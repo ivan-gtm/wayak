@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="56.52" height="80" viewBox="0 0 56.52 80">
+  <title>a4</title>
+  <g id="Layer_2" data-name="Layer 2">
+    <g id="Layer_1-2" data-name="Layer 1">
+      <rect id="A4" width="56.52" height="80" style="fill: #ccc"/>
+      <g>
+        <path d="M23.73,41l-.84,2.54H21.81l2.75-8.08h1.26l2.76,8.08H27.46L26.59,41Zm2.65-.82-.79-2.33c-.18-.53-.3-1-.42-1.48h0c-.12.48-.25,1-.41,1.46l-.79,2.34Z" style="fill: #fff"/>
+        <path d="M32.66,43.52V41.4H29v-.7l3.48-5h1.14v4.85h1.09v.83H33.65v2.12Zm0-3V38q0-.61,0-1.22h0c-.24.46-.43.79-.65,1.15L30.1,40.55v0Z" style="fill: #fff"/>
+      </g>
+    </g>
+  </g>
+</svg>
