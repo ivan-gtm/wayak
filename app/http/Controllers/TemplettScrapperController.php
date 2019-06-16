@@ -19,7 +19,7 @@ ini_set('memory_limit', '-1');
 class TemplettScrapperController extends Controller
 {
 
-  function storeJSONTemplate($template_id, $json_data){
+  	function storeJSONTemplate($template_id, $json_data){
 		$template_key = 'template:'.$template_id.':jsondata';
 		Redis::set($template_key, $json_data);
 	}
@@ -44,9 +44,9 @@ class TemplettScrapperController extends Controller
 										->limit(6)
 										->get();
 
-    foreach ($templates as $template) {
-			$template_key = 'template:'.$template->template_id.':jsondata';
-      if( Redis::exists($template_key) == 0 ) {
+		foreach ($templates as $template) {
+				$template_key = 'template:'.$template->template_id.':jsondata';
+			if( Redis::exists($template_key) == 0 ) {
 
 			}
 		}
@@ -68,11 +68,11 @@ class TemplettScrapperController extends Controller
 														// ->limit(10000)
                             ->get();
 
-		/*
-					echo "<pre>";
-					print_r($templates);
-					exit;
-		*/
+			/*
+						echo "<pre>";
+						print_r($templates);
+						exit;
+			*/
 
         
         foreach ($templates as $template) {
@@ -116,11 +116,11 @@ class TemplettScrapperController extends Controller
 							DB::table('templates')
 										->where('id', $template->id)
 										->update(['status' => 3]);
-						}
-				}
-}
+			}
+		}
+	}
 
-  function scrapURL(){
+	function scrapURL(){
     	// $this->startScrapping('https://templett.com/design/demo/DesignMyPartyStudio/799782');
     	// exit;
 
@@ -163,8 +163,7 @@ class TemplettScrapperController extends Controller
 					usleep(500000);
 				}
     	}
-
-  }
+  	}
 
 	function sanitizeExtraLargeURL($templett_url) {
 		// return sizeof($templett_url);
@@ -204,7 +203,6 @@ class TemplettScrapperController extends Controller
 		}
 
 		return str_replace('<br>', null, $templett_url);
-
 	}
 
 	function startScrapping($url, $etsy_template_id) {
@@ -242,8 +240,6 @@ class TemplettScrapperController extends Controller
 						->where('id', $etsy_template_id)
 						->update(['status' => 4]); // URL malformada
 		}
-
-
 	}
 
 	function registerThumbnailsOnDB($templates, $demo_as_id){
@@ -253,7 +249,7 @@ class TemplettScrapperController extends Controller
     		->first();
 
 		// We dont have any thumbnail registered on db
-    if( isset($template_metadata->id) == false ){
+    	if( isset($template_metadata->id) == false ){
 
 			$opts = array(
 			  'http'=>array(

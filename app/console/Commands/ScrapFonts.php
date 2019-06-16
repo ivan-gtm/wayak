@@ -36,7 +36,7 @@ class ScrapFonts extends Command
     function bulkFontsDownload(){
         
         // Collect all fonts are pending to download
-        $fonts_to_download = DB::select('SELECT font_id FROM template_has_fonts WHERE status = ? LIMIT 1500', [0]);
+        $fonts_to_download = DB::select('SELECT font_id FROM d_template_has_fonts WHERE status = ? LIMIT 1500', [0]);
         
         // print_r(sizeof($fonts_to_download));
         // exit;
@@ -53,11 +53,11 @@ class ScrapFonts extends Command
         /*
         DB::statement("UPDATE templates SET status = 2 WHERE template_id IN(
                             SELECT template_id FROM (
-                                SELECT template_has_fonts.template_id, COUNT(template_has_fonts.id) fonts, SUM(template_has_fonts.status) downloaded_fonts 
-                                FROM template_has_fonts, templates
-                                WHERE template_has_fonts.template_id = templates.template_id
+                                SELECT d_template_has_fonts.template_id, COUNT(d_template_has_fonts.id) fonts, SUM(d_template_has_fonts.status) downloaded_fonts 
+                                FROM d_template_has_fonts, templates
+                                WHERE d_template_has_fonts.template_id = templates.template_id
                                 AND templates.status = 1
-                                GROUP BY template_has_fonts.template_id
+                                GROUP BY d_template_has_fonts.template_id
                                 LIMIT 1000
                             ) fonts 
                             WHERE fonts = downloaded_fonts
@@ -424,7 +424,7 @@ class ScrapFonts extends Command
         }
 
         // Update all font db
-        DB::table('template_has_fonts')
+        DB::table('d_template_has_fonts')
             ->where('font_id', $font_id)
             ->update(['status' => 1]);
     }

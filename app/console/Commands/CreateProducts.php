@@ -42,7 +42,7 @@ class CreateProducts extends Command
     public function handle()
     {
         // $this->bulkThumbnailDownload();
-        $templates = DB::table('tmp_etsy_metadata')
+        $templates = DB::table('d_tmp_etsy_metadata')
                     ->select('title','price','description','templett_ids','templett_url','id')
                     ->where('templett_url','<>', '')
                     ->where('status','=', 2)
@@ -54,7 +54,7 @@ class CreateProducts extends Command
             $template_id = substr($template->templett_url, strrpos($template->templett_url,'/'), strlen($template->templett_url));
             $template_id = preg_replace("/[^0-9,]/", "", $template_id);
 
-            $thumbnail = DB::table('thumbnails')
+            $thumbnail = DB::table('d_thumbnails')
                     ->select('filename','template_id')
                     ->where('tmp_templates','=', $template_id)
                     ->first();
@@ -66,7 +66,7 @@ class CreateProducts extends Command
                 print_r($thumbnail_url."\n\n");
                 print_r($thumbnail->filename."\n\n");
                 
-                $product_id = DB::connection('mysql2')->table('products')->insertGetId(
+                $product_id = DB::table('products')->insertGetId(
                     [
                         'tax_class_id' => NULL,
                         'slug' => $this->createSlug($template->title),
@@ -90,7 +90,7 @@ class CreateProducts extends Command
                     ]
                 );
                        
-                DB::connection('mysql2')->table('product_translations')->insert(
+                DB::table('product_translations')->insert(
                     [
                         'product_id' => $product_id,
                         'locale' => 'en',
@@ -100,7 +100,7 @@ class CreateProducts extends Command
                     ]
                 );
                 
-                $file_id = DB::connection('mysql2')->table('files')->insertGetId(
+                $file_id = DB::table('files')->insertGetId(
                     [
                         'user_id' => 1,
                         'filename' => $thumbnail->filename,
@@ -114,7 +114,7 @@ class CreateProducts extends Command
                     ]
                 );
     
-                DB::connection('mysql2')->table('entity_files')->insert(
+                DB::table('entity_files')->insert(
                     [
                         // 'id' => ,
                         'file_id' => $file_id,
@@ -126,7 +126,7 @@ class CreateProducts extends Command
                     ]
                 );
     
-                DB::connection('mysql2')->table('search_terms')->insert(
+                DB::table('search_terms')->insert(
                     [
                         // 'id' => 1,
                         'term' => substr($template->title,0,180).Str::random(10),
@@ -137,7 +137,7 @@ class CreateProducts extends Command
                     ]
                 );
 
-                DB::table('tmp_etsy_metadata')
+                DB::table('d_tmp_etsy_metadata')
                     ->where('id', $template->id)
                     ->update(['in_store' => 1]);
             }

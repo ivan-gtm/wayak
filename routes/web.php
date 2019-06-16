@@ -15,10 +15,7 @@
 //     return view('welcome');
 // });
 
-Route::get('/scrap-from-etsy', 'EtsyScrapperController@extractMetaData');
-Route::get('/scrap-from-templett', 'TemplettScrapperController@scrapURL');
-Route::get('/scrap-from-templett-missing-redis', 'TemplettScrapperController@downloadMissingREDISTemplates');
-
+// TRANSLATE
 Route::get('/translate/words', 'TranslatorController@translateWord');
 Route::post('/translate/words/update', 'TranslatorController@updateWord');
 Route::post('translate/words/save-translation', 'TranslatorController@saveTranslation');
@@ -26,6 +23,15 @@ Route::post('translate/words/save-translation', 'TranslatorController@saveTransl
 Route::get('/translate/product-title', 'TranslatorController@translateProductTitle');
 Route::post('/translate/product-title/update', 'TranslatorController@updateProductTitle');
 
+Route::get('/translate/template', 'TranslatorController@translateTemplate');
+
+
+// SCRAPPER
+Route::get('/scrap-from-etsy', 'EtsyScrapperController@extractMetaData');
+Route::get('/scrap-from-templett', 'TemplettScrapperController@scrapURL');
+Route::get('/scrap-from-templett-missing-redis', 'TemplettScrapperController@downloadMissingREDISTemplates');
+
+// DESIGNER
 Route::get('/', 'DesignerAppController@home');
 Route::get('/app/get-thumbnails', 'DesignerAppController@getTemplateThumbnails');
 Route::get('/app/get-additional-assets', 'DesignerAppController@loadAdditionalAssets');

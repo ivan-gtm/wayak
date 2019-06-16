@@ -21,7 +21,7 @@ class TranslatorController extends Controller
 	function createKeywordDB() {
 
         // $template_id_query = DB::table('templates')
-        $keywords = DB::connection('store')->table('product_translations')
+        $keywords = DB::table('product_translations')
     		->select('product_id','name')
             // ->where('template_id','=',$template_id)
             // ->limit(1000)
@@ -32,7 +32,7 @@ class TranslatorController extends Controller
             
             foreach ($ress[0] as $word) {
                 
-                $word_exists = DB::table('keyword_translations')
+                $word_exists = DB::table('d_keyword_translations')
                 ->select('id','keyword','es_translation','occurrence')
                 ->where('keyword','=',$word)
                 ->first();
@@ -41,11 +41,11 @@ class TranslatorController extends Controller
                     echo "<pre>";
                     print_r($word);
 
-                    DB::table('keyword_translations')
+                    DB::table('d_keyword_translations')
 							->where('id', $word_exists->id )
 							->update(['occurrence' => $word_exists->occurrence + 1 ]);
                 } else {
-                    DB::table('keyword_translations')->insert([
+                    DB::table('d_keyword_translations')->insert([
                         'id' => null,
                         'keyword' => $word,
                         'es_translation' => null,
@@ -65,7 +65,7 @@ class TranslatorController extends Controller
     }
     
     function translateWord(){
-        $word = DB::table('keyword_translations')
+        $word = DB::table('d_keyword_translations')
         ->select('id','keyword')
         ->whereNull('es_translation')
         ->whereNull('has_translation')
@@ -73,27 +73,19 @@ class TranslatorController extends Controller
         ->first();
 
         /*
-        
+            DB::table('d_keyword_translations')
+                ->where('id', $word->id )
+                ->update(
+                    [
+                        'es_translation' => 'Invitación',
+                        'has_translation' => 1
+                    ]
+                );
+            
+            echo "<pre>";
+            print_r($word);
+            exit;
         */
-
-        
-
-        /*
-        DB::table('keyword_translations')
-		    ->where('id', $word->id )
-            ->update(
-                [
-                    'es_translation' => 'Invitación',
-                    'has_translation' => 1
-                ]
-            );
-        
-        echo "<pre>";
-        print_r($word);
-        exit;
-        */
-
-        
 
         // 5184
 
@@ -104,7 +96,7 @@ class TranslatorController extends Controller
         $word_id = $request->input('word_id');
         $has_translation = $request->input('has_translation');
 
-        DB::table('keyword_translations')
+        DB::table('d_keyword_translations')
 		    ->where('id', $word_id )
             ->update(['has_translation' => $has_translation ]);
 
@@ -116,7 +108,7 @@ class TranslatorController extends Controller
         $word_id = $request->input('word_id');
         $has_translation = $request->input('has_translation');
 
-        DB::table('keyword_translations')
+        DB::table('d_keyword_translations')
 		    ->where('id', $word_id )
             ->update(['has_translation' => $has_translation ]);
 
@@ -128,7 +120,7 @@ class TranslatorController extends Controller
         $word_id = $request->input('word_id');
         $translation = $request->input('translation');
 
-        DB::table('keyword_translations')
+        DB::table('d_keyword_translations')
 		    ->where('id', $word_id )
             ->update(['es_translation' => $translation ]);
 
@@ -140,27 +132,23 @@ class TranslatorController extends Controller
         $product_id = $request->input('product_id');
         $name_translation = $request->input('translation');
         /*
-        DB::connection('store')
-            ->table('product_translations')
+        DB::table('product_translations')
 		    ->where('id', $product_id )
             ->update(['es_translation' => $translation ]);
         */
-        $translation_exists = DB::connection('store')
-                ->table('product_translations')
+        $translation_exists = DB::table('product_translations')
                 ->select('product_id','locale','name')
                 ->where('locale','=','es')
                 ->where('product_id','=',$product_id)
                 ->first();
 
                 if($translation_exists) {
-                    DB::connection('store')
-                            ->table('product_translations')
+                    DB::table('product_translations')
                             ->where('locale','=','es')
                             ->where('product_id','=',$product_id)
 							->update([ 'name' => $name_translation ]);
                 } else {
-                    DB::connection('store')
-                            ->table('product_translations')->insert([
+                    DB::table('product_translations')->insert([
                         'product_id' => $product_id,
                         'locale' => 'es',
                         'name' => $name_translation,
@@ -168,21 +156,19 @@ class TranslatorController extends Controller
                     ]);
                 }
 
-                DB::connection('store')
-                            ->table('product_translations')
+                DB::table('product_translations')
                             ->where('locale','=','en')
                             ->where('product_id','=',$product_id)
 							->update([ 'tmp_status' => 1 ]); // Nombre traducido
 
         return response()->json(['name' => 'Abigail', 'state' => 'CA']);
-        
+
     }
 
     function translateProductTitle(){
 
         // SELECT * FROM `store`.`` LIMIT 0,1000
-        $title = DB::connection('store')
-        ->table('product_translations')
+        $title = DB::table('product_translations')
         ->select('product_id','name','tmp_name')
         ->where('locale','=','en')
         ->whereNull('tmp_status')
@@ -201,7 +187,7 @@ class TranslatorController extends Controller
 
         for ($i=0; $i < $translated_words_size; $i++) {
             $translation = null;
-            $translation = DB::table('keyword_translations')
+            $translation = DB::table('d_keyword_translations')
             ->select('keyword','es_translation')
             ->where('keyword','=',$translated_words[$i])
             ->whereNull('has_translation')
@@ -227,6 +213,53 @@ class TranslatorController extends Controller
         return view('translate_product_titles',[ 
             'title' => $title, 
             'title_words' => $title_words 
+        ]);
+    }
+
+    function translateTemplate(){
+
+        $templates = DB::table('d_templates')
+        ->select('id', 'template_id')
+        ->where('status','=',3)
+        ->orderBy('id','DESC')
+        ->limit(2)
+        ->get();
+        
+        // echo "<pre>";
+        // print_r($templates);
+        // exit;
+
+        foreach ($templates as $template) {
+            // print_r($template);
+            // exit;
+
+            $template_key = 'template:'.$template->template_id.':jsondata';
+
+            if(Redis::exists($template_key)){
+                // print_r($template_key);
+                // exit;
+
+                // print_r($template->template_id);
+                // print_r("\n");
+                // print_r(Redis::exists($template_key));
+                // print_r("\n");
+                
+                echo "<pre>";
+                print_r(json_decode(Redis::get($template_key)));
+            }
+
+            // Redis::get($template_key);  
+            /* 
+            DB::table('d_templates')
+            ->where('template_id', $thumb_row->template_id)
+            ->update(['status' => 4]);
+            */
+        }
+        exit;
+        
+        return view('translate_template',[ 
+            // 'title' => $title, 
+            // 'title_words' => $title_words 
         ]);
     }
 }

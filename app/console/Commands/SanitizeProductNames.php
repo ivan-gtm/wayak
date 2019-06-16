@@ -42,7 +42,7 @@ class SanitizeProductNames extends Command
     public function handle()
     {
         // $this->bulkThumbnailDownload();
-        $templates = DB::connection('mysql2')->table('product_translations')
+        $templates = DB::table('product_translations')
                     ->select('name','id')
                     // ->limit(2000)
                     ->get();
@@ -55,7 +55,7 @@ class SanitizeProductNames extends Command
             $template->name = ucwords($template->name);
             print_r($template);
 
-            DB::connection('mysql2')->table('product_translations')
+            DB::table('product_translations')
                     ->where('id', $template->id)
                     ->update(['name' => $template->name]);
 
@@ -76,7 +76,7 @@ class SanitizeProductNames extends Command
                 print_r($thumbnail_url."\n\n");
                 print_r($thumbnail->filename."\n\n");
                 
-                $product_id = DB::connection('mysql2')->table('products')->insertGetId(
+                $product_id = DB::table('products')->insertGetId(
                     [
                         'tax_class_id' => NULL,
                         'slug' => $this->createSlug($template->title),
@@ -100,7 +100,7 @@ class SanitizeProductNames extends Command
                     ]
                 );
                        
-                DB::connection('mysql2')->table('product_translations')->insert(
+                DB::table('product_translations')->insert(
                     [
                         'product_id' => $product_id,
                         'locale' => 'en',
@@ -110,7 +110,7 @@ class SanitizeProductNames extends Command
                     ]
                 );
                 
-                $file_id = DB::connection('mysql2')->table('files')->insertGetId(
+                $file_id = DB::table('files')->insertGetId(
                     [
                         'user_id' => 1,
                         'filename' => $thumbnail->filename,
@@ -124,7 +124,7 @@ class SanitizeProductNames extends Command
                     ]
                 );
     
-                DB::connection('mysql2')->table('entity_files')->insert(
+                DB::table('entity_files')->insert(
                     [
                         // 'id' => ,
                         'file_id' => $file_id,
@@ -136,7 +136,7 @@ class SanitizeProductNames extends Command
                     ]
                 );
     
-                DB::connection('mysql2')->table('search_terms')->insert(
+                DB::table('search_terms')->insert(
                     [
                         // 'id' => 1,
                         'term' => substr($template->title,0,180).Str::random(10),
