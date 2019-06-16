@@ -12,6 +12,7 @@ use SVG\Nodes\Shapes\SVGCircle;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 
@@ -23,10 +24,33 @@ class DesignerAppController extends Controller
 		return str_replace('http://localhost:8000/design/','http://localhost/design/', Redis::get($template_key) );
 	}
 
-	function home(Request $request){
+	function index(Request $request){
+		$template_urls = [];
+		$templates = DB::table('d_templates')
+					->select('id', 'template_id')
+					->where('status','=',3)
+					->orderBy('id','DESC')
+					->limit(2)
+					->get();
+		
+		// echo "<pre>";
+		// print_r($templates);
+		// exit;
+ 
+        foreach ($templates as $template) {
+			array_push($template_urls, 'http://localhost/open?templates='.$template->template_id );
+		}
+
+		// echo "<pre>";
+		// print_r($template_urls);
+		// exit;
+		
+    	return view('index',[ 'template_urls' => $template_urls ]);
+	}
+
+	function open(Request $request){
     	$templates = $request['templates'];
     	return view('home',[ 'templates' => $templates ]);
-
 	}
 
 	function convertPXtoIn($pixels){
@@ -67,13 +91,20 @@ class DesignerAppController extends Controller
 		// print_r( $request->all() );
 		// exit;
 
-		$this->createThumbnailFiles( $request->pngimageData, $template_id );
+		// echo "<pre>";
+		// print_r( $template_info );
+		// exit;
+
+		$this->deleteCurrentThumbnails($template_info);
+
+		$paths = $this->createThumbnailFiles( $request->pngimageData, $template_id );
+		$template_info['filename'] = $paths['normal'];
 
 		// echo "<pre>";
 		// print_r( $template_info );
 		// exit;
 
-		$this->registerTemplateOnDB( $template_info );
+		$this->registerThumbnailOnDB( $template_info );
 
 		$response = [
 			'id' => $template_id,
@@ -89,6 +120,7 @@ class DesignerAppController extends Controller
 		$png_image_data = $request['pngimageData'];
 
 		$template_data = json_decode( $request->jsonData );
+
 		$template_dimensions = $this->convertPXtoIn( $template_data[1]->cwidth ).'x'.$this->convertPXtoIn($template_data[1]->cheight).' in';
 		// $prefix_filename = $this->randomNumber();
 		$template_id = $request->template_id;
@@ -108,8 +140,10 @@ class DesignerAppController extends Controller
 		// print_r( $request->all() );
 		// exit;
 
-		$this->createThumbnailFiles( $png_image_data, $template_id );
-		$this->registerTemplateOnDB( $template_info );
+		$paths = $this->createThumbnailFiles( $png_image_data, $template_id );
+		$template_info['filename'] = $paths['normal'];
+		
+		$this->registerThumbnailOnDB( $template_info );
 
 		$response = [
 			'id' => $template_id,
@@ -122,14 +156,16 @@ class DesignerAppController extends Controller
 
 	function createThumbnailFiles( $image_data, $template_id ){
 		/*
-		$image = $image_data;  // your base64 encoded
-        $image = str_replace('data:image/jpeg;base64,', '', $image);
-		$image = str_replace(' ', '+', $image);
-		// $imageName = str_random(10).'.'.'png';
-		$imageName = 'ejemplo.jpeg';
-		
-		Storage::put('wthumbs/' . $imageName, base64_decode($image));
-		*/ 
+			$image = $image_data;  // your base64 encoded
+			$image = str_replace('data:image/jpeg;base64,', '', $image);
+			$image = str_replace(' ', '+', $image);
+			// $imageName = str_random(10).'.'.'png';
+			$imageName = 'ejemplo.jpeg';
+			
+			Storage::put('wthumbs/' . $imageName, base64_decode($image));
+		*/
+
+		// 1:: Borrar thumb pasado
 		
 		$image = $image_data;  // your base64 encoded
         $image = str_replace('data:image/jpeg;base64,', '', $image);
@@ -138,34 +174,42 @@ class DesignerAppController extends Controller
 		// Create image from base64 string
 		$img = \Image::make(base64_decode($image));
 
-		// $template_id = '173549';
+		// echo "<pre>";
+		// print_r($img);
+		// exit;
 		
 		$img_path = 'design/template/'.$template_id.'/thumbnails/';
 		$path = public_path($img_path);
 		@mkdir($path, 0777, true);
 
 		// Store mid-size thumbnail
-		$full_thumbnail_path = public_path($img_path.'thumbnail.jpg');
+		$unique_id = Str::random(10);
+		$full_thumbnail_path = public_path($img_path.$unique_id.'.jpg');
 		$img->save($full_thumbnail_path);
 		
 		// Create mini thumbnail
-		$img->resize(150, 107, function($constraint) {
+		$img->resize(150, 210, function($constraint) {
 			$constraint->aspectRatio();
 		});
 
-		$full_thumbnail_path = public_path($img_path.'mini.jpg');
-		$img->save($full_thumbnail_path);
+		$mini_thumbnail_path = public_path($img_path.$unique_id.'_mini.jpg');
+		$img->save($mini_thumbnail_path);
+
+		return [
+			'normal' => $unique_id.'.jpg',
+			'mini' => $unique_id.'_mini.jpg',
+		];
 		
 	}
 
-	function registerTemplateOnDB( $template_info ){
-		$thumbnail = DB::table('thumbnails')
+	function registerThumbnailOnDB( $template_info ){
+		$thumbnail = DB::table('d_thumbnails')
 						->select('id')
 						->where('template_id','=', $template_info['template_id'] )
 						->first();
 
 		if( isset( $thumbnail->id ) == false ){
-			DB::table('thumbnails')->insert([
+			DB::table('d_thumbnails')->insert([
 				'id' => null,
 				'template_id' => $template_info['template_id'],
 				'title' => htmlspecialchars_decode($template_info['title']),
@@ -175,6 +219,50 @@ class DesignerAppController extends Controller
 				'tmp_templates' => $template_info['tmp_templates'],
 				'status' => 1
 			]);
+		} else {
+			/*
+				echo "<pre>";
+				print_r($thumbnail->id);
+				echo "<br>";
+				print_r($template_info['filename']);
+				exit;
+			*/
+
+			DB::table('d_thumbnails')
+			->where(['id' => $thumbnail->id ])
+			->update([
+				// 'template_id' => $template_info['template_id'],
+				// 'title' => htmlspecialchars_decode($template_info['title']),
+				'filename' => $template_info['filename']
+				// 'tmp_original_url' => null,
+				// 'dimentions' => $template_info['dimentions'],
+				// 'tmp_templates' => $template_info['tmp_templates'],
+				// 'status' => 1
+			]);
+		}
+	}
+
+	function deleteCurrentThumbnails( $template_info ){
+		
+		$thumbnail = DB::table('d_thumbnails')
+						->select('filename')
+						->where('template_id','=', $template_info['template_id'] )
+						->first();
+		if( isset( $thumbnail->filename ) ){
+
+			$img_folder = 'design/template/'.$template_info['template_id'].'/thumbnails/';
+			$img_path = $img_folder.$thumbnail->filename;
+			
+			$thumbnail_path = public_path($img_path);
+			$mini_thumbnail_path = str_replace('.jpg','_mini.jpg',$thumbnail_path);
+
+			if(is_file($thumbnail_path)) {
+				unlink( $thumbnail_path );
+			}
+
+			if(is_file($mini_thumbnail_path)) {
+				unlink( $mini_thumbnail_path );
+			}
 		}
 	}
 
@@ -186,7 +274,7 @@ class DesignerAppController extends Controller
     	if( isset($template_ids) ){
 			// $template_ids = explode(',', string)
 
-			$template_thumbnails = DB::table('thumbnails')
+			$template_thumbnails = DB::table('d_thumbnails')
 	    		->select(['template_id', 'filename', 'title', 'dimentions'])
 	    		->whereRAW('template_id IN('.$template_ids.')')
 	    		->get();
@@ -274,7 +362,7 @@ class DesignerAppController extends Controller
 
 		
 
-		$template = DB::table('templates')
+		$template = DB::table('d_templates')
 	    		->select('*')
 	    		->where('template_id','=',$template_ids)
 	    		->first();
@@ -340,7 +428,7 @@ class DesignerAppController extends Controller
 
 		if( isset($font_id) ){
 
-			$font_info = DB::table('fonts')
+			$font_info = DB::table('d_fonts')
 	    		->select('name')
 				->where('font_id','=',$font_id)
 				->where('status','=', 1)
@@ -376,11 +464,11 @@ class DesignerAppController extends Controller
 
 		if( isset($templates) ){
 			// $templates = json_decode($templates);
-			// $templates = urldecode($request['templates']);
+			// $templates = urldecode($request['d_templates']);
 			// $templates = "'".implode("','", $templates)."'";
 			
 			// "SELECT * FROM fonts WHERE "
-			$font_families = DB::Table('fonts')
+			$font_families = DB::Table('d_fonts')
 								->select(['font_id','name'])
 								->whereRAW('font_id IN('.$templates.')')
 								->get();
