@@ -47,6 +47,13 @@
                       @endfor
                     </ul>
                 </div>
+                <div class="col-12 d-none d-sm-block">
+                  <h5 class="text-center title">DESCRIPCION</h5>
+                  <div>
+                    {!! $description !!}
+                  </div>
+                  <textarea class="form-control" id="description" name="description"></textarea>
+                </div>
             </div>
             
             <div class="row p-2">
@@ -119,6 +126,8 @@
 
         function saveTranslation(){
           var translation = $('#final-sentence').val();
+          var description = $('#description').val();
+
           // alert(translation);
           $.ajaxSetup({
             headers: {
@@ -128,7 +137,11 @@
           $.ajax({
             method: "POST",
             url: "{{ URL::to('/translate/product-title/update') }}",
-            data: { product_id: {{ $title->product_id }}, translation: translation }
+            data: { 
+              product_id: {{ $title->product_id }}, 
+              description: description,
+              translation: translation 
+            }
           })
           .done(function( msg ) {
               // alert( "Data Saved: " + msg );

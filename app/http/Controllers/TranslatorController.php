@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 // use Sunra\PhpSimple\HtmlDomParser;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Str;
 
 
 ini_set("max_execution_time", 0);   // no time-outs!
@@ -128,14 +129,20 @@ class TranslatorController extends Controller
         
     }
 
-    function updateProductTitle(Request $request){
+    function updateProductTitle( Request $request ){
         $product_id = $request->input('product_id');
         $name_translation = $request->input('translation');
-        /*
-        DB::table('product_translations')
+        $description = $request->input('description');
+        $slug = $this->createSlug($name_translation);
+        
+        // echo $slug;
+        // exit;
+
+        /* DB::table('product_translations')
 		    ->where('id', $product_id )
             ->update(['es_translation' => $translation ]);
         */
+
         $translation_exists = DB::table('product_translations')
                 ->select('product_id','locale','name')
                 ->where('locale','=','es')
@@ -143,33 +150,66 @@ class TranslatorController extends Controller
                 ->first();
 
                 if($translation_exists) {
+
+                    $update_fields = [ 'name' => $name_translation ];
+                    
+                    if( strlen($description) > 0 ){
+                        $update_fields = [ 
+                            'name' => $name_translation,
+                            'description' => $description
+                        ];
+                    }
+
                     DB::table('product_translations')
                             ->where('locale','=','es')
                             ->where('product_id','=',$product_id)
-							->update([ 'name' => $name_translation ]);
+                            ->update($update_fields);
+
                 } else {
                     DB::table('product_translations')->insert([
                         'product_id' => $product_id,
                         'locale' => 'es',
                         'name' => $name_translation,
-                        'description' => ''
+                        'description' => $description
                     ]);
                 }
-
+                
                 DB::table('product_translations')
                             ->where('locale','=','en')
                             ->where('product_id','=',$product_id)
-							->update([ 'tmp_status' => 1 ]); // Nombre traducido
+                            ->update([ 'tmp_status' => 1 ]); // Nombre traducido
+    
+                DB::table('products')
+                            ->where('id','=',$product_id)
+							->update(
+                                [ 
+                                    'is_active' => 1,
+                                    'slug' => $slug 
+                                ]
+                            ); // Nombre traducido
 
         return response()->json(['name' => 'Abigail', 'state' => 'CA']);
 
     }
 
-    function translateProductTitle(){
+    function createSlug($str, $delimiter = '-'){
 
+        $slug = strtolower(trim(preg_replace('/[\s-]+/', $delimiter, preg_replace('/[^A-Za-z0-9-]+/', $delimiter, preg_replace('/[&]/', 'and', preg_replace('/[\']/', '', iconv('UTF-8', 'ASCII//TRANSLIT', $str))))), $delimiter));
+        
+        // Make slug keyword unique
+        $slug = explode('-',$slug);
+        $slug = implode('-',array_unique($slug));
+
+        $slug = substr($slug,0,200);
+        $slug .= "-".Str::random(5);
+
+        return $slug;
+    }
+
+    function translateProductTitle(){
         // SELECT * FROM `store`.`` LIMIT 0,1000
         $title = DB::table('product_translations')
-        ->select('product_id','name','tmp_name')
+        ->select('product_id','name','tmp_name', 'description')
         ->where('locale','=','en')
         ->whereNull('tmp_status')
         ->orderBy('id','DESC')
@@ -211,7 +251,8 @@ class TranslatorController extends Controller
         // exit;
 
         return view('translate_product_titles',[ 
-            'title' => $title, 
+            'title' => $title,
+            'description' => $title->description,
             'title_words' => $title_words 
         ]);
     }
