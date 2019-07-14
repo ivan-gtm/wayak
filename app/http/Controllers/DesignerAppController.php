@@ -186,6 +186,9 @@ class DesignerAppController extends Controller
 		$unique_id = Str::random(10);
 		$full_thumbnail_path = public_path($img_path.$unique_id.'.jpg');
 		$img->save($full_thumbnail_path);
+
+		// Guardar en S3
+		Storage::disk('s3')->put($img_path.$unique_id.'.jpg', $full_thumbnail_path);
 		
 		// Create mini thumbnail
 		$img->resize(150, 210, function($constraint) {
