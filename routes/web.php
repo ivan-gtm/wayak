@@ -32,13 +32,14 @@ Route::get('/scrap-from-templett', 'TemplettScrapperController@scrapURL');
 Route::get('/scrap-from-templett-missing-redis', 'TemplettScrapperController@downloadMissingREDISTemplates');
 
 // DESIGNER
-Route::get('/', 'DesignerAppController@index');
+Route::get('/', 'DesignerAppController@home');
 Route::get('/open', 'DesignerAppController@open');
 Route::get('/app/get-thumbnails', 'DesignerAppController@getTemplateThumbnails');
 Route::get('/app/get-additional-assets', 'DesignerAppController@loadAdditionalAssets');
 Route::get('/app/get-bg-images', 'DesignerAppController@getBackgroundImages');
 Route::get('/app/load-settings', 'DesignerAppController@loadSettings');
 Route::get('/app/load-template', 'DesignerAppController@loadTemplate');
+Route::get('/app/download-pdf', 'DesignerAppController@downloadPDF');
 
 Route::post('/app/template/save-as', 'DesignerAppController@saveAs');
 Route::post('/app/template/update', 'DesignerAppController@update');
@@ -47,7 +48,5 @@ Route::get('/app/get-remaining-downloads','DesignerAppController@loadRemainingDo
 Route::get('/app/get-woff-font-url', 'DesignerAppController@getWoffFontUrl');
 Route::get('/app/check-allow-revert-template', 'DesignerAppController@checkAllowRevertTemplate');
 Route::get('/app/get-css-fonts', 'DesignerAppController@getCSSFonts');
-
-Route::post('/app/pdf', 'DesignerAppController@pdf');
-
-
+Route::post('/app/pdf', 'DesignerAppController@generatePDF');
+Route::post('/app/register-template-download', 'DesignerAppController@registerTemplateDownload');

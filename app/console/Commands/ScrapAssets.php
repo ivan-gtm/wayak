@@ -50,15 +50,15 @@ class ScrapAssets extends Command
                     ->select('id', 'template_id','tmp_path', 'filename','status')
                     ->where('status', '=', '0')
                     // ->where('template_id', '=', 799782)
-                    ->limit(1000)
+                    ->limit(5000)
                     ->get();
 
         // echo "<pre>";
-        // print_r(sizeof($assets_to_download));
+        // print_r( $assets_to_download);
         // exit;
 
         // Create relationship between font and template, if it does not exists
-        if( sizeof($assets_to_download) > 0 ){
+        if( $assets_to_download->count() > 0 ){
             // while( $font_row = $assets_to_download->fetch_assoc() ){
             foreach( $assets_to_download as $asset ){
                 
@@ -66,12 +66,14 @@ class ScrapAssets extends Command
                                         ->where('filename', $asset->filename )
                                         ->where('status', 1 )
                                         ->first();
-
+                // echo "<pre>";
+                // print_r( $existing_asset);
+                // exit;
 
                 // $existing_img_row = $mysqli->query("SELECT filename,template_id, tmp_path FROM images WHERE filename = '".$asset->filename."' AND status = 1 LIMIT 1");
 
                 // Verify if an image is already donwloaded for another template
-                if( sizeof($existing_asset) > 0 ){
+                if( $existing_asset != null && isset($existing_asset->id) ){
                     $old_path = public_path('design/template/'.$existing_asset->template_id.'/assets/'.$existing_asset->filename);
                     $new_path = public_path('design/template/'.$asset->template_id.'/assets/'.$asset->filename);
                     

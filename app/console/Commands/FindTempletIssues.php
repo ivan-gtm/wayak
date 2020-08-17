@@ -44,7 +44,7 @@ class FindTempletIssues extends Command
 
     function findTemplateIssues(){
 
-        $templates = DB::table('d_templates')
+        $templates = DB::table('templates')
                             ->select('id', 'template_id')
                             ->where('status','=',3)
                             ->orderBy('id','DESC')
@@ -67,7 +67,7 @@ class FindTempletIssues extends Command
             
             // Redis::get($template_key);  
             /* 
-            DB::table('d_templates')
+            DB::table('templates')
                     ->where('template_id', $thumb_row->template_id)
                     ->update(['status' => 4]);
             */

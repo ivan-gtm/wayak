@@ -19,7 +19,7 @@ ini_set('memory_limit', '-1');
 class TemplettScrapperController extends Controller
 {
 
-  	function storeJSONTemplate($template_id, $json_data){
+	private function storeJSONTemplate($template_id, $json_data){
 		$template_key = 'template:'.$template_id.':jsondata';
 		Redis::set($template_key, $json_data);
 	}
@@ -37,17 +37,22 @@ class TemplettScrapperController extends Controller
 			}
 			</style>'."\n\n\n\n";
 
+		echo "HIHIHI";
+
 		$templates = DB::table('templates')
 										->select('id', 'template_id')
-										->where('status', '=' , 3)
+										// ->where('status', '=' , 3)
 										->orderBy('id','DESC')
-										->limit(6)
+										->limit(3000)
 										->get();
-
+		// echo sizeof($templates);
+		// exit;
 		foreach ($templates as $template) {
-				$template_key = 'template:'.$template->template_id.':jsondata';
+			$template_key = 'template:'.$template->template_id.'ss:jsondata';
 			if( Redis::exists($template_key) == 0 ) {
-
+				echo $template_key."- NO EXISTE";
+			} else {
+				echo $template_key."- NO EXISTE";
 			}
 		}
 	}
@@ -63,83 +68,90 @@ class TemplettScrapperController extends Controller
 
 		$templates = DB::table('templates')
                             ->select('id', 'template_id')
-														->where('status','=',0)
-														->orderBy('id','DESC')
-														// ->limit(10000)
-                            ->get();
+							->where('status','=',0)
+							->orderBy('id','DESC')
+							// ->offset(10000)
+							// ->limit(5000)
+							->get();
+		// echo "<pre>";
+		// print_r($templates);
+		// exit;
+		/*
+			echo "<pre>";
+			print_r($templates);
+			exit;
+		*/
 
-			/*
-						echo "<pre>";
-						print_r($templates);
-						exit;
-			*/
-
-        
         foreach ($templates as $template) {
             
             $template_key = 'template:'.$template->template_id.':jsondata';
-            
+			
+			// IF template does not exists on REDIS database
             if(Redis::exists($template_key) == 0) {
-							// echo $template_key;
+				
+				// Verify if metadata already exist on database
+				$template_md = DB::table('tmp_etsy_metadata')
+					->select('id','templett_url')
+					->whereRaw('LENGTH(templett_url) > ?', [0])
+					->where('templett_url', 'like', '%'.$template->template_id.'%')
+					// ->where('templett_ids', 'like', '%'.$template->template_id.'%')
+					->first();
+				
+				$templett_url = $this->sanitizeExtraLargeURL($template_md->templett_url);
 
-							$template_md = DB::table('tmp_etsy_metadata')
-								->select('id','templett_url')
-								->whereRaw('LENGTH(templett_url) > ?', [0])
-								->where('templett_url', 'like', '%'.$template->template_id.'%')
-								// ->where('templett_ids', 'like', '%'.$template->template_id.'%')
-								->first();
+				// echo "NO EXISTE::>";
+				// echo "<pre>";
+				// print_r($templett_url);
+				// exit;
 
-								$templett_url = $this->sanitizeExtraLargeURL($template_md->templett_url);
-
-								if(strlen($templett_url) > 0 && strpos($templett_url, 'templett.com/design/demo/') > 0 ){
+				if(strlen($templett_url) > 0 && strpos($templett_url, 'templett.com/design/demo/') > 0 ){
+					// echo "-------------------------\n";
+					// print_r('<pre>');
+					// print_r($template);
+					// // print_r($template_id);
+					// exit;
 					
-									// echo "-------------------------\n";
-									// print_r('<pre>');
-									// print_r($template);
-									// // print_r($template_id);
-									// exit;
+					echo 'Start parsing for URL:: '.$templett_url."<br>\n";
+					$this->startScrapping($templett_url, $template->id);
+					echo '<br>Parsing complete - '.$templett_url."-\n\n<br><br>";
 					
-									echo 'Parsing '.$templett_url."<br>\n";
-									// exit;
-									$this->startScrapping($templett_url, $template->id);
-									echo '<br>Parsing complete - '.$templett_url."-\n\n<br><br>";
-									
-									DB::table('templates')
-										->where('id', $template->id)
-										->update(['status' => 3]);
+					DB::table('templates')
+						->where('id', $template->id)
+						->update(['status' => 3]);
 
-									usleep(50000);
+					usleep(50000);
 
-								}
+				}
 
-						} else {
-							DB::table('templates')
-										->where('id', $template->id)
-										->update(['status' => 3]);
+			} else {
+				echo 'EL TEMPLATE EXISTE::'.$template_key.'<br>';
+				DB::table('templates')
+					->where('id', $template->id)
+					->update(['status' => 3]);
 			}
 		}
 	}
 
 	function scrapURL(){
-    	// $this->startScrapping('https://templett.com/design/demo/DesignMyPartyStudio/799782');
-    	// exit;
+		// $this->startScrapping('https://templett.com/design/demo/DesignMyPartyStudio/799782');
+		// exit;
 
-    	// bulkThumbnailDownload();
-    	echo '<style type="text/css">
-		    body{
-		        background-color: #0f1419;
-		        color: #5de5ed
-		    }
-				</style>'."\n\n\n\n";
+		// bulkThumbnailDownload();
+		echo '<style type="text/css">
+				body{
+					background-color: #0f1419;
+					color: #5de5ed
+				}
+			</style>'."\n\n\n\n";
 
 		$urls = DB::table('tmp_etsy_metadata')
 						->select('id','templett_url')
-						// ->where('templett_url','=','https://templett.com/design/demo/asterandrose/616492')
-					->where('status','=','0')
-					->whereRaw('LENGTH(templett_url) > ?', [0])
-					// ->whereRaw('LENGTH(templett_url) < ?', [180])
-		    		->limit(1600)
-		    		->get();
+						// ->where('templett_url','=','https://templett.com/design/demo/ForeverYourPrints/1385372')
+						->where('status','=','0')
+						->whereRaw('LENGTH(templett_url) > ?', [0])
+						// ->whereRaw('LENGTH(templett_url) < ?', [180])
+						->limit(1600)
+						->get();
 
     	foreach ($urls as $key => $template) {
 				$templett_url = $this->sanitizeExtraLargeURL($template->templett_url);
@@ -156,14 +168,15 @@ class TemplettScrapperController extends Controller
 					// // print_r($template_id);
 					// exit;
 
-					echo 'Parsing '.$templett_url."<br>\n";
+					// echo 'Parsing '.$templett_url."<br>\n";
 					// exit;
 					$this->startScrapping($templett_url, $template->id);
 					echo '<br>Parsing complete - '.$templett_url."-\n\n<br><br>";
 					usleep(500000);
 				}
     	}
-  	}
+
+  }
 
 	function sanitizeExtraLargeURL($templett_url) {
 		// return sizeof($templett_url);
@@ -203,19 +216,18 @@ class TemplettScrapperController extends Controller
 		}
 
 		return str_replace('<br>', null, $templett_url);
+
 	}
 
 	function startScrapping($url, $etsy_template_id) {
 		
 		$url_info = trim(str_replace('*', null, str_replace('https://templett.com/design/demo/', null, str_replace('http://templett.com/design/demo/', null, $url))));
-		
 		$url_info = explode('/', $url_info);
-
 		// echo "<pre>";
 		// print_r($url_info);
 		// exit;
 
-		// En la url existen username y templates
+		// Extract username and template ids
 		if(isset($url_info[0]) && isset($url_info[1])){
 
 			$username = $url_info[0];
@@ -223,6 +235,12 @@ class TemplettScrapperController extends Controller
 			$parent_template_id = $templates[0];
 			$templates_with_commas = $url_info[1];
 			
+			// echo "<pre>";
+			// print_r($username);
+			// print_r($templates);
+			// print_r($parent_template_id);
+			// print_r($templates_with_commas);
+			// exit;
 			
 			foreach ($templates as $template_id) {
 				
@@ -240,6 +258,8 @@ class TemplettScrapperController extends Controller
 						->where('id', $etsy_template_id)
 						->update(['status' => 4]); // URL malformada
 		}
+
+
 	}
 
 	function registerThumbnailsOnDB($templates, $demo_as_id){
@@ -304,7 +324,7 @@ class TemplettScrapperController extends Controller
 							'dimentions' => $dimentionsMatches[1][$i][0],
 							'tmp_templates' => $templates,
 							'status' => 0
-			            ]);
+						]);
 					}
 
 				}
@@ -326,7 +346,7 @@ class TemplettScrapperController extends Controller
     	// print_r($username);
     	// echo "<hr>";
     	// // exit;
-    	// print_r( ( isset($demo_id_query->demo_as_id) ? 'ho':'no' ) );
+    	// print_r( ( isset($demo_id_query->demo_as_id) ? 'TENEMOS DEMO AS ID':'NO TENEMOS DEMO AS ID' ) );
     	// exit;
 
 		// If this user has not been previously parsed and we already have demo as id
@@ -410,10 +430,9 @@ class TemplettScrapperController extends Controller
 			$template_config['hideVideoModal'] = 'false';
 			$template_config['parentTemplateId'] = $parent_template_id;
 		}
-
+		
+		// Register thumbnails on database, based on templett html code
 		$this->registerThumbnailsOnDB($templates, $template_config['demo_as_id']);
-		
-		
 
 		$this->registerJSONTemplateOnDB($template_id, $template_config['demo_as_id'], $template_config, $etsy_template_id);
 
@@ -432,10 +451,13 @@ class TemplettScrapperController extends Controller
 		$template_id_query = DB::table('templates')
     		->select('template_id')
     		->where('template_id','=',$template_id)
-    		->first();
+			->first();
+		// echo "<pre>";
+		// print_r($template_id_query);
+		// exit;
 
-		// If font id does not exists on db
-		if( isset($template_id_query->template_id) == true ){
+		// If template does not exists on db
+		if( isset($template_id_query->template_id) == false ){
 
 			// echo "<pre>";
 			// print_r("BUSCAME TON");
@@ -445,16 +467,16 @@ class TemplettScrapperController extends Controller
 
 			// Create a stream
 			$opts = array(
-			  'http'=>array(
-			    'method'=>"GET",
-			    'header'=>"Accept-language: en\r\n" .
-			              "Cookie: foo=bar\r\n"
-			  )
+				'http'=>array(
+					'method'=>"GET",
+					'header'=>"Accept-language: en\r\n" .
+								"Cookie: foo=bar\r\n"
+				)
 			);
 			
 			$context = stream_context_create($opts);
 
-			// // Open the file using the HTTP headers set above
+			//Open the file using the HTTP headers set above
 			$template_raw_data = file_get_contents('https://templett.com/design/loadtemplate.php?id='.$template_id.'&design_as_id='.$design_as_id.'&demo_as_id='.$demo_as_id.'&demo_templates='.$template_id.'', false, $context);
 
 			$array_template = json_decode($template_raw_data);
@@ -506,7 +528,7 @@ class TemplettScrapperController extends Controller
 				}
 
 				$additional_info['jsondata'] = str_replace('https://dbzkr7khx0kap.cloudfront.net/', 'http://localhost/design/template/'.$template_id.'/assets/', $additional_info['jsondata']);
-
+				// Saves JSON Template on REDIS
 				$this->storeJSONTemplate($template_id, $additional_info['jsondata'] );
 
 				return $this->saveTemplateOnDB($template_info);
@@ -514,7 +536,7 @@ class TemplettScrapperController extends Controller
 			} else {
 
 				DB::table('tmp_etsy_metadata')
-				    ->where('id', $etsy_template_id)
+					->where('id', $etsy_template_id)
 						->update(['status' => 4 ]); // No se pudo descargar de la plataforma
 
 			}

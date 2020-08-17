@@ -7,6 +7,8 @@
         <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
         <meta content="" name="description">
         <meta content="" name="author">
+        <meta name="csrf-token" content="{{ csrf_token() }}" />
+
         <link href="{{ asset('apple-touch-icon.png') }}" rel="apple-touch-icon" sizes="180x180">
         <link href="{{ asset('favicon-32x32.png') }}" rel="icon" sizes="32x32" type="image/png">
         <link href="{{ asset('favicon-16x16.png') }}" rel="icon" sizes="16x16" type="image/png">
@@ -14,7 +16,7 @@
         <link color="#5bbad5" href="{{ asset('safari-pinned-tab.svg') }}" rel="mask-icon">
         <meta content="#ffffff" name="theme-color">
         <title>
-            Templett Designer
+            WAYAK - Invitaciones
         </title>
         <link href="{{ asset('assets/css/spectrum.css') }}" rel="canonical"/>
         <link href="{{ asset('assets/lib/stroke-7/style.css') }}" rel="stylesheet" type="text/css"/>
@@ -24,38 +26,38 @@
         <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
         <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
         <![endif]-->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous"/>
+        <link rel="stylesheet" href="{{ asset('assets/js/bootstrap/bootstrap.min.css') }}" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous"/>
 
-        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet"/>
+        <link href="{{ asset('assets/js/font-awesome/css/all.min.css') }}" rel="stylesheet"/>
         <link href="{{ asset('assets/css/spectrum.css') }}" rel="stylesheet" type="text/css"/>
         <link href="{{ asset('assets/css/jquery-ui.min.css') }}" rel="stylesheet" type="text/css"/>
         <!-- <link href="{{ asset('assets/css/bootstrap-slider.css') }}" rel="stylesheet" type="text/css"/> -->
-
         <!-- <link href="{{ asset('assets/lib/dropzone/dist/dropzone.css') }}" rel="stylesheet" type="text/css"/> -->
         <link href="{{ asset('assets/css/style.css?v=0301201901') }}" rel="stylesheet" type="text/css"/>
+        <link href="{{ asset('assets/js/select2/select2.min.css') }}" rel="stylesheet"/>
         
         <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.6.1/css/bootstrap-slider.min.css" rel="stylesheet" type="text/css"/> -->
 
         <!-- 
         <link rel="stylesheet" href="{{ asset('assets/css/spectrum.css') }}css/style.css">
         -->
-        <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+        <script src="{{ asset('assets/js/jquery/jquery-1.9.1.js') }}"></script>
         <script src="{{ asset('assets/js/jquery-ui-1.12.1/jquery-ui.min.js') }}"></script>
         <script src="{{ asset('assets/js/touchSwipe/jquery.touchSwipe.min.js') }}"></script>
 
-        <script src="https://unpkg.com/imagesloaded@4/imagesloaded.pkgd.min.js"></script>
+        <script src="{{ asset('assets/js/imagesLoaded/imagesloaded.pkgd.min.js') }}"></script>
 
         <!-- <script src="{{ asset('assets/js/jquery-mobile/jquery.mobile-1.4.5.min.js?rev=ed515e27701f638073403bd54317e') }}"></script> -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.6.1/bootstrap-slider.min.js"></script>
+        <script src="{{ asset('assets/js/bootstrap-slider/bootstrap-slider.min.js') }}"></script>
         <script src="{{ asset('assets/js/spectrum/spectrum.js') }}"></script>
         <script src="{{ asset('assets/js/tagsfield/tagsfield.js') }}"></script>
         <script src="{{ asset('assets/js/opentype/opentype.min.js') }}"></script>
-        <script src="http://malsup.github.com/jquery.form.js"></script>
-        <script src="https://rawgit.com/enyo/dropzone/master/dist/dropzone.js"></script>
+        <script src="{{ asset('assets/js/jquery-form/jquery.form.js') }}"></script>
+        <script src="{{ asset('assets/js/dropzone/dropzone.js') }}"></script>
         <script src="{{ asset('assets/js/isotope.pkgd.min.js') }}"></script>
-        <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.0/dist/jquery.validate.min.js"></script>
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet"/>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+        <script src="{{ asset('assets/js/jquery-validate/jquery.validate.min.js') }}"></script>
+        
+        <script src="{{ asset('assets/js/select2/select2.min.js') }}"></script>
         <script src="{{ asset('assets/js/vendor.js?rev=ed515e27701f638073403bd54317e') }}"></script>
         <script src="{{ asset('assets/js/nanoscroller/jquery.nanoscroller.min.js?rev=ed515e27701f638073403bd54317e') }}"></script>
         <script src="{{ asset('assets/js/fastclick/fastclick.js?rev=ed515e27701f638073403bd54317e') }}"></script>
@@ -66,14 +68,14 @@
 
         <!-- <script src="{{ asset('assets/js/fabricjs/2.4.6/fabric.min.js?rev=ed515e27701f638073403bd543') }}">
         </script> -->
-        <script src="https://rawgit.com/kangax/fabric.js/master/dist/fabric.js"></script>
-        <script src="https://rawgit.com/fabricjs/fabric.js/master/lib/centering_guidelines.js"></script>
-        <script src="https://rawgit.com/fabricjs/fabric.js/master/lib/aligning_guidelines.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+        <script src="{{ asset('assets/js/fabricjs/fabric.js') }}"></script>
+        <script src="{{ asset('assets/js/fabricjs/centering_guidelines.js') }}"></script>
+        <script src="{{ asset('assets/js/fabricjs/aligning_guidelines.js') }}"></script>
+        <script src="{{ asset('assets/js/bootstrap/bootstrap.min.js') }}" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 
         <script src="{{ asset('assets/js/toast/jquery.toast.min.js') }}" crossorigin="anonymous"></script>
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/webfont/1.6.28/webfontloader.js" crossorigin="anonymous"></script>
+        <script src="{{ asset('assets/js/webfontloader/webfontloader.js') }}" crossorigin="anonymous"></script>
 
     </head>
     <body class="normal">
@@ -98,7 +100,7 @@
                 Paste in place
             </li>
         </ul>
-        <div class="modal" data-backdrop="static" data-keyboard="false" id="loadingpage" style="background:#43D2F9; opacity:1; display:block;">
+        <div class="modal" data-backdrop="static" data-keyboard="false" id="loadingpage" style="background:#fff159; opacity:1; display:block;">
             <img class="loading-spin" src="{{ asset('assets/img/loader.svg') }}"/>
         </div>
         <div class="am-wrapper am-fixed-sidebar">
@@ -128,32 +130,32 @@
                         <ul class="nav navbar-nav am-nav-right">
                             <li>
                                 <a href="#" id="undo" title="Undo">
-                                    Undo
+                                    Deshacer
                                 </a>
                             </li>
                             <li>
                                 <a href="#" id="redo" title="Redo">
-                                    Redo
+                                    Adelante
                                 </a>
                             </li>
                             <li>
                                 <a href="#" id="savetemplate" title="savetemplate">
-                                    savetemplate
+                                    Guardar Como...
                                 </a>
                             </li>
                             <li>
                                 <a href="#" id="newtemplate" title="newtemplate">
-                                    newtemplate
+                                    Nueva Plantilla
                                 </a>
                             </li>
                             <li>
                                 <a href="#" id="saveastemplate" title="saveastemplate">
-                                    saveastemplate
+                                    Guardar Como Plantilla...
                                 </a>
                             </li>
                             <li>
                                 <a href="#" id="canvasSize" title="saveimage">
-                                    canvasSize
+                                    Tama&ntilde;o del lienzo
                                 </a>
                             </li>
                         </ul>
@@ -181,7 +183,7 @@
                         <ul class="nav navbar-nav navbar-right am-admin-nav">
                             <li>
                                 <a href="https://help.localhost.com" target="_blank">
-                                    Help
+                                    Ayuda
                                 </a>
                             </li>
                         </ul>
@@ -194,7 +196,7 @@
                                 <ul class="dropdown-menu am-connections">
                                     <li>
                                         <div class="title">
-                                            Settings
+                                            Ajustes
                                         </div>
                                         <div class="list">
                                             <div class="content">
@@ -206,7 +208,7 @@
                                                         </div>
                                                         <div class="field">
                                                             <span>
-                                                                Auto Save
+                                                                Auto guardar
                                                             </span>
                                                             <div class="pull-right">
                                                                 <div class="switch-button switch-button-sm">
@@ -228,12 +230,12 @@
                             </li>
                             <li class="dropdown download-menu">
                                 <button aria-expanded="false" class="dropdown-toggle btn btn-info" data-toggle="dropdown" href="#" role="button" style="margin:12px 0;">
-                                    Download
+                                    Descargar
                                 </button>
                                 <ul class="dropdown-menu am-connections">
                                     <li>
                                         <div class="title">
-                                            Download Options
+                                            Opciones de descarga
                                         </div>
                                         <div class="list">
                                             <div class="content">
@@ -242,21 +244,21 @@
                                                         <a href="#" id="downloadPDF">
                                                             <span class="icon s7-print" style="font-size:24px; vertical-align:middle;">
                                                             </span>
-                                                            PDF (For Print)
+                                                            PDF (Para imprimir)
                                                         </a>
                                                     </li>
                                                     <li class="download-jpeg-menu-item" style="text-align:center;">
                                                         <a href="#" id="downloadJPEG">
                                                             <span class="icon s7-print" style="font-size:24px; vertical-align:middle;">
                                                             </span>
-                                                            JPEG (For Print)
+                                                            JPEG (Para imprimir)
                                                         </a>
                                                     </li>
                                                     <li style="text-align:center;">
                                                         <a href="#" id="downloadAsPNG">
                                                             <span class="icon s7-share" style="font-size:24px; vertical-align:middle;">
                                                             </span>
-                                                            PNG (For Web)
+                                                            PNG (Face, Whats, Web)
                                                         </a>
                                                     </li>
                                                     <li class="title" id="downloads-remaining-text" style="text-align:center;">
@@ -271,8 +273,8 @@
                         <!-- Design As User -->
                         <!-- Demo -->
                         <ul class="nav navbar-nav navbar-right am-icons-nav">
-                            <li style="top:20px; color:#fff;">
-                                You are in demo mode. You will not be able to save any changes.
+                            <li style="top:20px; color:#333;">
+                                Estas en una version demo. No seras capaz de guardar los cambios o descargar la imagen.
                             </li>
                         </ul>
                     </div>
@@ -288,14 +290,14 @@
                                 <i class="icon s7-albums">
                                 </i>
                                 <span>
-                                    Templates
+                                    Plantillas
                                 </span>
                             </a>
                             <ul class="sub-menu visible">
                                 <li>
                                     <div class="col-lg-12">
                                         <div class="search">
-                                            <input id="templatesearch" name="templatesearch" placeholder="Search..." type="text">
+                                            <input id="templatesearch" name="templatesearch" placeholder="Buscar..." type="text">
                                                 <a class="cancel_button" href="#" id="cancel_templates_search" title="Clear search">
                                                     <i class="s7-close-circle">
                                                     </i>
@@ -317,7 +319,7 @@
                                     T
                                 </span>
                                 <span>
-                                    Text
+                                    Texto
                                 </span>
                             </a>
                             <ul class="sub-menu">
@@ -352,12 +354,12 @@
                                     <div class="col-lg-12" id="addtextoptions" style="text-align:center; margin-top:10px;">
                                         <div id="addheading" style="font-size:36px;">
                                             <a href="#" onclick="javascript:addheadingText();">
-                                                Add heading
+                                                Agregar Titulo
                                             </a>
                                         </div>
                                         <div id="addsometext" style="font-size:18px; margin:5px 0 10px 0;">
                                             <a href="#" onclick="javascript:addText();">
-                                                Add text box
+                                                Agregar cuadro de texto
                                             </a>
                                         </div>
                                     </div>
@@ -373,7 +375,7 @@
                                 <i class="icon s7-keypad">
                                 </i>
                                 <span>
-                                    Elements
+                                    Biblioteca
                                 </span>
                             </a>
                             <ul class="sub-menu">
@@ -433,7 +435,7 @@
                                 <i class="icon s7-photo">
                                 </i>
                                 <span>
-                                    Background
+                                    Fondo
                                 </span>
                             </a>
                             <ul class="sub-menu">
@@ -504,7 +506,7 @@
                                 <i class="icon s7-cloud-upload">
                                 </i>
                                 <span>
-                                    Images
+                                    Imagenes
                                 </span>
                             </a>
                             <ul class="sub-menu">
@@ -517,7 +519,7 @@
                                                     </span>
                                                 </div>
                                                 <h4>
-                                                    Drag and Drop files here
+                                                    Arrastra y suelta archivos aquí
                                                 </h4>
                                             </div>
                                             <div class="uploaded_images_list dropzone-previews">
@@ -538,13 +540,13 @@
                                 <i class="icon s7-shopbag">
                                 </i>
                                 <span>
-                                    Related Products
+                                    Productos relacionados
                                 </span>
                             </a>
                             <ul class="sub-menu">
                                 <li>
                                     <li class="title" style="font-size:20px;">
-                                        You may also like these...
+                                        Tambien te puede gustar...
                                     </li>
                                     <div class="col-lg-12 scroll-container" id="e">
                                         <div id="related_products_container" style="text-align:center;">
@@ -4880,19 +4882,23 @@
             var tempcanvas = new fabric.Canvas('tempcanvas');
             var selectedFont = 'font42';
             var fillColor = 'Black';
+            // PAID
             var design_as_id = 243578;
             var demo_as_id = 0;
+            // FREE
+            // var design_as_id = 0;
+            // var demo_as_id = 243578;
             var demo_templates = '{{ (isset($templates)) ? $templates : '' }}';
             var geofilterBackgrounds = [{"id":0,"filename":"none"},{"id":"1","filename":"geo-wedding.jpg"},{"id":"2","filename":"geo-party.jpg"},{"id":"3","filename":"geo-cheers.jpg"},{"id":"4","filename":"geo-babygirl.jpg"}];
             // currentUserRole = "administrator", "designer","customer"
-            var currentUserRole = 'designer'; 
+            var currentUserRole = 'customer'; 
             var hideVideoModal = false;
         </script>
         <script type="text/javascript">
             var appUrl = '{{ url("") }}/';
         </script>
         <!-- build:app -->
-        <script src="{{ asset('assets/js/app.js?rev=aae26f2ea671c99cdb72fa5471fea62a') }}">
+        <script src="{{ asset('assets/js/app.js?rev='.time()) }}">
         </script>
         <!-- endbuild -->
         <script type="text/javascript">

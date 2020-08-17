@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Log;
 
-use Sunra\PhpSimple\HtmlDomParser;
+// use Sunra\PhpSimple\HtmlDomParser;
 use Illuminate\Support\Facades\DB;
+use KubAT\PhpSimple\HtmlDomParser;
+
 
 ini_set("max_execution_time", 0);   // no time-outs!
 ignore_user_abort(true);            // Continue downloading even after user closes the browser.
@@ -29,23 +31,28 @@ class EtsyScrapperController extends Controller
       // $this->parseMetaData('https://www.etsy.com/listing/666353075/templett-template-revision-fee-please');
       // exit;
 
-    	$urls = DB::table('tmp_etsy_product')
-    		->select('id','product_link_href')
-    		->whereNull('status')
-    		->limit(1000)
-    		->get();
+      $urls = DB::table('tmp_etsy_product')
+                ->select('id','product_link_href')
+                ->whereNull('status')
+                ->limit(1000)
+                ->get();
 
-    	foreach ($urls as $key => $url) {
+      foreach ($urls as $key => $url) {
+        
+        $url_parts = parse_url($url->product_link_href);
+        $final_url = $url_parts['scheme'].'://'.$url_parts['host'].$url_parts['path'];
+        // echo $final_url."<br>";
+        // exit;
+        // https://www.etsy.com/listing/643207673/llama-party-thank-you-card-self-editable
+        // echo $url->product_link_href;
+        // preg_match_all('/(http|https):\/\/www\.etsy\.com\/listing\/[0-9]+\/[a-z-]+/', $url->product_link_href, $etsy_links);
+        // echo "<pre>";
+        // print_r($etsy_links);
+        // exit;
 
-	    	  $url_parts = parse_url($url->product_link_href);
-	    	  $final_url = $url_parts['scheme'].'://'.$url_parts['host'].$url_parts['path'];
-
-          echo $final_url."<br>";
-
-          $this->parseMetaData($final_url, $url->id);
-	    	
-          usleep(500000);
-
+        $this->parseMetaData($final_url, $url->id);
+        exit;
+        usleep(500000);
     	}
 
     	// echo "<pre>";
@@ -86,7 +93,7 @@ class EtsyScrapperController extends Controller
           $html = HtmlDomParser::str_get_html($file);
 
           if (!empty($html)) {
-            echo "Parseando HTML descargado de la web<br>";
+            echo "Parseando HTML descargado de la web $etsy_url<br>";
             $title = null;
             $username = null;
             $price = null;
@@ -130,6 +137,22 @@ class EtsyScrapperController extends Controller
                 $templett_ids = isset($templett_ids[0][0]) ? $templett_ids[0][0] : '';
               }
             }
+
+            echo "<pre>";
+            print_r([
+              'id' => null, 
+              'fk_product_id' => $product_id,
+              'title' => $title,
+              'description' => $description,
+              'username' => trim($username),
+              'price' => trim(str_replace('$', null, $price)),
+              'thumbnail' => $thumbnail_url,
+              'stars' => trim(str_replace('(', null, str_replace(')', null, $stars))),
+              // 'templett_url' => $templett_url,
+              'templett_ids' => $templett_ids,
+              'status' => 0
+            ]);
+            exit;
 
             if($templett_ids != '' || $templett_link != ''){
               

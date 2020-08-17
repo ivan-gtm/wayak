@@ -168,8 +168,8 @@ var $spectrum_options = {
     allowEmpty: !0,
     showButtons: !1,
     maxSelectionSize: 24,
-    togglePaletteMoreText: "Show advanced",
-    togglePaletteLessText: "Hide advanced",
+    togglePaletteMoreText: "Mostrar Avanzado",
+    togglePaletteLessText: "Ocultar Avanzando",
     beforeShow: function(color) {
         $(this).spectrum("set", $(this).css("backgroundColor"))
     },
@@ -561,7 +561,7 @@ function getFonts2($o, $fontFamily) {
         setupSymbolsPanel($fontFamily)) : (WebFontConfig = {
             custom: {
                 families: [$fontFamily],
-                urls: [appUrl + "admin/Fonts/get-font-css/" + $fontFamily]
+                urls: [appUrl + "app/get-css-fonts?templates=" + $fontFamily]
             },
             testStrings: {
                 fontFamily: "AB"
@@ -1840,33 +1840,49 @@ function setZoom(newZoomLevel) {
 function updateDpatternsScale() {
     arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : canvas
 }
+
 function setDemoOverlay() {
-    scale = $("#zoomperc").data("scaleValue");
-    var uri = appUrl + "design/assets/img/demo_overlay50.svg";
+	scale = $("#zoomperc").data("scaleValue");
+	var uri = appUrl + "assets/img/demo_overlay50.svg";
+    
     fabric.Image.fromURL(uri, function(img) {
-        img.scaleToWidth(50 * scale),
-        img.angle = 315,
-        img.top = 50 * scale,
-        img.left = 20 * scale,
-        patternSourceCanvas = new fabric.StaticCanvas,
+        img.scaleToWidth(50 * scale);
+        img.angle = 315;
+        img.top = 50 * scale;
+        img.left = 20 * scale;
+
+        patternSourceCanvas = new fabric.StaticCanvas();
         patternSourceCanvas.add(img);
-        for (var pattern = new fabric.Pattern({
+    
+        var pattern = new fabric.Pattern({
             source: function() {
-                return patternSourceCanvas.setDimensions({
+                patternSourceCanvas.setDimensions({
                     width: 80 * scale,
                     height: 80 * scale
-                }),
-                patternSourceCanvas.renderAll(),
-                patternSourceCanvas.getElement()
+                });
+                patternSourceCanvas.renderAll();
+                return patternSourceCanvas.getElement();
             },
             repeat: "repeat"
-        }), n = 0; canvasarray[n]; )
-            $("#divcanvas" + n).is(":visible") && canvasarray[n].setOverlayColor(pattern, function() {
-                canvasarray[n].renderAll()
-            }),
-            n++
-    })
+        });
+
+        for(n = 0; n < canvasarray.length; n++) {
+            if( $("#divcanvas" + n).is(":visible") == true ){
+                canvasarray[n].setOverlayColor(pattern, function() {
+                // canvasarray[n].setOverlayColor({source: uri }, function() {
+                    if( typeof canvasarray[n] != 'undefined' 
+                        && typeof canvasarray[n].renderAll() != 'undefined' ){
+                        canvasarray[n].renderAll();
+                        // canvas.discardActiveObject().renderAll();
+                        // canvasarray[n].renderAll.bind(canvasarray[n]);
+                    }
+                });
+            } 
+        }
+
+	});
 }
+
 function setGeofilterOverlay() {
     canvas.setOverlayImage("/design/assets/img/geofilter_overlay.svg", canvas.renderAll.bind(canvas))
 }
@@ -2298,11 +2314,12 @@ $("#downloadAsJPEG").click(function() {
 var registerDownload = function(type) {
     var obj = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : void 0;
     (arguments.length > 2 ? arguments[2] : void 0)(function() {
-        var url = appUrl + "design/app/register-template-download";
+        var url = appUrl + "app/register-template-download";
         $.ajax({
             url: url,
             type: "POST",
             data: {
+                "_token": $('meta[name="csrf-token"]').attr('content'),
                 templateId: loadedtemplateid,
                 fileType: type,
                 option: void 0 !== obj ? JSON.stringify(obj) : ""
@@ -2367,29 +2384,45 @@ function toggleHiddenStatusOfObjects() {
         canvasarray[$i].renderAll(),
         $i++
 }
-var globalRow = 0
-  , globalCol = 0;
+var globalRow = 0, globalCol = 0;
+
 function getTemplateThumbnail() {
-    var firstcanvas = canvasarray[currentcanvasid]
-      , initialZoom = firstcanvas.getZoom()
-      , isEmptyBackground = !1;
-    setZoom(350 / (96 * document.getElementById("loadCanvasWid").value)),
-    firstcanvas.backgroundColor || (isEmptyBackground = !0,
-    firstcanvas.set({
-        backgroundColor: "#ffffff"
-    })),
-    "geofilter2" == template_type && removeGeofilterOverlay();
+    var firstcanvas = canvasarray[currentcanvasid];
+    var initialZoom = firstcanvas.getZoom();
+    var isEmptyBackground = false;
+    
+    console.log("EJEMPLO");
+    setZoom(350 / (96 * document.getElementById("loadCanvasWid").value));
+    
+    if(firstcanvas.backgroundColor == null || isEmptyBackground == false){
+        firstcanvas.set({
+            backgroundColor: "#ffffff"
+        });
+    }
+
+    if(template_type != "geofilter2"){
+        removeGeofilterOverlay();
+    }
+
     var dataURL = firstcanvas.toDataURL({
         format: "jpeg",
         quality: .7
     });
-    return "geofilter2" == template_type && setGeofilterOverlay(),
-    isEmptyBackground && firstcanvas.set({
-        backgroundColor: ""
-    }),
-    setZoom(initialZoom),
-    dataURL
+
+    if("geofilter2" == template_type){
+        setGeofilterOverlay();
+        firstcanvas.set({
+            backgroundColor: ""
+        });
+    }
+
+    setZoom(initialZoom);
+    // setZoom(firstcanvas.getZoom());
+    // setZoom(350 / (96 * document.getElementById("loadCanvasWid").value));
+
+    return dataURL;
 }
+
 function saveAsTemplateFile() {
     issaveastemplate = !1,
     s_history = !1;
@@ -3939,7 +3972,7 @@ function proceedPDF2(svg, $width, $height) {
                     if (($answer = JSON.parse($answer)).success) {
                         var $pdf = $answer.data;
                         $("#autosave").data("saved", "yes"),
-                        window.location.href = appUrl + "design/downloadfile.php?file=" + $pdf + "&filename=" + filename,
+                        window.location.href = appUrl + "app/download-pdf?file=" + $pdf + "&filename=" + filename,
                         func()
                     } else
                         $.toast({
@@ -6371,8 +6404,8 @@ $("#bgcolorselect").spectrum({
     showInitial: !1,
     showButtons: !1,
     maxSelectionSize: 24,
-    togglePaletteMoreText: "Show advanced",
-    togglePaletteLessText: "Hide advanced",
+    togglePaletteMoreText: "Mostrar Avanzado",
+    togglePaletteLessText: "Ocultar Avanzando",
     move: function(color) {
         if (color) {
             colorVal = color.toHexString();
@@ -6415,8 +6448,8 @@ $("#colorStrokeSelector").spectrum({
     allowEmpty: !0,
     showButtons: !1,
     maxSelectionSize: 24,
-    togglePaletteMoreText: "Show advanced",
-    togglePaletteLessText: "Hide advanced",
+    togglePaletteMoreText: "Mostrar Avanzado",
+    togglePaletteLessText: "Ocultar Avanzando",
     change: function(color) {
         DEBUG && console.log("color: ", color),
         null == window.localStorage[localStorageKey] && (window.localStorage[localStorageKey] = ";");
@@ -6456,8 +6489,8 @@ $("#shadowColor").spectrum({
     flat: !0,
     showButtons: !1,
     maxSelectionSize: 24,
-    togglePaletteMoreText: "Show advanced",
-    togglePaletteLessText: "Hide advanced",
+    togglePaletteMoreText: "Mostrar Avanzado",
+    togglePaletteLessText: "Ocultar Avanzando",
     showAlpha: !0,
     move: function(color) {
         if (DEBUG && console.log("color: ", color),
@@ -7830,8 +7863,8 @@ function initCanvasEvents(lcanvas) {
                         allowEmpty: !0,
                         showButtons: !1,
                         maxSelectionSize: 24,
-                        togglePaletteMoreText: "Show advanced",
-                        togglePaletteLessText: "Hide advanced",
+                        togglePaletteMoreText: "Mostrar Avanzado",
+                        togglePaletteLessText: "Ocultar Avanzando",
                         change: function(color) {
                             DEBUG && console.log("color: ", color);
                             var local_store = window.localStorage[localStorageKey];
@@ -7919,8 +7952,8 @@ function initCanvasEvents(lcanvas) {
                                 allowEmpty: !0,
                                 showButtons: !1,
                                 maxSelectionSize: 24,
-                                togglePaletteMoreText: "Show advanced",
-                                togglePaletteLessText: "Hide advanced",
+                                togglePaletteMoreText: "Mostrar Avanzado",
+                                togglePaletteLessText: "Ocultar Avanzando",
                                 change: function(color) {
                                     DEBUG && console.log("color: ", color);
                                     var local_store = window.localStorage[localStorageKey];
@@ -8034,32 +8067,32 @@ function initCanvasEvents(lcanvas) {
         })
     }
     void 0 === window.localStorage[localStorageKey] && (window.localStorage[localStorageKey] = ";"),
-    canvas.observe("object:selected", function(e) {
+    canvas.on("object:selected", function(e) {
         objectSelected(e, "selected")
     }),
-    canvas.observe("selection:updated", function(e) {
+    canvas.on("selection:updated", function(e) {
         objectSelected(e, "updated")
     }),
-    canvas.observe("selection:created", function(e) {
+    canvas.on("selection:created", function(e) {
         objectSelected(e, "created")
     }),
-    canvas.observe("selection:updated", deselectLockedObject),
-    canvas.observe("selection:created", deselectLockedObject),
-    canvas.observe("object:moving", function(e) {
+    canvas.on("selection:updated", deselectLockedObject),
+    canvas.on("selection:created", deselectLockedObject),
+    canvas.on("object:moving", function(e) {
         $(".tools-top").removeClass("toolbar-show"),
         e.target.setCoords()
     }),
-    canvas.observe("object:rotating", function(e) {
+    canvas.on("object:rotating", function(e) {
         e.e.shiftKey ? e.target.snapAngle = 0 : e.target.snapAngle = 5;
         var $angle = parseInt(e.target.angle % 360);
         $(".rotation_info_block").html($angle + "°").show()
     }),
-    canvas.observe("object:scaling", function(e) {
+    canvas.on("object:scaling", function(e) {
         e.target && /text/.test(e.target.type) && e.target && e.target.scaleX === e.target.scaleY && $("#fontsize").val((e.target.fontSize * e.target.scaleX / 1.3).toFixed(0)),
         e.target.setCoords();
         document.getElementById("loadCanvasHei").value
     }),
-    canvas.observe("object:modified", function(e) {
+    canvas.on("object:modified", function(e) {
         if (DEBUG && console.log("object is modified"),
         $(".tools-top").addClass("toolbar-show"),
         s_history = !0,
@@ -8096,7 +8129,7 @@ function initCanvasEvents(lcanvas) {
             e.target.fill.coords.y2 = e.target.height / 2))
         }
     }),
-    canvas.observe("object:added", function(e) {
+    canvas.on("object:added", function(e) {
         if (e.target.isUngrouping)
             delete e.target.isUngrouping;
         else {
@@ -8118,10 +8151,10 @@ function initCanvasEvents(lcanvas) {
             canvas.renderAll()
         }
     }),
-    canvas.observe("mouse:up", function(e) {
+    canvas.on("mouse:up", function(e) {
         canvas.renderAll()
     }),
-    canvas.observe("mouse:up", function(e) {
+    canvas.on("mouse:up", function(e) {
         if (e.target && /text/.test(e.target.type) && e.target.isEditing) {
             DEBUG && console.log("style at positon", e.target.getStyleAtPosition());
             var styleAtPosition = e.target.getStyleAtPosition();
@@ -8141,7 +8174,7 @@ function initCanvasEvents(lcanvas) {
             }
         }
     }),
-    canvas.observe("text:editing:entered", function(e) {
+    canvas.on("text:editing:entered", function(e) {
         DEBUG && console.log("text:editing:entered first"),
         selectedObject.hasControls = !0,
         $("#group").hide(),
@@ -8163,7 +8196,7 @@ function initCanvasEvents(lcanvas) {
         e.target.setCoords(),
         canvas.renderAll())
     }),
-    canvas.observe("text:editing:exited", function(e) {
+    canvas.on("text:editing:exited", function(e) {
         DEBUG && console.log("text:editing:exited"),
         "" == e.target.text && setTimeout(function() {
             return canvas.remove(e.target)
