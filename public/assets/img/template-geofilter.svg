@@ -1,8 +1,15 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="42.75" height="76" viewBox="0 0 42.75 76">
-  <title>template-geofilter</title>
+<svg xmlns="http://www.w3.org/2000/svg" width="41" height="77" viewBox="0 0 41 77">
+  <title>geofilter_1</title>
   <g id="Layer_2" data-name="Layer 2">
     <g id="Layer_1-2" data-name="Layer 1">
-      <rect id="Geofilter" width="42.75" height="76" style="fill: #ccc"/>
+      <g id="Geofilter">
+        <rect x="0.5" y="0.5" width="40" height="76" rx="5" ry="5" style="fill: #ccc"/>
+        <rect x="0.5" y="0.5" width="40" height="76" rx="5" ry="5" style="fill: none;stroke: #ccc;stroke-miterlimit: 10"/>
+      </g>
+      <g id="Geofilter-2" data-name="Geofilter">
+        <rect x="1.5" y="1.5" width="38" height="74" rx="4" ry="4" style="fill: #ccc"/>
+        <rect x="1.5" y="1.5" width="38" height="74" rx="4" ry="4" style="fill: none;stroke: #fff;stroke-miterlimit: 10"/>
+      </g>
     </g>
   </g>
 </svg>

@@ -1,1 +1,24 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="216.5" height="220.1" viewBox="0 0 216.5 220.1"><title>clone</title><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><rect x="45.8" y="44.7" width="168.2" height="168.15" style="fill:none;stroke:#000;stroke-miterlimit:10;stroke-width:5px"/><text transform="translate(76.5 176.2)" style="font-size:175.87608337402344px;font-family:MyriadPro-Regular, Myriad Pro">+</text><polygon points="170.7 2.5 170.7 44.7 45.8 44.7 45.8 170.7 2.5 170.7 2.5 2.5 170.7 2.5" style="fill:none;stroke:#000;stroke-miterlimit:10;stroke-width:5px"/></g></g></svg>
+
+<svg width="215px" height="215px" viewBox="0 0 215 215" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 47.1 (45422) - http://www.bohemiancoding.com/sketch -->
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="139" height="143" rx="20"></rect>
+        <rect id="path-2" x="38" y="38" width="139" height="143" rx="20"></rect>
+        <rect id="path-3" x="76" y="72" width="139" height="143" rx="20"></rect>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Rectangle">
+            <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-1"></use>
+            <rect stroke="#000000" stroke-width="12" x="6" y="6" width="127" height="131" rx="20"></rect>
+        </g>
+        <g id="Rectangle">
+            <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-2"></use>
+            <rect stroke="#000000" stroke-width="12" x="44" y="44" width="127" height="131" rx="20"></rect>
+        </g>
+        <g id="Rectangle">
+            <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-3"></use>
+            <rect stroke="#000000" stroke-width="12" x="82" y="78" width="127" height="131" rx="20"></rect>
+        </g>
+    </g>
+</svg>
