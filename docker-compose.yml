@@ -1,0 +1,64 @@
+version: '3'
+
+services:
+  scrapper-server:
+    build: .cloud/docker
+    image: scrapper-server
+    # depends_on:
+      # - mysql
+      # - mysql-test
+      # - redis
+    volumes:
+      - ./:/application:cached
+
+  # horizon:
+  #   build: .cloud/docker
+  #   image: scrapper-server
+  #   command: php artisan horizon
+  #   depends_on:
+  #     - mysql
+  #   volumes:
+  #     - ./:/application:cached
+
+  # mysql:
+  #   image: mysql:8
+  #   command: --default-authentication-plugin=mysql_native_password
+  #   ports:
+  #     - "3306:3305"
+  #   environment:
+  #     - MYSQL_ROOT_PASSWORD=secret
+  #     - MYSQL_DATABASE=testing
+  #   volumes:
+  #     - db-data:/var/lib/mysql:cached
+
+  # mysql-test:
+  #   image: mysql:8
+  #   command: --default-authentication-plugin=mysql_native_password
+  #   ports:
+  #     - "3307:3306"
+  #   environment:
+  #     - MYSQL_ROOT_PASSWORD=secret
+  #     - MYSQL_DATABASE=testing
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "8001:8001"
+    volumes:
+      - .cloud/nginx/nginx.conf:/etc/nginx/conf.d/default.conf:cached
+      - ./:/application:cached
+    depends_on:
+      - scrapper-server
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    command: --port 6379
+    expose:
+        - "6379"
+    volumes:
+      - .cloud/redis/data:/data
+
+volumes:
+  db-data:
