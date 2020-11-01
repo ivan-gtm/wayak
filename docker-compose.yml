@@ -1,4 +1,4 @@
-version: '3'
+version: '3.8'
 
 services:
   scrapper-server:
@@ -10,35 +10,16 @@ services:
       # - redis
     volumes:
       - ./:/application:cached
-
-  # horizon:
-  #   build: .cloud/docker
-  #   image: scrapper-server
-  #   command: php artisan horizon
-  #   depends_on:
-  #     - mysql
-  #   volumes:
-  #     - ./:/application:cached
-
-  # mysql:
-  #   image: mysql:8
-  #   command: --default-authentication-plugin=mysql_native_password
-  #   ports:
-  #     - "3306:3305"
-  #   environment:
-  #     - MYSQL_ROOT_PASSWORD=secret
-  #     - MYSQL_DATABASE=testing
-  #   volumes:
-  #     - db-data:/var/lib/mysql:cached
-
-  # mysql-test:
-  #   image: mysql:8
-  #   command: --default-authentication-plugin=mysql_native_password
-  #   ports:
-  #     - "3307:3306"
-  #   environment:
-  #     - MYSQL_ROOT_PASSWORD=secret
-  #     - MYSQL_DATABASE=testing
+  mysql:
+    image: mysql:8
+    command: --default-authentication-plugin=mysql_native_password
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=secret
+      - MYSQL_DATABASE=wayak
+    volumes:
+      - db-data:/var/lib/mysql:cached
 
   nginx:
     image: nginx:alpine
@@ -59,6 +40,50 @@ services:
         - "6379"
     volumes:
       - .cloud/redis/data:/data
-
+  # nodejs:
+  #   build:
+  #     context: ./.cloud/nodejs
+  #   ports:
+  #     - 8080:8080
+  #     - 9229:9229
+  #   environment:
+  #     - SERVER_PORT=8080
+  #     - DATABASE_CONNECTIONSTRING=mongodb://mongo:27017/notes
+  #   volumes:
+  #     - ./.cloud/nodejs:/usr/src/app
+  #   # command: npm run debug
+  # elastic:
+  #   image: docker.elastic.co/elasticsearch/elasticsearch:7.9.3
+  #   # container_name: es01
+  #   environment:
+  #     - discovery.type=single-node
+  #     # - node.name=es01
+  #     # - cluster.name=es-docker-cluster
+  #     # - discovery.seed_hosts=es02,es03
+  #     # - cluster.initial_master_nodes=es01,es02,es03
+  #     # - bootstrap.memory_lock=true
+  #     # - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+  #   # ulimits:
+  #   #   memlock:
+  #   #     soft: -1
+  #   #     hard: -1
+  #   volumes:
+  #     - ./.cloud/elastic:/usr/share/elasticsearch/data
+  #   ports:
+  #     - 9200:9200
+  #     - 9300:9300
+  #   # networks:
+  #   #   - elastic
+  #   depends_on:
+  #     - kibana
+  # kibana:
+  #   image: docker.elastic.co/kibana/kibana:7.9.3
+  #   # volumes:
+  #   #   - ./.cloud/elastic/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
+  #   ports:
+  #       - 5601:5601
+  #   environment:
+  #       ELASTICSEARCH_URL: http://elastic:9200
+  #       ELASTICSEARCH_HOSTS: http://elastic:9200
 volumes:
   db-data:

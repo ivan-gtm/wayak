@@ -2321,7 +2321,8 @@ var registerDownload = function(type) {
             data: {
                 "_token": $('meta[name="csrf-token"]').attr('content'),
                 templateId: loadedtemplateid,
-                fileType: type,
+                filetype: type,
+                purchase_code: design_as_id,
                 option: void 0 !== obj ? JSON.stringify(obj) : ""
             },
             dataType: "json"
@@ -4930,7 +4931,7 @@ function loadTemplate(templateid) {
         url: url,
         type: "get",
         data: {
-            id: parseInt(templateid),
+            id: templateid,
             design_as_id: design_as_id,
             demo_as_id: demo_as_id,
             demo_templates: demo_templates
@@ -4999,14 +5000,27 @@ function loadTemplate(templateid) {
         }
     }),
     $("#downloads-remaining-text").hide();
-    var urlDownloadsRemaining = appUrl + "app/get-remaining-downloads?template_id=" + templateid;
+    var urlDownloadsRemaining = appUrl + "app/get-remaining-downloads?template_id=" + templateid+"&purchase_code="+design_as_id;
     $.ajax({
         url: urlDownloadsRemaining,
         type: "GET",
         dataType: "json"
     }).done(function(data) {
-        data.success && data.remaining && data.remaining > 0 && showDownloadsRemaining(data.remaining)
-    }).fail(function() {})
+        console.warn("PUTO+"+data.remaining);
+        
+        // data.success && data.remaining > 0 && showDownloadsRemaining(data.remaining)
+        if(data.success && showDownloadsRemaining(data.remaining) ){
+            $.toast({
+                text: data.msg,
+                icon: "error",
+                loader: !1,
+                position: "top-right",
+                hideAfter: 3e3
+            });
+        }
+    }).fail(function() {
+        showDownloadsRemaining(0)
+    })
 }
 $(function() {
     $("#addElement").click(function() {
@@ -5928,12 +5942,15 @@ objManip = function(prop, value) {
 $(document).ready(function() {
     var imageDz = null;
     null === imageDz && $("#myAwesomeDropzone").dropzone({
-        url: appUrl + "admin/Elements/upload-user-image",
-        paramName: "file[]",
+        url: appUrl + "app/template/upload-image",
+        paramName: "nombre",
         maxFilesize: 20,
         thumbnailWidth: 140,
         previewsContainer: ".uploaded_images_list",
         acceptedFiles: ".png,.jpg,.jpeg,.svg",
+        headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+        },
         init: function() {
             imageDz = this,
             this.on("success", function(file, $answer) {
@@ -6552,7 +6569,7 @@ $(".uploaded_images_list").on("click", ".dz-preview:not(.dz-error)", function(e)
         var id = $(this).data("id");
         if (id && hasCanvas()) {
             appSpinner.show();
-            var url = appUrl + "admin/Elements/get-uploaded-image/" + id;
+            var url = appUrl + "app/template/get-uploaded-image/" + id;
             $.getJSON(url).done(function(data) {
                 if (data.success) {
                     var image_link = encodeURI(data.img);

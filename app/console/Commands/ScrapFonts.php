@@ -69,6 +69,7 @@ class ScrapFonts extends Command
 
     function customBulkFontDownload(){
         $fonts = [
+            'font30218',
             'font1',
             'font2',
             'font3',
@@ -266,6 +267,7 @@ class ScrapFonts extends Command
             'font203',
             'font210',
             'font319',
+            'font3895',
             'font24172',
             'font24173',
             'font24240',
@@ -330,6 +332,7 @@ class ScrapFonts extends Command
             'font29674',
             'font29693',
             'font29768',
+            'font30218',
             'font30357',
             'font30358',
             'font30359',
@@ -424,9 +427,9 @@ class ScrapFonts extends Command
         }
 
         // Update all font db
-        DB::table('template_has_fonts')
-            ->where('font_id', $font_id)
-            ->update(['status' => 1]);
+        // DB::table('template_has_fonts')
+        //     ->where('font_id', $font_id)
+        //     ->update(['status' => 1]);
     }
 
     /**
@@ -436,7 +439,7 @@ class ScrapFonts extends Command
      */
     public function handle()
     {
-        $this->bulkFontsDownload();
-        // $this->customBulkFontDownload();
+        // $this->bulkFontsDownload();
+        $this->customBulkFontDownload();
     }
 }

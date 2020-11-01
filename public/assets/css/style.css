@@ -20524,16 +20524,23 @@ input[type="file"] {
 .switch-button.switch-button-pixin input[type="checkbox"]:checked + span label:before {
   content: "INCHES";
 }
+
 .cancel_button {
-  color: #ddd;
-  display: inline-block;
-  font-size: 20px;
-  height: 44px;
-  line-height: 44px;
+  -webkit-box-align: center;
+  align-items: center;
+  bottom: 0px;
+  color:#000;
+  display: flex;
+  height: 40px;
+  -webkit-box-pack: center;
+  justify-content: center;
+  margin: inherit;
   position: absolute;
-  right: 0;
-  width: 44px;
+  top: 0px;
+  width: 40px;
+  right: 15px;
 }
+
 .input-group .cancel_button {
   width: 29px;
 }

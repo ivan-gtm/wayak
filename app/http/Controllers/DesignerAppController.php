@@ -1,11 +1,70 @@
 <?php
 
+// Party
+// Holidays
+// Wedding
+// Babies & Kids
+// Announcements
+
+
+// Instagram Post
+// Youtube Thumbnail
+// Flyer
+// Animated Social Media
+// Facebook Post
+// Presentation
+// Invitation
+// Ticket
+// Instagram Story
+// Poster
+// Video
+// Logo
+// Infographic
+// Facebook Cover
+// Card
+// Brochure
+// Photo Collage
+// Resume
+// Business Card
+// Blog Banner
+// Youtube Channel Art
+// Book Cover
+// Desktop Wallpaper
+// Certificate
+// Menu
+// Letterhead
+// CD Cover
+// ID Card
+// Newsletter
+// Calendar
+// Postcard
+// Label
+// Announcement
+// Gift Certificate
+// Tag
+// Program
+// Bookmark
+// Class Schedule
+// Coupon
+// Report
+// Proposal
+// Media Kit
+// Worksheet
+// Invoice
+// Recipe Card
+// Rack Card
+// Planner
+// Report Card
+// Letter
+// Lesson Plan
+
 namespace App\Http\Controllers;
 
 use Dompdf\Dompdf;
 
 use SVG\SVG;
 // use Image;
+// use Intervention\Image\ImageManagerStatic as Image;
 
 use SVG\Nodes\Shapes\SVGCircle;
 
@@ -13,15 +72,63 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
+use Illuminate\Http\UploadedFile;
+
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 use Barryvdh\DomPDF\Facade as PDF;
+use Image;
+// use Intervention\Image;
+
+
+ini_set('memory_limit', -1);
 
 
 class DesignerAppController extends Controller
 {
-	function getJSONTemplate($template_id){
+	function home1(){
+		return view('home1',[ 'templates' => null ]);
+	}
+
+	function product(){
+		return view('product',[ 'templates' => null ]);
+	}
+
+	function category(){
+		return view('category',[ 'templates' => null ]);
+	}
+
+	function wayak(){
+
+		// $templates = Redis::keys('laravel_database_green:category:209:product:*');
+		// echo "<pre>";
+		// print_r($templates);
+		// exit;
+
+		// $template = Redis::keys('laravel_database_green:category:209:product:*');
+		// // $template = json_decode($template);
+
+		// echo "<pre>";
+		// print_r($template);
+		// exit;
+
+		// $templates = Redis::keys('laravel_database_template:*:jsondata');
+
+		// echo "<pre>";
+		// print_r($templates);
+		// exit;
+
+		// $template = Redis::get('laravel_database_template:g13780:jsondata');
+		// echo "<pre>";
+		// print_r(json_decode($template));
+		// exit;
+
+		return view('wayak',[ 'templates' => null ]);
+	}
+
+	function getJSONTemplate($template_id) {
 		$template_key = 'template:'.$template_id.':jsondata';
 		//  Redis::get($template_key);
 		// return str_replace('http://localhost/design/','http://localhost:8000/design/', Redis::get($template_key) );
@@ -29,10 +136,49 @@ class DesignerAppController extends Controller
 	}
 
 	function home(Request $request){
+		// echo Redis::type('ejemplo');
+		// echo "blunt";
+		// exit;
+		$purchase_code = $request['purchase_code'];
 		$templates = $request['templates'];
-		return view('home',[ 'templates' => $templates ]);
+		$demo_as_id = rand(1,999999);
+
+		if( Redis::exists('code:'.$purchase_code) == true && Redis::get('code:'.$purchase_code) == 0 ){
+			
+			$demo_as_id = 0;
+			$user_role = 'customer';
+
+			return view('home',[ 
+				'templates' => $templates, 
+				'purchase_code' => $purchase_code,
+				'demo_as_id' => $demo_as_id,
+				'user_role' => $user_role
+			]);
+			
+		} elseif( $purchase_code == 'administrator' ){
+			
+			$demo_as_id = 0;
+			$user_role = 'designer';
+			$purchase_code = 9999;
+
+			return view('home',[ 
+				'templates' => $templates, 
+				'purchase_code' => $purchase_code,
+				'demo_as_id' => $demo_as_id,
+				'user_role' => $user_role
+			]);
+
+		} else {
+			return redirect()->action(
+				'DesignerAppController@validateCode', [ 'templates' => $templates ]
+			);
+		}
+
+		// echo Redis::get('code:'.$purchase_code);
+		// exit;
+		
 	}
-	
+
 	function index(Request $request){
 		$template_urls = [];
 		$templates = DB::table('d_templates')
@@ -41,11 +187,11 @@ class DesignerAppController extends Controller
 					->orderBy('id','DESC')
 					->limit(2)
 					->get();
-		
+
 		// echo "<pre>";
 		// print_r($templates);
 		// exit;
- 
+
         foreach ($templates as $template) {
 			array_push($template_urls, 'http://localhost/open?templates='.$template->template_id );
 		}
@@ -53,7 +199,7 @@ class DesignerAppController extends Controller
 		// echo "<pre>";
 		// print_r($template_urls);
 		// exit;
-		
+
     	return view('index',[ 'template_urls' => $template_urls ]);
 	}
 
@@ -67,32 +213,43 @@ class DesignerAppController extends Controller
 	}
 
 	function randomNumber($length = 15) {
-		// $length = 15;
-		$result = '';
-	
-		for($i = 0; $i < $length; $i++) {
-			$result .= mt_rand(0, 9);
-		}
-	
-		return $result;
+		// // $length = 15;
+		// $result = '';
+
+		// for($i = 0; $i < $length; $i++) {
+		// 	$result .= mt_rand(0, 9);
+		// }
+
+		// return $result;
+
+		$permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		return substr(str_shuffle($permitted_chars), 0, $length);
+
 	}
 
 	function update(Request $request){
-		// echo "<pre>";
-		// print_r( $request->all() );
-		// exit;
 
 		$template_obj = json_decode( $request->jsonData );
 		$template_dimensions = $this->convertPXtoIn( $template_obj[1]->cwidth ).'x'.$this->convertPXtoIn($template_obj[1]->cheight).' in';
 		$template_id = $request->templateid;
+
+		// echo "<pre>";
+		// print_r( $template_id );
+		// exit;
+
+		$this->deleteCurrentThumbnails($template_id);
+
+
 		$thumbnail_imgs = $this->createThumbnailFiles( $request->pngimageData, $template_id );
-		
+
 		$thumbnail_info = [
-			'filename' => $thumbnail_imgs['thumbnail'],
-			'template_id' => $template_id,
-			'dimentions' => $template_dimensions,
-			'status' => 1
+				'filename' => $thumbnail_imgs['thumbnail'],
+				'template_id' => $template_id,
+				'dimentions' => $template_dimensions,
+				'status' => 1
 		];
+		// exit;
+
 		$this->updateThumbnailsOnDB( $thumbnail_info );
 
 		// echo "<pre>";
@@ -100,8 +257,9 @@ class DesignerAppController extends Controller
 		// print_r( $thumbnail_info );
 		// exit;
 
-		$this->deleteCurrentThumbnails($template_info);
 		$this->storeJSONTemplate($template_id, json_encode($template_obj));
+
+		Redis::set('green:ready_template:'.$template_id, 1);
 
 		$response = [
 			'id' => $template_id,
@@ -112,18 +270,75 @@ class DesignerAppController extends Controller
 		return json_encode($response);
 
 	}
-	
+
+	function uploadImage(Request $request){
+
+		// $extension = $request->file->extension();
+
+
+		// echo "<pre>";
+		// // print_r($extension);
+		// print_r($request->file('nombre'));
+		// print_r(Str::slug($request->input('name')).'_'.time());
+		// print_r( $image->getClientOriginalExtension() );
+
+		// $request->validate([
+        //     'name'              =>  'required',
+        //     'profile_image'     =>  'required|image|mimes:jpeg,png,jpg,gif|max:2048'
+        // ]);
+
+        // Check if a profile image has been uploaded
+        if ($request->has('nombre')) {
+            // Get image file
+            $image = $request->file('nombre');
+
+			// Make a image name based on user name and current timestamp
+            $name = Str::slug('ejemplo_'.time());
+            // Define folder path
+            $folder = '/design/template/ejemplo/';
+            // Make a file path where image will be stored [ folder path + file name + file extension]
+            $filePath = $folder . $name. '.' . $image->getClientOriginalExtension();
+            // Upload image
+			$this->uploadOne($image, $folder, 'public', $name);
+			$response = [
+				"id" =>1,
+				"msg" =>'Hola Mundo',
+				"success" => true
+			];
+			return json_encode($response);
+            // Set user profile image path in database to filePath
+            // $user->nombre = $filePath;
+        }
+	}
+
+	public function uploadOne(UploadedFile $uploadedFile, $folder = null, $disk = 'public', $filename = null)
+    {
+        $name = !is_null($filename) ? $filename : Str::random(25);
+
+        $file = $uploadedFile->storeAs($folder, $name.'.'.$uploadedFile->getClientOriginalExtension(), $disk);
+		// echo $folder;
+		// echo $name;
+        return $file;
+	}
+
+	function getUploadedImage($image_resource_id){
+		return json_encode([
+			'success' => true,
+			'img' => asset('design/template/ejemplo/5a2fb0dbd8141396fe9b528b.svg')
+		]);
+	}
+
 	function saveAs(Request $request){
 		$png_base64_thumb_data = $request['pngimageData'];
 
 		$template_json = json_decode( $request->jsonData );
 		$template_dimensions = $this->convertPXtoIn( $template_json[1]->cwidth ).'x'.$this->convertPXtoIn($template_json[1]->cheight).' in';
-		$template_id = $this->randomNumber(8);
+		$template_id = $this->randomNumber(20);
 		// $collection_id = $request->tmp_templates;
 
 		// Crreate thumbnail file, from base64 encoded data
 		$thumbnail_paths = $this->createThumbnailFiles( $png_base64_thumb_data, $template_id );
-		
+
 		$thumbnail_info = [
 			'title' => $request->filename,
 			'filename' => $thumbnail_paths['thumbnail'],
@@ -133,7 +348,21 @@ class DesignerAppController extends Controller
 			// 'tmp_templates' => $collection_id,
 			'status' => 1
 		];
-		
+
+		// $file_name = $request->filename; // Engagement party, floral, pinaple
+		// $tags = $request->tags; // engagement,party,tags
+		// $metrics = $request->metrics; // in
+		// $design_as_id = $request->design_as_id; // 243578
+		// $type = $request->type; // single
+		// $geofilterBackground = $request->geofilterBackground; // 0
+		// $instructionsId = $request->instructionsId; // 80
+		// $saveToAdminAccount = $request->saveToAdminAccount; // 0
+
+		// echo "<pre>";
+		// print_r($request->all());
+		// // print_r($thumbnail_info);
+		// exit;
+
 		$request['tags']; // daniel,ejemplotag1,ejemplotag2
 		$request['geofilterBackground']; // 0
 		$request['instructionsId']; // 0
@@ -176,15 +405,15 @@ class DesignerAppController extends Controller
 									->select('template_id')
 									->where('template_id','=',$template_id)
 									->first();
-		
+
 		// echo "<pre>";
 		// print_r($template_id_query);
 		// exit;
 
 		// If template does not exists on db
-		if( isset($template_id_query->template_id) == false 
-			&& isset($template_json) 
-			&& is_array($template_json) 
+		if( isset($template_id_query->template_id) == false
+			&& isset($template_json)
+			&& is_array($template_json)
 			&& is_object($template_json[1]) ){
 
 			// echo "<pre>";
@@ -194,11 +423,11 @@ class DesignerAppController extends Controller
 
 			// if(  ){
 			$template_info = $this->generateTemplateMetadata($template_id, $template_config);
-			
+
 			$template_json = json_encode($template_json);
 			$template_json = str_replace('https:\/\/dbzkr7khx0kap.cloudfront.net\/', 'http:\/\/localhost\/design\/template\/'.$template_id.'\/assets\/', $template_json);
 			$template_json = json_decode($template_json);
-			
+
 			// echo "<pre>";
 			// // print_r("template_info");
 			// // print_r($template_info);
@@ -211,26 +440,28 @@ class DesignerAppController extends Controller
 
 			foreach ($objects as $index => $object) {
 				if($object->type == 'image'){
-					echo '<br>'.$object->src;
-					// $this->registerImagesOnDB($object->src, $template_info['templateid']);
+					// echo '<br>'.$object->src;
+					$this->registerImagesOnDB($object->src, $template_info['templateid']);
 				} elseif($object->type == 'path' && isset($object->src)){
-					echo '<br>'.$object->src;
-					// $this->registerSVGsOnDB($object->src, $template_info['templateid']);
+					// echo '<br>'.$object->src;
+					$this->registerSVGsOnDB($object->src, $template_info['templateid']);
 				} elseif($object->type == 'textbox'){
-					echo '<br>'.$object->fontFamily;
-					// $this->registerFontsOnDB($object->fontFamily, $template_info['templateid']);
+					// echo '<br>'.$object->fontFamily;
+					$this->registerFontsOnDB($object->fontFamily, $template_info['templateid']);
 				}
 			}
 
-			echo "<pre>";
-			print_r($template_id);
-			print_r($template_json);
-			print_r($template_info);
-			exit;
+			// echo "<pre>";
+			// print_r($template_id);
+			// print_r($template_json);
+			// print_r($template_info);
+			// exit;
 
 			// Saves JSON Template on REDIS
-			// $this->storeJSONTemplate($template_id, json_encode($template_json) );
-			// $this->saveTemplateOnDB($template_info);
+			$this->storeJSONTemplate($template_id, json_encode($template_json) );
+
+			// exit;
+			$this->saveTemplateOnDB($template_info);
 
 			// print_r($template_info['templateid']);
 			// // print_r($template_json);
@@ -280,7 +511,7 @@ class DesignerAppController extends Controller
 	}
 
 	function registerDemoAsIDOnDB($username, $demo_as_id){
-		
+
 		DB::table('tmp_demo_as_id')->insert([
 			'id' => null,
 			'username' => $username,
@@ -301,13 +532,13 @@ class DesignerAppController extends Controller
 	function registerImagesOnDB($url, $template_id){
 		$diagonal = strripos($url, '/')+1;
 		$file_name = substr($url, $diagonal, strlen($url));
-		
+
 		$images_query = DB::table('images')
     		->select('template_id')
     		->where('template_id','=',$template_id)
     		->where('filename','=',$file_name)
     		->first();
-		
+
 		// If this image does not exists on db
 		if( isset($images_query->template_id) == false ){
 			$path = 'design/template/images/'.$template_id;
@@ -316,16 +547,16 @@ class DesignerAppController extends Controller
 	}
 
 	function registerSVGsOnDB($url, $template_id){
-		
+
 		$diagonal = strripos($url, '/')+1;
 		$file_name = substr($url, $diagonal, strlen($url));
-		
+
 		$svg_query = DB::table('images')
     		->select('template_id')
     		->where('template_id','=',$template_id)
     		->where('filename','=',$file_name)
     		->first();
-		
+
 		// If font id does not exists on db
 		if( isset($svg_query->template_id) == false ){
 			$path = 'design/template/images/'.$template_id;
@@ -407,48 +638,48 @@ class DesignerAppController extends Controller
 	}
 
 	function createThumbnailFiles( $image_data, $template_id ){
-		/*
-			$image = $image_data;  // your base64 encoded
-			$image = str_replace('data:image/jpeg;base64,', '', $image);
-			$image = str_replace(' ', '+', $image);
-			// $imageName = str_random(10).'.'.'png';
-			$imageName = 'ejemplo.jpeg';
-			
-			Storage::put('wthumbs/' . $imageName, base64_decode($image));
-		*/
-		
-		$rand_filename_id = $this->randomNumber(6).'_'.$this->randomNumber(10);
-		$image = $image_data;  // your base64 encoded
-        $image = str_replace('data:image/jpeg;base64,', '', $image);
-		$image = str_replace(' ', '+', $image);
+		// print_r(imagick_info());
+		// exit;
+		// $image_data = 'data:image/png;base64,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';
+		// $image_data = urldecode($image_data);
+		$croppie_code = $image_data;
 
-		// Create image from base64 string
-		$img = \Image::make(base64_decode($image));
+		if (preg_match('/^data:image\/(\w+);base64,/', $croppie_code, $type)) {
 
-		$img_path = 'design/template/'.$template_id.'/thumbnails/';
-		$path = public_path($img_path);
-		@mkdir($path, 0777, true);
+			$rand_filename_id = $this->randomNumber(6).'_'.$this->randomNumber(10);
+			$encoded_base64_image = substr($croppie_code, strpos($croppie_code, ',') + 1);
+			$decoded_image = base64_decode($encoded_base64_image);
+			// $type = strtolower($type[1]);
+			// echo $encoded_base64_image;
 
-		// Store mid-size thumbnail
-		// $unique_id = Str::random(10);
-		$full_thumbnail_path = public_path($img_path.$rand_filename_id.'_thumbnail.jpg');
-		$img->save($full_thumbnail_path);
+			$img = \Image::make($decoded_image);
+			// exit;
+			$img_path = 'design/template/'.$template_id.'/thumbnails/';
+			$path = public_path($img_path);
+			@mkdir($path, 0777, true);
 
-		// Guardar en S3
-		// Storage::disk('s3')->put($img_path.$unique_id.'.jpg', $full_thumbnail_path);
-		
-		// Create mini thumbnail
-		$img->resize(150, 210, function($constraint) {
-			$constraint->aspectRatio();
-		});
+			// Store mid-size thumbnail
+			// $unique_id = Str::random(10);
+			$full_thumbnail_path = public_path($img_path.$rand_filename_id.'_thumbnail.jpg');
+			$img->save($full_thumbnail_path);
 
-		$full_minithumbnail_path = public_path($img_path.$rand_filename_id.'_mini.jpg');
-		$img->save($full_minithumbnail_path);
+			// Guardar en S3
+			// Storage::disk('s3')->put($img_path.$unique_id.'.jpg', $full_thumbnail_path);
 
-		return [
-			'thumbnail' => $rand_filename_id.'_thumbnail.jpg',
-			'mini' => $rand_filename_id.'_mini.jpg'
-		];
+			// Create mini thumbnail
+			$img->resize(150, 210, function($constraint) {
+				$constraint->aspectRatio();
+			});
+
+			$full_minithumbnail_path = public_path($img_path.$rand_filename_id.'_mini.jpg');
+			$img->save($full_minithumbnail_path);
+
+			return [
+				'thumbnail' => $rand_filename_id.'_thumbnail.jpg',
+				'mini' => $rand_filename_id.'_mini.jpg'
+			];
+		}
+		// $image = str_replace('data:image/jpeg;base64,', '', $image);
 	}
 
 	function updateThumbnailsOnDB( $template_info ){
@@ -491,20 +722,20 @@ class DesignerAppController extends Controller
 		}
 		return false;
 	}
-	
-	function deleteCurrentThumbnails( $template_info ){
-		
-		$thumbnail = DB::table('d_thumbnails')
+
+	function deleteCurrentThumbnails( $template_id ){
+
+		$thumbnail = DB::table('thumbnails')
 						->select('filename')
-						->where('template_id','=', $template_info['template_id'] )
+						->where('template_id','=', $template_id )
 						->first();
 		if( isset( $thumbnail->filename ) ){
 
-			$img_folder = 'design/template/'.$template_info['template_id'].'/thumbnails/';
+			$img_folder = 'design/template/'.$template_id.'/thumbnails/';
 			$img_path = $img_folder.$thumbnail->filename;
-			
+
 			$thumbnail_path = public_path($img_path);
-			$mini_thumbnail_path = str_replace('.jpg','_mini.jpg',$thumbnail_path);
+			$mini_thumbnail_path = str_replace('_thumbnail.jpg','_mini.jpg',$thumbnail_path);
 
 			if(is_file($thumbnail_path)) {
 				unlink( $thumbnail_path );
@@ -517,35 +748,30 @@ class DesignerAppController extends Controller
 	}
 
     function getTemplateThumbnails(Request $request){
-    	$template_ids = $request['demo_templates'];
-    	// print_r($template_ids);
-    	// exit;
-		$thumbnails_html = '';
-    	if( isset($template_ids) ){
-			// $template_ids = explode(',', string)
+		// $template_ids = $request['demo_templates'];
+		// $response = array(
+		// 	'err' => 0,
+		//     'data' => '<div class="col-xs-6 thumb" id="987654"><a class="thumbnail" data-target="'.$template_ids.'"><span class="thumb-overlay"><h3>EJEMPLO</h3></span><div class="expired-notice" style="display:none;">EXPIRED</div><img class="tempImage img-responsive" src="http://localhost:8001/design/template/'.$template_ids.'/assets/preview.jpg" alt="" style=""></a><div class="badge-container"><span class="badge dims">5x7</span><span class="badge tempId">ID: xxxxx</span><i class="fa fa-trash-o deleteTemp" id="12345"></i></div></div>'
+		// );
+
+		// return json_encode($response);
+		// exit;
+
+		$template_ids = $request['demo_templates'];
+    	$thumbnails_html = '';
+
+		if( isset($template_ids) ){
 
 			$template_thumbnails = DB::table('thumbnails')
 	    		->select(['template_id', 'filename', 'title', 'dimentions'])
-	    		->whereRAW('template_id IN('.$template_ids.')')
-	    		->get();
+	    		->whereRAW('template_id IN(\''.$template_ids.'\')')
+				->get();
 
-	    	// echo "<pre>";
-			
-		    foreach($template_thumbnails as $thumbnail) {
+	    	foreach($template_thumbnails as $thumbnail) {
 		    	$img_url = url('design/template/'.$thumbnail->template_id.'/thumbnails/'.$thumbnail->filename);
 
 		    	$thumbnails_html .= '<div class="col-xs-6 thumb" id="'.$thumbnail->template_id.'"><a class="thumbnail" data-target="'.$thumbnail->template_id.'"><span class="thumb-overlay"><h3>'.$thumbnail->title.'</h3></span><div class="expired-notice" style="display:none;">EXPIRED</div><img class="tempImage img-responsive" src="'.$img_url.'" alt="" style=""></a><div class="badge-container"><span class="badge dims">'.$thumbnail->dimentions.'</span><span class="badge tempId">ID: '.$thumbnail->template_id.'</span><i class="fa fa-trash-o deleteTemp" id="'.$thumbnail->template_id.'"></i></div></div>';
 		    }
-
-		    // echo "<pre>";
-	    	// print_r($thumbnails_html);
-	    	// print_r(" - kokoko");
-	    	// exit;
-
-			// if ($row = $mysqli->query($query)) {
-			    /* obtener un array asociativo */
-			// }
-
 		}
 
 		$response = array(
@@ -555,7 +781,7 @@ class DesignerAppController extends Controller
 
 		return json_encode($response);
 	}
-	
+
 	function loadAdditionalAssets(){
 		// Load assets associated with template, in order user can add extra assets for template
 		// {
@@ -587,45 +813,42 @@ class DesignerAppController extends Controller
 	function loadTemplate(Request $request){
 
 		$template_ids = isset($request['id']) ? $request['id'] : null;
-		$array_final = [];
-		$error = 1;
-		$options = "";
+		// $array_final = [];
+		// $error = 1;
+		// $options = "";
 
-		// echo $template_ids;
-		// exit;
+		// // echo $template_ids;
+		// // exit;
 
+		// // $array_final =  stripslashes(stripslashes($response));
 
-		// $array_final =  stripslashes(stripslashes($response));
+		// // $array_final =  str_replace('["','[', $array_final);
 
-		// $array_final =  str_replace('["','[', $array_final);
+		// // // $array_final =  str_replace('"]"',']', $array_final);
+		// // // $array_final =  str_replace('\\\"','"', $response);
+		// // // $array_final =  str_replace('\\"','"', $response);
 
-		// // $array_final =  str_replace('"]"',']', $array_final);
-		// // $array_final =  str_replace('\\\"','"', $response);
-		// // $array_final =  str_replace('\\"','"', $response);
+		// // $array_final =  str_replace('{\\','{', $array_final);
+		// // $array_final =  str_replace('"{','{', $array_final);
+		// // $array_final =  str_replace('}"','}', $array_final);
+		// // $array_final =  str_replace(']"',']', $array_final);
+		// // $array_final =  str_replace('\"','"', $array_final);
 
-		// $array_final =  str_replace('{\\','{', $array_final);
-		// $array_final =  str_replace('"{','{', $array_final);
-		// $array_final =  str_replace('}"','}', $array_final);
-		// $array_final =  str_replace(']"',']', $array_final);
-		// $array_final =  str_replace('\"','"', $array_final);
+		// $template = DB::table('templates')
+		// 		->select('*')
+		// 		->where('template_id','=',$template_ids)
+		// 		->first();
 
-		
+	    // if(isset($template)){
+		// 	// printf("La selección devolvió %d filas.\n", $template->num_rows);
 
-		$template = DB::table('templates')
-				->select('*')
-				->where('template_id','=',$template_ids)
-				->first();
-
-	    if(isset($template)){
-			// printf("La selección devolvió %d filas.\n", $template->num_rows);
-
-			// echo "<pre>";
-			// print_r($template);
-			// exit;
+		// 	// echo "<pre>";
+		// 	// print_r($template);
+		// 	// exit;
 
 
-			$array_final = $this->getJSONTemplate($template->template_id);
-			$array_final = str_replace("\n", '\\n', $array_final);
+			$array_final = $this->getJSONTemplate($template_ids);
+			// $array_final = str_replace("\n", '\\n', $array_final);
 			// $array_final = preg_replace("/\"width\"/", '\\\"width\\\"', $array_final,1);
 			// $array_final = preg_replace("/\"height\"/", '\\\"height\\\"', $array_final,1);
 			// $array_final = preg_replace("/\"rows\"/", '\\\"rows\\\"', $array_final,1);
@@ -639,33 +862,39 @@ class DesignerAppController extends Controller
 			// $array_final =  str_replace('["{"','[{"', $array_final);
 			// $array_final =  str_replace('",{',',{', $array_final);
 
-			$options = array(
-				'width' => $template->width,
-				'height' => $template->height,
-				'metrics' => $template->metrics,
-				'type' => $template->type,
-				'instructionsId' => $template->instructionsId,
-				'scriptVersion' => 4
-			);
-			
-			$options = json_encode($options);
+			// $options = array(
+			// 	'width' => 200,
+			// 	'height' => 400,
+			// 	'metrics' => '9x7',
+			// 	'type' => '',
+			// 	'instructionsId' => '',
+			// 	'scriptVersion' => 4
+			// );
 
-			$error = 0;
-		}
+			// $options = json_encode($options);
 
-		return  json_encode(
+			// $error = 0;
+		// }
+
+		echo json_encode(
 			array(
-				'err' => $error,
+				'err' => 0,
 				'data' => $array_final,
-				"metrics" => 'in',
-				"options" => $options,
-				"instructions" => ""
+				'metrics' => 'in',
+				'options' => "{\"width\":1728,\"height\":2304,\"metrics\":\"in\",\"type\":\"single\",\"instructionsId\":\"80\",\"scriptVersion\":4}",
+				'instructions' => ""
 			)
 		);
 	}
 
 	function loadRemainingDownloads(){
-		return '{"success":true,"limit":0}';
+		
+		return response()->json([
+			'success' => true,
+			'msg' => 'No downloads remaining',
+			'limit' => 10,
+			'remaining' => 0
+		]);
 	}
 
 	function getWoffFontUrl(Request $request){
@@ -715,53 +944,48 @@ class DesignerAppController extends Controller
 			// $templates = json_decode($templates);
 			// $templates = urldecode($request['templates']);
 			// $templates = "'".implode("','", $templates)."'";
-			
+
 			// "SELECT * FROM fonts WHERE "
 			$font_families = DB::Table('fonts')
 								->select(['font_id','name'])
 								->whereRAW('font_id IN('.$templates.')')
 								->get();
-		
-		
+
+
 			// header("Content-type: text/css");
 			foreach( $font_families as $font ){
 				$font_url = url('design/fonts_new/'.$font->name);
-				
+
 				$response .= '@font-face {
 					font-family:\''.$font->font_id.'\';
 					src:url(\''.$font_url.'\') format(\'woff\');
 				}';
-		
+
 			}
 
 			return (new Response($response, 200))
               ->header('Content-Type', "text/css");
-		
+
 		}
 	}
 
 	function generatePDF(Request $request){
-		
-		if ($_SERVER['REQUEST_METHOD']=='OPTIONS') {
-			header('Access-Control-Allow-Origin : *');
-			header('Access-Control-Allow-Methods : POST, GET, OPTIONS, PUT, DELETE');
-			header('Access-Control-Allow-Headers : X-Requested-With, content-type');
-		}
-		
+
+		// if ($_SERVER['REQUEST_METHOD']=='OPTIONS') {
+		// 	header('Access-Control-Allow-Origin : *');
+		// 	header('Access-Control-Allow-Methods : POST, GET, OPTIONS, PUT, DELETE');
+		// 	header('Access-Control-Allow-Headers : X-Requested-With, content-type');
+		// }
+
 		// Writes SVG on disk
 		$svg_content = json_decode($request['jsonData']);
-		
+
 		File::put(public_path('example.svg'),$svg_content);
 
-		// READ CSV
-		
-		// echo substr_count($svg_content, 'clip-path=');
-		// exit;
-		// READ CSV
-		
 		$curl = curl_init();
+
 		curl_setopt_array($curl, array(
-			CURLOPT_URL => "http://localhost:3000",
+			CURLOPT_URL => "http://nodejs:8080/",
 			CURLOPT_RETURNTRANSFER => true,
 			CURLOPT_ENCODING => "",
 			CURLOPT_MAXREDIRS => 10,
@@ -774,6 +998,16 @@ class DesignerAppController extends Controller
 		$response = curl_exec($curl);
 
 		curl_close($curl);
+
+		echo $response;
+
+
+
+		echo "<pre>";
+		// print_r($request->all());
+		print_r($response);
+		exit;
+
 
 		// $dompdf = new Dompdf();
 		// $dompdf->loadHtml('hello world');
@@ -794,10 +1028,10 @@ class DesignerAppController extends Controller
 		$pdf = PDF::loadView('pdf_view', $data)
 				->setPaper('a4', 'landscape')
 				->save( public_path('invitation.pdf') );
-		
+
 		// $file_to_save = public_path('invitation.pdf');
-		// file_put_contents($file_to_save, $pdf->output()); 
-		
+		// file_put_contents($file_to_save, $pdf->output());
+
 		$response = [
 			'data' => 'invitation.pdf',
 			'success' => true
@@ -822,8 +1056,54 @@ class DesignerAppController extends Controller
 	function registerTemplateDownload(Request $request){
 		// echo "<pre>";
 		// print_r($request->all());
-		$request->templateId; //=> 29262
-		$request->fileType; //=> JPEG
-		$request->option; //=> {"saveBleed":false}
+		DB::table('orders')->insert([
+			'template_id' => $request->templateId,
+			'filetype' => $request->filetype,
+			'option' => $request->option,
+			'purchase_code' => $request->purchase_code
+		]);
+
+		// if()
+		Redis::set('code:'.$request->purchase_code, 1);
+
+		return response()->json([
+			'success' => true,
+			'limit' => 10,
+			'remaining' => 0
+		]);
+
+	}
+
+	function validateCode(Request $request){
+		if( isset( $request->templates ) ){
+			$templates = $request->templates;
+		} else {
+			$templates = 0;
+		}
+		return view('validate_code', ['templates' => $templates]);
+	}
+	function validatePurchaseCode(Request $request){
+		
+		$purchase_code = $request->digit1.$request->digit2.$request->digit3.$request->digit4;
+		
+		if( Redis::exists('code:'.$purchase_code) == true && Redis::get('code:'.$purchase_code) == 0 ){
+			// echo "<pre>";
+			// print_r($request->all());
+			// exit;
+			// echo 'code:'.$purchase_code;
+			// print_r(Redis::exists('code:'.$purchase_code));
+
+			// echo "exit0";
+			// exit;
+			
+			return redirect()->action(
+				'DesignerAppController@home', ['templates' => $request->templates, 'purchase_code' => $purchase_code]
+			);
+		}
+
+		return redirect()->action(
+			'DesignerAppController@validateCode', ['code_validation' => 0, 'templates' => $request->templates]
+		);
+
 	}
 }

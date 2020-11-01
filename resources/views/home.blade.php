@@ -16,7 +16,7 @@
         <link color="#5bbad5" href="{{ asset('safari-pinned-tab.svg') }}" rel="mask-icon">
         <meta content="#ffffff" name="theme-color">
         <title>
-            WAYAK - Invitaciones
+            WAYAK - Editor en linea
         </title>
         <link href="{{ asset('assets/css/spectrum.css') }}" rel="canonical"/>
         <link href="{{ asset('assets/lib/stroke-7/style.css') }}" rel="stylesheet" type="text/css"/>
@@ -100,7 +100,7 @@
                 Paste in place
             </li>
         </ul>
-        <div class="modal" data-backdrop="static" data-keyboard="false" id="loadingpage" style="background:#fff159; opacity:1; display:block;">
+        <div class="modal" data-backdrop="static" data-keyboard="false" id="loadingpage" style="background:#fff; opacity:1; display:block;">
             <img class="loading-spin" src="{{ asset('assets/img/loader.svg') }}"/>
         </div>
         <div class="am-wrapper am-fixed-sidebar">
@@ -162,7 +162,7 @@
                         <ul class="nav navbar-nav navbar-right am-user-nav">
                             <li class="dropdown">
                                 <a aria-expanded="false" class="dropdown-toggle" data-toggle="dropdown" href="#" role="button">
-                                    <img id="avatar-nav" src="{{ asset('assets/img/avatar.jpg') }}">
+                                    <img id="avatar-nav" src="{{ asset('assets/img/avatar.png') }}">
                                         <span class="user-name">
                                         </span>
                                         <span class="angle-down s7-angle-down">
@@ -296,14 +296,65 @@
                             <ul class="sub-menu visible">
                                 <li>
                                     <div class="col-lg-12">
-                                        <div class="search">
-                                            <input id="templatesearch" name="templatesearch" placeholder="Buscar..." type="text">
+                                        <style>
+                                            .iXSRa-D {
+                                                -webkit-box-align: center;
+                                                align-items: center;
+                                                bottom: 0px;
+                                                display: flex;
+                                                height: 40px;
+                                                -webkit-box-pack: center;
+                                                justify-content: center;
+                                                margin: inherit;
+                                                position: absolute;
+                                                top: 0px;
+                                                width: 40px;
+                                            }
+                                            .hgkKkK[type="templatesearch"] {
+                                                background-color: rgb(243, 243, 243);
+                                                border-color: rgb(220, 220, 220);
+                                            }
+                                            
+                                            .hgkKkK {
+                                                background-color: rgb(255, 255, 255);
+                                                border: 1px solid rgb(220, 220, 220);
+                                                border-radius: 8px;
+                                                color: rgb(86, 86, 86);
+                                                display: block;
+                                                font-size: 14px;
+                                                height: 40px;
+                                                line-height: 1;
+                                                padding-left: 40px;
+                                                padding-right: 12px;
+                                                transition: background-color 0.25s ease 0s, border-color 0.25s ease 0s, color 0.25s ease 0s;
+                                                width: 100%;
+                                            }
+                                            
+                                            [type="templatesearch"] {
+                                                appearance: textfield;
+                                                outline-offset: -2px;
+                                            }
+                                        </style>
+                                        <div class="StyledInputContainer-sc-1icyccg XAwfH">
+                                            <div class="StyledIcon-sc-r3p5g6 iXSRa-D">
+                                                <svg width="24" height="24" viewBox="0 0 24 24"><path fill="none" fill-rule="evenodd" stroke="#8C8C8C" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16.657 16.657L21 21l-4.343-4.343A8 8 0 1 1 5.343 5.343a8 8 0 0 1 11.314 11.314z"></path></svg>
+                                            </div>
+                                            <input type="templatesearch" id="templatesearch" placeholder="Buscar plantillas…" autocorrect="off" class="StyledInput-sc-1aryhc3 hgkKkK">
                                                 <a class="cancel_button" href="#" id="cancel_templates_search" title="Clear search">
                                                     <i class="s7-close-circle">
                                                     </i>
                                                 </a>
                                             </input>
                                         </div>
+
+                                        <!-- <div class="search">
+                                            <input id="templatesearch" name="templatesearch" placeholder="Buscar..." type="text">
+                                                <a class="cancel_button" href="#" id="cancel_templates_search" title="Clear search">
+                                                    <i class="s7-close-circle">
+                                                    </i>
+                                                </a>
+                                            </input>
+                                        </div> -->
                                     </div>
                                     <!-- /.col-lg-12 -->
                                     <div class="col-lg-12 scroll-container" id="a">
@@ -3076,8 +3127,9 @@
                                 </ul>
                             </div>
                             <a class="btn btn-default" href="javascript:void(0);" id="group" style="width:42px;" title="Group Objects">
-                                <i class="fa fa-object-group">
-                                </i>
+                                <!-- <i class="fa fa-object-group">
+                                </i> -->
+                                <img height="16" src="{{ asset('assets/img/group.svg') }}"/>
                             </a>
                             <a class="btn btn-default" href="javascript:void(0);" id="ungroup" style="width:42px;" title="Ungroup Objects">
                                 <i class="fa fa-object-ungroup">
@@ -3257,7 +3309,7 @@
                             </a>
                         </li>
                         <li class="parent" style="text-align:center;background:none;">
-                            <span class="btn" data-scalevalue="1" id="zoomperc" style="color:#fff; font-size:16px; padding:0px 5px;font-weight: 100;margin-bottom: 5px;" title="Cick to zoom to 100%">
+                            <span class="btn" data-scalevalue="1" id="zoomperc" style="color:#000; font-size:16px; padding:0px 5px;font-weight: 100;margin-bottom: 5px;" title="Cick to zoom to 100%">
                                 100%
                             </span>
                         </li>
@@ -4882,16 +4934,19 @@
             var tempcanvas = new fabric.Canvas('tempcanvas');
             var selectedFont = 'font42';
             var fillColor = 'Black';
+
             // PAID
-            var design_as_id = 243578;
-            var demo_as_id = 0;
+            var design_as_id = {{ $purchase_code }};
+            var demo_as_id = {{ $demo_as_id }};
+            var currentUserRole = '{{ $user_role }}'; 
+            
             // FREE
             // var design_as_id = 0;
             // var demo_as_id = 243578;
+            // currentUserRole = "administrator", "designer","customer"
+            
             var demo_templates = '{{ (isset($templates)) ? $templates : '' }}';
             var geofilterBackgrounds = [{"id":0,"filename":"none"},{"id":"1","filename":"geo-wedding.jpg"},{"id":"2","filename":"geo-party.jpg"},{"id":"3","filename":"geo-cheers.jpg"},{"id":"4","filename":"geo-babygirl.jpg"}];
-            // currentUserRole = "administrator", "designer","customer"
-            var currentUserRole = 'customer'; 
             var hideVideoModal = false;
         </script>
         <script type="text/javascript">

@@ -2,6 +2,8 @@
 /public/hot
 /public/storage
 /public/design
+/public/images
+/public/over
 /storage/*.key
 /storage/*
 /vendor
@@ -13,3 +15,7 @@ npm-debug.log
 yarn-error.log
 package-lock.json
 composer.lock
+.DS_STORE
+/.cloud/elastic/*
+/.cloud/nodejs/*
+*.rdb
