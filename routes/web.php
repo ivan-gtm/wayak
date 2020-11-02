@@ -1,29 +1,19 @@
 <?php
 
-// SCRAPPER
-Route::get('/scrapper/crello/download-templates', 'CrelloController@index');
-Route::get('/scrapper/crello/translate-templates', 'CrelloController@translateTemplate');
-Route::get('/scrapper/crello/library','CrelloController@explore');
 
-Route::get('/scrapper/over', 'overController@index');
-Route::get('/scrap-from-etsy', 'EtsyScrapperController@extractMetaData');
-Route::get('/scrap-from-templett', 'TemplettScrapperController@scrapURL');
-Route::get('/scrap-from-templett-missing-redis', 'TemplettScrapperController@downloadMissingREDISTemplates');
 
-// CONTENT MIGRATION
-Route::get('/green/categories', 'greenController@getFrontCategories');
-Route::get('/green/category/products/{category_id}', 'greenController@getFrontCategoryProducts');
-Route::get('/green/all-products', 'greenController@getAllProducts');
-Route::get('/green/all-categories', 'greenController@getAllCategories');
-Route::get('/green/translate-templates', 'greenController@translateTemplate');
-Route::get('/scrapper/green/download-templates', 'greenController@index');
+// Route::get('/scrapper/over', 'overController@index');
+// Route::get('/scrap-from-etsy', 'EtsyScrapperController@extractMetaData');
+// Route::get('/scrap-from-templett', 'TemplettScrapperController@scrapURL');
+// Route::get('/scrap-from-templett-missing-redis', 'TemplettScrapperController@downloadMissingREDISTemplates');
+
 
 // FRONTEND
-Route::get('/wayak', 'DesignerAppController@wayak');
-Route::get('/plantillas/invitaciones', 'DesignerAppController@home1');
-Route::get('/plantillas/producto-ejemplo', 'DesignerAppController@product');
-Route::get('/plantillas/category', 'DesignerAppController@category');
-// Route::get('/crello', 'DesignerAppController@home');
+Route::get('/wayak', 'EditorController@wayak');
+Route::get('/plantillas/invitaciones', 'EditorController@home1');
+Route::get('/plantillas/producto-ejemplo', 'EditorController@product');
+Route::get('/plantillas/category', 'EditorController@category');
+// Route::get('/crello', 'EditorController@home');
 
 
 // TRANSLATE
@@ -34,36 +24,54 @@ Route::get('/translate/product-title', 'TranslatorController@translateProductTit
 Route::post('/translate/product-title/update', 'TranslatorController@updateProductTitle');
 Route::get('/translate/template', 'TranslatorController@translateTemplate');
 
+
+// ADMIN
 Route::get('/admin/manage-codes', 'AdminController@manageCodes')->name('code.manage');
 Route::post('/admin/generate-code', 'AdminController@generateCode')->name('code.generate');
-Route::get('/admin/templates', 'AdminController@manageTemplates')->name('admin.templates');
 Route::get('/admin/create-product/{template_key}', 'AdminController@createProduct')->name('admin.createTemplate');
 Route::post('/admin/create-product/{template_key}', 'AdminController@createDBProduct');
+Route::get('/admin/etsy/templates/description', 'AdminController@descriptionTemplate');
+Route::post('/admin/etsy/templates/description', 'AdminController@editDescriptionTemplate');
+Route::get('/admin/db-missing-thumbs', 'AdminController@registerMissingTemplatesOnDB');
+Route::get('/admin/explore', 'AdminController@manageTemplates')->name('admin.templates');
+// CRELLO
+Route::get('/admin/crello/download-templates', 'CrelloController@index');
+Route::get('/admin/crello/translate-templates', 'CrelloController@translateTemplate');
+Route::get('/admin/crello/explore','CrelloController@explore');
+// GREEN
+Route::get('/admin/green/explore', 'greenController@getFrontCategories');
+Route::get('/admin/green/category/{category_id}/products', 'greenController@getFrontCategoryProducts');
+Route::get('/admin/green/all-products', 'greenController@getAllProducts');
+Route::get('/admin/green/all-categories', 'greenController@getAllCategories');
+Route::get('/admin/green/translate-templates', 'greenController@translateTemplate');
+Route::get('/admin/green/download-templates', 'greenController@index');
+
 
 // DESIGNER
-Route::get('/', 'DesignerAppController@home');
-// Route::get('/explore', 'DesignerAppController@explore');
-Route::get('/open', 'DesignerAppController@open');
+Route::get('/', 'EditorController@home');
+// Route::get('/explore', 'EditorController@explore');
+Route::get('/open', 'EditorController@open');
 
-Route::get('/app/validate-code', 'DesignerAppController@validateCode');
-Route::post('/app/validate-code', 'DesignerAppController@validatePurchaseCode')->name('code.validate');
-Route::get('/app/get-thumbnails', 'DesignerAppController@getTemplateThumbnails');
-Route::get('/app/load-template', 'DesignerAppController@loadTemplate');
+//EDITOR
+Route::get('/editor/validate-code', 'EditorController@validateCode');
+Route::post('/editor/validate-code', 'EditorController@validatePurchaseCode')->name('code.validate');
+Route::get('/editor/get-thumbnails', 'EditorController@getTemplateThumbnails');
+Route::get('/editor/load-template', 'EditorController@loadTemplate');
 
-Route::post('/app/template/update', 'DesignerAppController@update');
-Route::post('/app/template/save-as', 'DesignerAppController@saveAs');
-Route::post('/app/template/upload-image', 'DesignerAppController@uploadImage');
-Route::get('/app/template/get-uploaded-image/{image_resource_id}', 'DesignerAppController@getUploadedImage');
+Route::post('/editor/template/update', 'EditorController@update');
+Route::post('/editor/template/save-as', 'EditorController@saveAs');
+Route::post('/editor/template/upload-image', 'EditorController@uploadImage');
+Route::get('/editor/template/get-uploaded-image/{image_resource_id}', 'EditorController@getUploadedImage');
 
-Route::get('/app/get-additional-assets', 'DesignerAppController@loadAdditionalAssets');
-Route::get('/app/get-bg-images', 'DesignerAppController@getBackgroundImages');
-Route::get('/app/load-settings', 'DesignerAppController@loadSettings');
+Route::get('/editor/get-additional-assets', 'EditorController@loadAdditionalAssets');
+Route::get('/editor/get-bg-images', 'EditorController@getBackgroundImages');
+Route::get('/editor/load-settings', 'EditorController@loadSettings');
 
-Route::get('/app/download-pdf', 'DesignerAppController@downloadPDF');
-Route::post('/app/register-template-download', 'DesignerAppController@registerTemplateDownload');
-Route::get('/app/get-remaining-downloads','DesignerAppController@loadRemainingDownloads');
+Route::get('/editor/download-pdf', 'EditorController@downloadPDF');
+Route::post('/editor/register-template-download', 'EditorController@registerTemplateDownload');
+Route::get('/editor/get-remaining-downloads','EditorController@loadRemainingDownloads');
 
-Route::get('/app/get-woff-font-url', 'DesignerAppController@getWoffFontUrl');
-Route::get('/app/check-allow-revert-template', 'DesignerAppController@checkAllowRevertTemplate');
-Route::get('/app/get-css-fonts', 'DesignerAppController@getCSSFonts');
-Route::post('/app/pdf', 'DesignerAppController@generatePDF');
+Route::get('/editor/get-woff-font-url', 'EditorController@getWoffFontUrl');
+Route::get('/editor/check-allow-revert-template', 'EditorController@checkAllowRevertTemplate');
+Route::get('/editor/get-css-fonts', 'EditorController@getCSSFonts');
+Route::post('/editor/pdf', 'EditorController@generatePDF');

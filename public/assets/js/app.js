@@ -477,7 +477,7 @@ function addFontToFabric(fontid) {
 }
 function getFontFilename(fontid) {
     return new Promise(function(resolve, reject) {
-        var url = appUrl + "app/get-woff-font-url?font_id=" + fontid;
+        var url = appUrl + "editor/get-woff-font-url?font_id=" + fontid;
         $.getJSON(url).done(function(data) {
             data.success ? resolve(data.url) : console.log("An error occurred while receiving the font filename: " + url)
         })
@@ -503,7 +503,7 @@ function autoSave($element) {
     })
 }
 function loadSettings() {
-    var url = appUrl + "app/load-settings";
+    var url = appUrl + "editor/load-settings";
     $.getJSON(url).done(function($answer) {
         0 == $answer.err && $answer.data.forEach(function($setting, i) {
             $("#" + $setting.set_key).length && $("#" + $setting.set_key).prop("checked", eval($setting.set_value))
@@ -561,7 +561,7 @@ function getFonts2($o, $fontFamily) {
         setupSymbolsPanel($fontFamily)) : (WebFontConfig = {
             custom: {
                 families: [$fontFamily],
-                urls: [appUrl + "app/get-css-fonts?templates=" + $fontFamily]
+                urls: [appUrl + "editor/get-css-fonts?templates=" + $fontFamily]
             },
             testStrings: {
                 fontFamily: "AB"
@@ -625,7 +625,7 @@ function getFonts(e, fontFamily) {
     WebFontConfig = {
         custom: {
             families: families,
-            urls: [appUrl + "app/get-css-fonts?templates=" + JSON.stringify(families)]
+            urls: [appUrl + "editor/get-css-fonts?templates=" + JSON.stringify(families)]
         },
         testStrings: {
             fontFamily: "AB"
@@ -2314,7 +2314,7 @@ $("#downloadAsJPEG").click(function() {
 var registerDownload = function(type) {
     var obj = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : void 0;
     (arguments.length > 2 ? arguments[2] : void 0)(function() {
-        var url = appUrl + "app/register-template-download";
+        var url = appUrl + "editor/register-template-download";
         $.ajax({
             url: url,
             type: "POST",
@@ -2433,7 +2433,7 @@ function saveAsTemplateFile() {
       , jsonData = getTemplateJson()
       , pngdataURL = getTemplateThumbnail()
       , saveToAdminAccount = $("input[name=saveToAdminAccount]:checked").val()
-      , url = appUrl + "app/template/save-as";
+      , url = appUrl + "editor/template/save-as";
     $.post(url, {
         pngimageData: pngdataURL,
         filename: filename,
@@ -2568,11 +2568,12 @@ function updateTemplate(updateOriginal) {
                 var metrics = $("input[name=metric_units1]:checked").val()
                   , pngdataURL = getTemplateThumbnail()
                   , crc = crc32(jsonData)
-                  , url = appUrl + "app/template/update";
+                  , url = appUrl + "editor/template/update";
                 $.ajax({
                     type: "POST",
                     url: url,
                     data: {
+                        _token: $('meta[name="csrf-token"]').attr('content'),
                         templateid: loadedtemplateid,
                         pngimageData: pngdataURL,
                         jsonData: jsonData,
@@ -3945,7 +3946,7 @@ function proceedPDF2(svg, $width, $height) {
         DEBUG && console.log("svg size(mb): ", jsonData.length / 1024 / 1024);
         var pages = $(".divcanvas:visible").length / document.getElementById("numOfcanvasrows").value / document.getElementById("numOfcanvascols").value
           , url = appUrl;
-        url = appUrl + "app/pdf",
+        url = appUrl + "editor/pdf",
         $.ajax({
             type: "POST",
             url: url,
@@ -3973,7 +3974,7 @@ function proceedPDF2(svg, $width, $height) {
                     if (($answer = JSON.parse($answer)).success) {
                         var $pdf = $answer.data;
                         $("#autosave").data("saved", "yes"),
-                        window.location.href = appUrl + "app/download-pdf?file=" + $pdf + "&filename=" + filename,
+                        window.location.href = appUrl + "editor/download-pdf?file=" + $pdf + "&filename=" + filename,
                         func()
                     } else
                         $.toast({
@@ -4434,7 +4435,7 @@ function openTemplate(jsons) {
         WebFontConfig = {
             custom: {
                 families: families,
-                urls: [appUrl + "app/get-css-fonts?templates=" + families]
+                urls: [appUrl + "editor/get-css-fonts?templates=" + families]
             },
             active: function() {
                 DEBUG && console.log("all fonts are loaded"),
@@ -4926,7 +4927,7 @@ function loadTemplate(templateid) {
     setZoom(1),
     appSpinner.show(),
     loadedtemplateid = templateid;
-    var url = appUrl + "app/load-template";
+    var url = appUrl + "editor/load-template";
     $.ajax({
         url: url,
         type: "get",
@@ -5000,7 +5001,7 @@ function loadTemplate(templateid) {
         }
     }),
     $("#downloads-remaining-text").hide();
-    var urlDownloadsRemaining = appUrl + "app/get-remaining-downloads?template_id=" + templateid+"&purchase_code="+design_as_id;
+    var urlDownloadsRemaining = appUrl + "editor/get-remaining-downloads?template_id=" + templateid+"&purchase_code="+design_as_id;
     $.ajax({
         url: urlDownloadsRemaining,
         type: "GET",
@@ -5363,7 +5364,7 @@ var showDownloadsRemaining = function(remaining) {
 }
   , templateIdToRevert = 0;
 function checkAllowRevertTemplate(templateId) {
-    var url = appUrl + "app/check-allow-revert-template?templateId=" + templateId;
+    var url = appUrl + "editor/check-allow-revert-template?templateId=" + templateId;
     $.ajax({
         url: url,
         method: "GET",
@@ -5386,7 +5387,7 @@ function showRevertTemplate() {
 }
 function revertTemplate() {
     appSpinner.show();
-    var url = appUrl + "design/app/revert-template";
+    var url = appUrl + "design/editor/revert-template";
     $.ajax({
         url: url,
         method: "POST",
@@ -5942,7 +5943,7 @@ objManip = function(prop, value) {
 $(document).ready(function() {
     var imageDz = null;
     null === imageDz && $("#myAwesomeDropzone").dropzone({
-        url: appUrl + "app/template/upload-image",
+        url: appUrl + "editor/template/upload-image",
         paramName: "nombre",
         maxFilesize: 20,
         thumbnailWidth: 140,
@@ -6167,7 +6168,7 @@ function getCatimages2($offset, $tags) {
 }
 function getUploadedImages($offset) {
     var $grid = $(".uploaded_images_list")
-      , url = appUrl + "app/get-additional-assets/?offset=" + $offset;
+      , url = appUrl + "editor/get-additional-assets/?offset=" + $offset;
     $.getJSON(url).done(function(data) {
         data.success && jQuery.each(data.images, function(i, value) {
             var deleteBtn = demo_as_id ? "" : '<i data-target="' + value.id + '" class="fa fa-trash-o deleteImage"></i>';
@@ -6194,7 +6195,7 @@ function getBgimages2($offset, $tags) {
             left: $grid.offset().left + $grid.outerWidth() / 2 - 32,
             top: $(window).outerHeight() / 2 - 16
         }).show();
-        var url = appUrl + "app/get-bg-images";
+        var url = appUrl + "editor/get-bg-images";
         return $.getJSON(url, {
             offset: $offset,
             limit: 24,
@@ -6247,7 +6248,7 @@ function getTemplates2($offset, $tags) {
             left: $("#template_container").offset().left + $("#template_container").outerWidth() / 2 - 32,
             top: $(window).outerHeight() / 2 - 16
         }).show();
-        var url = appUrl + "app/get-thumbnails";
+        var url = appUrl + "editor/get-thumbnails";
         return $.getJSON(url, {
             offset: $offset,
             limit: 24,
@@ -6569,7 +6570,7 @@ $(".uploaded_images_list").on("click", ".dz-preview:not(.dz-error)", function(e)
         var id = $(this).data("id");
         if (id && hasCanvas()) {
             appSpinner.show();
-            var url = appUrl + "app/template/get-uploaded-image/" + id;
+            var url = appUrl + "editor/template/get-uploaded-image/" + id;
             $.getJSON(url).done(function(data) {
                 if (data.success) {
                     var image_link = encodeURI(data.img);
@@ -7483,7 +7484,7 @@ function getPatterns() {
             left: $grid.offset().left + $grid.outerWidth() / 2 - 32,
             top: $grid.offset().top + $grid.height() / 2 - 16
         }).show();
-        var url = appUrl + "app/get-bg-images";
+        var url = appUrl + "editor/get-bg-images";
         return $.getJSON(url, {
             offset: $offset,
             limit: 24,
@@ -7569,7 +7570,7 @@ function checkUTF8Symbols() {
       , callback = arguments.length > 1 ? arguments[1] : void 0;
     if (!$font)
         return !1;
-    var url = appUrl + "app/get-woff-font-url?font_id=" + $font;
+    var url = appUrl + "editor/get-woff-font-url?font_id=" + $font;
     $.ajax({
         url: url,
         method: "get",

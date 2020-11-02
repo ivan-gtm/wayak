@@ -122,10 +122,10 @@ class CrelloController extends Controller
         // for ($current_page_number=1; $current_page_number < $total_pages_number; $current_page_number++) {
             // print_r($product_result);
             // }
-        $page = $request->input('page');
+        $page = $request->page;
         
-        $page_from = $request->input('page');
-        $page_to = $request->input('page') + 10;
+        $page_from = $request->page;
+        $page_to = $request->page + 10;
 
         $total_pages_number = sizeof(Redis::keys('crello:search:results:page*'));
         $product_result = json_decode(Redis::get('crello:search:results:page:'.$page));
@@ -134,7 +134,7 @@ class CrelloController extends Controller
         // print_r($product_result);
         // exit;
         
-        return view('crello_products',[ 
+        return view('crello.products',[ 
             'page_from' => $page_from,
             'page_to' => $page_to,
             'total_pages' => $total_pages_number,

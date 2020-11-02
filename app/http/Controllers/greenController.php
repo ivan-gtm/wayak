@@ -630,7 +630,7 @@ class greenController extends Controller
         // print_r($category_tree);
         // exit;
 
-        return view('green_categories',[ 'category_tree' => $category_tree->CategoryTree ]);
+        return view('green.categories',[ 'category_tree' => $category_tree->CategoryTree ]);
     }
 
     function getREDISCategories(){
@@ -663,7 +663,7 @@ class greenController extends Controller
         // print_r($product_result);
         // exit;
 
-        return view('green_products',[ 
+        return view('green.products',[ 
             'total_pages' => $total_pages,
             'category_id' => $category_id,
             'product_result' => $product_result
@@ -673,7 +673,7 @@ class greenController extends Controller
     function getAllCategories(){
         $invitation_categories = Redis::sMembers('green:invitation_cats');
 
-        return view('green_cats',[ 
+        return view('green.cats',[ 
             'categories' => $invitation_categories
         ]);
     }
@@ -706,6 +706,14 @@ class greenController extends Controller
             for ($i=0; $i < $product_result_size; $i++) { 
                 $product_result[$i]->Id = Redis::get('green:template:'.$product_result[$i]->Id);
                 
+                $thumbnail_info = DB::table('thumbnails')
+                ->where('template_id','=',$product_result[$i]->Id)
+                ->first();
+                
+                if($thumbnail_info){
+                    $product_result[$i]->PreviewImage = asset('/design/template/'.$product_result[$i]->Id.'/thumbnails/'.$thumbnail_info->filename);
+                }
+                
                 if( Redis::exists('product:production_ready:'.$product_result[$i]->Id) ){
                     unset($product_result[$i]);
                 }
@@ -715,7 +723,7 @@ class greenController extends Controller
             
         }
 
-        return view('all_cat_products',[ 
+        return view('green.all_cat_products',[ 
             'total_pages' => $total_pages,
             'category_id' => $category_id,
             'product_result' => $products

@@ -86,7 +86,7 @@ use Image;
 ini_set('memory_limit', -1);
 
 
-class DesignerAppController extends Controller
+class EditorController extends Controller
 {
 	function home1(){
 		return view('home1',[ 'templates' => null ]);
@@ -170,7 +170,7 @@ class DesignerAppController extends Controller
 
 		} else {
 			return redirect()->action(
-				'DesignerAppController@validateCode', [ 'templates' => $templates ]
+				'EditorController@validateCode', [ 'templates' => $templates ]
 			);
 		}
 
@@ -259,7 +259,7 @@ class DesignerAppController extends Controller
 
 		$this->storeJSONTemplate($template_id, json_encode($template_obj));
 
-		Redis::set('green:ready_template:'.$template_id, 1);
+		Redis::set('product:production_ready:'.$template_id, 1);
 
 		$response = [
 			'id' => $template_id,
@@ -1097,12 +1097,12 @@ class DesignerAppController extends Controller
 			// exit;
 			
 			return redirect()->action(
-				'DesignerAppController@home', ['templates' => $request->templates, 'purchase_code' => $purchase_code]
+				'EditorController@home', ['templates' => $request->templates, 'purchase_code' => $purchase_code]
 			);
 		}
 
 		return redirect()->action(
-			'DesignerAppController@validateCode', ['code_validation' => 0, 'templates' => $request->templates]
+			'EditorController@validateCode', ['code_validation' => 0, 'templates' => $request->templates]
 		);
 
 	}

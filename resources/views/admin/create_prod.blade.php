@@ -15,26 +15,26 @@
   <body>
     
     
-    <div class="container">
+    <div class="container-fluid">
         <div class="row">
             <div class="col-12">
-                <h1 class="text-center">CREAR PRODUCTO</h1>
+                <h1 class="text-center">TEMPLATE METADATA EDITOR</h1>
             </div>
-            <div class="col-6">
-                <img src="{{ $thumb_img_url }}">
+            <div class="col-12 col-md-3">
+                <img class="img-fluid" src="{{ $thumb_img_url }}">
             </div>
-            <div class="col-6">
-                <form method="POST" action="/admin/create-product/YzafhmI6HRLiObn">
+            <div class="col-12 col-md-9">
+                <form method="POST" action="/admin/create-product/{{ $template_key }}">
                     @csrf
                         <div class="mb-3">
                             <label for="titleInput" class="form-label">Title (140 chars)</label>
-                            <input type="text" class="form-control" name="title" aria-describedby="titleHelp" maxlength="140" required>
+                            <input type="text" class="form-control" name="title" aria-describedby="titleHelp" maxlength="140" value="{{ isset($metadata->title) ? $metadata->title : null }}" required>
                             <div id="titleHelp" class="form-text">Include keywords that buyers would use to search for your item.</div>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Tags</label>
-                            <div class="form-text">Use all 13 tags to get found</div>
-                            <input class="tags" name="tags" type="text" value="Amsterdam,Washington,Sydney,Beijing,Cairo" data-role="tagsinput">
+                            <div class="form-text">What words might someone use to search for your listings? Use all 13 tags to get found.</div>
+                            <input class="tags" name="tags" type="text" value="{{ isset($metadata->tags) ? $metadata->tags : null }}" data-role="tagsinput" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Colors</label>
@@ -70,11 +70,7 @@
                                 </optgroup>
                             </select>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Tags Optional</label>
-                            What words might someone use to search for your listings? Use all 13 tags to get found. Get ideas for tags.
-
-                        </div>
+                        
                         <div class="mb-3">
                             <select class="form-select" name="secondaryColor">
                                 <option value="">Choose secondary color</option><optgroup label="Secondary color options">
@@ -102,8 +98,8 @@
                         </div>
 
                         <div class="mb-3">
+                            <label class="form-label">Occasion</label>
                             <div id="occasionHelp" class="form-text">
-                                Occasion
                                 Add to items designed for the occasion, for example graduation party decor, not for items that could be gifted for an occasion. You can skip this attribute if it isn’t relevant.
                             </div>
                             
@@ -139,8 +135,8 @@
                         </div>
 
                         <div class="mb-3">
+                            <label class="form-label">Holiday</label>
                             <div id="holidayHelp" class="form-text">
-                                Holiday
                                 Add to items meant specifically for a holiday, for example a Mother’s Day card, not for items that could be gifted for a holiday. You can skip this attribute if it isn’t relevant.
                             </div>
                             <select aria-describedby="holidayHelp" class="form-select" name="holiday">
@@ -167,14 +163,14 @@
                         </div>
 
                         <div class="mb-3">
+                            <label class="form-label">Description *</label>
                             <div id="descHelp" class="form-text">
-                                Description *
                                 Start with a brief overview that describes your item’s finest features. Shoppers will only see the first few lines of your description at first, so make it count!
                                 
                                 Not sure what else to say? Shoppers also like hearing about your process, and the story behind this item.
                             </div>
 
-                            <textarea aria-describedby="descHelp" class="form-control" name="description" required></textarea>
+                            <textarea aria-describedby="descHelp" class="form-control" name="description" rows="15" required>{{ isset($metadata->description) ? $metadata->description : null }}</textarea>
                         </div>
 
                         <button type="submit" class="btn btn-primary">Submit</button>
@@ -195,6 +191,19 @@
     <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
     <script src="{{ asset('assets/admin/tags/bootstrap-tagsinput.min.js') }}"></script>
     <script>
+        @if( isset($metadata->primaryColor) )
+            $('select[name="primaryColor"] option:eq({{ $metadata->primaryColor }})').attr('selected', 'selected');
+        @endif
+        @if( isset($metadata->secondaryColor) )
+            $('select[name="secondaryColor"] option:eq({{ $metadata->secondaryColor }})').attr('selected', 'selected');
+        @endif
+        @if( isset($metadata->occasion) )
+            $('select[name="occasion"] option:eq({{ $metadata->occasion }})').attr('selected', 'selected');
+        @endif
+        @if( isset($metadata->holiday) )
+            $('select[name="holiday"] option:eq({{ $metadata->holiday }})').attr('selected', 'selected');
+        @endif
+
         // $(document).on("keydown", "form>input", function(event) { 
         //     return event.key != "Enter";
         // });
