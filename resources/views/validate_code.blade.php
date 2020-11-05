@@ -71,12 +71,12 @@
         background: transparent;
         }
         #wrapper #dialog #form button {
-        margin: 30px 0 50px;
-        width: 100%;
-        padding: 6px;
-        background-color: #000;
-        border: none;
-        text-transform: uppercase;
+            margin: 30px 0 3px;
+            width: 100%;
+            padding: 15px;
+            background-color: #000;
+            border: none;
+            text-transform: uppercase;
         }
         #wrapper #dialog button.close {
         border: solid 2px;
@@ -119,6 +119,9 @@
                     <input name="digit4" type="text" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}" />
                     
                     <button type="submit" class="btn btn-primary btn-embossed">VERIFICAR CODIGO</button>
+                    <a href="#" style="color: #b1b1b1;text-decoration: none;font-size: 15px;">
+                        Usar versión demo
+                    </a>
                 </form>
             </div>
             

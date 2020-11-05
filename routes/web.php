@@ -27,9 +27,16 @@ Route::get('/translate/template', 'TranslatorController@translateTemplate');
 
 // ADMIN
 Route::get('/admin/manage-codes', 'AdminController@manageCodes')->name('code.manage');
+Route::get('/admin/delete/code/{code}', 'AdminController@deleteCode')->name('code.delete');
+Route::get('/admin/create/code/{code}', 'AdminController@createCode')->name('code.create');
 Route::post('/admin/generate-code', 'AdminController@generateCode')->name('code.generate');
 Route::get('/admin/create-product/{template_key}', 'AdminController@createProduct')->name('admin.createTemplate');
 Route::post('/admin/create-product/{template_key}', 'AdminController@createDBProduct');
+Route::get('/admin/mercado-pago/export/', 'AdminController@mercadoLibreExcel');
+
+Route::post('/admin/mp/create-product/{template_key}', 'AdminController@editMPProduct');
+Route::get('/admin/mp/create-product/{template_key}', 'AdminController@createMPProduct');
+
 Route::get('/admin/etsy/templates/description', 'AdminController@descriptionTemplate');
 Route::post('/admin/etsy/templates/description', 'AdminController@editDescriptionTemplate');
 Route::get('/admin/db-missing-thumbs', 'AdminController@registerMissingTemplatesOnDB');
@@ -75,3 +82,6 @@ Route::get('/editor/get-woff-font-url', 'EditorController@getWoffFontUrl');
 Route::get('/editor/check-allow-revert-template', 'EditorController@checkAllowRevertTemplate');
 Route::get('/editor/get-css-fonts', 'EditorController@getCSSFonts');
 Route::post('/editor/pdf', 'EditorController@generatePDF');
+
+
+Route::get('/mx/editar/plantillas', 'EditorController@editPurchasedTemplate');

@@ -1979,7 +1979,7 @@ function setWorkspace() {
     $("#background").hide(),
     $("#phone").hide(),
     $(".background-arrow").hide(),
-    $("#addnewpagebutton").text(" + Add a Blank Page"),
+    $("#addnewpagebutton").text("+ Pagina en blanco"),
     $("#convertToDoublesided").hide(),
     $("#convertToSingle").hide(),
     $("#convertGeofilterToNewSize").hide(),

@@ -24,6 +24,8 @@ use Barryvdh\DomPDF\Facade as PDF;
 use Image;
 // use Intervention\Image;
 
+use App\Exports\MercadoLibreExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 ini_set('memory_limit', -1);
 ini_set("max_execution_time", 0);   // no time-outs!
@@ -44,6 +46,7 @@ class AdminController extends Controller
             $thumbnail_rows = DB::table('thumbnails')
                 ->where('template_id','=',$template_key)
                 ->count();
+
             if( $thumbnail_rows == 0 ){
 
                 $path = public_path().'/design/template/' . $template_key.'/thumbnails/';
@@ -91,15 +94,54 @@ class AdminController extends Controller
         echo sizeof( Redis::keys('template:*:jsondata') );
     }
 
-    function generateCode(){
-        // echo "hihi";
+    function generarModeloMercadoPago($template_key){
+        // echo "<pre>";
+        // print_r($template_key);
+        // exit;
+
+        $modelo_id = rand(1111, 9999);
+        if( Redis::exists('wayak:mercadopago:template:modelo:'.$template_key) ){
+            return Redis::get('wayak:mercadopago:template:modelo:'.$template_key);
+        } else {
+            Redis::set('wayak:mercadopago:template:modelo:'.$template_key, $modelo_id);
+            Redis::set('wayak:mercadopago:modelo:'.$modelo_id, $template_key);
+        }
+        
+        return $modelo_id;
+    }
+
+    // function generateCode($template_key){
+    function createCode($template_key){
+        
+        // Create a template replica, for final user.
+        
+        // echo "<pre>";
+        // print_r($template_key);
+        // print_r($template_temp_key);
+        
+        $purchase_code = rand(1111, 9999);
+
+        $original_template_key = $template_key;
+        $temporal_customer_key = 'temp:'.$purchase_code;
+        
+        Redis::set('temp:template:relation:temp:'.$purchase_code, $original_template_key);
+        Redis::expire('temp:template:relation:temp:'.$purchase_code, 2592000); // Codigo valido por 30 dias - 60*60*24*30 = 2592000
+        
+        Redis::set('template:'.$temporal_customer_key.':jsondata' ,Redis::get('template:'.$original_template_key.':jsondata'));
+        Redis::expire('template:'.$temporal_customer_key.':jsondata', 2592000); // Codigo valido por 30 dias - 60*60*24*30 = 2592000
+		
+        Redis::set('code:'.$purchase_code, $temporal_customer_key);
+        Redis::expire('code:'.$purchase_code, 2592000); // Codigo valido por 30 dias - 60*60*24*30 = 2592000
+
+		// return str_replace('http://localhost/design/','http://localhost:8000/design/', Redis::get($template_key) );
+        // exit;
         // return view('generate_code');
         // Redis::keys()
 
-        $id = rand(1111, 9999);
-        Redis::set('code:'.$id, 0);
-        // exit;
-        return back()->with('success', 'Nuevo codigo generado con exito');
+        // return back()->with('success', 'Nuevo codigo generado con exito');
+        return redirect()->action(
+            'AdminController@manageCodes', []
+        );
     }
     
     function manageCodes(){
@@ -111,10 +153,36 @@ class AdminController extends Controller
         $ejemplo = [];
 
         $size_of_code = sizeof($codes);
+
         
         for ($i=0; $i < $size_of_code; $i++) { 
             $ejemplo[ $i ]['code'] = str_replace('code:', null ,$codes[$i]);
             $ejemplo[ $i ]['value'] = Redis::get( $codes[$i] );
+            
+            $template_key = Redis::get('temp:template:relation:temp:'.$ejemplo[ $i ]['code']);
+            $template_key = str_replace('template:',null, $template_key);
+            $template_key = str_replace(':jsondata',null, $template_key);
+            
+            // echo $template_key;
+            // exit;
+            // $purchase_code
+            
+            $thumb_info = DB::table('thumbnails')
+                    ->where('template_id','=', $template_key )
+                    ->first();
+
+            // echo "<pre>";
+            // print_r($template_key);
+            // print_r($thumb_info);
+            // exit;
+
+            if($thumb_info){
+                $thumb_img_url = asset( 'design/template/'. $template_key.'/thumbnails/'.$thumb_info->filename);
+            } else {
+                $thumb_img_url = null;
+            }
+            
+            $ejemplo[ $i ]['template_img'] = $thumb_img_url;
         }
 
         // echo "<pre>";
@@ -126,6 +194,15 @@ class AdminController extends Controller
         ]);
     }
     
+    function deleteCode($code){
+        // admin/delete/code/{code}
+        Redis::del('code:'.$code);
+        
+        return redirect()->action(
+            'AdminController@manageCodes', []
+        );
+    }
+
     function manageTemplates(){
 
         $tmp_template_keys = Redis::keys('product:production_ready:*');
@@ -138,11 +215,16 @@ class AdminController extends Controller
                 ->first();
 
             // print_r($thumb_info->filename);
+            if($thumb_info == false){
+                echo $template_key;
+                exit;
+            }
 
             $product_info['key'] = $template_key;
             $product_info['thumbnail'] = asset( 'design/template/'. $template_key.'/thumbnails/'.$thumb_info->filename);
             $product_info['title'] = $thumb_info->title;
             $product_info['dimentions'] = $thumb_info->dimentions;
+            $product_info['mercadopago'] = Redis::get('wayak:mercadopago:template:modelo:'.$template_key);
 
             $templates[] = $product_info;
         }
@@ -182,6 +264,80 @@ class AdminController extends Controller
             'thumb_img_url' => $thumb_img_url,
             'metadata' => $product_metadata
         ]);
+    }
+    
+    function createMPProduct($template_key){
+        $thumb_info = DB::table('thumbnails')
+                ->where('template_id','=',$template_key)
+                ->first();
+       
+        $thumb_img_url = asset( 'design/template/'. $template_key.'/thumbnails/'.$thumb_info->filename);
+        $modelo_id = self::generarModeloMercadoPago($template_key);
+        $description = Redis::get('wayak:mercadopago:description_template');
+        $titulo = 'Invitacion Digital *CAMBIAR* Whats Face';
+        $ocasion = '';
+
+        // Redis::set('mercadopago:template:metadata:'.$template_key, json_encode($request->all()));
+        if( Redis::exists('mercadopago:template:metadata:'.$template_key) ){
+            $product_metadata = Redis::get('mercadopago:template:metadata:'.$template_key);
+            $product_metadata = json_decode($product_metadata);
+            
+            // echo "<pre>";
+            // print_r($product_metadata);
+            // exit;
+
+            $description = $product_metadata->descripcion;
+            $titulo = $product_metadata->titulo;
+            $ocasion = $product_metadata->ocasion;
+            
+
+        }
+        
+        // echo "<pre>";
+        // print_r( $thumb_info );
+        // print_r( self::generarModeloMercadoPago($template_key) );
+        // exit;
+
+        return view('admin.mp_create_product', [
+            'thumb_img_url' => $thumb_img_url,
+            'product_images' => $thumb_img_url,
+            'titulo' => $titulo,
+            'ocasion' => $ocasion,
+            'modelo' => $modelo_id,
+            'description' => $description,
+            'template_key' => $template_key
+        ]);
+    }
+
+    function editMPProduct($template_key, Request $request){
+
+        $template_info = $request->all();
+        
+        $template_info['descripcion'] = str_replace('{{templateDemoUrl}}', url('mx/demo/'.$template_info['modelo'] ), $template_info['descripcion']);
+        $template_info['descripcion'] = str_replace('{{wayakCatalogUrl}}', url('mx/explorar' ), $template_info['descripcion']);
+        $template_info['descripcion'] = str_replace('{{estyStoreName}}', 'Estudio Jazmin', $template_info['descripcion']);
+        $template_info['descripcion'] = str_replace('{{template_id}}', $template_info['modelo'], $template_info['descripcion']);
+
+
+        // Redis::set
+        // $template_info['descripcion']
+
+        // $template_info['modelo'] // Numero identificador para vender en mercado
+        // $template_info['sku']
+
+        // echo "<pre>";
+        // print_r( $template_key );
+        // print_r( $template_info );
+        // print_r( $request->descripcion );
+        
+        // Redis::set('wayak:mercadopago:description_template',$request->descripcion );
+        // Redis::set('wayak:mercadopago:description_template',$request->descripcion );
+        
+        Redis::set('mercadopago:template:metadata:'.$template_key, json_encode( $template_info ) );
+        
+        return redirect()->action(
+            'AdminController@manageTemplates', []
+        );
     }
 
     function createDBProduct($template_key, Request $request){
@@ -226,5 +382,9 @@ class AdminController extends Controller
         return redirect()->action(
             'AdminController@editDescriptionTemplate', []
         );
+    }
+
+    function mercadoLibreExcel(){
+        return Excel::download(new MercadoLibreExport, 'mercado_libre.xlsx');
     }
 }

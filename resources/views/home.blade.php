@@ -140,17 +140,17 @@
                             </li>
                             <li>
                                 <a href="#" id="savetemplate" title="savetemplate">
-                                    Guardar Como...
+                                    Guardar
                                 </a>
                             </li>
                             <li>
                                 <a href="#" id="newtemplate" title="newtemplate">
-                                    Nueva Plantilla
+                                    Nuevo
                                 </a>
                             </li>
                             <li>
                                 <a href="#" id="saveastemplate" title="saveastemplate">
-                                    Guardar Como Plantilla...
+                                    Guardar Como
                                 </a>
                             </li>
                             <li>
@@ -159,7 +159,7 @@
                                 </a>
                             </li>
                         </ul>
-                        <ul class="nav navbar-nav navbar-right am-user-nav">
+                        <!-- <ul class="nav navbar-nav navbar-right am-user-nav">
                             <li class="dropdown">
                                 <a aria-expanded="false" class="dropdown-toggle" data-toggle="dropdown" href="#" role="button">
                                     <img id="avatar-nav" src="{{ asset('assets/img/avatar.png') }}">
@@ -179,7 +179,7 @@
                                     </li>
                                 </ul>
                             </li>
-                        </ul>
+                        </ul> -->
                         <ul class="nav navbar-nav navbar-right am-admin-nav">
                             <li>
                                 <a href="https://help.localhost.com" target="_blank">
@@ -240,13 +240,13 @@
                                         <div class="list">
                                             <div class="content">
                                                 <ul>
-                                                    <li style="text-align:center;">
+                                                    <!-- <li style="text-align:center;">
                                                         <a href="#" id="downloadPDF">
                                                             <span class="icon s7-print" style="font-size:24px; vertical-align:middle;">
                                                             </span>
                                                             PDF (Para imprimir)
                                                         </a>
-                                                    </li>
+                                                    </li> -->
                                                     <li class="download-jpeg-menu-item" style="text-align:center;">
                                                         <a href="#" id="downloadJPEG">
                                                             <span class="icon s7-print" style="font-size:24px; vertical-align:middle;">
@@ -272,11 +272,11 @@
                         </ul>
                         <!-- Design As User -->
                         <!-- Demo -->
-                        <ul class="nav navbar-nav navbar-right am-icons-nav">
+                        <!-- <ul class="nav navbar-nav navbar-right am-icons-nav">
                             <li style="top:20px; color:#333;">
                                 Estas en una version demo. No seras capaz de guardar los cambios o descargar la imagen.
                             </li>
-                        </ul>
+                        </ul> -->
                     </div>
                 </div>
             </nav>
@@ -296,7 +296,7 @@
                             <ul class="sub-menu visible">
                                 <li>
                                     <div class="col-lg-12">
-                                        <style>
+                                        <!-- <style>
                                             .iXSRa-D {
                                                 -webkit-box-align: center;
                                                 align-items: center;
@@ -334,8 +334,8 @@
                                                 appearance: textfield;
                                                 outline-offset: -2px;
                                             }
-                                        </style>
-                                        <div class="StyledInputContainer-sc-1icyccg XAwfH">
+                                        </style> -->
+                                        <!-- <div class="StyledInputContainer-sc-1icyccg XAwfH">
                                             <div class="StyledIcon-sc-r3p5g6 iXSRa-D">
                                                 <svg width="24" height="24" viewBox="0 0 24 24"><path fill="none" fill-rule="evenodd" stroke="#8C8C8C" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16.657 16.657L21 21l-4.343-4.343A8 8 0 1 1 5.343 5.343a8 8 0 0 1 11.314 11.314z"></path></svg>
                                             </div>
@@ -345,7 +345,7 @@
                                                     </i>
                                                 </a>
                                             </input>
-                                        </div>
+                                        </div> -->
 
                                         <!-- <div class="search">
                                             <input id="templatesearch" name="templatesearch" placeholder="Buscar..." type="text">
@@ -3339,11 +3339,11 @@
                                 </span>
                                 <br>
                                     <br>
-                                        <span aria-hidden="true" class="s7-copy-file duplicatecanvas" id="duplicatecanvas" title="Duplicate this page">
+                                        <span aria-hidden="true" class="s7-copy-file duplicatecanvas" id="duplicatecanvas" title="Duplicar esta pagina">
                                         </span>
                                         <br>
                                             <br>
-                                                <span class="s7-trash deletecanvas" id="deletecanvas" title="Delete this page">
+                                                <span class="s7-trash deletecanvas" id="deletecanvas" title="Borrar esta">
                                                 </span>
                                                 <span class="s7-angle-right-circle background-arrow background-arrow-right" onclick="nextBackground()" title="Preview backgrounds">
                                                 </span>
@@ -3355,7 +3355,7 @@
                                 </br>
                             </div>
                             <button class="btn btn-default" id="addnewpagebutton" onclick="javascript:addNewCanvasPage();" style="width:150px; margin:20px 0;" type="button">
-                                + Add a Blank Page
+                                + Agregar pagina en blanco
                             </button>
                             <!--<button onClick='javascript:toSVG();' id="tosvgbtn" class="btn" type="button" style="width:150px; margin:20px 0; padding:10px; border:1px solid #555;"> + Check SVG</button>-->
                             <div style="display:none;">

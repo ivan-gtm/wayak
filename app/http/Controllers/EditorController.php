@@ -130,6 +130,8 @@ class EditorController extends Controller
 
 	function getJSONTemplate($template_id) {
 		$template_key = 'template:'.$template_id.':jsondata';
+		// echo $template_key;
+		// exit;
 		//  Redis::get($template_key);
 		// return str_replace('http://localhost/design/','http://localhost:8000/design/', Redis::get($template_key) );
 		return Redis::get($template_key);
@@ -173,6 +175,75 @@ class EditorController extends Controller
 				'EditorController@validateCode', [ 'templates' => $templates ]
 			);
 		}
+
+		// echo Redis::get('code:'.$purchase_code);
+		// exit;
+		
+	}
+	
+	function editPurchasedTemplate(Request $request){
+		
+		$purchase_code = $request['purchase_code'];
+		$templates = $request['templates'];
+
+		if($purchase_code == '' OR $templates == ''){
+			return redirect()->action(
+				'EditorController@validateCode', []
+			);
+		}
+		
+		$demo_as_id = rand(1,999999);
+		
+		// echo "<pre>";
+		// print_r($request->all());
+		// print_r($templates);
+		// exit;
+
+		if( Redis::exists('code:'.$purchase_code) == true && Redis::get('code:'.$purchase_code) == $templates ){
+			// echo "jiji";
+			// exit;
+			$demo_as_id = 0;
+			$user_role = 'customer';
+
+			return view('home',[ 
+				'templates' => $templates, 
+				'purchase_code' => $purchase_code,
+				'demo_as_id' => $demo_as_id,
+				'user_role' => $user_role
+			]);
+
+		}
+		// if( Redis::exists('code:'.$purchase_code) == true && Redis::get('code:'.$purchase_code) == 0 ){
+			
+		// 	$demo_as_id = 0;
+		// 	$user_role = 'customer';
+
+		// 	return view('home',[ 
+		// 		'templates' => $templates, 
+		// 		'purchase_code' => $purchase_code,
+		// 		'demo_as_id' => $demo_as_id,
+		// 		'user_role' => $user_role
+		// 	]);
+			
+		// } else
+		// if( $purchase_code == 'administrator' ){
+			
+		// 	$demo_as_id = 0;
+		// 	$user_role = 'designer';
+		// 	$purchase_code = 9999;
+
+		// 	return view('home',[ 
+		// 		'templates' => $templates, 
+		// 		'purchase_code' => $purchase_code,
+		// 		'demo_as_id' => $demo_as_id,
+		// 		'user_role' => $user_role
+		// 	]);
+
+		// } else {
+			return redirect()->action(
+				'EditorController@validateCode', [ 'templates' => $templates ]
+			);
+		// }
 
 		// echo Redis::get('code:'.$purchase_code);
 		// exit;
@@ -235,22 +306,27 @@ class EditorController extends Controller
 
 		// echo "<pre>";
 		// print_r( $template_id );
-		// exit;
-
-		$this->deleteCurrentThumbnails($template_id);
-
-
-		$thumbnail_imgs = $this->createThumbnailFiles( $request->pngimageData, $template_id );
-
-		$thumbnail_info = [
+		// print_r( strpos($template_id, 'temp') !== false );
+		
+		if( strpos($template_id, 'temp') === false ){ // Its a user template
+			// echo "NO ES DEMO";
+			$this->deleteCurrentThumbnails($template_id);
+			$thumbnail_imgs = $this->createThumbnailFiles( $request->pngimageData, $template_id );
+	
+			$thumbnail_info = [
 				'filename' => $thumbnail_imgs['thumbnail'],
 				'template_id' => $template_id,
 				'dimentions' => $template_dimensions,
 				'status' => 1
-		];
+			];
+			// exit;
+	
+			$this->updateThumbnailsOnDB( $thumbnail_info );
+			Redis::set('product:production_ready:'.$template_id, 1);
+		}
 		// exit;
 
-		$this->updateThumbnailsOnDB( $thumbnail_info );
+
 
 		// echo "<pre>";
 		// print_r( $template_id );
@@ -259,7 +335,6 @@ class EditorController extends Controller
 
 		$this->storeJSONTemplate($template_id, json_encode($template_obj));
 
-		Redis::set('product:production_ready:'.$template_id, 1);
 
 		$response = [
 			'id' => $template_id,
@@ -757,7 +832,12 @@ class EditorController extends Controller
 		// return json_encode($response);
 		// exit;
 
-		$template_ids = $request['demo_templates'];
+		if( Redis::exists('temp:template:relation:temp:'.$request->design_as_id) ){
+			$template_ids = Redis::get('temp:template:relation:temp:'.$request->design_as_id);
+		} else {
+			$template_ids = $request['demo_templates'];
+		}
+
     	$thumbnails_html = '';
 
 		if( isset($template_ids) ){
@@ -770,7 +850,7 @@ class EditorController extends Controller
 	    	foreach($template_thumbnails as $thumbnail) {
 		    	$img_url = url('design/template/'.$thumbnail->template_id.'/thumbnails/'.$thumbnail->filename);
 
-		    	$thumbnails_html .= '<div class="col-xs-6 thumb" id="'.$thumbnail->template_id.'"><a class="thumbnail" data-target="'.$thumbnail->template_id.'"><span class="thumb-overlay"><h3>'.$thumbnail->title.'</h3></span><div class="expired-notice" style="display:none;">EXPIRED</div><img class="tempImage img-responsive" src="'.$img_url.'" alt="" style=""></a><div class="badge-container"><span class="badge dims">'.$thumbnail->dimentions.'</span><span class="badge tempId">ID: '.$thumbnail->template_id.'</span><i class="fa fa-trash-o deleteTemp" id="'.$thumbnail->template_id.'"></i></div></div>';
+		    	$thumbnails_html .= '<div class="col-xs-6 thumb" id="'.$request->demo_templates.'"><a class="thumbnail" data-target="'.$request->demo_templates.'"><span class="thumb-overlay"><h3>'.$thumbnail->title.'</h3></span><div class="expired-notice" style="display:none;">EXPIRED</div><img class="tempImage img-responsive" src="'.$img_url.'" alt="" style=""></a><div class="badge-container"><span class="badge dims">'.$thumbnail->dimentions.'</span><span class="badge tempId">ID: '.$request->demo_templates.'</span><i class="fa fa-trash-o deleteTemp" id="'.$request->demo_templates.'"></i></div></div>';
 		    }
 		}
 
@@ -817,8 +897,8 @@ class EditorController extends Controller
 		// $error = 1;
 		// $options = "";
 
-		// // echo $template_ids;
-		// // exit;
+		// echo $template_ids;
+		// exit;
 
 		// // $array_final =  stripslashes(stripslashes($response));
 
@@ -1064,7 +1144,7 @@ class EditorController extends Controller
 		]);
 
 		// if()
-		Redis::set('code:'.$request->purchase_code, 1);
+		Redis::del('code:'.$request->purchase_code);
 
 		return response()->json([
 			'success' => true,
@@ -1082,11 +1162,16 @@ class EditorController extends Controller
 		}
 		return view('validate_code', ['templates' => $templates]);
 	}
+	
 	function validatePurchaseCode(Request $request){
 		
 		$purchase_code = $request->digit1.$request->digit2.$request->digit3.$request->digit4;
+
+		if( isset($request->templates) ){
+			$templates = $request->templates;
+		}
 		
-		if( Redis::exists('code:'.$purchase_code) == true && Redis::get('code:'.$purchase_code) == 0 ){
+		if( Redis::exists('code:'.$purchase_code) == true ){
 			// echo "<pre>";
 			// print_r($request->all());
 			// exit;
@@ -1095,14 +1180,19 @@ class EditorController extends Controller
 
 			// echo "exit0";
 			// exit;
+
+			$templates = Redis::get('code:'.$purchase_code);
+			// echo "<pre>";
+			// print_r( $templates );
+			// exit;
 			
 			return redirect()->action(
-				'EditorController@home', ['templates' => $request->templates, 'purchase_code' => $purchase_code]
+				'EditorController@home', ['templates' => $templates, 'purchase_code' => $purchase_code]
 			);
 		}
 
 		return redirect()->action(
-			'EditorController@validateCode', ['code_validation' => 0, 'templates' => $request->templates]
+			'EditorController@validateCode', ['code_validation' => 0, 'templates' => $templates]
 		);
 
 	}

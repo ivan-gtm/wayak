@@ -13,7 +13,7 @@
   <body>
     
     
-    <div class="container-fluid">
+    <div class="container">
         <div class="row">
             <div class="col-12">
                 <h1 class="text-center">GESTIÓN DE CODIGOS</h1>
@@ -55,6 +55,10 @@
                                 Some quick example text to build on the card title and make up the bulk of the card's content.
                             </p> -->
                             <h1 class="card-text text-center">{{ $item['code'] }}</h1>
+                            <h3 class="card-text text-center" style="font-size:15px">{{ $item['value'] }}</h3>
+                            <img class="img-fluid" src="{{ $item['template_img'] }}">
+                            <br>
+                            <a href="/admin/delete/code/{{ $item['code'] }}">Eliminar</a>
                         </div>
                     </div>
                 </div>

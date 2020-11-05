@@ -65,9 +65,21 @@
             </div>
             @foreach ($templates as $product_info )
                 <div class="col-3 box">
-                    <a href="/admin/create-product/{{ $product_info['key'] }}">
+                    <a href="/admin/mp/create-product/{{ $product_info['key'] }}">
                         <img class="img-fluid" src="{{ $product_info['thumbnail'] }}">
                     </a>
+                    <br>
+                    <div class="row text-center">
+                      <div class="col-12">
+                        <p>{{ $product_info['key'] }}</p>
+                      </div>
+                      <div class="col-6">
+                        <a href="/admin/create/code/{{ $product_info['key'] }}">GENERAR CODIGO</a>
+                      </div>
+                      <div class="col-6">
+                        <a href="/?templates={{ $product_info['key'] }}&purchase_code=administrator">EDITAR PLANTILLA</a>
+                      </div>
+                    </div>
                 </div>
             @endforeach
         </div>
