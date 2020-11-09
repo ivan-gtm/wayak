@@ -19,21 +19,21 @@
                     <ul class="pagination justify-content-center">
 
                         <li class="page-item">
-                            <a class="page-link" href="/crello/explore?page=1">
+                            <a class="page-link" href="{{ route('crello.explore', ['page'=>1]) }}">
                                 First
                             </a>
                         </li>
 
                         @for ($i = $page_from; $i < $page_to; $i++)
                             <li class="page-item">
-                                <a class="page-link" href="/crello/explore?page={{ $i }}">
+                                <a class="page-link" href="{{ route('crello.explore', ['page'=>$i]) }}">
                                     Page {{ $i }}
                                 </a>
                             </li>    
                         @endfor
                         
                         <li class="page-item">
-                            <a class="page-link" href="/crello/explore?page={{ $total_pages }}">
+                            <a class="page-link" href="{{ route('crello.explore', ['page'=>$total_pages]) }}">
                                 Last {{ $total_pages }}
                             </a>
                         </li>
@@ -44,7 +44,10 @@
         <div class="row">
             @foreach ($product_result->results as $product )
                 <div class="col-3">
-                    <a href="/?templates={{ $product->id }}">
+                    <a href="{{ route('admin.edit.template', [
+                        'language_code' => 'en',
+                        'template_key' => $product->id
+                    ]) }}">
                         <img class="img-fluid" src="/design/template/{{ $product->id }}/thumbnails/preview.jpg">
                     </a>
                 </div>
@@ -56,21 +59,21 @@
                     <ul class="pagination justify-content-center">
 
                         <li class="page-item">
-                            <a class="page-link" href="/crello/explore?page=1">
+                            <a class="page-link" href="{{ route('crello.explore', ['page'=>1]) }}">
                                 First
                             </a>
                         </li>
 
                         @for ($i = $page_from; $i < $page_to; $i++)
                             <li class="page-item">
-                                <a class="page-link" href="/crello/explore?page={{ $i }}">
+                                <a class="page-link" href="{{ route('crello.explore', ['page'=>$i]) }}">
                                     Page {{ $i }}
                                 </a>
                             </li>    
                         @endfor
                         
                         <li class="page-item">
-                            <a class="page-link" href="/crello/explore?page={{ $total_pages }}">
+                            <a class="page-link" href="{{ route('crello.explore', ['page'=>$total_pages]) }}">
                                 Last {{ $total_pages }}
                             </a>
                         </li>

@@ -677,6 +677,7 @@ class greenController extends Controller
             'categories' => $invitation_categories
         ]);
     }
+    
     function getAllProducts(Request $request){
         // echo "<pre>";
         // print_r( Redis::sMembers('green:invitation_cats') );
@@ -729,51 +730,51 @@ class greenController extends Controller
             'product_result' => $products
         ]);
         
-        echo "<pre>";
-        print_r($products);
-        exit;
+        // echo "<pre>";
+        // print_r($products);
+        // exit;
 
-        // Build unique array of categories for invitations
-        $category_tree = $this->getREDISCategories();
-        echo "<pre>";
-        $categories_number = sizeof( $category_tree->CategoryTree );
-        for ($i=0; $i < $categories_number; $i++) {
-            if( $category_tree->CategoryTree[$i]->SectionName == 'Invitations' ){
+        // // Build unique array of categories for invitations
+        // $category_tree = $this->getREDISCategories();
+        // echo "<pre>";
+        // $categories_number = sizeof( $category_tree->CategoryTree );
+        // for ($i=0; $i < $categories_number; $i++) {
+        //     if( $category_tree->CategoryTree[$i]->SectionName == 'Invitations' ){
                 
-                // print_r( $category_tree->CategoryTree[$i]->CategoryId);
-                $cat_id = $category_tree->CategoryTree[$i]->CategoryId;
-                Redis::sAdd('green:invitation_cats', $cat_id);
+        //         // print_r( $category_tree->CategoryTree[$i]->CategoryId);
+        //         $cat_id = $category_tree->CategoryTree[$i]->CategoryId;
+        //         Redis::sAdd('green:invitation_cats', $cat_id);
                 
-                if(isset($category_tree->CategoryTree[$i]->Children)){
-                    $children = $category_tree->CategoryTree[$i]->Children;
-                    $children_size = sizeof( $category_tree->CategoryTree[$i]->Children );
+        //         if(isset($category_tree->CategoryTree[$i]->Children)){
+        //             $children = $category_tree->CategoryTree[$i]->Children;
+        //             $children_size = sizeof( $category_tree->CategoryTree[$i]->Children );
 
-                    $child_cat_id = $category_tree->CategoryTree[$i]->CategoryId;
-                    Redis::sAdd('green:invitation_cats', $child_cat_id);
+        //             $child_cat_id = $category_tree->CategoryTree[$i]->CategoryId;
+        //             Redis::sAdd('green:invitation_cats', $child_cat_id);
 
-                    for ($j=0; $j < $children_size; $j++) {
+        //             for ($j=0; $j < $children_size; $j++) {
                         
-                        // print_r($children[$j]);
+        //                 // print_r($children[$j]);
 
-                        if(isset($children[$j]->Children)){
-                            $subchildren = $children[$j]->Children;
-                            $subchildren_size = sizeof( $children[$j]->Children );
+        //                 if(isset($children[$j]->Children)){
+        //                     $subchildren = $children[$j]->Children;
+        //                     $subchildren_size = sizeof( $children[$j]->Children );
 
-                            for ($k=0; $k < $subchildren_size; $k++) {
+        //                     for ($k=0; $k < $subchildren_size; $k++) {
                                 
-                                // print_r($subchildren[$k]);
+        //                         // print_r($subchildren[$k]);
 
-                                $subchild_cat_id = $subchildren[$k]->CategoryId;
-                                Redis::sAdd('green:invitation_cats', $subchild_cat_id);
+        //                         $subchild_cat_id = $subchildren[$k]->CategoryId;
+        //                         Redis::sAdd('green:invitation_cats', $subchild_cat_id);
 
-                            }
+        //                     }
 
-                        }
-                    }
-                }
-            }
-        }
-        exit;
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
+        // exit;
     }
 
 }

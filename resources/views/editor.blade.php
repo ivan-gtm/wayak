@@ -138,21 +138,26 @@
                                     Adelante
                                 </a>
                             </li>
-                            <li>
-                                <a href="#" id="savetemplate" title="savetemplate">
-                                    Guardar
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" id="newtemplate" title="newtemplate">
-                                    Nuevo
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" id="saveastemplate" title="saveastemplate">
-                                    Guardar Como
-                                </a>
-                            </li>
+                            <!-- if( $user_role  == 'administrator' OR $user_role  == 'designer' )  "administrator", "designer","customer" -->
+                            @if( $demo_as_id == 0 )
+                                <li>
+                                    <a href="#" id="savetemplate" title="savetemplate">
+                                        Guardar
+                                    </a>
+                                </li>
+                                @if( $user_role == 'administrator' )
+                                    <li>
+                                        <a href="#" id="newtemplate" title="newtemplate">
+                                            Nuevo
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#" id="saveastemplate" title="saveastemplate">
+                                            Guardar Como
+                                        </a>
+                                    </li>
+                                @endif
+                            @endif
                             <li>
                                 <a href="#" id="canvasSize" title="saveimage">
                                     Tama&ntilde;o del lienzo
@@ -228,55 +233,60 @@
                                     </li>
                                 </ul>
                             </li>
-                            <li class="dropdown download-menu">
-                                <button aria-expanded="false" class="dropdown-toggle btn btn-info" data-toggle="dropdown" href="#" role="button" style="margin:12px 0;">
-                                    Descargar
-                                </button>
-                                <ul class="dropdown-menu am-connections">
-                                    <li>
-                                        <div class="title">
-                                            Opciones de descarga
-                                        </div>
-                                        <div class="list">
-                                            <div class="content">
-                                                <ul>
-                                                    <!-- <li style="text-align:center;">
-                                                        <a href="#" id="downloadPDF">
-                                                            <span class="icon s7-print" style="font-size:24px; vertical-align:middle;">
-                                                            </span>
-                                                            PDF (Para imprimir)
-                                                        </a>
-                                                    </li> -->
-                                                    <li class="download-jpeg-menu-item" style="text-align:center;">
-                                                        <a href="#" id="downloadJPEG">
-                                                            <span class="icon s7-print" style="font-size:24px; vertical-align:middle;">
-                                                            </span>
-                                                            JPEG (Para imprimir)
-                                                        </a>
-                                                    </li>
-                                                    <li style="text-align:center;">
-                                                        <a href="#" id="downloadAsPNG">
-                                                            <span class="icon s7-share" style="font-size:24px; vertical-align:middle;">
-                                                            </span>
-                                                            PNG (Face, Whats, Web)
-                                                        </a>
-                                                    </li>
-                                                    <li class="title" id="downloads-remaining-text" style="text-align:center;">
-                                                    </li>
-                                                </ul>
+
+                            @if( $demo_as_id == 0 )
+                                <li class="dropdown download-menu">
+                                    <button aria-expanded="false" class="dropdown-toggle btn btn-info" data-toggle="dropdown" href="#" role="button" style="margin:12px 0;">
+                                        Descargar
+                                    </button>
+                                    <ul class="dropdown-menu am-connections">
+                                        <li>
+                                            <div class="title">
+                                                Opciones de descarga
                                             </div>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </li>
+                                            <div class="list">
+                                                <div class="content">
+                                                    <ul>
+                                                        <!-- <li style="text-align:center;">
+                                                            <a href="#" id="downloadPDF">
+                                                                <span class="icon s7-print" style="font-size:24px; vertical-align:middle;">
+                                                                </span>
+                                                                PDF (Para imprimir)
+                                                            </a>
+                                                        </li> -->
+                                                        <li class="download-jpeg-menu-item" style="text-align:center;">
+                                                            <a href="#" id="downloadJPEG">
+                                                                <span class="icon s7-print" style="font-size:24px; vertical-align:middle;">
+                                                                </span>
+                                                                JPEG (Para imprimir)
+                                                            </a>
+                                                        </li>
+                                                        <li style="text-align:center;">
+                                                            <a href="#" id="downloadAsPNG">
+                                                                <span class="icon s7-share" style="font-size:24px; vertical-align:middle;">
+                                                                </span>
+                                                                PNG (Face, Whats, Web)
+                                                            </a>
+                                                        </li>
+                                                        <li class="title" id="downloads-remaining-text" style="text-align:center;">
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </li>
+                            @endif
                         </ul>
                         <!-- Design As User -->
                         <!-- Demo -->
-                        <!-- <ul class="nav navbar-nav navbar-right am-icons-nav">
-                            <li style="top:20px; color:#333;">
-                                Estas en una version demo. No seras capaz de guardar los cambios o descargar la imagen.
-                            </li>
-                        </ul> -->
+                        @if( $demo_as_id > 0 )
+                            <ul class="nav navbar-nav navbar-right am-icons-nav">
+                                <li style="top:20px; color:#333;font-weight: bold;">
+                                    Estas en una version demo. No seras capaz de guardar los cambios o descargar la imagen.
+                                </li>
+                            </ul>
+                        @endif
                     </div>
                 </div>
             </nav>
@@ -553,13 +563,13 @@
                             </ul>
                         </li>
                         <li class="parent" id="tab-upload">
-                            <a class="invisible" href="#" id="imagesPane">
+                            <!-- <a class="invisible" href="#" id="imagesPane">
                                 <i class="icon s7-cloud-upload">
                                 </i>
                                 <span>
                                     Imagenes
                                 </span>
-                            </a>
+                            </a> -->
                             <ul class="sub-menu">
                                 <li>
                                     <div class="col-lg-12 scroll-container">
@@ -3322,7 +3332,7 @@
                     </ul>
                     <img id="choose-img" src="{{ asset('assets/img/choose-a-template.png') }}"/>
                     <div style="display: inline-block; text-align:center; padding: 0 70px;">
-                        <img id="phone" src="{{ asset('assets/img/templett-phone-background-2.png') }}" style="display: none; left: 50%; position: absolute; transform-origin: 0 0; opacity: .5;"/>
+                        <img id="phone" src="{{ asset('assets/img/wayak-phone-background-2.png') }}" style="display: none; left: 50%; position: absolute; transform-origin: 0 0; opacity: .5;"/>
                         <div align="center" id="canvasbox-tab" style="margin-top:40px; text-align: -webkit-center; display: inline-block;">
                             <span id="infotext" style="font-size: 10px; opacity: 0.8; position: relative; left: 0px; top: 0px; z-index: 1000;">
                             </span>
@@ -3967,7 +3977,7 @@
                         </div>
                         <div class="modal-body">
                             <p class="text-center" style="padding-bottom: 5px;">
-                                Uploading to Templett...
+                                Uploading to Wayak...
                             </p>
                             <div data-backdrop="static" data-keyboard="false">
                                 <div class="progress progress-striped active">
@@ -4557,7 +4567,7 @@
                                 </i>
                             </button>
                             <h3 class="modal-title">
-                                Templett Design Introduction
+                                Wayak Design Introduction
                             </h3>
                         </div>
                         <div class="modal-body">
@@ -4939,6 +4949,7 @@
             var design_as_id = {{ $purchase_code }};
             var demo_as_id = {{ $demo_as_id }};
             var currentUserRole = '{{ $user_role }}'; 
+            var language_code = '{{ $language_code }}'; 
             
             // FREE
             // var design_as_id = 0;
@@ -5009,7 +5020,7 @@
             //l: false,                       // set a language for the message, e.g. "en"
             // overrides the default detection
             //test: true,                    // true = always show the bar (for testing)
-            text: "Your browser is not up to date. Templett relies on the latest web technologies. If you experience issues, please consider updating or switching to Chrome.",                       // custom notification html text
+            text: "Your browser is not up to date. Wayak relies on the latest web technologies. If you experience issues, please consider updating or switching to Chrome.",                       // custom notification html text
             // Optionally include up to two placeholders "%s" which will be replaced with the browser version and contents of the link tag. Example: "Your browser (%s) is old.  Please <a%s>update</a>"
             //text_xx: "",                    // custom notification text for language "xx"
             // e.g. text_de for german and text_it for italian

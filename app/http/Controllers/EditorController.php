@@ -79,7 +79,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 use Barryvdh\DomPDF\Facade as PDF;
-use Image;
+// use Image;
 // use Intervention\Image;
 
 
@@ -88,6 +88,77 @@ ini_set('memory_limit', -1);
 
 class EditorController extends Controller
 {
+	function home(){
+		return redirect()->action(
+			[EditorController::class,'validateCode'], []
+		);
+	}
+	
+	function demoTemplateEditor($country, $modelo_mercado_pago){
+		// echo $country;
+		// exit;
+		if( $country == 'mx'){
+			$language_code = 'es';
+		}
+
+		$template_key = Redis::get('wayak:mercadopago:modelo:'.$modelo_mercado_pago);
+		
+		// echo 'es:'.$template_key;
+		// exit;
+		
+		$demo_as_id = Rand(100000,999999);
+		$user_role = 'customer';
+		$purchase_code = 0;
+
+		return view('editor',[ 
+			'templates' => $template_key, 
+			'purchase_code' => $purchase_code,
+			'demo_as_id' => $demo_as_id,
+			'user_role' => $user_role,
+			'language_code' => $language_code
+		]);
+	}
+	
+	function customerTemplate($template_key) {
+		$purchase_code = str_replace('temp:',null, $template_key);
+		// echo $purchase_code;
+		// echo Redis::get('code:'.$purchase_code);
+		// exit;
+
+		if( Redis::exists('code:'.$purchase_code) ){
+			
+			// $template_key = Redis::get('wayak:mercadopago:modelo:'.$modelo_mercado_pago);
+			$demo_as_id = 0;
+			$user_role = 'customer';
+			// $purchase_code = str_replace('temp:',null, $template_key);
+
+			return view('editor',[ 
+				'templates' => $template_key, 
+				'purchase_code' => $purchase_code,
+				'demo_as_id' => $demo_as_id,
+				'user_role' => $user_role
+			]);
+				
+			// } elseif( $purchase_code == 'administrator' ){
+				
+			// 	$demo_as_id = 0;
+			// 	$user_role = 'designer';
+			// 	$purchase_code = 9999;
+
+			// 	return view('editor',[ 
+			// 		'templates' => $templates, 
+			// 		'purchase_code' => $purchase_code,
+			// 		'demo_as_id' => $demo_as_id,
+			// 		'user_role' => $user_role
+			// 	]);
+
+		}
+		
+		return redirect()->action(
+			[EditorController::class,'validateCode'], []
+		);
+	}
+
 	function home1(){
 		return view('home1',[ 'templates' => null ]);
 	}
@@ -128,8 +199,8 @@ class EditorController extends Controller
 		return view('wayak',[ 'templates' => null ]);
 	}
 
-	function getJSONTemplate($template_id) {
-		$template_key = 'template:'.$template_id.':jsondata';
+	function getJSONTemplate($template_id, $language_code) {
+		$template_key = 'template:'.$language_code.':'.$template_id.':jsondata';
 		// echo $template_key;
 		// exit;
 		//  Redis::get($template_key);
@@ -137,47 +208,24 @@ class EditorController extends Controller
 		return Redis::get($template_key);
 	}
 
-	function home(Request $request){
-		// echo Redis::type('ejemplo');
-		// echo "blunt";
+	function adminTemplateEditor($language_code, $template_key, Request $request){
+		
+		$templates = $template_key;
+		$demo_as_id = 0;
+		$user_role = 'designer';
+		$purchase_code = 9999;
+
+		// echo $templates;
 		// exit;
-		$purchase_code = $request['purchase_code'];
-		$templates = $request['templates'];
-		$demo_as_id = rand(1,999999);
+		// $language_code = 'es';
 
-		if( Redis::exists('code:'.$purchase_code) == true && Redis::get('code:'.$purchase_code) == 0 ){
-			
-			$demo_as_id = 0;
-			$user_role = 'customer';
-
-			return view('home',[ 
-				'templates' => $templates, 
-				'purchase_code' => $purchase_code,
-				'demo_as_id' => $demo_as_id,
-				'user_role' => $user_role
-			]);
-			
-		} elseif( $purchase_code == 'administrator' ){
-			
-			$demo_as_id = 0;
-			$user_role = 'designer';
-			$purchase_code = 9999;
-
-			return view('home',[ 
-				'templates' => $templates, 
-				'purchase_code' => $purchase_code,
-				'demo_as_id' => $demo_as_id,
-				'user_role' => $user_role
-			]);
-
-		} else {
-			return redirect()->action(
-				'EditorController@validateCode', [ 'templates' => $templates ]
-			);
-		}
-
-		// echo Redis::get('code:'.$purchase_code);
-		// exit;
+		return view('editor',[ 
+			'templates' => $templates, 
+			'purchase_code' => $purchase_code,
+			'demo_as_id' => $demo_as_id,
+			'user_role' => $user_role,
+			'language_code' => $language_code
+		]);
 		
 	}
 	
@@ -188,7 +236,7 @@ class EditorController extends Controller
 
 		if($purchase_code == '' OR $templates == ''){
 			return redirect()->action(
-				'EditorController@validateCode', []
+				[EditorController::class,'validateCode'], []
 			);
 		}
 		
@@ -205,7 +253,7 @@ class EditorController extends Controller
 			$demo_as_id = 0;
 			$user_role = 'customer';
 
-			return view('home',[ 
+			return view('editor',[ 
 				'templates' => $templates, 
 				'purchase_code' => $purchase_code,
 				'demo_as_id' => $demo_as_id,
@@ -218,7 +266,7 @@ class EditorController extends Controller
 		// 	$demo_as_id = 0;
 		// 	$user_role = 'customer';
 
-		// 	return view('home',[ 
+		// 	return view('editor',[ 
 		// 		'templates' => $templates, 
 		// 		'purchase_code' => $purchase_code,
 		// 		'demo_as_id' => $demo_as_id,
@@ -232,7 +280,7 @@ class EditorController extends Controller
 		// 	$user_role = 'designer';
 		// 	$purchase_code = 9999;
 
-		// 	return view('home',[ 
+		// 	return view('editor',[ 
 		// 		'templates' => $templates, 
 		// 		'purchase_code' => $purchase_code,
 		// 		'demo_as_id' => $demo_as_id,
@@ -241,7 +289,7 @@ class EditorController extends Controller
 
 		// } else {
 			return redirect()->action(
-				'EditorController@validateCode', [ 'templates' => $templates ]
+				[EditorController::class,'validateCode'], [ 'templates' => $templates ]
 			);
 		// }
 
@@ -276,7 +324,7 @@ class EditorController extends Controller
 
 	function open(Request $request){
     	$templates = $request['templates'];
-    	return view('home',[ 'templates' => $templates ]);
+    	return view('editor',[ 'templates' => $templates ]);
 	}
 
 	function convertPXtoIn($pixels){
@@ -303,18 +351,21 @@ class EditorController extends Controller
 		$template_obj = json_decode( $request->jsonData );
 		$template_dimensions = $this->convertPXtoIn( $template_obj[1]->cwidth ).'x'.$this->convertPXtoIn($template_obj[1]->cheight).' in';
 		$template_id = $request->templateid;
+		$language_code = $request->language_code;
 
 		// echo "<pre>";
-		// print_r( $template_id );
-		// print_r( strpos($template_id, 'temp') !== false );
-		
+		// print_r( $request->all() );
+		// exit;
+
 		if( strpos($template_id, 'temp') === false ){ // Its a user template
-			// echo "NO ES DEMO";
-			$this->deleteCurrentThumbnails($template_id);
-			$thumbnail_imgs = $this->createThumbnailFiles( $request->pngimageData, $template_id );
+			
+			$this->deleteCurrentThumbnails($template_id, $language_code);
+			$thumbnail_imgs = $this->createThumbnailFiles( $request->pngimageData, $template_id, $language_code );
+			// exit;
 	
 			$thumbnail_info = [
 				'filename' => $thumbnail_imgs['thumbnail'],
+				'language_code' => $language_code,
 				'template_id' => $template_id,
 				'dimentions' => $template_dimensions,
 				'status' => 1
@@ -333,7 +384,7 @@ class EditorController extends Controller
 		// print_r( $thumbnail_info );
 		// exit;
 
-		$this->storeJSONTemplate($template_id, json_encode($template_obj));
+		$this->storeJSONTemplate($template_id, $language_code, json_encode($template_obj));
 
 
 		$response = [
@@ -580,8 +631,8 @@ class EditorController extends Controller
 		return $template_info;
 	}
 
-	private function storeJSONTemplate($template_id, $json_data){
-		$template_key = 'template:'.$template_id.':jsondata';
+	private function storeJSONTemplate($template_id, $language_code, $json_data){
+		$template_key = 'template:'.$language_code.':'.$template_id.':jsondata';
 		Redis::set($template_key, $json_data);
 	}
 
@@ -712,12 +763,14 @@ class EditorController extends Controller
 		}
 	}
 
-	function createThumbnailFiles( $image_data, $template_id ){
-		// print_r(imagick_info());
-		// exit;
+	function createThumbnailFiles( $image_data, $template_id, $language_code ){
 		// $image_data = 'data:image/png;base64,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';
 		// $image_data = urldecode($image_data);
 		$croppie_code = $image_data;
+		
+		// print_r( $language_code );
+		// exit;
+
 
 		if (preg_match('/^data:image\/(\w+);base64,/', $croppie_code, $type)) {
 
@@ -731,6 +784,10 @@ class EditorController extends Controller
 			// exit;
 			$img_path = 'design/template/'.$template_id.'/thumbnails/';
 			$path = public_path($img_path);
+
+			// print_r( $path );
+			// exit;
+
 			@mkdir($path, 0777, true);
 
 			// Store mid-size thumbnail
@@ -758,21 +815,39 @@ class EditorController extends Controller
 	}
 
 	function updateThumbnailsOnDB( $template_info ){
+		// print_r($template_info);
+		// exit;
+
 		$thumbnail = DB::table('thumbnails')
 						->select('id')
 						->where('template_id','=', $template_info['template_id'] )
+						->where('language_code','=', $template_info['language_code'] )
 						->first();
 
 		if( isset( $thumbnail->id ) != false ){
 			DB::table('thumbnails')
 				->where('template_id','=', $template_info['template_id'] )
+				->where('language_code','=', $template_info['language_code'] )
 				->update([
 					'filename' => $template_info['filename'],
 					'dimentions' => $template_info['dimentions'],
 					'status' => 1
 				]);
 			return true;
+		} else {
+			DB::table('thumbnails')->insert([
+				'id' => null,
+				'template_id' => $template_info['template_id'],
+				'title' => 'Invitation',
+				'filename' => $template_info['filename'],
+				'tmp_original_url' => null,
+				'language_code' => $template_info['language_code'],
+				'dimentions' => $template_info['dimentions'],
+				// 'tmp_templates' => $template_info['template_id'],
+				'status' => 1
+			]);
 		}
+
 		return false;
 	}
 
@@ -798,12 +873,14 @@ class EditorController extends Controller
 		return false;
 	}
 
-	function deleteCurrentThumbnails( $template_id ){
+	function deleteCurrentThumbnails( $template_id, $language_code ){
 
 		$thumbnail = DB::table('thumbnails')
 						->select('filename')
 						->where('template_id','=', $template_id )
+						->where('language_code','=', $language_code )
 						->first();
+						
 		if( isset( $thumbnail->filename ) ){
 
 			$img_folder = 'design/template/'.$template_id.'/thumbnails/';
@@ -830,8 +907,10 @@ class EditorController extends Controller
 		// );
 
 		// return json_encode($response);
+		// print_r($request->all());
 		// exit;
-
+		
+		// get mercado pago relationship
 		if( Redis::exists('temp:template:relation:temp:'.$request->design_as_id) ){
 			$template_ids = Redis::get('temp:template:relation:temp:'.$request->design_as_id);
 		} else {
@@ -843,7 +922,8 @@ class EditorController extends Controller
 		if( isset($template_ids) ){
 
 			$template_thumbnails = DB::table('thumbnails')
-	    		->select(['template_id', 'filename', 'title', 'dimentions'])
+				->select(['template_id', 'filename', 'title', 'dimentions'])
+				->where('language_code', '=',$request->language_code)
 	    		->whereRAW('template_id IN(\''.$template_ids.'\')')
 				->get();
 
@@ -890,9 +970,30 @@ class EditorController extends Controller
 		return '{"err":1,"msg":"Not allowed"}';
 	}
 
-	function loadTemplate(Request $request){
+	function loadTemplate(Request $request) {
 
 		$template_ids = isset($request['id']) ? $request['id'] : null;
+		$language_code = isset($request['language_code']) ? $request['language_code'] : 'en';
+
+		// $templates = Redis::keys('template:*');
+		
+		// echo "<pre>";
+		// foreach ($templates as $original_template_key) {
+		// 	$template_key = str_replace('template:', null, $original_template_key);
+		// 	$template_key = str_replace(':jsondata', null, $template_key);
+		// 	$new_template_key = str_replace('template:','template:en:',$original_template_key);
+
+		// 	Redis::rename($original_template_key , $new_template_key);
+
+		// 	// print_r("\n");
+		// 	// print_r( $template_key );
+		// 	// print_r("\n");
+		// 	// print_r( str_replace('template:','template:en:',$original_template_key) );
+		// 	// print_r("\n");
+		// }
+
+		// exit;
+
 		// $array_final = [];
 		// $error = 1;
 		// $options = "";
@@ -927,7 +1028,7 @@ class EditorController extends Controller
 		// 	// exit;
 
 
-			$array_final = $this->getJSONTemplate($template_ids);
+			$array_final = $this->getJSONTemplate($template_ids,$language_code);
 			// $array_final = str_replace("\n", '\\n', $array_final);
 			// $array_final = preg_replace("/\"width\"/", '\\\"width\\\"', $array_final,1);
 			// $array_final = preg_replace("/\"height\"/", '\\\"height\\\"', $array_final,1);
@@ -1145,6 +1246,8 @@ class EditorController extends Controller
 
 		// if()
 		Redis::del('code:'.$request->purchase_code);
+		Redis::del('temp:template:relation:temp:'.$request->purchase_code);
+		Redis::del('template:temp:'.$request->purchase_code.':jsondata');
 
 		return response()->json([
 			'success' => true,
@@ -1181,18 +1284,18 @@ class EditorController extends Controller
 			// echo "exit0";
 			// exit;
 
-			$templates = Redis::get('code:'.$purchase_code);
+			$template_key = Redis::get('code:'.$purchase_code);
 			// echo "<pre>";
 			// print_r( $templates );
 			// exit;
 			
 			return redirect()->action(
-				'EditorController@home', ['templates' => $templates, 'purchase_code' => $purchase_code]
+				[EditorController::class,'customerTemplate'], [ 'template_key' => $template_key ]
 			);
 		}
 
 		return redirect()->action(
-			'EditorController@validateCode', ['code_validation' => 0, 'templates' => $templates]
+			[EditorController::class,'validateCode'], ['code_validation' => 0, 'templates' => $templates]
 		);
 
 	}

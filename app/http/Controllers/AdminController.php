@@ -140,7 +140,7 @@ class AdminController extends Controller
 
         // return back()->with('success', 'Nuevo codigo generado con exito');
         return redirect()->action(
-            'AdminController@manageCodes', []
+            [AdminController::class,'manageCodes'], []
         );
     }
     
@@ -199,19 +199,30 @@ class AdminController extends Controller
         Redis::del('code:'.$code);
         
         return redirect()->action(
-            'AdminController@manageCodes', []
+            [AdminController::class,'manageCodes'], []
         );
     }
 
-    function manageTemplates(){
+    function manageTemplates($country){
+        if( $country == 'mx' ){
+            $language_code = 'es';
+        } else {
+            $language_code = 'en';
+        }
 
         $tmp_template_keys = Redis::keys('product:production_ready:*');
+        
+        // echo "<pre>";
+        // print_r($tmp_template_keys);
+        // exit;
+
         $templates = [];
         foreach ($tmp_template_keys as $template) {
             $template_key = str_replace('product:production_ready:',null, $template);
             
             $thumb_info = DB::table('thumbnails')
                 ->where('template_id','=',$template_key)
+                // ->where('language_code','=',$language_code)
                 ->first();
 
             // print_r($thumb_info->filename);
@@ -224,7 +235,8 @@ class AdminController extends Controller
             $product_info['thumbnail'] = asset( 'design/template/'. $template_key.'/thumbnails/'.$thumb_info->filename);
             $product_info['title'] = $thumb_info->title;
             $product_info['dimentions'] = $thumb_info->dimentions;
-            $product_info['mercadopago'] = Redis::get('wayak:mercadopago:template:modelo:'.$template_key);
+            $product_info['mercadopago'] = ( Redis::exists('wayak:mercadopago:template:modelo:'.$template_key) ) ? Redis::get('wayak:mercadopago:template:modelo:'.$template_key) : 0;
+            $product_info['translation_ready'] = ( Redis::exists('template:'.$language_code.':'.$template_key.':jsondata') ) ? true : false;
 
             $templates[] = $product_info;
         }
@@ -234,7 +246,9 @@ class AdminController extends Controller
         // exit;
 
         return view('admin.templates', [
-            'templates' => $templates
+            'templates' => $templates,
+            'language_code' => $language_code,
+            'country' => $country
         ]);
     }
     
@@ -336,7 +350,7 @@ class AdminController extends Controller
         Redis::set('mercadopago:template:metadata:'.$template_key, json_encode( $template_info ) );
         
         return redirect()->action(
-            'AdminController@manageTemplates', []
+            [AdminController::class,'manageTemplates'], []
         );
     }
 
@@ -357,7 +371,7 @@ class AdminController extends Controller
         Redis::set('template:'.$template_key.':metadata', json_encode($request->all()));
         
         return redirect()->action(
-            'AdminController@manageTemplates', []
+            [AdminController::class,'manageTemplates'], []
         );
 
     }
@@ -380,11 +394,98 @@ class AdminController extends Controller
         
         Redis::set('wayak:etsy:description_template', $request->description);
         return redirect()->action(
-            'AdminController@editDescriptionTemplate', []
+            [AdminController::class,'editDescriptionTemplate'], []
         );
     }
 
     function mercadoLibreExcel(){
         return Excel::download(new MercadoLibreExport, 'mercado_libre.xlsx');
     }
+
+    function translateTemplate(Request $request){
+        if( $request->template_key && $request->template_data ){
+            $translation_data = $request->template_data;
+            $language_from = $request->language_from;
+            $language_to = $request->language_to;
+            
+            
+            $template_obj = json_decode( Redis::get('template:'.$language_from.':'.$request->template_key.':jsondata') );
+            
+            // echo "<pre>";
+            // // print_r( $template_obj[1]->objects );
+            // print_r( $translation_data );
+            // exit;
+
+            // echo "<pre>";
+
+            $index_text = 0;
+            for ($i=0; $i <= sizeof( $translation_data ); $i++) { 
+                
+                if( $template_obj[1]->objects[$i]->type == 'textbox' ){
+                    
+                    // print_r( $template_obj[1]->objects[$i]->text );
+                    // print_r( "\n" );
+                    // print_r( "\n" );
+                    // exit;
+                    // print_r( $text_obj->text );
+                    $template_obj[1]->objects[$i]->text =  str_replace('- * -', "\n", $translation_data[$index_text]) ;
+                    $index_text++;
+                }
+
+            }
+
+            // echo "<pre>";
+            // print_r( $template_obj );
+            // exit;
+
+            Redis::set('template:'.$language_to.':'.$request->template_key.':jsondata', json_encode($template_obj) );
+
+
+        }
+    }
+    
+    function translateTemplateForm($template_key, $from, $to){
+        
+        $template_obj = json_decode( Redis::get('template:'.$from.':'.$template_key.':jsondata') );
+        
+        // echo "<pre>";
+        // print_r( $template_obj );
+        // exit;
+        
+        $template_text = '<ul id="template-content">';
+        $text_i = 0;
+
+        foreach($template_obj[1]->objects as $object ){
+            if( $object->type == 'textbox'){
+                // echo '<span>'.$object->text.'</span>';
+                // exit;
+                $text = $object->text;
+                $text = str_replace('  ','_',$object->text);
+                // $text = str_replace(' ','*',$object->text);
+                // $text = str_replace(' ','_',$object->text);
+                $text = strtolower($text);
+                
+                // $text = ucfirst($text);
+                // $text = ucwords(strtolower($text));
+                // $text = preg_replace('/(\s  )+/', '', $text);
+
+                $tmp = '<li lang="en" data-index="'.$text_i.'">'.$text.' </li>';
+                $template_text .= str_replace("\n", ', ', $tmp);
+                $text_i++;
+            }
+        }
+
+        $template_text .= '</ul>';
+        
+        // echo $template_key;
+        // echo $template_text;
+        // exit;
+        
+		return view('admin.translate_template', [
+            'template_key' => $template_key,
+            'template_text' => $template_text,
+            'from' => $from,
+            'to' => $to
+        ]);
+	}
 }

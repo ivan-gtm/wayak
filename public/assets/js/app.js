@@ -1843,10 +1843,10 @@ function updateDpatternsScale() {
 
 function setDemoOverlay() {
 	scale = $("#zoomperc").data("scaleValue");
-	var uri = appUrl + "assets/img/demo_overlay50.svg";
+	var uri = appUrl + "assets/img/demo_overlay.svg";
     
     fabric.Image.fromURL(uri, function(img) {
-        img.scaleToWidth(50 * scale);
+        img.scaleToWidth(80 * scale);
         img.angle = 315;
         img.top = 50 * scale;
         img.left = 20 * scale;
@@ -1857,7 +1857,7 @@ function setDemoOverlay() {
         var pattern = new fabric.Pattern({
             source: function() {
                 patternSourceCanvas.setDimensions({
-                    width: 80 * scale,
+                    width: 90 * scale,
                     height: 80 * scale
                 });
                 patternSourceCanvas.renderAll();
@@ -2572,8 +2572,12 @@ function updateTemplate(updateOriginal) {
                 $.ajax({
                     type: "POST",
                     url: url,
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                    },
                     data: {
                         _token: $('meta[name="csrf-token"]').attr('content'),
+                        language_code: language_code,
                         templateid: loadedtemplateid,
                         pngimageData: pngdataURL,
                         jsonData: jsonData,
@@ -2749,7 +2753,7 @@ function downloadImage() {
                     var canvasele = document.getElementById("outputcanvas")
                       , id = loadedtemplateid;
                     0 === loadedtemplateid && (id = "new");
-                    var filename = "templett_" + id + ".png"
+                    var filename = "wayak_" + id + ".png"
                       , img = canvasele.toDataURL({
                         format: "png",
                         quality: 1
@@ -3104,7 +3108,7 @@ function downloadImage3($options) {
       , $format = $options.format || "jpeg"
       , $zip = $options.zip || new JSZip;
     "jpg" === $format && ($format = "jpeg");
-    var filename = "templett_" + (i + 1) + "." + $format
+    var filename = "wayak_" + (i + 1) + "." + $format
       , id = loadedtemplateid;
     "jpeg" === $format && ($canvases[i].backgroundColor || $canvases[i].set({
         backgroundColor: "#ffffff"
@@ -3139,7 +3143,7 @@ function downloadImage3($options) {
         });
     else {
         0 === loadedtemplateid && (id = "new");
-        filename = "templett_" + id + ".zip";
+        filename = "wayak_" + id + ".zip";
         isMac && isSafari ? $zip.generateAsync({
             type: "base64"
         }).then(function(content) {
@@ -3173,7 +3177,7 @@ function downloadImage2($options) {
     "jpg" === $format && ($format = "jpeg");
     var id = loadedtemplateid;
     0 === loadedtemplateid && (id = "new");
-    var filename = "templett_" + id + "." + $format
+    var filename = "wayak_" + id + "." + $format
       , metrics = $("input[name=metric_units1]:checked").val()
       , multiplier = 1;
     ("jpeg" == $format || "png" == $format && "px" == metrics && !/geofilter/.test(template_type)) && (multiplier = 3.125);
@@ -3936,7 +3940,7 @@ function proceedPDF2(svg, $width, $height) {
         toggleHiddenStatusOfObjects();
         var id = loadedtemplateid;
         0 === loadedtemplateid && (id = "new");
-        var filename = "templett_" + id + ".pdf"
+        var filename = "wayak_" + id + ".pdf"
           , $fonts = "";
         for (var $family in fabric.fontPaths)
             fabric.fontPaths.hasOwnProperty($family) && ($fonts += "@font-face {font-family: '" + $family + "';src: url('" + fabric.fontPaths[$family] + "');font-style: normal;font-weight: normal;}");
@@ -4002,7 +4006,7 @@ function proceedPDF(jsonCanvasArray) {
     $("input#savecrop").is(":checked") && (savecrop = !0);
     var id = loadedtemplateid;
     0 === loadedtemplateid && (id = "new");
-    var filename = "templett_" + id + ".pdf"
+    var filename = "wayak_" + id + ".pdf"
       , $onecanvasperpage = $("#onecanvasperpage").is(":checked")
       , jsonData = JSON.stringify(jsonCanvasArray)
       , cwidth = document.getElementById("loadCanvasWid").value
@@ -4935,7 +4939,8 @@ function loadTemplate(templateid) {
             id: templateid,
             design_as_id: design_as_id,
             demo_as_id: demo_as_id,
-            demo_templates: demo_templates
+            demo_templates: demo_templates,
+            language_code: language_code
         },
         dataType: "json",
         success: function(data) {
@@ -6255,7 +6260,8 @@ function getTemplates2($offset, $tags) {
             tags: $tags,
             design_as_id: design_as_id,
             demo_as_id: demo_as_id,
-            demo_templates: demo_templates
+            demo_templates: demo_templates,
+            language_code: language_code
         }).done(function($answer) {
             "0" == $answer.err && $answer.data ? ($grid.isotope().append($answer.data).isotope("appended", $answer.data).isotope("layout"),
             $grid.imagesLoaded().always(function() {

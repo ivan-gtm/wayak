@@ -32,7 +32,10 @@
         <div class="row">
             @foreach ($product_result as $product )
                 <div class="col-3">
-                    <a href="/?templates={{ $product->Id }}&purchase_code=administrator">
+                    <a href="{{ route('admin.edit.template', [
+                            'language_code' => 'en',
+                            'template_key' => $product->Id
+                        ]) }}">
                         <img class="img-fluid" src="{{ $product->PreviewImage }}">
                     </a>
                 </div>

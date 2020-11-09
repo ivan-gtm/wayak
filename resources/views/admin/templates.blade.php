@@ -56,8 +56,7 @@
     </style>
   </head>
   <body>
-    
-    
+
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
@@ -73,16 +72,37 @@
                       <div class="col-12">
                         <p>{{ $product_info['key'] }}</p>
                       </div>
-                      <div class="col-6">
-                        <a href="/admin/create/code/{{ $product_info['key'] }}">GENERAR CODIGO</a>
+                      <div class="col-3">
+                        <a href="{{ route( 'admin.translate.template', [
+                          'template_key' => $product_info['key'],
+                          'from' => 'en',
+                          'to' => $language_code
+                        ] ) }}">TRANSLATE</a>
                       </div>
-                      <div class="col-6">
-                        <a href="/?templates={{ $product_info['key'] }}&purchase_code=administrator">EDITAR PLANTILLA</a>
+                      <div class="col-3">
+                        <a href="{{ route('code.create', $product_info['key'] ) }}">GENERAR CODIGO</a>
+                      </div>
+                      <div class="col-3">
+                        @if( $product_info['translation_ready'] )
+                          <a href="{{ route('admin.edit.template', [
+                              'language_code' => $language_code,
+                              'template_key' => $product_info['key']
+                          ]) }}">EDITAR PLANTILLA</a>
+                        @endif
+                      </div>
+                      <div class="col-3">
+                        @if( $product_info['mercadopago'] > 0 )
+                          <a href="{{ route('plantilla.demo', [
+                            'modelo_mercado_pago' => $product_info['mercadopago'],
+                            'country' => $country,
+                          ] ) }}">DEMO MP</a>
+                        @endif
                       </div>
                     </div>
                 </div>
             @endforeach
         </div>
+
     </div>
 
     <!-- Optional JavaScript; choose one of the two! -->

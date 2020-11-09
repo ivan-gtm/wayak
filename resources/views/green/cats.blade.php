@@ -17,7 +17,7 @@
         <div class="row">
             @foreach ($categories as $cat )
                 <div class="col-3 text-center">
-                    <a href="{{ action('greenController@getAllProducts') }}?category_id={{ $cat }}">
+                    <a href="{{ route('green.products', ['category_id' => $cat ] ) }}">
                         {{ $cat }}
                     </a>
                 </div>
