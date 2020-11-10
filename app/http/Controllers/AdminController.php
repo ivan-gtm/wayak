@@ -22,10 +22,15 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 use Barryvdh\DomPDF\Facade as PDF;
 use Image;
-// use Intervention\Image;
 
-use App\Exports\MercadoLibreExport;
-use Maatwebsite\Excel\Facades\Excel;
+// use Intervention\Image;
+use PhpOffice\PhpSpreadsheet\Helper\Sample;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+
+
+// use App\Exports\MercadoLibreExport;
+// use Maatwebsite\Excel\Facades\Excel;
 
 ini_set('memory_limit', -1);
 ini_set("max_execution_time", 0);   // no time-outs!
@@ -399,7 +404,116 @@ class AdminController extends Controller
     }
 
     function mercadoLibreExcel(){
-        return Excel::download(new MercadoLibreExport, 'mercado_libre.xlsx');
+        $helper = new Sample();
+        
+        if ($helper->isCli()) {
+            $helper->log('This example should only be run from a Web Browser' . PHP_EOL);
+            return;
+        }
+
+        // Create new Spreadsheet object
+        $spreadsheet = new Spreadsheet();
+                    
+        // Set document properties
+        $spreadsheet->getProperties()->setCreator('Maarten Balliauw')
+            ->setLastModifiedBy('Maarten Balliauw')
+            ->setTitle('Office 2007 XLSX Test Document')
+            ->setSubject('Office 2007 XLSX Test Document')
+            ->setDescription('Test document for Office 2007 XLSX, generated using PHP classes.')
+            ->setKeywords('office 2007 openxml php')
+            ->setCategory('Test result file');
+
+        $product_keys_metadata = Redis::keys('mercadopago:template:metadata*');
+
+        // echo "<pre>";
+        // print_r( Redis::keys('mercadopago:template:metadata*') );
+        // exit;
+        $row_number = 1;
+
+        foreach ($product_keys_metadata as $template_key) {
+            if( Redis::exists($template_key) ){
+                
+                $product_metadata = Redis::get($template_key);
+                $product_metadata = json_decode($product_metadata);
+                
+                // echo "<pre>";
+                // print_r($product_metadata);
+                // exit;
+                
+                
+    
+                // $description = $product_metadata->descripcion;
+                // $titulo = $product_metadata->titulo;
+                // $ocasion = $product_metadata->ocasion;
+                
+        
+                // Add some data
+                $spreadsheet->setActiveSheetIndex(0)
+                    ->setCellValue('A'.$row_number, $product_metadata->titulo)
+                    ->setCellValue('B'.$row_number, $product_metadata->codigo_universal)
+                    ->setCellValue('C'.$row_number, $product_metadata->imagenes)
+                    ->setCellValue('D'.$row_number, $product_metadata->sku)
+                    ->setCellValue('E'.$row_number, $product_metadata->cantidad)
+                    ->setCellValue('F'.$row_number, $product_metadata->precio)
+                    ->setCellValue('G'.$row_number, $product_metadata->moneda)
+                    ->setCellValue('H'.$row_number, $product_metadata->condicion)
+                    ->setCellValue('I'.$row_number, $product_metadata->descripcion)
+                    ->setCellValue('J'.$row_number, '')// **Link de YouTube
+                    ->setCellValue('K'.$row_number, $product_metadata->tipo_publicacion)
+                    ->setCellValue('L'.$row_number, $product_metadata->forma_envio)
+                    ->setCellValue('M'.$row_number, $product_metadata->costo_envio)
+                    ->setCellValue('N'.$row_number, $product_metadata->retiro_persona)
+                    ->setCellValue('O'.$row_number, $product_metadata->tipo_garantia)
+                    ->setCellValue('P'.$row_number, $product_metadata->tiempo_garantia)
+                    ->setCellValue('Q'.$row_number, $product_metadata->unidad_tiempo_garantia)
+                    ->setCellValue('R'.$row_number, '')// **Disponibilidad de stock [días] == XXXXX NO APLICA
+                    ->setCellValue('S'.$row_number, $product_metadata->ocasion)
+                    ->setCellValue('T'.$row_number, $product_metadata->marca)
+                    ->setCellValue('U'.$row_number, $product_metadata->modelo)
+                    ->setCellValue('V'.$row_number, '') // ** frabricante NO APLICA
+                    ->setCellValue('W'.$row_number, $product_metadata->formato)
+                    ->setCellValue('X'.$row_number, $product_metadata->material)
+                    ->setCellValue('Y'.$row_number, $product_metadata->largo)
+                    ->setCellValue('Z'.$row_number, $product_metadata->unidad_largo)
+                    ->setCellValue('AA'.$row_number, $product_metadata->ancho)
+                    ->setCellValue('AB'.$row_number, $product_metadata->unidad_ancho);
+        
+                // // Miscellaneous glyphs, UTF-8
+                // $spreadsheet->setActiveSheetIndex(0)
+                //     ->setCellValue('A4', 'Miscellaneous glyphs')
+                //     ->setCellValue('A5', 'éàèùâêîôûëïüÿäöüç');
+
+                $row_number++;
+            }
+        }
+
+        
+        // Rename worksheet
+        $spreadsheet->getActiveSheet()->setTitle('Simple');
+
+        // Set active sheet index to the first sheet, so Excel opens this as the first sheet
+        $spreadsheet->setActiveSheetIndex(0);
+
+        // Redirect output to a client’s web browser (Xlsx)
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="01simple.xlsx"');
+        header('Cache-Control: max-age=0');
+        // If you're serving to IE 9, then the following may be needed
+        header('Cache-Control: max-age=1');
+
+        // If you're serving to IE over SSL, then the following may be needed
+        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+        header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // always modified
+        header('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+        header('Pragma: public'); // HTTP/1.0
+
+        $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+        $writer->save('php://output');
+
+        // return redirect()->action(
+        //     [AdminController::class,'manageTemplates'], []
+        // );
+
     }
 
     function translateTemplate(Request $request){

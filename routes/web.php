@@ -49,7 +49,7 @@ Route::post('/admin/generate-code', [AdminController::class, 'generateCode'])->n
 Route::get('/admin/create-product/{template_key}', [AdminController::class, 'createProduct'])->name('admin.createTemplate');
 Route::post('/admin/create-product/{template_key}', [AdminController::class, 'createDBProduct']);
 
-Route::get('/admin/mercado-libre/export/', [AdminController::class, 'mercadoLibreExcel']);
+Route::get('/admin/mercado-libre/catalogo-excel', [AdminController::class, 'mercadoLibreExcel']);
 Route::post('/admin/mp/create-product/{template_key}', [AdminController::class, 'editMPProduct']);
 Route::get('/admin/mp/create-product/{template_key}', [AdminController::class, 'createMPProduct']);
 
