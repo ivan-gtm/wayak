@@ -1,11 +1,7 @@
 /node_modules
 /public/hot
 /public/storage
-/public/design
-/public/images
-/public/over
 /storage/*.key
-/storage/*
 /vendor
 .env
 .env.backup
@@ -14,9 +10,3 @@ Homestead.json
 Homestead.yaml
 npm-debug.log
 yarn-error.log
-package-lock.json
-composer.lock
-.DS_STORE
-/.cloud/elastic/*
-/.cloud/nodejs/*
-*.rdb
