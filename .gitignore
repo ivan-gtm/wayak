@@ -16,4 +16,4 @@ yarn-error.log
 /public/design/*
 /public/images/*
 /public/over/*
-.DS_STORE
+**/.DS_Store
