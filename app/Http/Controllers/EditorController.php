@@ -202,10 +202,11 @@ class EditorController extends Controller
 	function getJSONTemplate($template_id, $language_code) {
 		$template_key = 'template:'.$language_code.':'.$template_id.':jsondata';
 		// echo $template_key;
+		// echo "<pre>";
+		return str_replace('http:\/\/localhost:8001', url('/'), Redis::get($template_key) );
 		// exit;
 		//  Redis::get($template_key);
-		// return str_replace('http://localhost/design/','http://localhost:8000/design/', Redis::get($template_key) );
-		return Redis::get($template_key);
+		// return Redis::get($template_key);
 	}
 
 	function adminTemplateEditor($language_code, $template_key, Request $request){
