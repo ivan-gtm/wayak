@@ -16,7 +16,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-12 text-center">
-                <h1>TEMPLATES</h1>
+                <h1>GREEN TEMPLATES</h1>
             </div>
             @foreach ($product_result as $product )
                 <div class="col-3">

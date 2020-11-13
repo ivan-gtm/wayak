@@ -16,6 +16,7 @@ use App\Http\Controllers\CrelloController;
 // Route::get('/scrap-from-templett-missing-redis', [TemplettScrapperController::class, 'downloadMissingREDISTemplates']);
 
 // FRONTEND
+// https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes#UNI2
 Route::get('/', [EditorController::class, 'home']);
 Route::get('mx', [EditorController::class, 'home']);
 Route::get('{country}/demo/{modelo_mercado_pago}', [EditorController::class, 'demoTemplateEditor'])->name('plantilla.demo');
