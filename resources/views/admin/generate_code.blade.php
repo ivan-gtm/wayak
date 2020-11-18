@@ -25,11 +25,13 @@
                     </div>
                 @endif
 
-                <form method="post" action="{{ route('code.generate', ['id' => 1]) }}">
+                <form method="post" action="">
                     <!-- CROSS Site Request Forgery Protection -->
                     @csrf
-                    <button type="submit" class="btn btn-primary btn-lg btn-block">Generar Codigo</button>
                 </form>
+                <a class="btn btn-primary btn-lg btn-block" href="{{ route('admin.template.gallery', ['country' => $country]) }}">
+                    Generar Codigo
+                </a>
             </div>
         </div>
 
@@ -58,7 +60,7 @@
                             <h3 class="card-text text-center" style="font-size:15px">{{ $item['value'] }}</h3>
                             <img class="img-fluid" src="{{ $item['template_img'] }}">
                             <br>
-                            <a href="/admin/delete/code/{{ $item['code'] }}">Eliminar</a>
+                            <a href="{{ route('code.delete', [ 'country' => $country, 'code' => $item['code'] ]) }}">Eliminar</a>
                         </div>
                     </div>
                 </div>

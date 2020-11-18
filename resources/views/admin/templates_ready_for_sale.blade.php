@@ -81,11 +81,9 @@
                       </div>
                       <div class="col-3">
                         <a href="{{ route('code.create', [
-                          'country' => $country,
-                          'code' => $product_info['key']
-                        ] ) }}">
-                          GENERAR CODIGO
-                        </a>
+                            'country' => 'mx',
+                            'code' => $product_info['key']
+                        ] ) }}">GENERAR CODIGO</a>
                       </div>
                       <div class="col-3">
                         @if( $product_info['translation_ready'] )
@@ -96,9 +94,9 @@
                         @endif
                       </div>
                       <div class="col-3">
-                        @if( $product_info['mercadopago'] > 0 )
+                        @if( $product_info['mp_modelo'] > 0 )
                           <a href="{{ route('plantilla.demo', [
-                            'modelo_mercado_pago' => $product_info['mercadopago'],
+                            'modelo_mercado_pago' => $product_info['mp_modelo'],
                             'country' => $country,
                           ] ) }}">DEMO MP</a>
                         @endif

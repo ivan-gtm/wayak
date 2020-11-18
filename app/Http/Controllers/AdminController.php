@@ -116,7 +116,14 @@ class AdminController extends Controller
     }
 
     // function generateCode($template_key){
-    function createCode($template_key){
+    function createCode($country, $template_key){
+        // echo $country;
+        // exit;
+        if( $country == 'mx' ){
+            $language_code = 'es';
+        } else {
+            $language_code = 'en';
+        }
         
         // Create a template replica, for final user.
         
@@ -132,7 +139,7 @@ class AdminController extends Controller
         Redis::set('temp:template:relation:temp:'.$purchase_code, $original_template_key);
         Redis::expire('temp:template:relation:temp:'.$purchase_code, 2592000); // Codigo valido por 30 dias - 60*60*24*30 = 2592000
         
-        Redis::set('template:'.$temporal_customer_key.':jsondata' ,Redis::get('template:'.$original_template_key.':jsondata'));
+        Redis::set('template:'.$language_code.':'.$temporal_customer_key.':jsondata' ,Redis::get('template:'.$language_code.':'.$original_template_key.':jsondata'));
         Redis::expire('template:'.$temporal_customer_key.':jsondata', 2592000); // Codigo valido por 30 dias - 60*60*24*30 = 2592000
 		
         Redis::set('code:'.$purchase_code, $temporal_customer_key);
@@ -145,20 +152,29 @@ class AdminController extends Controller
 
         // return back()->with('success', 'Nuevo codigo generado con exito');
         return redirect()->action(
-            [AdminController::class,'manageCodes'], []
+            [AdminController::class,'manageCodes'], [
+                'country' => $country
+            ]
         );
     }
     
-    function manageCodes(){
-        $codes = Redis::keys('code:*');
+    function manageCodes($country){
+        // $codes = Redis::keys('*crello*');
         
-        // echo "<pre>";
-        // print_r($codes);
-        // exit;
+        // $templates_to_delete = Redis::keys('*crello*');
+        
+        // foreach ($templates_to_delete as $template_key) {
+            //     Redis::del( $template_key );
+            // }
+            
+            // echo "<pre>";
+            // print_r($templates_to_delete);
+            // exit;
+            
+            
+        $codes = Redis::keys('code:*');
         $ejemplo = [];
-
         $size_of_code = sizeof($codes);
-
         
         for ($i=0; $i < $size_of_code; $i++) { 
             $ejemplo[ $i ]['code'] = str_replace('code:', null ,$codes[$i]);
@@ -195,25 +211,32 @@ class AdminController extends Controller
         // exit;
 
 		return view('admin.generate_code', [
+            'country' => $country,
             'codes' => $ejemplo
         ]);
     }
     
-    function deleteCode($code){
-        // admin/delete/code/{code}
+    function deleteCode($country, $code){
+        
         Redis::del('code:'.$code);
         
         return redirect()->action(
-            [AdminController::class,'manageCodes'], []
+            [AdminController::class,'manageCodes'], ['country' => $country]
         );
     }
 
-    function manageTemplates($country){
+    function getCountryLanguage($country){
         if( $country == 'mx' ){
             $language_code = 'es';
         } else {
             $language_code = 'en';
         }
+
+        return $language_code;
+    }
+    function viewGallery($country){
+
+        $language_code = self::getCountryLanguage($country);
 
         $tmp_template_keys = Redis::keys('product:production_ready:*');
         
@@ -232,6 +255,7 @@ class AdminController extends Controller
 
             // print_r($thumb_info->filename);
             if($thumb_info == false){
+                echo "NO EXISTE ROW EN [thumbnails] PARA: <br>";
                 echo $template_key;
                 exit;
             }
@@ -333,10 +357,9 @@ class AdminController extends Controller
         $template_info = $request->all();
         
         $template_info['descripcion'] = str_replace('{{templateDemoUrl}}', url('mx/demo/'.$template_info['modelo'] ), $template_info['descripcion']);
-        $template_info['descripcion'] = str_replace('{{wayakCatalogUrl}}', url('mx/explorar' ), $template_info['descripcion']);
-        $template_info['descripcion'] = str_replace('{{estyStoreName}}', 'Estudio Jazmin', $template_info['descripcion']);
+        $template_info['descripcion'] = str_replace('{{wayakCatalogUrl}}', url('mx/plantillas' ), $template_info['descripcion']);
+        $template_info['descripcion'] = str_replace('{{estyStoreName}}', 'wayak.app', $template_info['descripcion']);
         $template_info['descripcion'] = str_replace('{{template_id}}', $template_info['modelo'], $template_info['descripcion']);
-
 
         // Redis::set
         // $template_info['descripcion']
@@ -355,8 +378,15 @@ class AdminController extends Controller
         Redis::set('mercadopago:template:metadata:'.$template_key, json_encode( $template_info ) );
         
         return redirect()->action(
-            [AdminController::class,'manageTemplates'], []
+            [AdminController::class,'manageTemplates'], [
+                'country' => 'mx'
+            ]
         );
+    }
+
+    function adminHome(){
+        return view('admin.home', [
+        ]);
     }
 
     function createDBProduct($template_key, Request $request){
@@ -522,51 +552,363 @@ class AdminController extends Controller
             $language_from = $request->language_from;
             $language_to = $request->language_to;
             
-            
             $template_obj = json_decode( Redis::get('template:'.$language_from.':'.$request->template_key.':jsondata') );
             
+
             // echo "<pre>";
-            // // print_r( $template_obj[1]->objects );
-            // print_r( $translation_data );
+            // print_r( $request->all() );
+            // print_r( $template_obj );
             // exit;
 
-            // echo "<pre>";
-
-            $index_text = 0;
+            
+            $phrase_index = 0;
             for ($i=0; $i <= sizeof( $translation_data ); $i++) { 
                 
                 if( $template_obj[1]->objects[$i]->type == 'textbox' ){
                     
-                    // print_r( $template_obj[1]->objects[$i]->text );
-                    // print_r( "\n" );
-                    // print_r( "\n" );
-                    // exit;
-                    // print_r( $text_obj->text );
-                    $template_obj[1]->objects[$i]->text =  str_replace('- * -', "\n", $translation_data[$index_text]) ;
-                    $index_text++;
+                    $template_obj[1]->objects[$i]->text =  str_replace(',', "\n", $translation_data[$phrase_index] ) ;
+                    $template_obj[1]->objects[$i]->text =  str_replace( 'u0021', "!", urldecode($template_obj[1]->objects[$i]->text));
+                    $phrase_index++;
                 }
 
             }
 
             // echo "<pre>";
             // print_r( $template_obj );
+            // // print_r( $language_to );
+            // exit;
+            
+            Redis::set('template:'.$language_to.':'.$request->template_key.':jsondata', json_encode($template_obj) );
+            
+            $original_thumb_data = DB::table('thumbnails')
+            ->where('template_id','=',$request->template_key)
+            ->first();
+
+            $destination_lang_template = DB::table('thumbnails')
+            ->where('template_id','=',$request->template_key)
+            ->where('language_code','=',$language_to)
+            ->count();
+
+            // print_r($destination_lang_template);
             // exit;
 
-            Redis::set('template:'.$language_to.':'.$request->template_key.':jsondata', json_encode($template_obj) );
+            if( $original_thumb_data && $destination_lang_template == 0 ){
+                DB::table('thumbnails')->insert([
+                    'id' => null,
+                    'template_id' => $request->template_key,
+                    'language_code' => $language_to,
+                    'title' => $original_thumb_data->title,
+                    'filename' => $original_thumb_data->filename,
+                    'tmp_original_url' => null,
+                    'dimentions' => $original_thumb_data->dimentions,
+                    'tmp_templates' => $request->template_key,
+                    'status' => 1
+                ]);
 
+            }
+            
+            // echo "<pre>";
+            // print_r( $original_thumb_data );
+            // exit;
+        
+            return response()->json($original_thumb_data);
+            
+        }
+    }
 
+    function saveTemplateTranslation( $template_info ){
+        $language_from = 'en';
+        $language_to = 'es';
+        
+        $template_key = str_replace('template:en:',null, $template_info['key']);
+        $template_key = str_replace(':jsondata',null, $template_key);
+
+        // echo $template_key;
+        // exit;
+
+        // $translations = Redis::keys('template:es:*:jsondata');
+        // foreach ($translations as $template_key) {
+        //     Redis::del($template_key);
+        // }
+        // exit;
+
+        if( $template_info['key'] && $template_info['template_text'] ){
+            // $template_key = ;
+            $template_obj = json_decode( Redis::get( $template_info['key'] ) );
+            $template_objects = sizeof( $template_obj[1]->objects );
+
+            // echo "<pre>";
+            // // print_r($template_info['template_text']);
+            // // print_r( $template_objects );
+            // // print_r( $template_obj );
+            // exit;
+
+            
+            $phrase_index = 0;
+            for ($i=0; $i < $template_objects; $i++) { 
+                
+                if( $template_obj[1]->objects[$i]->type == 'textbox' ){
+                    
+                    $template_obj[1]->objects[$i]->text =  str_replace(',', "\n", $template_info['template_text'][$phrase_index] ) ;
+                    $template_obj[1]->objects[$i]->text =  str_replace( 'u0021', "!", urldecode($template_obj[1]->objects[$i]->text));
+                    $phrase_index++;
+                }
+
+            }
+
+            // echo "<pre>";
+            // print_r( $template_obj );
+            // // print_r( $language_to );
+            // exit;
+            
+            $destination_template_key = str_replace(':'.$language_from.':', ':'.$language_to.':', $template_info['key']);
+            // print_r( $template_key );
+            // exit;
+
+            Redis::set($destination_template_key, json_encode($template_obj) );
+            
+            $original_thumb_data = DB::table('thumbnails')
+                ->where('template_id','=',$template_key)
+                ->where('language_code','=',$language_from)
+                ->first();
+
+            $destination_lang_template = DB::table('thumbnails')
+                ->where('template_id','=',$template_key)
+                ->where('language_code','=',$language_to)
+                ->count();
+
+            // print_r( $template_info['key'] );
+            // print_r($template_key);
+            // print_r($original_thumb_data);
+            // print_r($destination_lang_template);
+            // exit;
+
+            if( $original_thumb_data && $destination_lang_template == 0 ){
+                DB::table('thumbnails')->insert([
+                    'id' => null,
+                    'template_id' => $template_key,
+                    'language_code' => $language_to,
+                    'title' => $original_thumb_data->title,
+                    'filename' => $original_thumb_data->filename,
+                    'tmp_original_url' => null,
+                    'dimentions' => $original_thumb_data->dimentions,
+                    'tmp_templates' => $template_key,
+                    'status' => 1
+                ]);
+            }
+            
+            // echo "<pre>";
+            // print_r( $original_thumb_data );
+            // exit;
+        
+            return $original_thumb_data;
+            
         }
     }
     
-    function translateTemplateForm($template_key, $from, $to){
+    function templatesReadyForSale(){
         
-        $template_obj = json_decode( Redis::get('template:'.$from.':'.$template_key.':jsondata') );
+        // Get all templates already formated
+        $formated_templates = Redis::keys('product:production_ready:*');
+        $formated_templates_total = sizeof($formated_templates);
+        $arr_ready_for_sale = [];
+        
+        for ($i=0; $i < $formated_templates_total; $i++) { 
+            $template_key = str_replace('product:production_ready:', null, $formated_templates[$i]);
+            
+            $template_info['key'] = $template_key;
+            // Template elements has been formated
+            $template_info['format_ready'] = Redis::exists('product:production_ready:'.$template_key);
+            $template_info['translation_ready'] = Redis::exists('template:es:'.$template_key.':jsondata');
+            // Has metadata for mercado pago product description
+            $template_info['mp_metadata_ready'] = Redis::exists('mercadopago:template:metadata:'.$template_key);
+            $template_info['mp_modelo'] = Redis::exists('wayak:mercadopago:template:modelo:'.$template_key);
+
+            if ( $template_info['format_ready']
+                && $template_info['translation_ready']
+                && $template_info['mp_metadata_ready']
+                && $template_info['mp_modelo']){
+                
+                $thumb_info = DB::table('thumbnails')
+                ->where('template_id','=', $template_key )
+                ->first();
+
+                if($thumb_info){
+                    $template_info['thumbnail']  = asset( 'design/template/'. $template_key.'/thumbnails/'.$thumb_info->filename);
+                } else {
+                    $template_info['thumbnail']  = null;
+                }
+                
+                $arr_ready_for_sale[] = $template_info;
+            }
+        }
         
         // echo "<pre>";
+        // print_r($arr_ready_for_sale);
+        // exit;
+
+        return view('admin.templates_ready_for_sale', [
+            'templates' => $arr_ready_for_sale,
+            'language_code' => 'es',
+            'country' => 'mx'
+        ]);
+        
+    }
+    
+    function getFormatReadyTemplates(){
+        
+        // Get all templates already formated
+        $formated_templates = Redis::keys('product:production_ready:*');
+        $formated_templates_total = sizeof($formated_templates);
+        $arr_ready_for_sale = [];
+        
+        for ($i=0; $i < $formated_templates_total; $i++) { 
+            $template_key = str_replace('product:production_ready:', null, $formated_templates[$i]);
+            
+            $template_info['key'] = $template_key;
+            // Template elements has been formated
+            $template_info['format_ready'] = Redis::exists('product:production_ready:'.$template_key);
+            $template_info['translation_ready'] = Redis::exists('template:es:'.$template_key.':jsondata');
+            // Has metadata for mercado pago product description
+            $template_info['mp_metadata_ready'] = Redis::exists('mercadopago:template:metadata:'.$template_key);
+            $template_info['mp_modelo'] = Redis::exists('wayak:mercadopago:template:modelo:'.$template_key);
+
+            if ( $template_info['format_ready'] ){
+                
+                $thumb_info = DB::table('thumbnails')
+                ->where('template_id','=', $template_key )
+                ->first();
+
+                if($thumb_info){
+                    $template_info['thumbnail']  = asset( 'design/template/'. $template_key.'/thumbnails/'.$thumb_info->filename);
+                } else {
+                    $template_info['thumbnail']  = null;
+                }
+                
+                $arr_ready_for_sale[] = $template_info;
+            }
+        }
+        
+        return view('admin.templates_ready_for_sale', [
+            'templates' => $arr_ready_for_sale,
+            'language_code' => 'es',
+            'country' => 'mx'
+        ]);
+        
+    }
+    
+    function getMissingTranslationTemplates(){
+        
+        // Get all templates already formated
+        $formated_templates = Redis::keys('product:production_ready:*');
+        $formated_templates_total = sizeof($formated_templates);
+        $arr_ready_for_sale = [];
+        
+        for ($i=0; $i < $formated_templates_total; $i++) { 
+            $template_key = str_replace('product:production_ready:', null, $formated_templates[$i]);
+            
+            $template_info['key'] = $template_key;
+            // Template elements has been formated
+            $template_info['format_ready'] = Redis::exists('product:production_ready:'.$template_key);
+            $template_info['translation_ready'] = Redis::exists('template:es:'.$template_key.':jsondata');
+            // Has metadata for mercado pago product description
+            $template_info['mp_metadata_ready'] = Redis::exists('mercadopago:template:metadata:'.$template_key);
+            $template_info['mp_modelo'] = Redis::exists('wayak:mercadopago:template:modelo:'.$template_key);
+
+            if ( $template_info['format_ready'] && $template_info['translation_ready'] ){
+                
+                $thumb_info = DB::table('thumbnails')
+                ->where('template_id','=', $template_key )
+                ->first();
+
+                if($thumb_info){
+                    $template_info['thumbnail']  = asset( 'design/template/'. $template_key.'/thumbnails/'.$thumb_info->filename);
+                } else {
+                    $template_info['thumbnail']  = null;
+                }
+                
+                $arr_ready_for_sale[] = $template_info;
+            }
+        }
+        
+        return view('admin.templates_ready_for_sale', [
+            'templates' => $arr_ready_for_sale,
+            'language_code' => 'es',
+            'country' => 'mx'
+        ]);
+        
+    }
+
+    function bulkTranslate($origin_lang, $destination_lang, Request $request){
+
+        // $translations = Redis::keys('template:es:*:jsondata');
+        // foreach ($translations as $template_key) {
+        //     Redis::del($template_key);
+        // }
+        // exit;
+
+        // Save translated Google data on database
+        if( isset($request->templates_text) ){
+            $templates_metadata = $request->templates_text;
+
+            foreach ($templates_metadata as $template_info) {
+                self::saveTemplateTranslation( $template_info );
+            }
+        }
+
+        // echo "<pre>";
+        // print_r( $request->all() );
+        // exit;
+
+        // echo "<pre>";
+        // print_r( Redis::keys('product:production_ready:*') );
+        // exit;
+        
+        // Get formated templates
+        $ready_for_sale = Redis::keys('product:production_ready:*');
+
+        $template_total = sizeof($ready_for_sale); // Array size of format ready templates
+        $template_text = '';
+        
+        $templates_per_page = 2;
+        $templates_on_page = 0;
+        for ($i=0; $i < $template_total; $i++) {
+            $template_key = str_replace('product:production_ready:', null, $ready_for_sale[$i]);
+            $source_template = 'template:'.$origin_lang.':'.$template_key.':jsondata';
+            $destination_template = 'template:'.$destination_lang.':'.$template_key.':jsondata';
+            
+            if( Redis::exists($source_template) && Redis::exists($destination_template) == false ){
+                $template_text .= self::getTemplateHTMLText($source_template);
+                $templates_on_page++;
+                if($templates_on_page == $templates_per_page) {
+                    break;
+                }
+            }
+        }
+
+        return view('admin.bulk_translate', [
+            'template_key' => $template_key,
+            'template_text' => $template_text,
+            'from' => $origin_lang,
+            'to' => $destination_lang
+        ]);
+    }
+
+    function getTemplateHTMLText($template_key){
+
+        $template_obj = json_decode( Redis::get($template_key) );
+
+        if(isset($template_obj[1]->objects) == false){
+            echo $template_key;
+            exit;
+        }
+        
+        // echo "<pre>";
+        // // print_r( $template_key );
         // print_r( $template_obj );
         // exit;
         
-        $template_text = '<ul id="template-content">';
+        $template_text = '<ul class="template-content" data-template-id="'.$template_key.'">';
         $text_i = 0;
 
         foreach($template_obj[1]->objects as $object ){
@@ -574,10 +916,19 @@ class AdminController extends Controller
                 // echo '<span>'.$object->text.'</span>';
                 // exit;
                 $text = $object->text;
-                $text = str_replace('  ','_',$object->text);
-                // $text = str_replace(' ','*',$object->text);
+                
+                $text = str_replace('sat.','saturday,',$text);
+                $text = str_replace('sun.','sunday,',$text);
+
+                if( strpos($text, '  ') ){
+                    // echo "Tiene doble espacio";
+                    // exit;
+                    $text = str_replace('  ','_',$text);
+                    $text = str_replace(' ',null,$text);
+                    $text = str_replace('_',' ',$text);
+                    // $text = strtolower($text);
+                }
                 // $text = str_replace(' ','_',$object->text);
-                $text = strtolower($text);
                 
                 // $text = ucfirst($text);
                 // $text = ucwords(strtolower($text));
@@ -590,6 +941,13 @@ class AdminController extends Controller
         }
 
         $template_text .= '</ul>';
+
+        return $template_text;
+    }
+    
+    function translateTemplateForm($template_key, $from, $to){
+        
+        $template_text = self::getTemplateHTMLText($template_key);
         
         // echo $template_key;
         // echo $template_text;

@@ -119,11 +119,21 @@ class EditorController extends Controller
 		]);
 	}
 	
-	function customerTemplate($template_key) {
+	function customerTemplate($country,$template_key) {
 		$purchase_code = str_replace('temp:',null, $template_key);
 		// echo $purchase_code;
 		// echo Redis::get('code:'.$purchase_code);
 		// exit;
+		
+		// echo "<pre>";
+		// print_r($country);
+		// exit;
+		if($country == 'mx'){
+			$language_code = 'es';
+		} else {
+			$language_code = 'en';
+		}
+
 
 		if( Redis::exists('code:'.$purchase_code) ){
 			
@@ -135,6 +145,7 @@ class EditorController extends Controller
 			return view('editor',[ 
 				'templates' => $template_key, 
 				'purchase_code' => $purchase_code,
+				'language_code' => $language_code,
 				'demo_as_id' => $demo_as_id,
 				'user_role' => $user_role
 			]);
@@ -202,6 +213,7 @@ class EditorController extends Controller
 	function getJSONTemplate($template_id, $language_code) {
 		$template_key = 'template:'.$language_code.':'.$template_id.':jsondata';
 		// echo $template_key;
+		// exit;
 		// echo "<pre>";
 		return str_replace('http:\/\/localhost:8001', url('/'), Redis::get($template_key) );
 		// exit;
@@ -230,8 +242,11 @@ class EditorController extends Controller
 		
 	}
 	
-	function editPurchasedTemplate(Request $request){
-		
+	function editPurchasedTemplate($country, Request $request){
+		echo "<pre>";
+		print_r($country);
+		exit;
+
 		$purchase_code = $request['purchase_code'];
 		$templates = $request['templates'];
 
@@ -901,6 +916,10 @@ class EditorController extends Controller
 	}
 
     function getTemplateThumbnails(Request $request){
+		// echo "<pre>";
+		// print_r( $request->all() );
+		// exit;
+
 		// $template_ids = $request['demo_templates'];
 		// $response = array(
 		// 	'err' => 0,
@@ -918,6 +937,10 @@ class EditorController extends Controller
 			$template_ids = $request['demo_templates'];
 		}
 
+		// echo "<pre>";
+		// print_r( $template_ids );
+		// exit;
+
     	$thumbnails_html = '';
 
 		if( isset($template_ids) ){
@@ -930,7 +953,6 @@ class EditorController extends Controller
 
 	    	foreach($template_thumbnails as $thumbnail) {
 		    	$img_url = url('design/template/'.$thumbnail->template_id.'/thumbnails/'.$thumbnail->filename);
-
 		    	$thumbnails_html .= '<div class="col-xs-6 thumb" id="'.$request->demo_templates.'"><a class="thumbnail" data-target="'.$request->demo_templates.'"><span class="thumb-overlay"><h3>'.$thumbnail->title.'</h3></span><div class="expired-notice" style="display:none;">EXPIRED</div><img class="tempImage img-responsive" src="'.$img_url.'" alt="" style=""></a><div class="badge-container"><span class="badge dims">'.$thumbnail->dimentions.'</span><span class="badge tempId">ID: '.$request->demo_templates.'</span><i class="fa fa-trash-o deleteTemp" id="'.$request->demo_templates.'"></i></div></div>';
 		    }
 		}
@@ -1037,8 +1059,7 @@ class EditorController extends Controller
 			// $array_final = preg_replace("/\"cols\"/", '\\\"cols\\\"', $array_final,1);
 
 			// echo "<pre>";
-			// print_r($template);
-			// print_r( addslashes(json_encode($options)) );
+			// print_r($array_final);
 			// exit;
 
 			// $array_final =  str_replace('["{"','[{"', $array_final);
@@ -1291,7 +1312,10 @@ class EditorController extends Controller
 			// exit;
 			
 			return redirect()->action(
-				[EditorController::class,'customerTemplate'], [ 'template_key' => $template_key ]
+				[EditorController::class,'customerTemplate'], [ 
+					'country' => 'mx',
+					'template_key' => $template_key 
+				]
 			);
 		}
 
