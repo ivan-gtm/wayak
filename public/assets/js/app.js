@@ -2392,7 +2392,6 @@ function getTemplateThumbnail() {
     var initialZoom = firstcanvas.getZoom();
     var isEmptyBackground = false;
     
-    console.log("EJEMPLO");
     setZoom(350 / (96 * document.getElementById("loadCanvasWid").value));
     
     if(firstcanvas.backgroundColor == null || isEmptyBackground == false){
@@ -2400,15 +2399,22 @@ function getTemplateThumbnail() {
             backgroundColor: "#ffffff"
         });
     }
-
+    
     if(template_type != "geofilter2"){
         removeGeofilterOverlay();
     }
-
+    
     var dataURL = firstcanvas.toDataURL({
         format: "jpeg",
-        quality: .7
+        quality: 0.7
     });
+    
+    console.warn("PUTO DEBUGGG");
+    
+    return 1;
+
+    
+
 
     if("geofilter2" == template_type){
         setGeofilterOverlay();
@@ -2546,71 +2552,85 @@ function getTemplateJson() {
         }
     return JSON.stringify(jsonCanvasArray).replace(/"backgroundImage":{.*?}/gi, '"backgroundImage":""')
 }
+
 function updateTemplate(updateOriginal) {
-    return DEBUG && console.log("updateTemplate"),
-    new Promise(function(resolve, reject) {
-        if (stopProcess)
+    if (DEBUG) {
+        console.log("updateTemplate");
+    }
+    
+    return new Promise(function(resolve, reject) {
+        if (stopProcess){
             reject();
-        else {
+        } else {
+
             var updateOriginal = updateOriginal || 0;
-            if (s_history = !1,
-            totalsvgs == convertedsvgs && 0 != loadedtemplateid) {
-                isupdatetemplate = !1;
+            s_history = false;
+            
+            if ( totalsvgs == convertedsvgs && loadedtemplateid != 0 ) {
+                isupdatetemplate = false;
                 var jsonData = getTemplateJson();
-                if (!IsJsonString(jsonData))
+                
+                if (IsJsonString(jsonData) == false){
+                    
                     return $.toast({
                         text: "An error occurred while saving the template",
                         icon: "error",
                         loader: !1,
                         position: "top-right"
-                    }),
-                    void reject();
-                var metrics = $("input[name=metric_units1]:checked").val()
-                  , pngdataURL = getTemplateThumbnail()
-                  , crc = crc32(jsonData)
-                  , url = appUrl + "editor/template/update";
-                $.ajax({
-                    type: "POST",
-                    url: url,
-                    headers: {
-                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
-                    },
-                    data: {
-                        _token: $('meta[name="csrf-token"]').attr('content'),
-                        language_code: language_code,
-                        templateid: loadedtemplateid,
-                        pngimageData: pngdataURL,
-                        jsonData: jsonData,
-                        metrics: metrics,
-                        crc: crc,
-                        design_as_id: design_as_id,
-                        type: template_type,
-                        geofilterBackground: geofilterBackground,
-                        instructionsId: instructionsId,
-                        updateOriginal: updateOriginal
-                    },
-                    success: function(answer) {
-                        answer = JSON.parse(answer),
-                        appSpinner.hide();
-                        var icon = answer.err ? "error" : "success"
-                          , text = answer.err ? answer.msg : "Template saved";
-                        $.toast({
-                            text: text,
-                            icon: icon,
-                            loader: !1,
-                            position: "top-right"
-                        }),
-                        answer.err || ("customer" == currentUserRole && getTemplates2(0, ""),
-                        $("#autosave").data("saved", "yes")),
-                        s_history = !0,
-                        resolve()
-                    }
-                })
+                    });
+
+                } else {
+
+                    // void reject(); // COMENTADO DG
+                    var metrics = $("input[name=metric_units1]:checked").val(),
+                        pngdataURL = getTemplateThumbnail(),
+                        crc = crc32(jsonData),
+                        url = appUrl + "editor/template/update";
+    
+                    $.ajax({
+                        type: "POST",
+                        url: url,
+                        headers: {
+                            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                        },
+                        data: {
+                            _token: $('meta[name="csrf-token"]').attr('content'),
+                            language_code: language_code,
+                            templateid: loadedtemplateid,
+                            pngimageData: pngdataURL,
+                            jsonData: jsonData,
+                            metrics: metrics,
+                            crc: crc,
+                            design_as_id: design_as_id,
+                            type: template_type,
+                            geofilterBackground: geofilterBackground,
+                            instructionsId: instructionsId,
+                            updateOriginal: updateOriginal
+                        },
+                        success: function(answer) {
+                            answer = JSON.parse(answer),
+                                appSpinner.hide();
+                            var icon = answer.err ? "error" : "success",
+                                text = answer.err ? answer.msg : "Template saved";
+                            $.toast({
+                                    text: text,
+                                    icon: icon,
+                                    loader: !1,
+                                    position: "top-right"
+                                }),
+                                answer.err || ("customer" == currentUserRole && getTemplates2(0, ""),
+                                    $("#autosave").data("saved", "yes")),
+                                s_history = !0,
+                                resolve()
+                        }
+                    });
+                }
+                    
             }
         }
-    }
-    )
+    })
 }
+
 function saveFromSelection(callback) {
     var actobj = canvas.getActiveObject()
       , actgroupobjs = canvas.getActiveObject();
@@ -4389,80 +4409,91 @@ function adjustIconPos(id) {
         $(".duplicatecanvas, .deletecanvas").css("left", position.left + (width + 30))
     }
 }
+
 function openTemplate(jsons) {
-    if (DEBUG && console.log("openTemplate()"),
-    savestatecount = 0,
-    s_history = !1,
-    !IsJsonString(jsons))
-        return appSpinner.hide(),
-        $.toast({
-            text: "Something went wrong",
-            icon: "error",
-            hideAfter: 2e3,
-            loader: !1,
-            position: "top-right"
-        }),
-        !1;
-    var jsonCanvasArray = JSON.parse(jsons);
-    if (jsonCanvasArray && !(jsonCanvasArray.length <= 0)) {
-        var wh = jsonCanvasArray[0];
-        wh = JSON.parse(wh),
-        document.getElementById("loadCanvasWid").value = parseFloat(wh.width / 96),
-        document.getElementById("loadCanvasHei").value = parseFloat(wh.height / 96),
-        document.getElementById("numOfcanvasrows").value = parseInt(wh.rows),
-        document.getElementById("numOfcanvascols").value = parseInt(wh.cols);
-        var rc = parseInt(wh.rows) * parseInt(wh.cols);
-        $("#canvaspages").html(""),
-        pageindex = 0,
-        canvasindex = 0,
-        canvasarray = [];
-        for (var i = 0; i < (jsonCanvasArray.length - 1) / rc; i++)
-            pageindex = i,
-            $("#canvaspages").append("<div class='page' id='page" + pageindex + "'></div>"),
-            addCanvasToPage(!1, i, jsonCanvasArray);
-        setCanvasSize(),
-        i = 1;
-        for (var families = []; jsonCanvasArray[i]; )
-            jsonCanvasArray[i].objects && jsonCanvasArray[i].objects.forEach(function(o, i) {
-                o.fontFamily && (dontLoadFonts.indexOf(o.fontFamily) < 0 && (families.push(o.fontFamily),
-                $("body").append('<div class="font-test" style="font-family: ' + o.fontFamily + '"></div>'),
-                dontLoadFonts.push(o.fontFamily)),
-                addFontToFabric(o.fontFamily)),
-                $.isEmptyObject(o.styles) || $.each(o.styles, function($i, $line) {
-                    $.each($line, function($i, $style) {
-                        void 0 !== $style.fontFamily && dontLoadFonts.indexOf($style.fontFamily) < 0 && families.push($style.fontFamily)
-                    })
-                })
-            }),
-            i++;
-        return 0 == families.length ? proceedOpenTemplate(jsonCanvasArray) : (families = _toConsumableArray(new Set(families)),
-        WebFontConfig = {
-            custom: {
-                families: families,
-                urls: [appUrl + "editor/get-css-fonts?templates=" + families]
-            },
-            active: function() {
-                DEBUG && console.log("all fonts are loaded"),
-                proceedOpenTemplate(jsonCanvasArray)
-            },
-            fontinactive: function(f) {
-                DEBUG && console.log("Font failed to load: " + f)
-            },
-            inactive: function() {
-                $.toast({
-                    text: "Fonts have failed to load. Please refresh the browser.",
-                    icon: "error",
-                    hideAfter: !1,
-                    loader: !1,
-                    position: "top-right"
-                }),
-                proceedOpenTemplate(jsonCanvasArray)
-            }
-        },
-        WebFont.load(WebFontConfig)),
-        !0
+	if(DEBUG) {
+        console.log("openTemplate()");
     }
+    
+    savestatecount = 0;
+    s_history = false;
+    
+	if( IsJsonString(jsons) == false){
+        appSpinner.hide();
+        return $.toast({
+                text: "Something went wrong",
+                icon: "error",
+                hideAfter: 2000,
+                loader: false,
+                position: "top-right"
+        });
+    }
+
+    var jsonCanvasArray = JSON.parse(jsons);
+    
+	if( jsonCanvasArray && jsonCanvasArray.length >= 0 ) {
+		var wh = jsonCanvasArray[0];
+		wh = JSON.parse(wh),
+			document.getElementById("loadCanvasWid").value = parseFloat(wh.width / 96),
+			document.getElementById("loadCanvasHei").value = parseFloat(wh.height / 96),
+			document.getElementById("numOfcanvasrows").value = parseInt(wh.rows),
+            document.getElementById("numOfcanvascols").value = parseInt(wh.cols);
+            
+		var rc = parseInt(wh.rows) * parseInt(wh.cols);
+        
+        $("#canvaspages").html(""),
+			pageindex = 0,
+			canvasindex = 0,
+            canvasarray = [];
+            
+		for (var i = 0; i < (jsonCanvasArray.length - 1) / rc; i++)
+			pageindex = i,
+			$("#canvaspages").append("<div class='page' id='page" + pageindex + "'></div>"),
+			addCanvasToPage(!1, i, jsonCanvasArray);
+		setCanvasSize(),
+			i = 1;
+		for (var families = []; jsonCanvasArray[i];)
+			jsonCanvasArray[i].objects && jsonCanvasArray[i].objects.forEach(function(o, i) {
+				o.fontFamily && (dontLoadFonts.indexOf(o.fontFamily) < 0 && (families.push(o.fontFamily),
+							$("body").append('<div class="font-test" style="font-family: ' + o.fontFamily + '"></div>'),
+							dontLoadFonts.push(o.fontFamily)),
+						addFontToFabric(o.fontFamily)),
+					$.isEmptyObject(o.styles) || $.each(o.styles, function($i, $line) {
+						$.each($line, function($i, $style) {
+							void 0 !== $style.fontFamily && dontLoadFonts.indexOf($style.fontFamily) < 0 && families.push($style.fontFamily)
+						})
+					})
+			}),
+			i++;
+		return 0 == families.length ? proceedOpenTemplate(jsonCanvasArray) : (families = _toConsumableArray(new Set(families)),
+				WebFontConfig = {
+					custom: {
+						families: families,
+						urls: [appUrl + "editor/get-css-fonts?templates=" + families]
+					},
+					active: function() {
+						DEBUG && console.log("all fonts are loaded"),
+							proceedOpenTemplate(jsonCanvasArray)
+					},
+					fontinactive: function(f) {
+						DEBUG && console.log("Font failed to load: " + f)
+					},
+					inactive: function() {
+						$.toast({
+								text: "Fonts have failed to load. Please refresh the browser.",
+								icon: "error",
+								hideAfter: !1,
+								loader: !1,
+								position: "top-right"
+							}),
+							proceedOpenTemplate(jsonCanvasArray)
+					}
+				},
+				WebFont.load(WebFontConfig)),
+			!0
+	}
 }
+
 function proceedOpenTemplate(jsonCanvasArray) {
     s_history = !1;
     for (var i = 0; i < canvasindex; i++)
@@ -4531,6 +4562,7 @@ function proceedOpenTemplate(jsonCanvasArray) {
     demo_as_id && getRelatedProducts(0),
     !0
 }
+
 function loadObjectOnCanvasFromJSON(lcanvas, json, svg_custom_data12, i) {
     DEBUG && console.log("loadObjectOnCanvasFromJSON() json", json),
     lcanvas.renderOnAddRemove = !1,
@@ -4714,6 +4746,7 @@ function loadObjectOnCanvasFromJSON(lcanvas, json, svg_custom_data12, i) {
     }),
     demo_as_id && setDemoOverlay()
 }
+
 function checkIfGroupsNeedsSVGLoading(lcanvas, i) {
     DEBUG && console.log("checkIfGroupsNeedsSVGLoading()"),
     $.each(lcanvas._objects, function(index, object) {
@@ -5012,14 +5045,14 @@ function loadTemplate(templateid) {
         type: "GET",
         dataType: "json"
     }).done(function(data) {
-        console.warn("PUTO+"+data.remaining);
+        // console.warn("PUTO+"+data.remaining);
         
         // data.success && data.remaining > 0 && showDownloadsRemaining(data.remaining)
         if(data.success && showDownloadsRemaining(data.remaining) ){
             $.toast({
                 text: data.msg,
                 icon: "error",
-                loader: !1,
+                loader: false,
                 position: "top-right",
                 hideAfter: 3e3
             });

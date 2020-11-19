@@ -66,11 +66,11 @@
 
         <script src="{{ asset('assets/js/jszip/jszip.min.js') }}"></script>
 
-        <!-- <script src="{{ asset('assets/js/fabricjs/2.4.6/fabric.min.js?rev=ed515e27701f638073403bd543') }}">
-        </script> -->
-        <script src="{{ asset('assets/js/fabricjs/fabric.js') }}"></script>
-        <script src="{{ asset('assets/js/fabricjs/centering_guidelines.js') }}"></script>
-        <script src="{{ asset('assets/js/fabricjs/aligning_guidelines.js') }}"></script>
+        <!-- <script src="{{ asset('assets/js/fabricjs/2.4.6/fabric.min.js?rev=ed515e27701f638073403bd543') }}"></script> -->
+        <script src="{{ asset('assets/js/fabricjs/4.2.0/fabric.min.js').'?rand='.rand(0,800) }}"></script>
+        <script src="{{ asset('assets/js/fabricjs/4.2.0/lib/centering_guidelines.js').'?rand='.rand(0,800) }}"></script>
+        <script src="{{ asset('assets/js/fabricjs/4.2.0/lib/aligning_guidelines.js').'?rand='.rand(0,800) }}"></script>
+        
         <script src="{{ asset('assets/js/bootstrap/bootstrap.min.js') }}" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 
         <script src="{{ asset('assets/js/toast/jquery.toast.min.js') }}" crossorigin="anonymous"></script>

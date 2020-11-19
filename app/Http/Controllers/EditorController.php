@@ -1052,6 +1052,18 @@ class EditorController extends Controller
 
 
 			$array_final = $this->getJSONTemplate($template_ids,$language_code);
+
+			// TRANSLATE FOR NEW FABRICJS VERSION
+			// $array_final = json_decode($array_final);
+			// unset( $array_final[1]->overlay );
+			// unset( $array_final[1]->cwidth );
+			// unset( $array_final[1]->cheight );
+			// $array_final = str_replace('"version":"2.7.0"', '"version":"4.2.0"', json_encode( $array_final ) );
+
+			// echo "<pre>";
+			// print_r($array_final);
+			// exit;
+
 			// $array_final = str_replace("\n", '\\n', $array_final);
 			// $array_final = preg_replace("/\"width\"/", '\\\"width\\\"', $array_final,1);
 			// $array_final = preg_replace("/\"height\"/", '\\\"height\\\"', $array_final,1);
