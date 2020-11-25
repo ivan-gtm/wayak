@@ -7,8 +7,7 @@ use Log;
 
 // use Sunra\PhpSimple\HtmlDomParser;
 use Illuminate\Support\Facades\DB;
-use KubAT\PhpSimple\HtmlDomParser;
-
+use Sunra\PhpSimple\HtmlDomParser;
 
 ini_set("max_execution_time", 0);   // no time-outs!
 ignore_user_abort(true);            // Continue downloading even after user closes the browser.
@@ -41,8 +40,11 @@ class EtsyScrapperController extends Controller
         
         $url_parts = parse_url($url->product_link_href);
         $final_url = $url_parts['scheme'].'://'.$url_parts['host'].$url_parts['path'];
+        
+        // echo "final_url >><br>";
         // echo $final_url."<br>";
         // exit;
+        
         // https://www.etsy.com/listing/643207673/llama-party-thank-you-card-self-editable
         // echo $url->product_link_href;
         // preg_match_all('/(http|https):\/\/www\.etsy\.com\/listing\/[0-9]+\/[a-z-]+/', $url->product_link_href, $etsy_links);
@@ -171,7 +173,9 @@ class EtsyScrapperController extends Controller
                       'templett_ids' => $templett_ids,
                       'status' => 0
               ]);
+
               $parse_status = 1; // Templett link found on description
+
             }
 
             DB::table('tmp_etsy_product')

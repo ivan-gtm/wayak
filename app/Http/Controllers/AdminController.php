@@ -478,6 +478,34 @@ class AdminController extends Controller
                 
         
                 // Add some data
+                // **Título
+                // **Código universal de producto == "No aplica"
+                // **Imágenes
+                // **SKU
+                // **Cantidad
+                // **Precio
+                // **Moneda == $
+                // **Condición == Nuevo
+                // **Descripción	
+                // **Link de YouTube
+                // **Tipo de publicación == Premium
+                // **Forma de envío == Mercado Envíos
+                // **Costo de envío  == Ofreces envío gratis
+                // **Retiro en persona == Acepto
+                // **Tipo de garantía
+                // **Tiempo de garantía == 3
+                // **Unidad de Tiempo de garantía == días
+                // **Disponibilidad de stock [días] == XXXXX NO APLICA
+                // **Ocasiones
+                // **Marca == Wayak
+                // **Modelo == XXX
+                // **Fabricante == Jazmin
+                // **Formato == Digital
+                // **Material == null
+                // **Largo
+                // **Unidad de Largo
+                // **Ancho
+                // **Unidad de Ancho
                 $spreadsheet->setActiveSheetIndex(0)
                     ->setCellValue('A'.$row_number, $product_metadata->titulo)
                     ->setCellValue('B'.$row_number, $product_metadata->codigo_universal)
@@ -959,5 +987,432 @@ class AdminController extends Controller
             'from' => $from,
             'to' => $to
         ]);
-	}
+    }
+    
+    function generateProductThumbnails() {
+        $mock_option = 17;
+        switch ($mock_option) {
+            case 1:
+                $img_url = self::generateMock1();
+                break;
+            case 2:
+                $img_url = self::generateMock2();
+                break;
+            
+            case 3:
+                $img_url = self::generateMock3();
+                break;
+            
+            case 4:
+                $img_url = self::generateMock4();
+                break;
+            
+            case 5:
+                $img_url = self::generateMock5();
+                break;
+            
+            case 6:
+                $img_url = self::generateMock6();
+                break;
+            
+            case 7:
+                $img_url = self::generateMock7();
+                break;
+            
+            case 8:
+                $img_url = self::generateMock8();
+                break;
+            
+            case 9:
+                $img_url = self::generateMock9();
+                break;
+            
+            case 10:
+                $img_url = self::generateMock10();
+                break;
+            
+            case 11:
+                $img_url = self::generateMock11();
+                break;
+            
+            case 12:
+                $img_url = self::generateMock12();
+                break;
+            
+            case 13:
+                $img_url = self::generateMock13();
+                break;
+            
+            case 14:
+                $img_url = self::generateMock14();
+                break;
+            
+            case 15:
+                $img_url = self::generateMock15();
+                break;
+            
+            case 16:
+                $img_url = self::generateMock16();
+                break;
+            
+            default:
+                $img_url = self::generateMock1();
+                break;
+        }
+        
+        echo '<img src="'.$img_url.'">';
+
+    }
+
+    function generateMock1(){
+        // echo "Hola Mundo";
+        $mockup_img_path = public_path('mockups/mockup_1.jpg');
+        
+        $overlay_img_path = public_path('mockups/0D3R5QGHeITnp6u_thumbnail.png');
+        
+        
+            
+        // create new Intervention Image
+        $mockup_img = Image::make($mockup_img_path);
+        
+        $overlay_img = Image::make($overlay_img_path);
+
+        $overlay_img->resize(null, 1270, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+
+        // echo $path;
+        
+        // paste another image
+        $mockup_img->insert($overlay_img, 'top-left', 445, 230);
+
+        $mockup_img->save( public_path('mockups/final_thumbs.jpg') );
+        
+        return asset('mockups/final_thumbs.jpg');
+        
+        // exit;
+
+
+        // // create a new Image instance for inserting
+        // $watermark = Image::make('public/watermark.png');
+        // $img->insert($watermark, 'center');
+
+        // // insert watermark at bottom-right corner with 10px offset
+        // $img->insert('public/watermark.png', 'bottom-right', 10, 10);
+    }
+
+    function generateMock2(){
+        $mockup_img_path = public_path('mockups/mockup_2.jpg');
+        $overlay_img_path = public_path('mockups/0D3R5QGHeITnp6u_thumbnail.png');
+        
+        // create new Intervention Image
+        $mockup_img = Image::make($mockup_img_path);
+        $overlay_img = Image::make($overlay_img_path);
+
+        $overlay_img->resize(null, 1044, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+
+        $overlay_img->rotate(0);
+        $mockup_img->insert($overlay_img, 'top-left', 411, 350);
+        $mockup_img->save( public_path('mockups/final_thumbs.jpg') );
+        
+        return asset('mockups/final_thumbs.jpg');
+    }
+
+    function generateMock3(){
+        $mockup_img_path = public_path('mockups/mockup_3.jpg');
+        $overlay_img_path = public_path('mockups/0D3R5QGHeITnp6u_thumbnail.png');
+        
+        // create new Intervention Image
+        $mockup_img = Image::make($mockup_img_path);
+        $overlay_img = Image::make($overlay_img_path);
+
+        $overlay_img->resize(null, 800, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+
+        $overlay_img->rotate(0);
+        $mockup_img->insert($overlay_img, 'top-left', 319, 280);
+        $mockup_img->save( public_path('mockups/final_thumbs.jpg') );
+        
+        return asset('mockups/final_thumbs.jpg');
+    }
+    
+    function generateMock4(){
+        $mockup_img_path = public_path('mockups/mockup_4.jpg');
+        $overlay_img_path = public_path('mockups/0D3R5QGHeITnp6u_thumbnail.png');
+        
+        // create new Intervention Image
+        $mockup_img = Image::make($mockup_img_path);
+        $overlay_img = Image::make($overlay_img_path);
+
+        $overlay_img->resize(null, 1100, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+
+        $overlay_img->rotate(0);
+        $mockup_img->insert($overlay_img, 'top-left', 360, 220);
+        $mockup_img->save( public_path('mockups/final_thumbs.jpg') );
+        
+        return asset('mockups/final_thumbs.jpg');
+    }
+
+    function generateMock5(){
+        $mockup_img_path = public_path('mockups/mockup_5.jpg');
+        $overlay_img_path = public_path('mockups/0D3R5QGHeITnp6u_thumbnail.png');
+        
+        $mockup_img = Image::make($mockup_img_path);
+        $overlay_img = Image::make($overlay_img_path);
+
+        $overlay_img->resize(null, 1690, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+
+        $mockup_img->insert($overlay_img, 'top-left', 542, 180);
+
+        $mockup_img->save( public_path('mockups/final_thumbs.jpg') );
+        
+        return asset('mockups/final_thumbs.jpg');
+    }
+    
+    function generateMock6(){
+        $mockup_img_path = public_path('mockups/mockup_6.png');
+        $overlay_img_path = public_path('mockups/0D3R5QGHeITnp6u_thumbnail.png');
+        
+        $mockup_img = Image::make($mockup_img_path);
+        $overlay_img = Image::make($overlay_img_path);
+        $overlay_2_img = Image::make($overlay_img_path);
+
+        $overlay_img->resize(null, 934, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+
+        $overlay_2_img->resize(null, 518, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+
+        $mockup_img->insert($overlay_img, 'top-left', 180, 440);
+        
+        $mockup_img->insert($overlay_2_img, 'top-left', 945, 640);
+
+        $mockup_img->save( public_path('mockups/final_thumbs.jpg') );
+        
+        return asset('mockups/final_thumbs.jpg');
+    }
+    
+    function generateMock7(){
+        $mockup_img_path = public_path('mockups/mockup_7.jpg');
+        $overlay_img_path = public_path('mockups/0D3R5QGHeITnp6u_thumbnail.png');
+        
+        $mockup_img = Image::make($mockup_img_path);
+        $overlay_img = Image::make($overlay_img_path);
+
+        $overlay_img->resize(null, 890, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+
+        $mockup_img->insert($overlay_img, 'top-left', 275, 200);
+
+        $mockup_img->save( public_path('mockups/final_thumbs.jpg') );
+        
+        return asset('mockups/final_thumbs.jpg');
+    }
+
+    function generateMock8(){
+        $mockup_img_path = public_path('mockups/mockup_8.png');
+        $overlay_img_path = public_path('mockups/0D3R5QGHeITnp6u_thumbnail.png');
+        $overlay_dedo = public_path('mockups/mockup_8_dedo.png');
+        
+        $mockup_img = Image::make($mockup_img_path);
+        $overlay_img = Image::make($overlay_img_path);
+        $overlay_dedo_img = Image::make($overlay_dedo);
+
+        $overlay_img->resize(null, 535, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+
+        $overlay_img->rotate(355);
+
+        $mockup_img->insert($overlay_img, 'top-left', 400, 380);
+        $mockup_img->insert($overlay_dedo_img, 'top-left', 300, 780);
+
+        $mockup_img->save( public_path('mockups/final_thumbs.jpg') );
+        
+        return asset('mockups/final_thumbs.jpg');
+    }
+
+    function generateMock9(){
+        $mockup_img_path = public_path('mockups/mockup_9.jpg');
+        $overlay_img_path = public_path('mockups/0D3R5QGHeITnp6u_thumbnail.png');
+        
+        
+        $mockup_img = Image::make($mockup_img_path);
+        $overlay_img = Image::make($overlay_img_path);
+        
+
+        $overlay_img->resize(null, 1158, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+
+        // $overlay_img->rotate(359);
+
+        $mockup_img->insert($overlay_img, 'top-left', 330, 310);
+
+        $mockup_img->save( public_path('mockups/final_thumbs.jpg') );
+        
+        return asset('mockups/final_thumbs.jpg');
+    }
+
+    function generateMock10(){
+        $mockup_img_path = public_path('mockups/mockup_10.jpg');
+        $overlay_img_path = public_path('mockups/0D3R5QGHeITnp6u_thumbnail.png');
+        
+        
+        $mockup_img = Image::make($mockup_img_path);
+        $overlay_img = Image::make($overlay_img_path);
+        
+
+        $overlay_img->resize(null, 1159, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+
+        // $overlay_img->rotate(359);
+
+        $mockup_img->insert($overlay_img, 'top-left', 330, 250);
+
+        $mockup_img->save( public_path('mockups/final_thumbs.jpg') );
+        
+        return asset('mockups/final_thumbs.jpg');
+    }
+
+    function generateMock11(){
+        $mockup_img_path = public_path('mockups/mockup_11.jpg');
+        $overlay_img_path = public_path('mockups/0D3R5QGHeITnp6u_thumbnail.png');
+        
+        
+        $mockup_img = Image::make($mockup_img_path);
+        $overlay_img = Image::make($overlay_img_path);
+        
+
+        $overlay_img->resize(null, 980, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+
+        // $overlay_img->rotate(359);
+
+        $mockup_img->insert($overlay_img, 'top-left', 500, 397);
+
+        $mockup_img->save( public_path('mockups/final_thumbs.jpg') );
+        
+        return asset('mockups/final_thumbs.jpg');
+    }
+
+    function generateMock12(){
+        $mockup_img_path = public_path('mockups/mockup_12.jpg');
+        $overlay_img_path = public_path('mockups/0D3R5QGHeITnp6u_thumbnail.png');
+        
+        
+        $mockup_img = Image::make($mockup_img_path);
+        $overlay_img = Image::make($overlay_img_path);
+        
+
+        $overlay_img->resize(null, 880, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+
+        // $overlay_img->rotate(359);
+
+        $mockup_img->insert($overlay_img, 'top-left', 300, 307);
+
+        $mockup_img->save( public_path('mockups/final_thumbs.jpg') );
+        
+        return asset('mockups/final_thumbs.jpg');
+    }
+
+    function generateMock13(){
+        $mockup_img_path = public_path('mockups/mockup_13.jpg');
+        $overlay_img_path = public_path('mockups/0D3R5QGHeITnp6u_thumbnail.png');
+        
+        
+        $mockup_img = Image::make($mockup_img_path);
+        $overlay_img = Image::make($overlay_img_path);
+        
+
+        $overlay_img->resize(null, 972, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+
+        // $overlay_img->rotate(359);
+
+        $mockup_img->insert($overlay_img, 'top-left', 302, 100);
+
+        $mockup_img->save( public_path('mockups/final_thumbs.jpg') );
+        
+        return asset('mockups/final_thumbs.jpg');
+    }
+
+    function generateMock14(){
+        $mockup_img_path = public_path('mockups/mockup_14.jpg');
+        $overlay_img_path = public_path('mockups/0D3R5QGHeITnp6u_thumbnail.png');
+        
+        
+        $mockup_img = Image::make($mockup_img_path);
+        $overlay_img = Image::make($overlay_img_path);
+        
+
+        $overlay_img->resize(null, 783, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+
+        // $overlay_img->rotate(359);
+
+        $mockup_img->insert($overlay_img, 'top-left', 332, 210);
+
+        $mockup_img->save( public_path('mockups/final_thumbs.jpg') );
+        
+        return asset('mockups/final_thumbs.jpg');
+    }
+
+    function generateMock15(){
+        $mockup_img_path = public_path('mockups/mockup_15.jpg');
+        $overlay_img_path = public_path('mockups/0D3R5QGHeITnp6u_thumbnail.png');
+        
+        
+        $mockup_img = Image::make($mockup_img_path);
+        $overlay_img = Image::make($overlay_img_path);
+        
+
+        $overlay_img->resize(null, 900, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+
+        $mockup_img->insert($overlay_img, 'top-left', 392, 350);
+
+        $mockup_img->save( public_path('mockups/final_thumbs.jpg') );
+        
+        return asset('mockups/final_thumbs.jpg');
+    }
+
+    function generateMock16(){
+        $mockup_img_path = public_path('mockups/mockup_16.jpg');
+        $overlay_img_path = public_path('mockups/0D3R5QGHeITnp6u_thumbnail.png');
+        
+        
+        $mockup_img = Image::make($mockup_img_path);
+        $overlay_img = Image::make($overlay_img_path);
+        
+
+        $overlay_img->resize(null, 830, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+
+        // $overlay_img->rotate(359);
+
+        $mockup_img->insert($overlay_img, 'top-left', 458, 455);
+        $mockup_img->encode('jpg', 10);
+        $mockup_img->save( public_path('mockups/final_thumbs.jpg') );
+        
+        return asset('mockups/final_thumbs.jpg');
+    }
 }

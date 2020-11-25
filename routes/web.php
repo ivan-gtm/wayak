@@ -5,9 +5,10 @@ use App\Http\Controllers\EditorController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\greenController;
 use App\Http\Controllers\CrelloController;
+use App\Http\Controllers\EtsyScrapperController;
 
+Route::get( '/scrapper/etsy', [ EtsyScrapperController::class, 'extractMetaData' ]);
 // Route::get('/scrapper/over', [overController::class, 'index']);
-// Route::get('/scrap-from-etsy', [EtsyScrapperController::class, 'extractMetaData']);
 // Route::get('/scrap-from-templett', [TemplettScrapperController::class, 'scrapURL']);
 // Route::get('/scrap-from-templett-missing-redis', [TemplettScrapperController::class, 'downloadMissingREDISTemplates']);
 
@@ -81,6 +82,8 @@ use App\Http\Controllers\CrelloController;
 
 Route::get('/admin/create-product/{template_key}', [AdminController::class, 'createProduct'])->name('admin.createTemplate');
 Route::post('/admin/create-product/{template_key}', [AdminController::class, 'createDBProduct']);
+
+Route::get('/admin/generate-thumbs', [AdminController::class, 'generateProductThumbnails']);
 
 // DESIGNER
     // Route::get('/open',  [EditorController::class,'open']);

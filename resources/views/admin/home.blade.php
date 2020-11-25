@@ -21,60 +21,91 @@
             <div class="col-12">
                 <h1>Plantillas</h1>
             </div>
-            <div class="col-6">
-                <div class="card">
-                    <div class="card-body">
-                        <a href="{{ route('green.products', [ 'category_id' => 201 ]) }}" class="card-link">
-                            Falta editar (pendiente ajustar formato)
-                        </a>
+            
+            <div class="col-12">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <a href="{{ route('green.products', [ 'category_id' => 201 ]) }}" class="card-link">
+                                        1 .- Corregir formato de plantillas ( Falta ajustar formato )
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <a href="{{ route( 'admin.ml.getFormatReady' ) }}" class="card-link">
+                                        2.- Plantillas editadas ( Formato OK )
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <a href="{{ route( 'admin.bulkTranslateText', ['from' => 'en', 'to' => 'es'] ) }}" class="card-link">
+                                        3.- Traducción masiva
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <a href="{{ route( 'admin.ml.getMissingTranslation' ) }}" class="card-link">
+                                        4.- Plantillas traducidas
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <a href="{{ route( 'admin.ml.templatesReadyForSale' ) }}" class="card-link">
+                                        5.- Falta editar metadatos ( Ficha del producto )
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <a href="{{ route( 'admin.ml.templatesReadyForSale' ) }}" class="card-link">
+                                        6.- Plantillas listas para la venta ( formato, lenguage, descripción del producto ).
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <a href="{{ route( 'admin.template.gallery', ['country' => 'mx'] ) }}" class="card-link">
+                                        7.- Generar imagenes "vistas previa de producto"
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <a href="{{ route( 'admin.template.gallery', ['country' => 'mx'] ) }}" class="card-link">
+                                        8.- Plantillas en venta ( Mercado Libre )
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="col-6">
-                <div class="card">
-                    <div class="card-body">
-                        <a href="{{ route( 'admin.ml.getFormatReady' ) }}" class="card-link">
-                            Editadas y con formato listo.
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-6">
-                <div class="card">
-                    <div class="card-body">
-                        <a href="{{ route( 'admin.ml.templatesReadyForSale' ) }}" class="card-link">
-                            Listas para la venta.
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-6">
-                <div class="card">
-                    <div class="card-body">
-                        <a href="{{ route( 'admin.ml.getMissingTranslation' ) }}" class="card-link">
-                            Traducción lista
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-6">
-                <div class="card">
-                    <div class="card-body">
-                        <a href="{{ route( 'admin.bulkTranslateText', ['from' => 'en', 'to' => 'es'] ) }}" class="card-link">
-                            Bulk Translate
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-6">
-                <div class="card">
-                    <div class="card-body">
-                        <a href="{{ route( 'admin.template.gallery', ['country' => 'mx'] ) }}" class="card-link">
-                            Galeria de plantillas MX
-                        </a>
-                    </div>
-                </div>
-            </div>
+            
+            
+            
+            
         </div>
         <div class="row">
             <div class="col-12">
