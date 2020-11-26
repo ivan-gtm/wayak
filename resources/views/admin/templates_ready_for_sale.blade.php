@@ -64,7 +64,7 @@
             </div>
             @foreach ($templates as $product_info )
                 <div class="col-3 box">
-                    <a href="/admin/mp/create-product/{{ $product_info['key'] }}">
+                    <a href="{{ route('admin.ml.editMLMetadata',['template_key' => $product_info['key']]) }}">
                         <img class="img-fluid" src="{{ $product_info['thumbnail'] }}">
                     </a>
                     <br>

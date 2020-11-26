@@ -54,13 +54,15 @@ Route::get( '/scrapper/etsy', [ EtsyScrapperController::class, 'extractMetaData'
 
 // MERCADO LIBRE
     Route::get('/admin/ml/catalogo-excel', [AdminController::class, 'mercadoLibreExcel'])->name('admin.ml.generateProductExcel');
-    Route::post('/admin/ml/products/missing-metadata', [AdminController::class, 'getMissingMetadataProducts'])->name('admin.ml.editMetadata');
-    Route::get('/admin/ml/product/edit-metadata/{template_key}', [AdminController::class, 'createMPProduct']);
+    // Route::get('/admin/ml/products/missing-metadata', [AdminController::class, 'getMissingMetadataTemplates'])->name('admin.ml.getMissingMetadataTemplates');
+    Route::get('/admin/ml/product/edit-metadata/{template_key}', [AdminController::class, 'editMLMetadata'])->name('admin.ml.editMLMetadata');
     Route::post('/admin/ml/product/edit-metadata/{template_key}', [AdminController::class, 'editMPProduct']);
     
     Route::get('/admin/ml/templates/ready-for-sale', [AdminController::class, 'templatesReadyForSale'])->name('admin.ml.templatesReadyForSale');
     Route::get('/admin/ml/templates/format-ready', [AdminController::class, 'getFormatReadyTemplates'])->name('admin.ml.getFormatReady');
+    Route::get('/admin/ml/templates/translation-ready', [AdminController::class, 'getTranslationReadyTemplates'])->name('admin.ml.getTranslationReady');
     Route::get('/admin/ml/templates/missing-translation', [AdminController::class, 'getMissingTranslationTemplates'])->name('admin.ml.getMissingTranslation');
+    Route::get('/admin/ml/templates/missing-metadata', [AdminController::class, 'getMissingMetadataTemplates'])->name('admin.ml.getMissingMetadataTemplates');
 
 // ETSY
     Route::get('/admin/etsy/templates/description', [AdminController::class, 'descriptionTemplate'])->name('etsy.editMetadata');
@@ -83,7 +85,7 @@ Route::get( '/scrapper/etsy', [ EtsyScrapperController::class, 'extractMetaData'
 Route::get('/admin/create-product/{template_key}', [AdminController::class, 'createProduct'])->name('admin.createTemplate');
 Route::post('/admin/create-product/{template_key}', [AdminController::class, 'createDBProduct']);
 
-Route::get('/admin/generate-thumbs', [AdminController::class, 'generateProductThumbnails']);
+Route::get('/admin/generate-thumbs', [AdminController::class, 'generateProductThumbnails'])->name('admin.generateProductThumbnails');
 
 // DESIGNER
     // Route::get('/open',  [EditorController::class,'open']);

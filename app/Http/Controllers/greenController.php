@@ -680,10 +680,10 @@ class greenController extends Controller
     
     function getAllProducts(Request $request){
         
-        echo "<pre>";
-        print_r( Redis::sMembers('green:invitation_cats') );
-        print_r( $request->category_id );
-        exit;
+        // echo "<pre>";
+        // print_r( Redis::sMembers('green:invitation_cats') );
+        // print_r( $request->category_id );
+        // exit;
         
         // 
         

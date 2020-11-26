@@ -234,6 +234,7 @@ class AdminController extends Controller
 
         return $language_code;
     }
+
     function viewGallery($country){
 
         $language_code = self::getCountryLanguage($country);
@@ -309,7 +310,7 @@ class AdminController extends Controller
         ]);
     }
     
-    function createMPProduct($template_key){
+    function editMLMetadata($template_key){
         $thumb_info = DB::table('thumbnails')
                 ->where('template_id','=',$template_key)
                 ->first();
@@ -317,7 +318,7 @@ class AdminController extends Controller
         $thumb_img_url = asset( 'design/template/'. $template_key.'/thumbnails/'.$thumb_info->filename);
         $modelo_id = self::generarModeloMercadoPago($template_key);
         $description = Redis::get('wayak:mercadopago:description_template');
-        $titulo = 'Invitacion Digital *CAMBIAR* Whats Face';
+        $titulo = 'Invitacion Digital _CAMBIAR_ Whats Face';
         $ocasion = '';
 
         // Redis::set('mercadopago:template:metadata:'.$template_key, json_encode($request->all()));
@@ -843,7 +844,7 @@ class AdminController extends Controller
             $template_info['mp_metadata_ready'] = Redis::exists('mercadopago:template:metadata:'.$template_key);
             $template_info['mp_modelo'] = Redis::exists('wayak:mercadopago:template:modelo:'.$template_key);
 
-            if ( $template_info['format_ready'] && $template_info['translation_ready'] ){
+            if ( $template_info['format_ready'] && $template_info['translation_ready'] == false ){
                 
                 $thumb_info = DB::table('thumbnails')
                 ->where('template_id','=', $template_key )
@@ -861,6 +862,94 @@ class AdminController extends Controller
         
         return view('admin.templates_ready_for_sale', [
             'templates' => $arr_ready_for_sale,
+            'language_code' => 'es',
+            'country' => 'mx'
+        ]);
+        
+    }
+    
+    function getTranslationReadyTemplates(){
+        
+        // Get all templates already formated
+        $formated_templates = Redis::keys('product:production_ready:*');
+        $formated_templates_total = sizeof($formated_templates);
+        $arr_ready_for_sale = [];
+        
+        for ($i=0; $i < $formated_templates_total; $i++) { 
+            $template_key = str_replace('product:production_ready:', null, $formated_templates[$i]);
+            
+            $template_info['key'] = $template_key;
+            // Template elements has been formated
+            $template_info['format_ready'] = Redis::exists('product:production_ready:'.$template_key);
+            $template_info['translation_ready'] = Redis::exists('template:es:'.$template_key.':jsondata');
+            // Has metadata for mercado pago product description
+            $template_info['mp_metadata_ready'] = Redis::exists('mercadopago:template:metadata:'.$template_key);
+            $template_info['mp_modelo'] = Redis::exists('wayak:mercadopago:template:modelo:'.$template_key);
+
+            if ( $template_info['format_ready'] && $template_info['translation_ready'] ){
+                
+                $thumb_info = DB::table('thumbnails')
+                ->where('template_id','=', $template_key )
+                ->first();
+
+                if($thumb_info){
+                    $template_info['thumbnail']  = asset( 'design/template/'. $template_key.'/thumbnails/'.$thumb_info->filename);
+                } else {
+                    $template_info['thumbnail']  = null;
+                }
+                
+                $arr_ready_for_sale[] = $template_info;
+            }
+        }
+
+        // echo "<pre>";
+        // print_r( $template_info );
+        // exit;
+        
+        return view('admin.templates_ready_for_sale', [
+            'templates' => $arr_ready_for_sale,
+            'language_code' => 'es',
+            'country' => 'mx'
+        ]);
+        
+    }
+    
+    function getMissingMetadataTemplates(){
+        
+        // Get all templates already formated
+        $formated_templates = Redis::keys('product:production_ready:*');
+        $formated_templates_total = sizeof($formated_templates);
+        $arr_ready_for_sale = [];
+        
+        for ($i=0; $i < $formated_templates_total; $i++) { 
+            $template_key = str_replace('product:production_ready:', null, $formated_templates[$i]);
+            
+            $template_info['key'] = $template_key;
+            // Template elements has been formated
+            $template_info['format_ready'] = Redis::exists('product:production_ready:'.$template_key);
+            $template_info['translation_ready'] = Redis::exists('template:es:'.$template_key.':jsondata');
+            // Has metadata for mercado pago product description
+            $template_info['mp_metadata_ready'] = Redis::exists('mercadopago:template:metadata:'.$template_key);
+            $template_info['mp_modelo'] = Redis::exists('wayak:mercadopago:template:modelo:'.$template_key);
+
+            if ( $template_info['format_ready'] && $template_info['translation_ready'] && $template_info['mp_metadata_ready'] == false){
+                
+                $thumb_info = DB::table('thumbnails')
+                ->where('template_id','=', $template_key )
+                ->first();
+
+                if($thumb_info){
+                    $template_info['thumbnail']  = asset( 'design/template/'. $template_key.'/thumbnails/'.$thumb_info->filename);
+                } else {
+                    $template_info['thumbnail']  = null;
+                }
+                
+                $arr_missing_metadata[] = $template_info;
+            }
+        }
+        
+        return view('admin.templates_ready_for_sale', [
+            'templates' => $arr_missing_metadata,
             'language_code' => 'es',
             'country' => 'mx'
         ]);
@@ -898,15 +987,22 @@ class AdminController extends Controller
         $template_total = sizeof($ready_for_sale); // Array size of format ready templates
         $template_text = '';
         
-        $templates_per_page = 2;
+        $templates_per_page = 10;
         $templates_on_page = 0;
         for ($i=0; $i < $template_total; $i++) {
             $template_key = str_replace('product:production_ready:', null, $ready_for_sale[$i]);
-            $source_template = 'template:'.$origin_lang.':'.$template_key.':jsondata';
-            $destination_template = 'template:'.$destination_lang.':'.$template_key.':jsondata';
+            $source_template_key = 'template:'.$origin_lang.':'.$template_key.':jsondata';
             
-            if( Redis::exists($source_template) && Redis::exists($destination_template) == false ){
-                $template_text .= self::getTemplateHTMLText($source_template);
+            $source_template_exists = Redis::exists( $source_template_key );
+            $template_translation_ready = Redis::exists('template:'.$destination_lang.':'.$template_key.':jsondata');
+            $template_format_ready = Redis::exists('product:production_ready:'.$template_key);
+            
+            
+            if( $source_template_exists
+                && $template_format_ready 
+                && $template_translation_ready == false 
+                ){
+                $template_text .= self::getTemplateHTMLText($source_template_key);
                 $templates_on_page++;
                 if($templates_on_page == $templates_per_page) {
                     break;
@@ -925,6 +1021,10 @@ class AdminController extends Controller
     function getTemplateHTMLText($template_key){
 
         $template_obj = json_decode( Redis::get($template_key) );
+
+        // echo "<pre>";
+        // print_r( $template_obj );
+        // exit;GET 
 
         if(isset($template_obj[1]->objects) == false){
             echo $template_key;
@@ -990,87 +1090,132 @@ class AdminController extends Controller
     }
     
     function generateProductThumbnails() {
-        $mock_option = 17;
-        switch ($mock_option) {
-            case 1:
-                $img_url = self::generateMock1();
-                break;
-            case 2:
-                $img_url = self::generateMock2();
-                break;
-            
-            case 3:
-                $img_url = self::generateMock3();
-                break;
-            
-            case 4:
-                $img_url = self::generateMock4();
-                break;
-            
-            case 5:
-                $img_url = self::generateMock5();
-                break;
-            
-            case 6:
-                $img_url = self::generateMock6();
-                break;
-            
-            case 7:
-                $img_url = self::generateMock7();
-                break;
-            
-            case 8:
-                $img_url = self::generateMock8();
-                break;
-            
-            case 9:
-                $img_url = self::generateMock9();
-                break;
-            
-            case 10:
-                $img_url = self::generateMock10();
-                break;
-            
-            case 11:
-                $img_url = self::generateMock11();
-                break;
-            
-            case 12:
-                $img_url = self::generateMock12();
-                break;
-            
-            case 13:
-                $img_url = self::generateMock13();
-                break;
-            
-            case 14:
-                $img_url = self::generateMock14();
-                break;
-            
-            case 15:
-                $img_url = self::generateMock15();
-                break;
-            
-            case 16:
-                $img_url = self::generateMock16();
-                break;
-            
-            default:
-                $img_url = self::generateMock1();
-                break;
-        }
+        // Get all templates already formated
+        $formated_templates = Redis::keys('product:production_ready:*');
+        $formated_templates_total = sizeof($formated_templates);
+        $arr_ready_for_sale = [];
         
-        echo '<img src="'.$img_url.'">';
+        for ($i=0; $i < $formated_templates_total; $i++) { 
+            $template_key = str_replace('product:production_ready:', null, $formated_templates[$i]);
+            
+            $template_info['key'] = $template_key;
+            // Template elements has been formated
+            $template_info['format_ready'] = Redis::exists('product:production_ready:'.$template_key);
+            $template_info['translation_ready'] = Redis::exists('template:es:'.$template_key.':jsondata');
+            // Has metadata for mercado pago product description
+            $template_info['mp_metadata_ready'] = Redis::exists('mercadopago:template:metadata:'.$template_key);
+            $template_info['mp_modelo'] = Redis::exists('wayak:mercadopago:template:modelo:'.$template_key);
+
+            if ( $template_info['format_ready'] 
+                && $template_info['translation_ready'] 
+                // && $template_info['mp_metadata_ready'] == false 
+                ){
+                
+                $thumb_info = DB::table('thumbnails')
+                ->where('template_id','=', $template_key )
+                ->where('language_code','=', 'es' )
+                ->first();
+
+                if($thumb_info){
+                    $template_info['thumbnail']  = public_path( 'design/template/'. $template_key.'/thumbnails/'.$thumb_info->filename);
+                } else {
+                    $template_info['thumbnail']  = null;
+                }
+                
+                // 10, 7, 6
+                self::processMockup($template_info, 10);
+                
+                $arr_missing_metadata[] = $template_info;
+            }
+        }
+
+        // echo "<pre>";
+        // print_r($arr_missing_metadata);
+        // exit;
 
     }
 
-    function generateMock1(){
-        // echo "Hola Mundo";
-        $mockup_img_path = public_path('mockups/mockup_1.jpg');
-        
-        $overlay_img_path = public_path('mockups/0D3R5QGHeITnp6u_thumbnail.png');
-        
-        
+    function processMockup($template_info, $mockup_variant){
+        $mock_option = $mockup_variant;
+
+        switch ($mock_option) {
+            case 1:
+                $img_url = self::generateMock1($template_info);
+                break;
+            case 2:
+                $img_url = self::generateMock2($template_info);
+                break;
+            
+            case 3:
+                $img_url = self::generateMock3($template_info);
+                break;
+            
+            case 4:
+                $img_url = self::generateMock4($template_info);
+                break;
+            
+            case 5:
+                $img_url = self::generateMock5($template_info);
+                break;
+            
+            case 6:
+                $img_url = self::generateMock6($template_info);
+                break;
+            
+            case 7:
+                $img_url = self::generateMock7($template_info);
+                break;
+            
+            case 8:
+                $img_url = self::generateMock8($template_info);
+                break;
+            
+            case 9:
+                $img_url = self::generateMock9($template_info);
+                break;
+            
+            case 10:
+                $img_url = self::generateMock10($template_info);
+                break;
+            
+            case 11:
+                $img_url = self::generateMock11($template_info);
+                break;
+            
+            case 12:
+                $img_url = self::generateMock12($template_info);
+                break;
+            
+            case 13:
+                $img_url = self::generateMock13($template_info);
+                break;
+            
+            case 14:
+                $img_url = self::generateMock14($template_info);
+                break;
+            
+            case 15:
+                $img_url = self::generateMock15($template_info);
+                break;
+            
+            case 16:
+                $img_url = self::generateMock16($template_info);
+                break;
+            
+            default:
+                $img_url = self::generateMock1($template_info);
+                break;
+        }
+
+        echo '<img src="'.$img_url.'">';
+        exit;
+
+    }
+
+    function generateMock1($product_info){
+        $mockup_img_path = public_path('mockups/mockup_1.jpg');    
+        $overlay_img_path = $product_info['thumbnail'];
+    
             
         // create new Intervention Image
         $mockup_img = Image::make($mockup_img_path);
@@ -1081,18 +1226,11 @@ class AdminController extends Controller
             $constraint->aspectRatio();
         });
 
-        // echo $path;
-        
-        // paste another image
         $mockup_img->insert($overlay_img, 'top-left', 445, 230);
-
         $mockup_img->save( public_path('mockups/final_thumbs.jpg') );
         
         return asset('mockups/final_thumbs.jpg');
         
-        // exit;
-
-
         // // create a new Image instance for inserting
         // $watermark = Image::make('public/watermark.png');
         // $img->insert($watermark, 'center');
@@ -1101,9 +1239,9 @@ class AdminController extends Controller
         // $img->insert('public/watermark.png', 'bottom-right', 10, 10);
     }
 
-    function generateMock2(){
+    function generateMock2($product_info){
         $mockup_img_path = public_path('mockups/mockup_2.jpg');
-        $overlay_img_path = public_path('mockups/0D3R5QGHeITnp6u_thumbnail.png');
+        $overlay_img_path = $product_info['thumbnail'];
         
         // create new Intervention Image
         $mockup_img = Image::make($mockup_img_path);
@@ -1120,9 +1258,9 @@ class AdminController extends Controller
         return asset('mockups/final_thumbs.jpg');
     }
 
-    function generateMock3(){
+    function generateMock3($product_info){
         $mockup_img_path = public_path('mockups/mockup_3.jpg');
-        $overlay_img_path = public_path('mockups/0D3R5QGHeITnp6u_thumbnail.png');
+        $overlay_img_path = $product_info['thumbnail'];
         
         // create new Intervention Image
         $mockup_img = Image::make($mockup_img_path);
@@ -1139,9 +1277,9 @@ class AdminController extends Controller
         return asset('mockups/final_thumbs.jpg');
     }
     
-    function generateMock4(){
+    function generateMock4($product_info){
         $mockup_img_path = public_path('mockups/mockup_4.jpg');
-        $overlay_img_path = public_path('mockups/0D3R5QGHeITnp6u_thumbnail.png');
+        $overlay_img_path = $product_info['thumbnail'];
         
         // create new Intervention Image
         $mockup_img = Image::make($mockup_img_path);
@@ -1158,9 +1296,9 @@ class AdminController extends Controller
         return asset('mockups/final_thumbs.jpg');
     }
 
-    function generateMock5(){
+    function generateMock5($product_info){
         $mockup_img_path = public_path('mockups/mockup_5.jpg');
-        $overlay_img_path = public_path('mockups/0D3R5QGHeITnp6u_thumbnail.png');
+        $overlay_img_path = $product_info['thumbnail'];
         
         $mockup_img = Image::make($mockup_img_path);
         $overlay_img = Image::make($overlay_img_path);
@@ -1176,15 +1314,15 @@ class AdminController extends Controller
         return asset('mockups/final_thumbs.jpg');
     }
     
-    function generateMock6(){
+    function generateMock6($product_info){
         $mockup_img_path = public_path('mockups/mockup_6.png');
-        $overlay_img_path = public_path('mockups/0D3R5QGHeITnp6u_thumbnail.png');
+        $overlay_img_path = $product_info['thumbnail'];
         
         $mockup_img = Image::make($mockup_img_path);
         $overlay_img = Image::make($overlay_img_path);
         $overlay_2_img = Image::make($overlay_img_path);
 
-        $overlay_img->resize(null, 934, function ($constraint) {
+        $overlay_img->resize(null, 999, function ($constraint) {
             $constraint->aspectRatio();
         });
 
@@ -1192,18 +1330,18 @@ class AdminController extends Controller
             $constraint->aspectRatio();
         });
 
-        $mockup_img->insert($overlay_img, 'top-left', 180, 440);
+        $mockup_img->insert($overlay_img, 'top-left', 122, 283);
         
-        $mockup_img->insert($overlay_2_img, 'top-left', 945, 640);
+        $mockup_img->insert($overlay_2_img, 'top-left', 985, 520);
 
         $mockup_img->save( public_path('mockups/final_thumbs.jpg') );
         
         return asset('mockups/final_thumbs.jpg');
     }
     
-    function generateMock7(){
-        $mockup_img_path = public_path('mockups/mockup_7.jpg');
-        $overlay_img_path = public_path('mockups/0D3R5QGHeITnp6u_thumbnail.png');
+    function generateMock7($product_info){
+        $mockup_img_path = public_path('mockups/mockup_7.png');
+        $overlay_img_path = $product_info['thumbnail'];
         
         $mockup_img = Image::make($mockup_img_path);
         $overlay_img = Image::make($overlay_img_path);
@@ -1219,9 +1357,9 @@ class AdminController extends Controller
         return asset('mockups/final_thumbs.jpg');
     }
 
-    function generateMock8(){
+    function generateMock8($product_info){
         $mockup_img_path = public_path('mockups/mockup_8.png');
-        $overlay_img_path = public_path('mockups/0D3R5QGHeITnp6u_thumbnail.png');
+        $overlay_img_path = $product_info['thumbnail'];
         $overlay_dedo = public_path('mockups/mockup_8_dedo.png');
         
         $mockup_img = Image::make($mockup_img_path);
@@ -1242,9 +1380,9 @@ class AdminController extends Controller
         return asset('mockups/final_thumbs.jpg');
     }
 
-    function generateMock9(){
+    function generateMock9($product_info){
         $mockup_img_path = public_path('mockups/mockup_9.jpg');
-        $overlay_img_path = public_path('mockups/0D3R5QGHeITnp6u_thumbnail.png');
+        $overlay_img_path = $product_info['thumbnail'];
         
         
         $mockup_img = Image::make($mockup_img_path);
@@ -1264,9 +1402,9 @@ class AdminController extends Controller
         return asset('mockups/final_thumbs.jpg');
     }
 
-    function generateMock10(){
-        $mockup_img_path = public_path('mockups/mockup_10.jpg');
-        $overlay_img_path = public_path('mockups/0D3R5QGHeITnp6u_thumbnail.png');
+    function generateMock10($product_info){
+        $mockup_img_path = public_path('mockups/mockup_10.png');
+        $overlay_img_path = $product_info['thumbnail'];
         
         
         $mockup_img = Image::make($mockup_img_path);
@@ -1286,9 +1424,9 @@ class AdminController extends Controller
         return asset('mockups/final_thumbs.jpg');
     }
 
-    function generateMock11(){
+    function generateMock11($product_info){
         $mockup_img_path = public_path('mockups/mockup_11.jpg');
-        $overlay_img_path = public_path('mockups/0D3R5QGHeITnp6u_thumbnail.png');
+        $overlay_img_path = $product_info['thumbnail'];
         
         
         $mockup_img = Image::make($mockup_img_path);
@@ -1308,9 +1446,9 @@ class AdminController extends Controller
         return asset('mockups/final_thumbs.jpg');
     }
 
-    function generateMock12(){
+    function generateMock12($product_info){
         $mockup_img_path = public_path('mockups/mockup_12.jpg');
-        $overlay_img_path = public_path('mockups/0D3R5QGHeITnp6u_thumbnail.png');
+        $overlay_img_path = $product_info['thumbnail'];
         
         
         $mockup_img = Image::make($mockup_img_path);
@@ -1330,9 +1468,9 @@ class AdminController extends Controller
         return asset('mockups/final_thumbs.jpg');
     }
 
-    function generateMock13(){
+    function generateMock13($product_info){
         $mockup_img_path = public_path('mockups/mockup_13.jpg');
-        $overlay_img_path = public_path('mockups/0D3R5QGHeITnp6u_thumbnail.png');
+        $overlay_img_path = $product_info['thumbnail'];
         
         
         $mockup_img = Image::make($mockup_img_path);
@@ -1352,9 +1490,9 @@ class AdminController extends Controller
         return asset('mockups/final_thumbs.jpg');
     }
 
-    function generateMock14(){
+    function generateMock14($product_info){
         $mockup_img_path = public_path('mockups/mockup_14.jpg');
-        $overlay_img_path = public_path('mockups/0D3R5QGHeITnp6u_thumbnail.png');
+        $overlay_img_path = $product_info['thumbnail'];
         
         
         $mockup_img = Image::make($mockup_img_path);
@@ -1374,9 +1512,9 @@ class AdminController extends Controller
         return asset('mockups/final_thumbs.jpg');
     }
 
-    function generateMock15(){
+    function generateMock15($product_info){
         $mockup_img_path = public_path('mockups/mockup_15.jpg');
-        $overlay_img_path = public_path('mockups/0D3R5QGHeITnp6u_thumbnail.png');
+        $overlay_img_path = $product_info['thumbnail'];
         
         
         $mockup_img = Image::make($mockup_img_path);
@@ -1394,9 +1532,9 @@ class AdminController extends Controller
         return asset('mockups/final_thumbs.jpg');
     }
 
-    function generateMock16(){
+    function generateMock16($product_info){
         $mockup_img_path = public_path('mockups/mockup_16.jpg');
-        $overlay_img_path = public_path('mockups/0D3R5QGHeITnp6u_thumbnail.png');
+        $overlay_img_path = $product_info['thumbnail'];
         
         
         $mockup_img = Image::make($mockup_img_path);

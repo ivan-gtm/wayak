@@ -78,6 +78,8 @@ use Illuminate\Http\UploadedFile;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Facades\App;
+
 use Barryvdh\DomPDF\Facade as PDF;
 // use Image;
 // use Intervention\Image;
@@ -212,13 +214,12 @@ class EditorController extends Controller
 
 	function getJSONTemplate($template_id, $language_code) {
 		$template_key = 'template:'.$language_code.':'.$template_id.':jsondata';
-		// echo $template_key;
-		// exit;
-		// echo "<pre>";
-		return str_replace('http:\/\/localhost:8001', url('/'), Redis::get($template_key) );
-		// exit;
-		//  Redis::get($template_key);
-		// return Redis::get($template_key);
+		
+		if( App::environment() == 'local' ){
+			return str_replace('https:\/\/wayak.app', 'http:\/\/localhost:8001', Redis::get($template_key) );
+		} elseif( App::environment() == 'local' ){
+			return str_replace('http:\/\/localhost:8001', url('/'), Redis::get($template_key) );
+		}
 	}
 
 	function adminTemplateEditor($language_code, $template_key, Request $request){

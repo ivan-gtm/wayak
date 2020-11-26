@@ -55,7 +55,7 @@
                         <div class="col-12">
                             <div class="card">
                                 <div class="card-body">
-                                    <a href="{{ route( 'admin.ml.getMissingTranslation' ) }}" class="card-link">
+                                    <a href="{{ route( 'admin.ml.getTranslationReady' ) }}" class="card-link">
                                         4.- Plantillas traducidas
                                     </a>
                                 </div>
@@ -84,7 +84,7 @@
                         <div class="col-12">
                             <div class="card">
                                 <div class="card-body">
-                                    <a href="{{ route( 'admin.template.gallery', ['country' => 'mx'] ) }}" class="card-link">
+                                    <a href="{{ route('admin.generateProductThumbnails') }}" class="card-link">
                                         7.- Generar imagenes "vistas previa de producto"
                                     </a>
                                 </div>
