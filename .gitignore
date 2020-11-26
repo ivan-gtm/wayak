@@ -17,3 +17,4 @@ yarn-error.log
 /public/images/*
 /public/over/*
 **/.DS_Store
+*.rdb
