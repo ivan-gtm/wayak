@@ -16,17 +16,38 @@ error_reporting(E_ALL);
 class CrelloController extends Controller
 {
     public function index(){
+        // $crello = Redis::keys('crello:template:*');
+        // foreach ($crello as $crello_key) {
+        //     Redis::del( $crello_key);
+        // }
+        // exit;
+        
+        // echo "parseAllSearchResults>>> \n";
         // $this->parseAllSearchResults();
         // exit;
+        
+        // $crello_search_result = Redis::keys('crello:search:results:url:*:page:*');
+        // $total_results = sizeof($crello_search_result);
+        // // echo $total_results;
+        // // exit;
 
-        // for ($page=0; $page <= 156; $page++) {
-        //     $search_results = $this->getLocalSearchResults($page);
+        // for ($page=0; $page < $total_results; $page++) {
+        //     $search_results = $this->getLocalSearchResults( $crello_search_result[$page] );
         //     // print_r("\n");
-        //     // print_r($search_results->results);
+        //     // print_r("<pre>");
+        //     // // print_r($search_results);
+        //     // print_r("PAGE>>".$page);
+        //     // print_r("<br>");
+        //     // print_r($search_results);
         //     // exit;
-        //     // print_r('---\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\---');
-        //     foreach($search_results->results as $template){
-        //         $this->getTemplate($template->id);
+            
+        //     print_r('\n<br>---\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\---');
+        //     if( isset($search_results->results) ){
+        //         foreach($search_results->results as $template){
+        //             // print_r($template->id);
+        //             // exit;
+        //             $this->getTemplate($template->id);
+        //         }
         //     }
         // }
         // exit;
@@ -454,68 +475,183 @@ class CrelloController extends Controller
 
     function getTemplate( $template_id ){
 
-        $curl = curl_init();
+        if( Redis::exists('crello:template:'.$template_id) == false 
+            OR (
+                Redis::exists('crello:template:'.$template_id) == true
+                && strlen( Redis::get('crello:template:'.$template_id) ) == 0
+             )
+        ){
 
-        curl_setopt_array($curl, array(
-        CURLOPT_URL => "https://crello.com/api/templates/$template_id",
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_ENCODING => "",
-        CURLOPT_MAXREDIRS => 10,
-        CURLOPT_TIMEOUT => 0,
-        CURLOPT_FOLLOWLOCATION => true,
-        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        CURLOPT_CUSTOMREQUEST => "GET",
-        CURLOPT_HTTPHEADER => array(
-            "authority: crello.com",
-            "user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36",
-            "accept: */*",
-            "sec-fetch-site: same-origin",
-            "sec-fetch-mode: cors",
-            "sec-fetch-dest: empty",
-            "referer: https://crello.com/user/projects/5f810cf90bff316d4bf8ab80/",
-            "accept-language: es"
-        ),
-        ));
+            $curl = curl_init();
 
-        $response = curl_exec($curl);
+            curl_setopt_array($curl, array(
+            CURLOPT_URL => "https://crello.com/api/templates/$template_id",
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "GET",
+            CURLOPT_HTTPHEADER => array(
+                "authority: crello.com",
+                "accept: application/json",
+                "user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.67 Safari/537.36",
+                "sec-fetch-site: same-origin",
+                "sec-fetch-mode: cors",
+                "sec-fetch-dest: empty",
+                "referer: https://crello.com/artboard/?template=5ea2a28b499b85dcc726d7f4",
+                "accept-language: es"
+            ),
+            ));
 
-        curl_close($curl);
+            $response = curl_exec($curl);
 
-        Redis::set('crello:template:'.$template_id, $response);
+            curl_close($curl);
+            
+            // echo $response;
+            // exit;
+    
+            Redis::set('crello:template:'.$template_id, $response);
+        }
+
     }
 
-    function getLocalSearchResults($page){
-        return json_decode(Redis::get('crello:search:results:page:'.$page));
+    function getLocalSearchResults($page_key){
+        // return json_decode(Redis::get('crello:search:results:page:'.$page));
+        return json_decode(Redis::get($page_key));
+    }
+
+    function getCategories(){
+        return [
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=BG&format=&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=SM&format=&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=EO&format=&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=HC&format=&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=MM&format=&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=&format=&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=AN&format=&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=SMA&format=&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=AN&format=Animated%20Logo&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=AN&format=TikTok%20Video&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=HC&format=Twitch%20Offline%20Banner&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=HC&format=Twitch%20Profile%20Banner&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=AN&format=Facebook%20Video%20cover&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=HC&format=Zoom%20Background&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=AN&format=Animated%20Post&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=BG&format=Title&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=EO&format=Business%20card&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=EO&format=Invitation&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=HC&format=Tumblr&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=MM&format=Logo&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=SM&format=Instagram%20Story&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=SMA&format=Skyscraper&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=SMA&format=Twitter&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=AN&format=Full%20HD%20video&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=BG&format=Image&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=HC&format=FB%20event%20cover&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=SM&format=Instagram&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=SM&format=Tumblr&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=EO&format=Postcard&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=AN&format=Instagram%20Video%20Story&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=SMA&format=Facebook%20AD&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=MM&format=Poster&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=SM&format=Pinterest&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=SM&format=Twitter&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=BG&format=Graphic&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=EO&format=Card&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=EO&format=Letterhead&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=EO&format=Menu&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=EO&format=Recipe%20Card&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=EO&format=Schedule%20Planner&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=HC&format=Album%20Cover&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=HC&format=Book%20Cover&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=HC&format=Email%20header&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=HC&format=LinkedIn%20Cover&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=HC&format=Twitter&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=HC&format=Youtube%20Thumbnail&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=HC&format=Youtube&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=MM&format=Certificate&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=MM&format=Coupon&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=MM&format=Flayer&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=MM&format=Gift%20Certificate&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=MM&format=Invoice&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=MM&format=Label&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=MM&format=Mind%20Map&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=MM&format=Mood%20Board&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=MM&format=Poster%20US&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=MM&format=Presentation%20Wide&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=MM&format=Presentation&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=MM&format=Resume&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=MM&format=Storyboard&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=MM&format=T-Shirt&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=SM&format=Facebook&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=SM&format=IGTV%20Cover&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=SM&format=Instagram%20Highlight%20Cover&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=SMA&format=Instagram%20AD&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=SMA&format=Large%20Rectangle&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=SMA&format=Leaderboard&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=SMA&format=Medium%20Rectangle&sort=-order%2C-acceptedAt',
+            'https://crello.com/api/v2/search/templates?limit={limit}&skip={skip}&templateType=regular%2Canimated&searchByKeyword=false&group=HC&format=Facebook%20cover&sort=-order%2C-acceptedAt'
+        ];
     }
 
     function parseAllSearchResults(){
 
-        $perpage = 60;
-        $limit = 60;
-        $skip = 0;
-        $total_pages = 10;
+        $cats = self::getCategories();
+        $size_cats = sizeof($cats);
 
-        for ($page=0; $page <= $total_pages; $page++) {
+        for ($i=0; $i < $size_cats; $i++) { 
+            
+            $url = $cats[$i];
 
-            // $search_results = $this->getSearchResult( $limit, $skip, $page);
-            $total_pages = ceil( 9360 / $perpage );
+            $perpage = 60;
+            $limit = 60;
+            $skip = 0;
+            $total_pages = 1;
+    
+            for ($page=0; $page < $total_pages; $page++) {
+    
+                // $search_results = $this->getSearchResult( $limit, $skip, $page);
 
-            print_r("\n");
-            print_r('---\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\---');
-            print_r("\nPARSING PAGE >>".$total_pages);
-            print_r("\nPAGE::".$page);
-            print_r("\nSKIP::".$skip);
-            print_r("\n\n---\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\---");
+                $url = str_replace('{limit}', $limit, $url);
+                $url = str_replace('{skip}', $skip, $url);
+                
+                $search_results = $this->getSearchResultByCategory( $limit, $skip, $i, $page, $url);
+                
+                if( isset($search_results->count) ){
+                    $total_pages = ceil( $search_results->count / $perpage );
+                }
 
-            $skip = $perpage * ($page+1);
+                // echo "<pre>";
+                // print_r( $total_pages );
+                // print_r( $search_results );
+                // exit;
+    
+                print_r("<pre>");
+                print_r("\n");
+                print_r('---\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\---');
+                print_r("\nPARSING PAGE >>".$page);
+                print_r("\nTOTAL PAGES >>".$total_pages);
+                print_r("\nPAGE::".$page);
+                print_r("\nLIMIT::".$limit);
+                print_r("\nSKIP::".$skip);
+                print_r("\n\n---\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\---");
+    
+                $skip = $perpage * ($page+1);
+            }
         }
+        // echo "<pre>";
+        // print_r($cats);
+        // exit;
+
     }
 
     public function getSearchResult( $limit, $skip, $page){
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-        CURLOPT_URL => "https://crello.com/api/v2/search/templates?limit=$limit&skip=$skip&templateType=regular%2Canimated&searchByKeyword=false&group=&format=&sort=-order%2C-acceptedAt",
+        CURLOPT_URL => "https://crello.com/api/v2/search/templates?limit=$limit&skip={skip}skip&templateType=regular%2Canimated&searchByKeyword=false&group=&format=&sort=-order%2C-acceptedAt",
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_ENCODING => "",
         CURLOPT_MAXREDIRS => 10,
@@ -541,8 +677,59 @@ class CrelloController extends Controller
         $response = curl_exec($curl);
 
         curl_close($curl);
+        
+        if( $response == "") {
+            echo "<pre>";
+            print_r( json_decode($response) );
+            exit;
+        }
 
         Redis::set('crello:search:results:page:'.$page, $response);
+        return json_decode($response);
+    }
+    
+    public function getSearchResultByCategory( $limit, $skip, $url_number,$page, $url){
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+        CURLOPT_URL => $url,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => "",
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => "GET",
+        CURLOPT_HTTPHEADER => array(
+            "authority: crello.com",
+            "accept: application/json",
+            "_ga: GA1.2.646585340.1602305896",
+            "traceparent: 00-fe9bc2fca2816674a017308c86638db3-6d54564a6424b0c2-01",
+            "user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36",
+            "sec-fetch-site: same-origin",
+            "sec-fetch-mode: cors",
+            "sec-fetch-dest: empty",
+            "referer: https://crello.com/es/templates/",
+            "accept-language: es",
+            "cookie: langKey=es; _gcl_au=1.1.355941730.1602305889; __cfduid=d4333dd71061fcef5f6c803659b2c1d6d1602305887; AMP_TOKEN=%24NOT_FOUND; _ga=GA1.2.646585340.1602305896; _gid=GA1.2.1503329357.1602305896; features=%7B%22split5%22%3A%22group2%22%7D; _hjid=e23ce939-1d4f-474d-9725-45210f49adfb; iwidth=1920; iheight=1920; _hjIncludedInPageviewSample=1; _hjAbsoluteSessionInProgress=1; _gat_UA-11492843-19=1; __cfduid=d8fd0c52d898439e78e0e287b6bd318281602309284"
+        ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+        
+        // echo "<pre>";
+        // print_r( json_decode($response) );
+        // exit;
+
+        if( $response == "") {
+            echo "<pre>";
+            print_r( json_decode($response) );
+            exit;
+        }
+
+        Redis::set('crello:search:results:url:'.$url_number.':page:'.$page, $response);
         return json_decode($response);
     }
 

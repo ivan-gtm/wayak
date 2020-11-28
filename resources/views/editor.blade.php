@@ -4964,8 +4964,7 @@
             var appUrl = '{{ url("") }}/';
         </script>
         <!-- build:app -->
-        <script src="{{ asset('assets/js/app.js?rev='.time()) }}">
-        </script>
+        <script src="{{ asset('assets/js/app.js?rev='.time()) }}"></script>
         <!-- endbuild -->
         <script type="text/javascript">
             // Wait for window load

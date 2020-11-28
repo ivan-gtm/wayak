@@ -1115,23 +1115,38 @@ class AdminController extends Controller
                 ->where('template_id','=', $template_key )
                 ->where('language_code','=', 'es' )
                 ->first();
+                
 
                 if($thumb_info){
                     $template_info['thumbnail']  = public_path( 'design/template/'. $template_key.'/thumbnails/'.$thumb_info->filename);
                 } else {
                     $template_info['thumbnail']  = null;
                 }
+
+                if (file_exists($template_info['thumbnail']) == false ) {
+                    echo "The file does not exist\n<br>";
+                    echo $product_info['thumbnail'];
+                    exit;
+                }
                 
-                // 10, 7, 6
-                self::processMockup($template_info, 10);
+                // echo "<pre>";
+                // print_r($mercadolibre_path);
+                // exit;
+                
+                self::processMockup($template_info,10);
+                self::processMockup($template_info,2);
+                self::processMockup($template_info,6);
+                // self::processMockup($template_info,18);
+                // 10, 2, 6, 18
+                exit;
                 
                 $arr_missing_metadata[] = $template_info;
             }
         }
 
-        // echo "<pre>";
-        // print_r($arr_missing_metadata);
-        // exit;
+        echo "<pre>";
+        print_r($arr_missing_metadata);
+        exit;
 
     }
 
@@ -1206,10 +1221,22 @@ class AdminController extends Controller
                 $img_url = self::generateMock1($template_info);
                 break;
         }
+    }
 
-        echo '<img src="'.$img_url.'">';
-        exit;
+    function createImagePreview(){
+        $img = \Image::make($decoded_image);
+        $img_path = 'design/template/'.$template_id.'/thumbnails/';
+        $path = public_path($img_path);
 
+        // print_r( $path );
+        // exit;
+
+        @mkdir($path, 0777, true);
+
+        // Store mid-size thumbnail
+        // $unique_id = Str::random(10);
+        $full_thumbnail_path = public_path($img_path.$rand_filename_id.'_thumbnail.jpg');
+        $img->save($full_thumbnail_path);
     }
 
     function generateMock1($product_info){
@@ -1240,22 +1267,30 @@ class AdminController extends Controller
     }
 
     function generateMock2($product_info){
-        $mockup_img_path = public_path('mockups/mockup_2.jpg');
+        $mockup_img_path = public_path('mockups/mockup_2.png');
         $overlay_img_path = $product_info['thumbnail'];
         
         // create new Intervention Image
         $mockup_img = Image::make($mockup_img_path);
         $overlay_img = Image::make($overlay_img_path);
 
-        $overlay_img->resize(null, 1044, function ($constraint) {
+        $overlay_img->resize(null, 999, function ($constraint) {
             $constraint->aspectRatio();
         });
 
         $overlay_img->rotate(0);
-        $mockup_img->insert($overlay_img, 'top-left', 411, 350);
-        $mockup_img->save( public_path('mockups/final_thumbs.jpg') );
+        $mockup_img->insert($overlay_img, 'top-left', 410, 357);
         
-        return asset('mockups/final_thumbs.jpg');
+        $mercadolibre_preview_path = public_path( 'product/preview-images/'. $product_info['key'] .'/');
+        $filename = 'preview_2_'.rand(111111,999999).'.jpg';
+        $preview_path = $mercadolibre_preview_path.$filename;
+        @mkdir($mercadolibre_preview_path, 0777, true);
+        $mockup_img->save( $preview_path );
+
+        // echo '<img src="'.asset( 'product/preview-images/'. $product_info['key'] .'/'.$filename ).'">';
+        // exit;
+
+        return $preview_path;
     }
 
     function generateMock3($product_info){
@@ -1331,12 +1366,14 @@ class AdminController extends Controller
         });
 
         $mockup_img->insert($overlay_img, 'top-left', 122, 283);
-        
         $mockup_img->insert($overlay_2_img, 'top-left', 985, 520);
 
-        $mockup_img->save( public_path('mockups/final_thumbs.jpg') );
-        
-        return asset('mockups/final_thumbs.jpg');
+        $mercadolibre_preview_path = public_path( 'product/preview-images/'. $product_info['key'] .'/');
+        $preview_path = $mercadolibre_preview_path.'preview_3_'.rand(111111,999999).'.jpg';
+        @mkdir($mercadolibre_preview_path, 0777, true);
+        $mockup_img->save( $preview_path );
+
+        return $preview_path;
     }
     
     function generateMock7($product_info){
@@ -1406,22 +1443,21 @@ class AdminController extends Controller
         $mockup_img_path = public_path('mockups/mockup_10.png');
         $overlay_img_path = $product_info['thumbnail'];
         
-        
         $mockup_img = Image::make($mockup_img_path);
         $overlay_img = Image::make($overlay_img_path);
         
-
-        $overlay_img->resize(null, 1159, function ($constraint) {
+        $overlay_img->resize(null, 1080, function ($constraint) {
             $constraint->aspectRatio();
         });
 
-        // $overlay_img->rotate(359);
+        $mockup_img->insert($overlay_img, 'top-left', 349, 303);
 
-        $mockup_img->insert($overlay_img, 'top-left', 330, 250);
+        $mercadolibre_preview_path = public_path( 'product/preview-images/'. $product_info['key'] .'/');
+        $preview_path = $mercadolibre_preview_path.'preview_1_'.rand(111111,999999).'.jpg';
+        @mkdir($mercadolibre_preview_path, 0777, true);
+        $mockup_img->save( $preview_path );
 
-        $mockup_img->save( public_path('mockups/final_thumbs.jpg') );
-        
-        return asset('mockups/final_thumbs.jpg');
+        return $preview_path;
     }
 
     function generateMock11($product_info){

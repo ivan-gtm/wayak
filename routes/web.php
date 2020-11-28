@@ -5,6 +5,8 @@ use App\Http\Controllers\EditorController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\greenController;
 use App\Http\Controllers\CrelloController;
+use App\Http\Controllers\DesygnerController;
+
 use App\Http\Controllers\EtsyScrapperController;
 
 Route::get( '/scrapper/etsy', [ EtsyScrapperController::class, 'extractMetaData' ]);
@@ -67,6 +69,9 @@ Route::get( '/scrapper/etsy', [ EtsyScrapperController::class, 'extractMetaData'
 // ETSY
     Route::get('/admin/etsy/templates/description', [AdminController::class, 'descriptionTemplate'])->name('etsy.editMetadata');
     Route::post('/admin/etsy/templates/description', [AdminController::class, 'editDescriptionTemplate']);
+
+// DESYGNER
+    Route::get('/admin/desygner/download-templates', [DesygnerController::class, 'index']);
 
 // CRELLO
     Route::get('/admin/crello/download-templates', [CrelloController::class, 'index']);

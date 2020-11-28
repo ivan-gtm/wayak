@@ -2392,8 +2392,9 @@ function getTemplateThumbnail() {
     var initialZoom = firstcanvas.getZoom();
     var isEmptyBackground = false;
     
-    console.log("EJEMPLO");
-    setZoom(350 / (96 * document.getElementById("loadCanvasWid").value));
+    DEBUG && console.log("Set template thumbnail size");
+
+    setZoom(1100 / (96 * document.getElementById("loadCanvasWid").value));
     
     if(firstcanvas.backgroundColor == null || isEmptyBackground == false){
         firstcanvas.set({

@@ -18,4 +18,5 @@ yarn-error.log
 /public/design/*
 /public/images/*
 /public/over/*
+/public/product/preview-images/*
 **/.DS_Store
