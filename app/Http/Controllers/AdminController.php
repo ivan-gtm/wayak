@@ -890,6 +890,7 @@ class AdminController extends Controller
                 
                 $thumb_info = DB::table('thumbnails')
                 ->where('template_id','=', $template_key )
+                ->where('language_code','=', 'es' )
                 ->first();
 
                 if($thumb_info){
@@ -906,7 +907,7 @@ class AdminController extends Controller
         // print_r( $template_info );
         // exit;
         
-        return view('admin.templates_ready_for_sale', [
+        return view('admin.templates_ready_translation', [
             'templates' => $arr_ready_for_sale,
             'language_code' => 'es',
             'country' => 'mx'

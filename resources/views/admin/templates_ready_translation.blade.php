@@ -72,36 +72,17 @@
                       <div class="col-12">
                         <p>{{ $product_info['key'] }}</p>
                       </div>
-                      <div class="col-3">
-                        <a href="{{ route( 'admin.translate.template', [
-                          'template_key' => $product_info['key'],
-                          'from' => 'en',
-                          'to' => $language_code
-                        ] ) }}">TRANSLATE</a>
-                      </div>
-                      <div class="col-3">
-                        <a href="{{ route('code.create', [
-                            'country' => 'mx',
-                            'code' => $product_info['key']
-                        ] ) }}">GENERAR CODIGO</a>
-                      </div>
+                      
                       <div class="col-3">
                         @if( $product_info['translation_ready'] )
-                          <a class="translate-template"  
+                          <a class="translate-template" 
                             href="{{ route('admin.edit.template', [
                               'language_code' => $language_code,
                               'template_key' => $product_info['key']
                           ]) }}">EDITAR PLANTILLA</a>
                         @endif
                       </div>
-                      <div class="col-3">
-                        @if( $product_info['mp_modelo'] > 0 )
-                          <a href="{{ route('plantilla.demo', [
-                            'modelo_mercado_pago' => $product_info['mp_modelo'],
-                            'country' => $country,
-                          ] ) }}">DEMO MP</a>
-                        @endif
-                      </div>
+                      
                     </div>
                 </div>
             @endforeach

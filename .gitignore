@@ -17,6 +17,7 @@ yarn-error.log
 /.cloud/mysql_db/*
 /public/design/*
 /public/images/*
+/public/canva/*
 /public/over/*
 /public/product/preview-images/*
 **/.DS_Store

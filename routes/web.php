@@ -6,13 +6,17 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\greenController;
 use App\Http\Controllers\CrelloController;
 use App\Http\Controllers\DesygnerController;
+use App\Http\Controllers\overController;
+use App\Http\Controllers\canvaController;
 
 use App\Http\Controllers\EtsyScrapperController;
+use App\Http\Controllers\TemplettScrapperController;
 
-Route::get( '/scrapper/etsy', [ EtsyScrapperController::class, 'extractMetaData' ]);
-// Route::get('/scrapper/over', [overController::class, 'index']);
+Route::get('/scrapper/over', [overController::class, 'index']);
+Route::get('/scrapper/canva', [canvaController::class, 'index']);
+Route::get('/scrapper/templett', [TemplettScrapperController::class, 'downloadOriginalTemplate']);
+// Route::get( '/scrapper/etsy', [ EtsyScrapperController::class, 'extractMetaData' ]);
 // Route::get('/scrap-from-templett', [TemplettScrapperController::class, 'scrapURL']);
-// Route::get('/scrap-from-templett-missing-redis', [TemplettScrapperController::class, 'downloadMissingREDISTemplates']);
 
 // https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes#UNI2
 

@@ -57,6 +57,84 @@ class TemplettScrapperController extends Controller
 		}
 	}
 
+	function downloadOriginalTemplate(){
+		echo '<style type="text/css">
+			body{
+					background-color: #0f1419;
+					color: #5de5ed
+			}
+			</style>'."\n\n\n\n";
+
+		$templates = DB::table('tmp_etsy_metadata')
+                            ->select('id', 'templett_url')
+							->whereNotNull('templett_url')
+							// ->where('username','!=', 'asterandrose')
+							->where('id', '>=', 9535)
+							->where('templett_url', 'not like', "%asterandrose%")
+							->limit(3500)
+							->get();
+		
+		echo "<pre>";
+		foreach ($templates as $template) {
+			
+			$template_ids = substr($template->templett_url, strrpos($template->templett_url, '/')+1, strlen($template->templett_url));
+			// $template_ids = "s";
+			$template_ids = explode(',',$template_ids);
+			
+			foreach ($template_ids as $template_id) {
+				
+				print_r($template_id);
+				
+				$template_key = 'template:'.$template_id.':jsondata';
+				
+				// IF template does not exists on REDIS database
+				if(Redis::exists($template_key) == 0) {
+					
+					// Verify if metadata already exist on database
+					// $template_md = DB::table('tmp_etsy_metadata')
+					// 	->select('id','templett_url')
+					// 	->whereRaw('LENGTH(templett_url) > ?', [0])
+					// 	->where('templett_url', 'like', '%'.$template_id.'%')
+					// 	// ->where('templett_ids', 'like', '%'.$template->template_id.'%')
+					// 	->first();
+					
+					$templett_url = $this->sanitizeExtraLargeURL( $template->templett_url );
+	
+					// echo "NO EXISTE::>";
+					// echo "<pre>";
+					// print_r($templett_url);
+					// exit;
+	
+					if(strlen($templett_url) > 0 && strpos($templett_url, 'templett.com/design/demo/') > 0 ){
+						// echo "-------------------------\n";
+						// print_r('<pre>');
+						// print_r($template);
+						// // print_r($template_id);
+						// exit;
+						
+						echo 'Start parsing for URL:: '.$templett_url."<br>\n";
+						$this->startScrapping($templett_url, $template->id);
+						echo '<br>Parsing complete - '.$templett_url."-\n\n<br><br>";
+						
+						DB::table('templates')
+							->where('id', $template->id)
+							->update(['status' => 3]);
+	
+						usleep(50000);
+	
+					}
+	
+				} else {
+					echo 'EL TEMPLATE already exists on database::'.$template_key.'<br>';
+					DB::table('templates')
+						->where('id', $template->id)
+						->update(['status' => 3]);
+				}
+			}
+		}
+		
+	}
+
 	function downloadMissingREDISTemplates(){
 		
 		echo '<style type="text/css">
@@ -318,6 +396,7 @@ class TemplettScrapperController extends Controller
 						DB::table('thumbnails')->insert([
 							'id' => null,
 							'template_id' => $template_id,
+							'language_code' => 'en',
 							'title' => htmlspecialchars_decode(str_replace('\'', null, $titleMatches[1][$i][0])),
 							'filename' => str_replace('https://dbzkr7khx0kap.cloudfront.net/thumbs/', null, $imgsMatches[1][$i][0]),
 							'tmp_original_url' => $imgsMatches[1][$i][0],
@@ -326,7 +405,6 @@ class TemplettScrapperController extends Controller
 							'status' => 0
 						]);
 					}
-
 				}
 			}
 		}

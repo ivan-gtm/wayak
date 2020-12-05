@@ -2394,7 +2394,7 @@ function getTemplateThumbnail() {
     
     DEBUG && console.log("Set template thumbnail size");
 
-    setZoom(1100 / (96 * document.getElementById("loadCanvasWid").value));
+    setZoom(800 / (96 * document.getElementById("loadCanvasWid").value));
     
     if(firstcanvas.backgroundColor == null || isEmptyBackground == false){
         firstcanvas.set({
@@ -4785,7 +4785,8 @@ function afterLoadJSON(lcanvas, i) {
     }
     lcanvas.setDimensions(),
     lcanvas.renderAll(),
-    canvasarray.length == i + 1 && afterLoadTemplate()
+    canvasarray.length == i + 1 && afterLoadTemplate(),
+    $('#template-status').val('Template Loaded');
 }
 function saveHistoryForAllCanvases() {
     s_history = !0,
@@ -6279,7 +6280,7 @@ function getTemplates2($offset, $tags) {
             $answer.data || 0 != $offset || $grid.html("<h3>No Results</h3>"),
             offsetTemplates += 24
         }).always(function() {
-            templatesloading = !1,
+            $('#template-status').val("Thumbs Loaded"),templatesloading = !1,
             0 == $offset && ($grid.isotope("reloadItems"),
             $grid.isotope({
                 itemSelector: ".thumb",

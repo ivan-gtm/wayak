@@ -35,6 +35,9 @@
         <!-- <link href="{{ asset('assets/lib/dropzone/dist/dropzone.css') }}" rel="stylesheet" type="text/css"/> -->
         <link href="{{ asset('assets/css/style.css?v=0301201901') }}" rel="stylesheet" type="text/css"/>
         <link href="{{ asset('assets/js/select2/select2.min.css') }}" rel="stylesheet"/>
+
+        <!-- The largest collection of templates online. Ready to print or use on social media. Create invitations, resumes, presentations, posters, flyers. Check it out! -->
+        <meta name="description" content="🖍️ La mayor colección de plantillas en línea. Listo para imprimir o usar en redes sociales. Cree invitaciones, currículums, presentaciones, carteles, volantes. ¡Echale un vistazo!"/>
         
         <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.6.1/css/bootstrap-slider.min.css" rel="stylesheet" type="text/css"/> -->
 
@@ -236,6 +239,8 @@
 
                             @if( $demo_as_id == 0 )
                                 <li class="dropdown download-menu">
+                                    <input type="hidden" id="template-status" value="empty">
+
                                     <button aria-expanded="false" class="dropdown-toggle btn btn-info" data-toggle="dropdown" href="#" role="button" style="margin:12px 0;">
                                         Descargar
                                     </button>

@@ -13,7 +13,7 @@ ini_set('display_errors', 1);
 ignore_user_abort(true);            // Continue downloading even after user closes the browser.
 error_reporting(E_ALL);
 
-class CrelloController extends Controller
+class overController extends Controller
 {
     public function index(){
         $categories = $this->getCategories();
@@ -50,11 +50,11 @@ class CrelloController extends Controller
             // $this->generateDownloadPage(16916);
             // exit;
             
-            $pages = Redis::keys('category:'.$category->id.':offset:*');
+            $pages = Redis::keys('over:category:'.$category->id.':offset:*');
             $total_page_number = sizeof($pages)*100;
             // print_r($total_page_number);
             for ($offset_page=0; $offset_page < $total_page_number; $offset_page +=100) { 
-                $page_data = json_decode(Redis::get('category:'.$category->id.':offset:'.$offset_page));
+                $page_data = json_decode(Redis::get('over:category:'.$category->id.':offset:'.$offset_page));
                 // print_r($page_data->elementList->elements);
                 // exit;
                 $templates = $page_data->elementList->elements;
@@ -97,8 +97,8 @@ class CrelloController extends Controller
                     }
                     // exit;
 
-                    // print_r("\n TEMPLATE:: ".$template->id);
-                    // $this->generateDownloadPage($template->id);
+                    print_r("\n TEMPLATE:: ".$template->id);
+                    $this->generateDownloadPage($template->id);
                     // // exit;
                 }
             }
@@ -107,40 +107,41 @@ class CrelloController extends Controller
     }
 
     function getCategories(){
-        // $auth_token = 'eyJjdHkiOiJKV1QiLCJlbmMiOiJBMTI4R0NNIiwiYWxnIjoiZGlyIn0..MqIBDs9TDJkvdywU.EqVtUaMEMzb73DFwHPSk1I3jBp8dNK5B90Yu8eGeUfNUZsOjCI_xh-_Sb_5ns1A3MOWhfn5V4d8NGcRwilgLnwyrovWGyLYrpjRz--XpYnWDlyZVXEnr8ud2lT6o0HBnY7ABqpyvDK8Sk7E1tdEV2a1AboP0aMZM3TkHXruk94qPQgqzYR32JXK97Id4RxjpVniiyOLtlF1UrxynHJMUkusUpLTwanaSThhg7WOu5ZW7ua4lQ1k4ymgBnaTSacmZBA1Wi77NTGPmQT9aHmF5wGlNWTDGQKjqSW_R8jIoNM5ILDreStr2_yfwepqpBZgqWTE5LBDiWywKsq-TMpi7ZvdQaTSOkOucZTjQ_Jwt0Ky07FYr9DAQMjZHJ7AbTdfUpuwTOGfX8_0rm5boiC8i77BsZ-97aCrPanxCtr_OMRqwsRYyi68A91rmCKNXYHlMQsZ1U0j6M6JYv7L4jDt2iOPZyF23DKnb-8qtBZQqQm1gyG4V_t0e2fVQ3z0JCL80vfLt2uBnKJta5Ikp0u2VhKHJXkf-Y9_oTtIIkCOi2LXhploB091WvTZ55i8QTxO1RG9WjprDWfE9qBZ14DfoZ5P4Q7Npy3beMMncCpnjAL6QB8ItJFqYu39atfR7YV2fK0R4umNv-EeA1lOQPQ77l4AdZn5X5zl0avzcrWvpMZTG50WKnlCyInbW9DxMltBJYEdIa7TAlapMnfslOQzQpFe-oiM-EFjxKmVh.sBd5Y6rwAfhRzJercezTaA';
+        // $auth_token = 'eyJjdHkiOiJKV1QiLCJlbmMiOiJBMTI4R0NNIiwiYWxnIjoiZGlyIn0..HsTjvBwUoWcG0CPH.ZL_UNTdO7M0UbCxNaqmjXtwss7RIznBfmbGM2lNbvBFUGx1I3Q27YNbbTa-QovyUMnIn56U4OFdX3FSusOmdcvCBc7bc_dQtUzC-RIqw8RSZ4_mV5VqqVIq-wkNd4GK3fYuAFgAi8qmb9WwX6_OMqjjKQmQscMc3Cr6665gfWN1vOeeYBp8cpkLjthC7V3qW8UfG13Ho9Omwwn2fs98MfbCcob6J2JllYKHsNjvY6VPeADS6KMKhHgcid4feXpCfFuUjQjVYe9-3srUDywwyKH9-jT6VHN0eQYtbLEDfQrQeI9E54ub0jMBcH322c1OG9ugcab4AcT973hrENlxBtaS3ToVPX3FwHJ-b77hw8hV8e9pIOqrZ0O8bEkfDnT3tlIGZt9RlOuLzmWcxpT0hQyRHqfvis7gKhiFFQeoq6VTlDp3OeCuGLIcmsNaUowY5Dxp5yuM3T79RGeFlvZjq-LGJ645ozh1IA8mjM4T6W1_IrDOAbzKm-hXdtADx-7xGUAsgvjFmkcpvLVgKGb8Wi9rpYGwP-xg9kqPxaXPV1wQoGM6nUtqFtp8yvDyMw7Hu0tkmWiKkJhqN83WUEmfNpNFmTg9gfxKAcJWWJg5FR69kuZSIWTYHvDPacj5C4buOgQ8ynrfOB2ov0G6NZ1Yj3ZUy1LI7FiDK5CSby0vObAd32DXMMJBKJhTVyjvB6S7XYIze3y-UYLyKDXpCu398sQ0E_AG8ixz8ZX6l.Bz23_GRoIVIeYy_jZbao-g';
 
         // $curl = curl_init();
 
         // curl_setopt_array($curl, array(
-        // CURLOPT_URL => "https://api.overhq.com/feed/quickstart",
-        // CURLOPT_RETURNTRANSFER => true,
-        // CURLOPT_ENCODING => "",
-        // CURLOPT_MAXREDIRS => 10,
-        // CURLOPT_TIMEOUT => 0,
-        // CURLOPT_FOLLOWLOCATION => true,
-        // CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        // CURLOPT_CUSTOMREQUEST => "GET",
-        // CURLOPT_HTTPHEADER => array(
-        //     "Host: api.overhq.com",
-        //     "accept: application/json",
-        //     "content-type: application/json",
-        //     "accept-language: en-MX;q=1.0, es-MX;q=0.9",
-        //     "over-lang: en",
-        //     "user-agent: Over/7.1.7 (com.gopotluck.over; build:70094; iOS 14.0.0)",
-        //     "over-auth: $auth_token"
-        // ),
+        //     CURLOPT_URL => "https://api.overhq.com/feed/quickstart",
+        //     CURLOPT_RETURNTRANSFER => true,
+        //     CURLOPT_ENCODING => "",
+        //     CURLOPT_MAXREDIRS => 10,
+        //     CURLOPT_TIMEOUT => 0,
+        //     CURLOPT_FOLLOWLOCATION => true,
+        //     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        //     CURLOPT_CUSTOMREQUEST => "GET",
+        //     CURLOPT_HTTPHEADER => array(
+        //         "Host: api.overhq.com",
+        //         "accept: application/json",
+        //         "content-type: application/json",
+        //         "accept-language: en-MX;q=1.0, es-MX;q=0.9",
+        //         "over-lang: en",
+        //         "user-agent: Over/7.1.7 (com.gopotluck.over; build:70094; iOS 14.0.0)",
+        //         "over-auth: $auth_token"
+        //     ),
         // ));
 
-        // $response = curl_exec($curl);
-        
-        // Redis::set('categories', $response);
-        
-        $response = Redis::get('categories');
+        // $response = curl_exec($curl); 
+        // Redis::set('over:categories', $response);
+        // curl_close($curl);
+
+        $response = Redis::get('over:categories');
         $response = json_decode($response);
 
-        // curl_close($curl);
-        // echo "<pre>";
-        // print_r($response);
+        
+        echo "<pre>";
+        print_r($response);
+
         return $response;
 
     }
@@ -199,7 +200,7 @@ class CrelloController extends Controller
             "accept-language: en-MX;q=1.0, es-MX;q=0.9",
             "over-lang: en",
             "user-agent: Over/7.1.7 (com.gopotluck.over; build:70094; iOS 14.0.0)",
-            "over-auth: eyJjdHkiOiJKV1QiLCJlbmMiOiJBMTI4R0NNIiwiYWxnIjoiZGlyIn0..MqIBDs9TDJkvdywU.EqVtUaMEMzb73DFwHPSk1I3jBp8dNK5B90Yu8eGeUfNUZsOjCI_xh-_Sb_5ns1A3MOWhfn5V4d8NGcRwilgLnwyrovWGyLYrpjRz--XpYnWDlyZVXEnr8ud2lT6o0HBnY7ABqpyvDK8Sk7E1tdEV2a1AboP0aMZM3TkHXruk94qPQgqzYR32JXK97Id4RxjpVniiyOLtlF1UrxynHJMUkusUpLTwanaSThhg7WOu5ZW7ua4lQ1k4ymgBnaTSacmZBA1Wi77NTGPmQT9aHmF5wGlNWTDGQKjqSW_R8jIoNM5ILDreStr2_yfwepqpBZgqWTE5LBDiWywKsq-TMpi7ZvdQaTSOkOucZTjQ_Jwt0Ky07FYr9DAQMjZHJ7AbTdfUpuwTOGfX8_0rm5boiC8i77BsZ-97aCrPanxCtr_OMRqwsRYyi68A91rmCKNXYHlMQsZ1U0j6M6JYv7L4jDt2iOPZyF23DKnb-8qtBZQqQm1gyG4V_t0e2fVQ3z0JCL80vfLt2uBnKJta5Ikp0u2VhKHJXkf-Y9_oTtIIkCOi2LXhploB091WvTZ55i8QTxO1RG9WjprDWfE9qBZ14DfoZ5P4Q7Npy3beMMncCpnjAL6QB8ItJFqYu39atfR7YV2fK0R4umNv-EeA1lOQPQ77l4AdZn5X5zl0avzcrWvpMZTG50WKnlCyInbW9DxMltBJYEdIa7TAlapMnfslOQzQpFe-oiM-EFjxKmVh.sBd5Y6rwAfhRzJercezTaA"
+            "over-auth: eyJjdHkiOiJKV1QiLCJlbmMiOiJBMTI4R0NNIiwiYWxnIjoiZGlyIn0..HsTjvBwUoWcG0CPH.ZL_UNTdO7M0UbCxNaqmjXtwss7RIznBfmbGM2lNbvBFUGx1I3Q27YNbbTa-QovyUMnIn56U4OFdX3FSusOmdcvCBc7bc_dQtUzC-RIqw8RSZ4_mV5VqqVIq-wkNd4GK3fYuAFgAi8qmb9WwX6_OMqjjKQmQscMc3Cr6665gfWN1vOeeYBp8cpkLjthC7V3qW8UfG13Ho9Omwwn2fs98MfbCcob6J2JllYKHsNjvY6VPeADS6KMKhHgcid4feXpCfFuUjQjVYe9-3srUDywwyKH9-jT6VHN0eQYtbLEDfQrQeI9E54ub0jMBcH322c1OG9ugcab4AcT973hrENlxBtaS3ToVPX3FwHJ-b77hw8hV8e9pIOqrZ0O8bEkfDnT3tlIGZt9RlOuLzmWcxpT0hQyRHqfvis7gKhiFFQeoq6VTlDp3OeCuGLIcmsNaUowY5Dxp5yuM3T79RGeFlvZjq-LGJ645ozh1IA8mjM4T6W1_IrDOAbzKm-hXdtADx-7xGUAsgvjFmkcpvLVgKGb8Wi9rpYGwP-xg9kqPxaXPV1wQoGM6nUtqFtp8yvDyMw7Hu0tkmWiKkJhqN83WUEmfNpNFmTg9gfxKAcJWWJg5FR69kuZSIWTYHvDPacj5C4buOgQ8ynrfOB2ov0G6NZ1Yj3ZUy1LI7FiDK5CSby0vObAd32DXMMJBKJhTVyjvB6S7XYIze3y-UYLyKDXpCu398sQ0E_AG8ixz8ZX6l.Bz23_GRoIVIeYy_jZbao-g"
         ),
         ));
 
@@ -211,7 +212,7 @@ class CrelloController extends Controller
         $obj_response = json_decode($response);
         
         if($obj_response->elementList->count > 0){
-            Redis::set('category:'.$category_id.':offset:'.$offset, $response);
+            Redis::set('over:category:'.$category_id.':offset:'.$offset, $response);
             return true;
         }
 
@@ -257,7 +258,7 @@ class CrelloController extends Controller
                     "accept: */*",
                     "over-lang: en",
                     "user-agent: Over/7.1.7 (com.gopotluck.over; build:70094; iOS 14.0.0)",
-                    "over-auth: eyJjdHkiOiJKV1QiLCJlbmMiOiJBMTI4R0NNIiwiYWxnIjoiZGlyIn0..MqIBDs9TDJkvdywU.EqVtUaMEMzb73DFwHPSk1I3jBp8dNK5B90Yu8eGeUfNUZsOjCI_xh-_Sb_5ns1A3MOWhfn5V4d8NGcRwilgLnwyrovWGyLYrpjRz--XpYnWDlyZVXEnr8ud2lT6o0HBnY7ABqpyvDK8Sk7E1tdEV2a1AboP0aMZM3TkHXruk94qPQgqzYR32JXK97Id4RxjpVniiyOLtlF1UrxynHJMUkusUpLTwanaSThhg7WOu5ZW7ua4lQ1k4ymgBnaTSacmZBA1Wi77NTGPmQT9aHmF5wGlNWTDGQKjqSW_R8jIoNM5ILDreStr2_yfwepqpBZgqWTE5LBDiWywKsq-TMpi7ZvdQaTSOkOucZTjQ_Jwt0Ky07FYr9DAQMjZHJ7AbTdfUpuwTOGfX8_0rm5boiC8i77BsZ-97aCrPanxCtr_OMRqwsRYyi68A91rmCKNXYHlMQsZ1U0j6M6JYv7L4jDt2iOPZyF23DKnb-8qtBZQqQm1gyG4V_t0e2fVQ3z0JCL80vfLt2uBnKJta5Ikp0u2VhKHJXkf-Y9_oTtIIkCOi2LXhploB091WvTZ55i8QTxO1RG9WjprDWfE9qBZ14DfoZ5P4Q7Npy3beMMncCpnjAL6QB8ItJFqYu39atfR7YV2fK0R4umNv-EeA1lOQPQ77l4AdZn5X5zl0avzcrWvpMZTG50WKnlCyInbW9DxMltBJYEdIa7TAlapMnfslOQzQpFe-oiM-EFjxKmVh.sBd5Y6rwAfhRzJercezTaA",
+                    "over-auth: eyJjdHkiOiJKV1QiLCJlbmMiOiJBMTI4R0NNIiwiYWxnIjoiZGlyIn0..HsTjvBwUoWcG0CPH.ZL_UNTdO7M0UbCxNaqmjXtwss7RIznBfmbGM2lNbvBFUGx1I3Q27YNbbTa-QovyUMnIn56U4OFdX3FSusOmdcvCBc7bc_dQtUzC-RIqw8RSZ4_mV5VqqVIq-wkNd4GK3fYuAFgAi8qmb9WwX6_OMqjjKQmQscMc3Cr6665gfWN1vOeeYBp8cpkLjthC7V3qW8UfG13Ho9Omwwn2fs98MfbCcob6J2JllYKHsNjvY6VPeADS6KMKhHgcid4feXpCfFuUjQjVYe9-3srUDywwyKH9-jT6VHN0eQYtbLEDfQrQeI9E54ub0jMBcH322c1OG9ugcab4AcT973hrENlxBtaS3ToVPX3FwHJ-b77hw8hV8e9pIOqrZ0O8bEkfDnT3tlIGZt9RlOuLzmWcxpT0hQyRHqfvis7gKhiFFQeoq6VTlDp3OeCuGLIcmsNaUowY5Dxp5yuM3T79RGeFlvZjq-LGJ645ozh1IA8mjM4T6W1_IrDOAbzKm-hXdtADx-7xGUAsgvjFmkcpvLVgKGb8Wi9rpYGwP-xg9kqPxaXPV1wQoGM6nUtqFtp8yvDyMw7Hu0tkmWiKkJhqN83WUEmfNpNFmTg9gfxKAcJWWJg5FR69kuZSIWTYHvDPacj5C4buOgQ8ynrfOB2ov0G6NZ1Yj3ZUy1LI7FiDK5CSby0vObAd32DXMMJBKJhTVyjvB6S7XYIze3y-UYLyKDXpCu398sQ0E_AG8ixz8ZX6l.Bz23_GRoIVIeYy_jZbao-g",
                     "accept-language: en-MX;q=1.0, es-MX;q=0.9"
                 ),
             ));
