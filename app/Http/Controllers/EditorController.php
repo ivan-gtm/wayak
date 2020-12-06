@@ -390,7 +390,11 @@ class EditorController extends Controller
 			// exit;
 	
 			$this->updateThumbnailsOnDB( $thumbnail_info );
+			
 			Redis::set('product:production_ready:'.$template_id, 1);
+			if( $language_code != 'en' ){
+				Redis::set('product:thumbnail_ready:'.$template_id, 1);
+			}
 		}
 		// exit;
 

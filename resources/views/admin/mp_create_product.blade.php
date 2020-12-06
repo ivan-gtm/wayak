@@ -1,30 +1,65 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+@extends('layouts.admin')
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/css/bootstrap.min.css" integrity="sha384-DhY6onE6f3zzKbjUPRc2hOzGAdEf4/Dz+WJwBvEYL/lkkIsI3ihufq9hk9K4lVoK" crossorigin="anonymous">
-    
-    <link rel="stylesheet" href="{{ asset('assets/admin/tags/bootstrap-tagsinput.css') }}">
-    
-    <title>Create Product</title>
-  </head>
-  <body>
-    
-    
-    <div class="container-fluid">
+@section('title', 'Plantillas Formato Listo')
+
+@section('css')
+<style>
+      .box {
+        position: relative;
+        margin: 20px auto;
+        /* width: 400px;
+        height: 350px; */
+        background: #fff;
+        border-radius: 2px;
+      }
+
+      .box::before,
+      .box::after {
+        content: '';
+        position: absolute;
+        bottom: 10px;
+        width: 40%;
+        height: 10px;
+        box-shadow: 0 5px 14px rgba(0,0,0,.7);
+        z-index: -1;
+        transition: all .3s ease-in-out;
+      }
+
+      .box::before {
+        left: 15px;
+        transform: skew(-5deg) rotate(-5deg);
+      }
+
+      .box::after {
+        right: 15px;
+        transform: skew(5deg) rotate(5deg);
+      }
+
+      .box:hover::before,
+      .box:hover::after {
+        box-shadow: 0 2px 14px rgba(0,0,0,.4);
+      }
+
+      .box:hover::before {
+        left: 5px;
+      }
+
+      .box:hover::after {
+        right: 5px;
+      }
+</style>
+@endsection
+
+@section('content')
         <div class="row">
             <div class="col-12">
-                <h1 class="text-center">TEMPLATE METADATA EDITOR</h1>
+                <h1 class="text-center">Editar Metadatos del producto</h1>
             </div>
-            <div class="col-12 col-md-3">
+            <div class="col-3">
                 <img class="img-fluid" src="{{ $thumb_img_url }}">
             </div>
-            <div class="col-12 col-md-9">
-                <form method="POST" action="/admin/mp/create-product/{{ $template_key }}">
+            <div class="col-9">
+                <form method="POST" action="{{ route('admin.createTemplate',[$template_key]) }}">
                     @csrf
                     <input name="codigo_universal" type="hidden" value="No aplica">
                     <input name="sku" type="hidden" value="{{ $template_key }}">
@@ -59,6 +94,26 @@
                         </ul> -->
                     </div>
                     <div class="mb-3">
+                        <label for="titleInput" class="form-label">Ocasiones</label>
+                        <!-- <ul>
+                            <li>Obligatorio"</li>
+                        </ul> -->
+                            <select class="form-select" name="ocasion" id="ocasion" required>
+                                <option value="">Selecciona Valor</option>
+                                <option value="Aniversario">Aniversario</option>
+                                <option value="Baby shower">Baby shower</option>
+                                <option value="Bautizo">Bautizo</option>
+                                <option value="Boda">Boda</option>
+                                <option value="Cumpleaños">Cumpleaños</option>
+                                <option value="Despedida de soltera">Despedida de soltera</option>
+                                <option value="Despedida de soltero">Despedida de soltero</option>
+                                <option value="Fiesta de 15 años">Fiesta de 15 años</option>
+                                <option value="Graduación">Graduación</option>
+                                <option value="Halloween">Halloween</option>
+                                <option value="Primera comunión">Primera comunión</option>
+                            </select>
+                    </div>
+                    <div class="mb-3">
                         <label for="titleInput" class="form-label">Imágenes</label>
                         <input class="form-control" name="imagenes" type="text" value="{{ $product_images }}" required>
                         <!-- <ul>
@@ -87,26 +142,7 @@
                             <li>Entre 1 y 45 días</li>
                         </ul>
                     </div> -->
-                    <div class="mb-3">
-                        <label for="titleInput" class="form-label">Ocasiones</label>
-                        <!-- <ul>
-                            <li>Obligatorio"</li>
-                        </ul> -->
-                            <select class="form-select" name="ocasion" id="ocasion" required>
-                                <option value="">Selecciona Valor</option>
-                                <option value="Aniversario">Aniversario</option>
-                                <option value="Baby shower">Baby shower</option>
-                                <option value="Bautizo">Bautizo</option>
-                                <option value="Boda">Boda</option>
-                                <option value="Cumpleaños">Cumpleaños</option>
-                                <option value="Despedida de soltera">Despedida de soltera</option>
-                                <option value="Despedida de soltero">Despedida de soltero</option>
-                                <option value="Fiesta de 15 años">Fiesta de 15 años</option>
-                                <option value="Graduación">Graduación</option>
-                                <option value="Halloween">Halloween</option>
-                                <option value="Primera comunión">Primera comunión</option>
-                            </select>
-                    </div>
+                    
 
                     <!-- <div class="mb-3">
                         <label for="titleInput" class="form-label">Fabricante == Jazmin</label>
@@ -118,17 +154,7 @@
                 </form>
             </div>
         </div>
-    </div>
-
-    <!-- Optional JavaScript; choose one of the two! -->
-
-    <!-- Option 1: Bootstrap Bundle with Popper.js -->
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/js/bootstrap.bundle.min.js" integrity="sha384-BOsAfwzjNJHrJ8cZidOg56tcQWfp6y72vEJ8xQ9w6Quywb24iOsW913URv1IS4GD" crossorigin="anonymous"></script>
-
-    <!-- Option 2: Separate Popper.js and Bootstrap JS
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/js/bootstrap.min.js" integrity="sha384-5h4UG+6GOuV9qXh6HqOLwZMY4mnLPraeTrjT5v07o347pj6IkfuoASuGBhfDsp3d" crossorigin="anonymous"></script>
-    -->
+    
     <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
     <script src="{{ asset('assets/admin/tags/bootstrap-tagsinput.min.js') }}"></script>
     <script>
@@ -150,5 +176,4 @@
             console.log( $("input.tags").val() );
         });
     </script>
-  </body>
-</html>
+  @endsection

@@ -69,9 +69,9 @@ class TemplettScrapperController extends Controller
                             ->select('id', 'templett_url')
 							->whereNotNull('templett_url')
 							// ->where('username','!=', 'asterandrose')
-							->where('id', '>=', 9535)
+							->where('id', '>=', 5940)
 							->where('templett_url', 'not like', "%asterandrose%")
-							->limit(3500)
+							->limit(12000)
 							->get();
 		
 		echo "<pre>";

@@ -710,6 +710,7 @@ class greenController extends Controller
                 
                 $thumbnail_info = DB::table('thumbnails')
                 ->where('template_id','=',$product_result[$i]->Id)
+                ->where('language_code','=','en')
                 ->first();
                 
                 if($thumbnail_info){

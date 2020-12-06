@@ -313,6 +313,7 @@ class AdminController extends Controller
     function editMLMetadata($template_key){
         $thumb_info = DB::table('thumbnails')
                 ->where('template_id','=',$template_key)
+                ->where('language_code','=','es')
                 ->first();
        
         $thumb_img_url = asset( 'design/template/'. $template_key.'/thumbnails/'.$thumb_info->filename);
@@ -322,8 +323,10 @@ class AdminController extends Controller
         $ocasion = '';
 
         // Redis::set('mercadopago:template:metadata:'.$template_key, json_encode($request->all()));
-        if( Redis::exists('mercadopago:template:metadata:'.$template_key) ){
-            $product_metadata = Redis::get('mercadopago:template:metadata:'.$template_key);
+        // echo 'template:'.$template_key.':metadata';
+        // exit;
+        if( Redis::exists('template:'.$template_key.':metadata') ){
+            $product_metadata = Redis::get('template:'.$template_key.':metadata');
             $product_metadata = json_decode($product_metadata);
             
             // echo "<pre>";
@@ -376,13 +379,9 @@ class AdminController extends Controller
         // Redis::set('wayak:mercadopago:description_template',$request->descripcion );
         // Redis::set('wayak:mercadopago:description_template',$request->descripcion );
         
-        Redis::set('mercadopago:template:metadata:'.$template_key, json_encode( $template_info ) );
+        Redis::set('template:'.$template_key.':metadata', json_encode( $template_info ) );
         
-        return redirect()->action(
-            [AdminController::class,'manageTemplates'], [
-                'country' => 'mx'
-            ]
-        );
+        return redirect()->route('admin.ml.getMissingMetadataTemplates');
     }
 
     function adminHome(){
@@ -394,6 +393,7 @@ class AdminController extends Controller
         // echo "<pre>";
         // print_r( $template_key );
         // exit;
+
         // print_r( $request->all() );
         // '_token' => $request->_token;
         // 'title' => $request->title;
@@ -406,9 +406,7 @@ class AdminController extends Controller
 
         Redis::set('template:'.$template_key.':metadata', json_encode($request->all()));
         
-        return redirect()->action(
-            [AdminController::class,'manageTemplates'], []
-        );
+        return redirect()->route('admin.ml.getMissingMetadataTemplates');
 
     }
 
@@ -695,6 +693,8 @@ class AdminController extends Controller
             // exit;
 
             Redis::set($destination_template_key, json_encode($template_obj) );
+            Redis::set('product:translation_ready:'.$template_key, 1);
+
             
             $original_thumb_data = DB::table('thumbnails')
                 ->where('template_id','=',$template_key)
@@ -750,16 +750,66 @@ class AdminController extends Controller
             $template_info['format_ready'] = Redis::exists('product:production_ready:'.$template_key);
             $template_info['translation_ready'] = Redis::exists('template:es:'.$template_key.':jsondata');
             // Has metadata for mercado pago product description
-            $template_info['mp_metadata_ready'] = Redis::exists('mercadopago:template:metadata:'.$template_key);
+            $template_info['metadata_ready'] = Redis::exists('template:'.$template_key.':metadata');
             $template_info['mp_modelo'] = Redis::exists('wayak:mercadopago:template:modelo:'.$template_key);
 
             if ( $template_info['format_ready']
                 && $template_info['translation_ready']
-                && $template_info['mp_metadata_ready']
-                && $template_info['mp_modelo']){
+                && $template_info['mp_modelo']
+                && $template_info['metadata_ready'] ){
                 
                 $thumb_info = DB::table('thumbnails')
                 ->where('template_id','=', $template_key )
+                ->first();
+
+                if($thumb_info){
+                    $template_info['thumbnail']  = asset( 'design/template/'. $template_key.'/thumbnails/'.$thumb_info->filename);
+                } else {
+                    $template_info['thumbnail']  = null;
+                }
+                
+                $arr_ready_for_sale[] = $template_info;
+            }
+        }
+        
+        // echo "<pre>";
+        // print_r($arr_ready_for_sale);
+        // exit;
+
+        return view('admin.templates_ready_for_sale', [
+            'templates' => $arr_ready_for_sale,
+            'language_code' => 'es',
+            'country' => 'mx'
+        ]);
+        
+    }
+
+    function missingMetadataTemplates(){
+        
+        // Get all templates already formated
+        $formated_templates = Redis::keys('product:production_ready:*');
+        $formated_templates_total = sizeof($formated_templates);
+        $arr_ready_for_sale = [];
+        
+        for ($i=0; $i < $formated_templates_total; $i++) {
+
+            $template_key = str_replace('product:production_ready:', null, $formated_templates[$i]);
+            $template_info['key'] = $template_key;
+
+            // Template elements has been formated
+            $template_info['format_ready'] = Redis::exists('product:production_ready:'.$template_key);
+            $template_info['translation_ready'] = Redis::exists('template:es:'.$template_key.':jsondata');
+            // Has metadata for mercado pago product description
+            $template_info['metadata_ready'] = Redis::exists('template:'.$template_key.':metadata');
+            $template_info['mp_modelo'] = Redis::exists('wayak:mercadopago:template:modelo:'.$template_key);
+
+            if ( $template_info['format_ready']
+                && $template_info['translation_ready'] 
+                && $template_info['metadata_ready'] == false ){
+                
+                $thumb_info = DB::table('thumbnails')
+                ->where('template_id','=', $template_key )
+                ->where('language_code','=', 'es' )
                 ->first();
 
                 if($thumb_info){
@@ -795,17 +845,19 @@ class AdminController extends Controller
             $template_key = str_replace('product:production_ready:', null, $formated_templates[$i]);
             
             $template_info['key'] = $template_key;
-            // Template elements has been formated
+            
+            // Template elements has been formated by humans
             $template_info['format_ready'] = Redis::exists('product:production_ready:'.$template_key);
-            $template_info['translation_ready'] = Redis::exists('template:es:'.$template_key.':jsondata');
-            // Has metadata for mercado pago product description
-            $template_info['mp_metadata_ready'] = Redis::exists('mercadopago:template:metadata:'.$template_key);
-            $template_info['mp_modelo'] = Redis::exists('wayak:mercadopago:template:modelo:'.$template_key);
+            $template_info['translation_not_ready'] = Redis::exists('template:es:'.$template_key.':jsondata') == false || Redis::exists('product:translation_ready:'.$template_key) == false;
+            $template_info['thumbnail_ready'] = Redis::exists('product:thumbnail_ready:'.$template_key) == false;
 
-            if ( $template_info['format_ready'] ){
+            if ( $template_info['format_ready'] 
+                && $template_info['translation_not_ready'] 
+                && $template_info['thumbnail_ready'] ){
                 
                 $thumb_info = DB::table('thumbnails')
                 ->where('template_id','=', $template_key )
+                ->where('language_code','=', 'en' )
                 ->first();
 
                 if($thumb_info){
@@ -818,9 +870,9 @@ class AdminController extends Controller
             }
         }
         
-        return view('admin.templates_ready_for_sale', [
+        return view('admin.templates_format_ready', [
             'templates' => $arr_ready_for_sale,
-            'language_code' => 'es',
+            'language_code' => 'en',
             'country' => 'mx'
         ]);
         
@@ -841,10 +893,11 @@ class AdminController extends Controller
             $template_info['format_ready'] = Redis::exists('product:production_ready:'.$template_key);
             $template_info['translation_ready'] = Redis::exists('template:es:'.$template_key.':jsondata');
             // Has metadata for mercado pago product description
-            $template_info['mp_metadata_ready'] = Redis::exists('mercadopago:template:metadata:'.$template_key);
+            $template_info['metadata_ready'] = Redis::exists('mercadopago:template:metadata:'.$template_key);
             $template_info['mp_modelo'] = Redis::exists('wayak:mercadopago:template:modelo:'.$template_key);
 
-            if ( $template_info['format_ready'] && $template_info['translation_ready'] == false ){
+            if ( $template_info['format_ready'] 
+                && $template_info['translation_ready'] == false ){
                 
                 $thumb_info = DB::table('thumbnails')
                 ->where('template_id','=', $template_key )
@@ -881,12 +934,67 @@ class AdminController extends Controller
             $template_info['key'] = $template_key;
             // Template elements has been formated
             $template_info['format_ready'] = Redis::exists('product:production_ready:'.$template_key);
-            $template_info['translation_ready'] = Redis::exists('template:es:'.$template_key.':jsondata');
-            // Has metadata for mercado pago product description
-            $template_info['mp_metadata_ready'] = Redis::exists('mercadopago:template:metadata:'.$template_key);
-            $template_info['mp_modelo'] = Redis::exists('wayak:mercadopago:template:modelo:'.$template_key);
+            $template_info['translation_ready'] = Redis::exists('template:es:'.$template_key.':jsondata') && Redis::exists('product:translation_ready:'.$template_key);
+            $template_info['thumbnail_ready'] = Redis::exists('product:thumbnail_ready:'.$template_key);
+            
+            // // Has metadata for mercado pago product description
+            // $template_info['metadata_ready'] = Redis::exists('mercadopago:template:metadata:'.$template_key);
+            // $template_info['mp_modelo'] = Redis::exists('wayak:mercadopago:template:modelo:'.$template_key);
 
-            if ( $template_info['format_ready'] && $template_info['translation_ready'] ){
+            if ( $template_info['format_ready'] 
+                && $template_info['translation_ready']
+                && $template_info['thumbnail_ready'] == false ){
+                
+                $thumb_info = DB::table('thumbnails')
+                ->where('template_id','=', $template_key )
+                ->where('language_code','=', 'es' )
+                ->first();
+
+                if($thumb_info){
+                    $template_info['thumbnail']  = asset( 'design/template/'. $template_key.'/thumbnails/'.$thumb_info->filename);
+                } else {
+                    $template_info['thumbnail']  = null;
+                }
+                
+                $arr_ready_for_sale[] = $template_info;
+            }
+        }
+
+        // echo "<pre>";
+        // print_r( $template_info );
+        // exit;
+        
+        return view('admin.templates_ready_translation', [
+            'templates' => $arr_ready_for_sale,
+            'language_code' => 'es',
+            'country' => 'mx'
+        ]);
+        
+    }
+    
+    function getThumbnailReady(){
+        
+        // Get all templates already formated
+        $formated_templates = Redis::keys('product:production_ready:*');
+        $formated_templates_total = sizeof($formated_templates);
+        $arr_ready_for_sale = [];
+        
+        for ($i=0; $i < $formated_templates_total; $i++) { 
+            $template_key = str_replace('product:production_ready:', null, $formated_templates[$i]);
+            
+            $template_info['key'] = $template_key;
+            // Template elements has been formated
+            $template_info['format_ready'] = Redis::exists('product:production_ready:'.$template_key);
+            $template_info['translation_ready'] = Redis::exists('template:es:'.$template_key.':jsondata') && Redis::exists('product:translation_ready:'.$template_key);
+            $template_info['thumbnail_ready'] = Redis::exists('product:thumbnail_ready:'.$template_key);
+            
+            // // Has metadata for mercado pago product description
+            // $template_info['metadata_ready'] = Redis::exists('mercadopago:template:metadata:'.$template_key);
+            // $template_info['mp_modelo'] = Redis::exists('wayak:mercadopago:template:modelo:'.$template_key);
+
+            if ( $template_info['format_ready'] 
+                && $template_info['translation_ready'] 
+                && $template_info['thumbnail_ready']){
                 
                 $thumb_info = DB::table('thumbnails')
                 ->where('template_id','=', $template_key )
@@ -928,15 +1036,21 @@ class AdminController extends Controller
             $template_info['key'] = $template_key;
             // Template elements has been formated
             $template_info['format_ready'] = Redis::exists('product:production_ready:'.$template_key);
-            $template_info['translation_ready'] = Redis::exists('template:es:'.$template_key.':jsondata');
+            $template_info['translation_ready'] = Redis::exists('template:es:'.$template_key.':jsondata') && Redis::exists('product:translation_ready:'.$template_key);
+            $template_info['thumbnail_ready'] = Redis::exists('product:thumbnail_ready:'.$template_key);
+            $template_info['metadata_ready'] = Redis::exists('template:'.$template_key.':metadata');
+
             // Has metadata for mercado pago product description
-            $template_info['mp_metadata_ready'] = Redis::exists('mercadopago:template:metadata:'.$template_key);
             $template_info['mp_modelo'] = Redis::exists('wayak:mercadopago:template:modelo:'.$template_key);
 
-            if ( $template_info['format_ready'] && $template_info['translation_ready'] && $template_info['mp_metadata_ready'] == false){
+            if ( $template_info['format_ready'] 
+                && $template_info['translation_ready'] 
+                && $template_info['thumbnail_ready'] 
+                && $template_info['metadata_ready'] == false){
                 
                 $thumb_info = DB::table('thumbnails')
                 ->where('template_id','=', $template_key )
+                ->where('language_code','=', 'es' )
                 ->first();
 
                 if($thumb_info){
@@ -995,7 +1109,7 @@ class AdminController extends Controller
             $source_template_key = 'template:'.$origin_lang.':'.$template_key.':jsondata';
             
             $source_template_exists = Redis::exists( $source_template_key );
-            $template_translation_ready = Redis::exists('template:'.$destination_lang.':'.$template_key.':jsondata');
+            $template_translation_ready = Redis::exists('template:'.$destination_lang.':'.$template_key.':jsondata') && Redis::exists('product:translation_ready:'.$template_key);
             $template_format_ready = Redis::exists('product:production_ready:'.$template_key);
             
             
@@ -1104,12 +1218,12 @@ class AdminController extends Controller
             $template_info['format_ready'] = Redis::exists('product:production_ready:'.$template_key);
             $template_info['translation_ready'] = Redis::exists('template:es:'.$template_key.':jsondata');
             // Has metadata for mercado pago product description
-            $template_info['mp_metadata_ready'] = Redis::exists('mercadopago:template:metadata:'.$template_key);
+            $template_info['metadata_ready'] = Redis::exists('mercadopago:template:metadata:'.$template_key);
             $template_info['mp_modelo'] = Redis::exists('wayak:mercadopago:template:modelo:'.$template_key);
 
             if ( $template_info['format_ready'] 
                 && $template_info['translation_ready'] 
-                // && $template_info['mp_metadata_ready'] == false 
+                // && $template_info['metadata_ready'] == false 
                 ){
                 
                 $thumb_info = DB::table('thumbnails')

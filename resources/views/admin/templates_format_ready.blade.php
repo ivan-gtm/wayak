@@ -53,11 +53,15 @@
 @section('content')
         <div class="row">
             <div class="col-12">
-                <h1 class="text-center">GESTIÓN DE PLANTILLAS</h1>
+                <h1 class="text-center">Plantillas con formato listo.</h1>
             </div>
             @foreach ($templates as $product_info )
                 <div class="col-3 box">
-                    <a href="{{ route('admin.ml.editMLMetadata',['template_key' => $product_info['key']]) }}">
+                    <a class="translate-template"  
+                            href="{{ route('admin.edit.template', [
+                              'language_code' => $language_code,
+                              'template_key' => $product_info['key']
+                        ]) }}">
                         <img class="img-fluid" src="{{ $product_info['thumbnail'] }}">
                     </a>
                     <br>
@@ -65,17 +69,20 @@
                       <div class="col-12">
                         <p>{{ $product_info['key'] }}</p>
                       </div>
-                      
+                      <!-- <div class="col-6">
+                        <a href="{{ route( 'admin.translate.template', [
+                          'template_key' => $product_info['key'],
+                          'from' => 'en',
+                          'to' => $language_code
+                        ] ) }}">TRADUCIR</a>
+                      </div> -->
                       <div class="col-12">
-                        @if( $product_info['translation_ready'] )
-                          <a class="translate-template" 
+                        <a class="translate-template"  
                             href="{{ route('admin.edit.template', [
                               'language_code' => $language_code,
                               'template_key' => $product_info['key']
                           ]) }}">EDITAR PLANTILLA</a>
-                        @endif
                       </div>
-                      
                     </div>
                 </div>
             @endforeach
