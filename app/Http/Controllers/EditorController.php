@@ -216,9 +216,9 @@ class EditorController extends Controller
 		$template_key = 'template:'.$language_code.':'.$template_id.':jsondata';
 		
 		if( App::environment() == 'local' ){
-			return str_replace('https:\/\/wayak.app', 'http:\/\/localhost:8001', Redis::get($template_key) );
-		} elseif( App::environment() == 'local' ){
 			return str_replace('http:\/\/localhost:8001', url('/'), Redis::get($template_key) );
+		} else {
+			return str_replace('https:\/\/wayak.app', 'http:\/\/localhost:8001', Redis::get($template_key) );
 		}
 	}
 
