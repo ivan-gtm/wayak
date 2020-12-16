@@ -80,9 +80,20 @@
                             <div class="col-12">
                                 <div class="card widget-flat">
                                     <div class="card-body">
+                                        <a href="{{ route('admin.generateProductThumbnails') }}" class="card-link">
+                                            <h4>
+                                                6.- Generar imagenes "vistas previa de producto" para Mercado Libre
+                                            </h4>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="card widget-flat">
+                                    <div class="card-body">
                                         <a href="{{ route('admin.ml.getMissingMetadataTemplates') }}" class="card-link">
                                             <h4>
-                                                5.- Falta editar metadatos ( Ficha del producto )
+                                                7.- Falta editar metadatos ( Ficha del producto )
                                             </h4>
                                         </a>
                                     </div>
@@ -93,29 +104,32 @@
                                     <div class="card-body">
                                         <a href="{{ route( 'admin.ml.templatesReadyForSale' ) }}" class="card-link">
                                             <h4>
-                                                6.- Plantillas listas para la venta ( formato, lenguage, descripción del producto ).
+                                                8.- Plantillas listas para la venta ( formato, lenguage, descripción del producto ).
                                             </h4>
                                         </a>
                                     </div>
                                 </div>
                             </div>
+                           
                             <div class="col-12">
                                 <div class="card widget-flat">
                                     <div class="card-body">
-                                        <a href="{{ route('admin.generateProductThumbnails') }}" class="card-link">
+                                        <!-- <a href="{{ route( 'admin.ml.templatesReadyForSale' ) }}" class="card-link"> -->
+                                        <a href="{{ route( 'admin.ml.mercadoLibreCatalog' ) }}" class="card-link">
                                             <h4>
-                                                7.- Generar imagenes "vistas previa de producto"
+                                                9.- Generar Formato Excel
                                             </h4>
                                         </a>
                                     </div>
                                 </div>
                             </div>
+                            
                             <div class="col-12">
                                 <div class="card widget-flat">
                                     <div class="card-body">
                                         <a href="{{ route( 'admin.template.gallery', ['country' => 'mx'] ) }}" class="card-link">
                                             <h4>
-                                                8.- Plantillas en venta ( Mercado Libre )
+                                                10.- Plantillas en venta ( Mercado Libre )
                                             </h4>
                                         </a>
                                     </div>

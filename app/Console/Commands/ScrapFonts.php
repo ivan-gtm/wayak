@@ -36,7 +36,7 @@ class ScrapFonts extends Command
     function bulkFontsDownload(){
         
         // Collect all fonts are pending to download
-        $fonts_to_download = DB::select('SELECT font_id FROM template_has_fonts WHERE  status = ? LIMIT 800', [0]);
+        $fonts_to_download = DB::select('SELECT font_id FROM template_has_fonts WHERE  status = ? LIMIT 1600', [0]);
         
         // print_r(sizeof($fonts_to_download));
         // exit;
@@ -427,9 +427,9 @@ class ScrapFonts extends Command
         }
 
         // Update all font db
-        // DB::table('template_has_fonts')
-        //     ->where('font_id', $font_id)
-        //     ->update(['status' => 1]);
+        DB::table('template_has_fonts')
+            ->where('font_id', $font_id)
+            ->update(['status' => 1]);
     }
 
     /**
@@ -439,7 +439,7 @@ class ScrapFonts extends Command
      */
     public function handle()
     {
-        // $this->bulkFontsDownload();
-        $this->customBulkFontDownload();
+        $this->bulkFontsDownload();
+        // $this->customBulkFontDownload();
     }
 }

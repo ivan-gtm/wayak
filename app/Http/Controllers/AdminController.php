@@ -239,7 +239,7 @@ class AdminController extends Controller
 
         $language_code = self::getCountryLanguage($country);
 
-        $tmp_template_keys = Redis::keys('product:production_ready:*');
+        $tmp_template_keys = Redis::keys('product:format_ready:*');
         
         // echo "<pre>";
         // print_r($tmp_template_keys);
@@ -247,7 +247,7 @@ class AdminController extends Controller
 
         $templates = [];
         foreach ($tmp_template_keys as $template) {
-            $template_key = str_replace('product:production_ready:',null, $template);
+            $template_key = str_replace('product:format_ready:',null, $template);
             
             $thumb_info = DB::table('thumbnails')
                 ->where('template_id','=',$template_key)
@@ -315,8 +315,17 @@ class AdminController extends Controller
                 ->where('template_id','=',$template_key)
                 ->where('language_code','=','es')
                 ->first();
-       
+
         $thumb_img_url = asset( 'design/template/'. $template_key.'/thumbnails/'.$thumb_info->filename);
+                
+        $product_preview_imgs = Redis::get('product:preview_images:'.$template_key);
+        $product_preview_imgs = json_decode($product_preview_imgs);
+
+        // echo "<pre>";
+        // print_r($product_preview_imgs);
+        // exit;
+
+        $product_preview_urls = implode(', ', $product_preview_imgs);
         $modelo_id = self::generarModeloMercadoPago($template_key);
         $description = Redis::get('wayak:mercadopago:description_template');
         $titulo = 'Invitacion Digital _CAMBIAR_ Whats Face';
@@ -347,7 +356,7 @@ class AdminController extends Controller
 
         return view('admin.mp_create_product', [
             'thumb_img_url' => $thumb_img_url,
-            'product_images' => $thumb_img_url,
+            'product_images' => $product_preview_urls,
             'titulo' => $titulo,
             'ocasion' => $ocasion,
             'modelo' => $modelo_id,
@@ -440,23 +449,34 @@ class AdminController extends Controller
             return;
         }
 
+        $filename = 'ejemplo';
+        $id = DB::table('ml_excel')->insertGetId([
+            'id' => null,
+            'created_at' => date('Y-m-d H:i'),
+            'filename' => $filename
+        ]);
+        // echo $id;
+        // exit;
+
         // Create new Spreadsheet object
         $spreadsheet = new Spreadsheet();
                     
         // Set document properties
         $spreadsheet->getProperties()->setCreator('Maarten Balliauw')
-            ->setLastModifiedBy('Maarten Balliauw')
+            ->setLastModifiedBy('Daniel Gutierrez')
             ->setTitle('Office 2007 XLSX Test Document')
             ->setSubject('Office 2007 XLSX Test Document')
             ->setDescription('Test document for Office 2007 XLSX, generated using PHP classes.')
             ->setKeywords('office 2007 openxml php')
             ->setCategory('Test result file');
 
-        $product_keys_metadata = Redis::keys('mercadopago:template:metadata*');
+
+        $product_keys_metadata = Redis::keys('template:*:metadata');
 
         // echo "<pre>";
-        // print_r( Redis::keys('mercadopago:template:metadata*') );
+        // print_r( $product_keys_metadata );
         // exit;
+
         $row_number = 1;
 
         foreach ($product_keys_metadata as $template_key) {
@@ -464,18 +484,15 @@ class AdminController extends Controller
                 
                 $product_metadata = Redis::get($template_key);
                 $product_metadata = json_decode($product_metadata);
-                
+
                 // echo "<pre>";
                 // print_r($product_metadata);
                 // exit;
-                
-                
     
                 // $description = $product_metadata->descripcion;
                 // $titulo = $product_metadata->titulo;
                 // $ocasion = $product_metadata->ocasion;
-                
-        
+
                 // Add some data
                 // **Título
                 // **Código universal de producto == "No aplica"
@@ -534,6 +551,13 @@ class AdminController extends Controller
                     ->setCellValue('Z'.$row_number, $product_metadata->unidad_largo)
                     ->setCellValue('AA'.$row_number, $product_metadata->ancho)
                     ->setCellValue('AB'.$row_number, $product_metadata->unidad_ancho);
+
+                    // 
+                    DB::table('ml_excel_products')->insert([
+                        'excel_id' => $id,
+                        'template_key' => $product_metadata->sku,
+                        'added_at' => date('Y-m-d h:i')
+                    ]);
         
                 // // Miscellaneous glyphs, UTF-8
                 // $spreadsheet->setActiveSheetIndex(0)
@@ -553,7 +577,7 @@ class AdminController extends Controller
 
         // Redirect output to a client’s web browser (Xlsx)
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment;filename="01simple.xlsx"');
+        header('Content-Disposition: attachment;filename="'.$filename.'.xlsx"');
         header('Cache-Control: max-age=0');
         // If you're serving to IE 9, then the following may be needed
         header('Cache-Control: max-age=1');
@@ -738,17 +762,17 @@ class AdminController extends Controller
     function templatesReadyForSale(){
         
         // Get all templates already formated
-        $formated_templates = Redis::keys('product:production_ready:*');
+        $formated_templates = Redis::keys('product:format_ready:*');
         $formated_templates_total = sizeof($formated_templates);
         $arr_ready_for_sale = [];
         
         for ($i=0; $i < $formated_templates_total; $i++) { 
-            $template_key = str_replace('product:production_ready:', null, $formated_templates[$i]);
+            $template_key = str_replace('product:format_ready:', null, $formated_templates[$i]);
             
             $template_info['key'] = $template_key;
             // Template elements has been formated
-            $template_info['format_ready'] = Redis::exists('product:production_ready:'.$template_key);
-            $template_info['translation_ready'] = Redis::exists('template:es:'.$template_key.':jsondata');
+            $template_info['format_ready'] = Redis::exists('product:format_ready:'.$template_key);
+            $template_info['translation_ready'] = Redis::exists('template:es:'.$template_key.':jsondata') && Redis::exists('product:translation_ready:'.$template_key);
             // Has metadata for mercado pago product description
             $template_info['metadata_ready'] = Redis::exists('template:'.$template_key.':metadata');
             $template_info['mp_modelo'] = Redis::exists('wayak:mercadopago:template:modelo:'.$template_key);
@@ -760,14 +784,18 @@ class AdminController extends Controller
                 
                 $thumb_info = DB::table('thumbnails')
                 ->where('template_id','=', $template_key )
+                ->where('language_code','=', 'es' )
                 ->first();
-
-                if($thumb_info){
-                    $template_info['thumbnail']  = asset( 'design/template/'. $template_key.'/thumbnails/'.$thumb_info->filename);
-                } else {
-                    $template_info['thumbnail']  = null;
-                }
                 
+                // if($thumb_info){
+                //     $template_info['thumbnail']  = asset( 'design/template/'. $template_key.'/thumbnails/'.$thumb_info->filename);
+                // } else {
+                //     $template_info['thumbnail']  = null;
+                // }
+
+                $images = json_decode( Redis::get('product:preview_images:'.$template_key) );
+                $template_info['thumbnail']  = $images[0];
+
                 $arr_ready_for_sale[] = $template_info;
             }
         }
@@ -784,28 +812,63 @@ class AdminController extends Controller
         
     }
 
+
+    function mercadoLibreCatalog(){
+        
+        $files = DB::table('ml_excel')
+            ->select('id','created_at', 'filename')
+            ->get();
+
+        return view('admin.ml.excel', [
+            'files' => $files
+        ]);
+    }
+
+    function mercadoLibreExcelProducts($excel_id){
+        
+        $excel_products = DB::table('ml_excel_products')
+            ->select('template_key')
+            ->get();
+        
+        foreach ($excel_products as $product) {
+            $images = json_decode( Redis::get('product:preview_images:'.$product->template_key) );
+            // echo "<pre>";
+            // print_r($images);
+            // exit;
+            $template['thumbnail']  = $images[0];
+            $template['template_key']  = $product->template_key;
+            $arr_excel_products[] = $template;
+        }
+
+        return view('admin.ml.excel_products', [
+            'excel_products' => $arr_excel_products
+        ]);
+    }
+
     function missingMetadataTemplates(){
         
         // Get all templates already formated
-        $formated_templates = Redis::keys('product:production_ready:*');
+        $formated_templates = Redis::keys('product:format_ready:*');
         $formated_templates_total = sizeof($formated_templates);
         $arr_ready_for_sale = [];
         
         for ($i=0; $i < $formated_templates_total; $i++) {
 
-            $template_key = str_replace('product:production_ready:', null, $formated_templates[$i]);
+            $template_key = str_replace('product:format_ready:', null, $formated_templates[$i]);
             $template_info['key'] = $template_key;
 
             // Template elements has been formated
-            $template_info['format_ready'] = Redis::exists('product:production_ready:'.$template_key);
-            $template_info['translation_ready'] = Redis::exists('template:es:'.$template_key.':jsondata');
+            $template_info['format_ready'] = Redis::exists('product:format_ready:'.$template_key);
+            $template_info['translation_ready'] = Redis::exists('template:es:'.$template_key.':jsondata') && Redis::exists('product:translation_ready:'.$template_key);
             // Has metadata for mercado pago product description
             $template_info['metadata_ready'] = Redis::exists('template:'.$template_key.':metadata');
             $template_info['mp_modelo'] = Redis::exists('wayak:mercadopago:template:modelo:'.$template_key);
+            $template_info['thumbnail_ready'] = Redis::exists('product:preview_images:'.$template_key);
 
             if ( $template_info['format_ready']
                 && $template_info['translation_ready'] 
-                && $template_info['metadata_ready'] == false ){
+                && $template_info['metadata_ready'] == false 
+                && $template_info['thumbnail_ready'] ){
                 
                 $thumb_info = DB::table('thumbnails')
                 ->where('template_id','=', $template_key )
@@ -835,19 +898,24 @@ class AdminController extends Controller
     }
     
     function getFormatReadyTemplates(){
+
+        $format_ready_keys = Redis::keys('product:production_ready:*');
+        foreach ($format_ready_keys as $template_key) {
+            Redis::rename($template_key, str_replace(':production_ready:', ':format_ready:',$template_key ) );
+        }
         
         // Get all templates already formated
-        $formated_templates = Redis::keys('product:production_ready:*');
+        $formated_templates = Redis::keys('product:format_ready:*');
         $formated_templates_total = sizeof($formated_templates);
         $arr_ready_for_sale = [];
         
         for ($i=0; $i < $formated_templates_total; $i++) { 
-            $template_key = str_replace('product:production_ready:', null, $formated_templates[$i]);
+            $template_key = str_replace('product:format_ready:', null, $formated_templates[$i]);
             
             $template_info['key'] = $template_key;
             
             // Template elements has been formated by humans
-            $template_info['format_ready'] = Redis::exists('product:production_ready:'.$template_key);
+            $template_info['format_ready'] = Redis::exists('product:format_ready:'.$template_key);
             $template_info['translation_not_ready'] = Redis::exists('template:es:'.$template_key.':jsondata') == false || Redis::exists('product:translation_ready:'.$template_key) == false;
             $template_info['thumbnail_ready'] = Redis::exists('product:thumbnail_ready:'.$template_key) == false;
 
@@ -856,9 +924,9 @@ class AdminController extends Controller
                 && $template_info['thumbnail_ready'] ){
                 
                 $thumb_info = DB::table('thumbnails')
-                ->where('template_id','=', $template_key )
-                ->where('language_code','=', 'en' )
-                ->first();
+                    ->where('template_id','=', $template_key )
+                    ->where('language_code','=', 'en' )
+                    ->first();
 
                 if($thumb_info){
                     $template_info['thumbnail']  = asset( 'design/template/'. $template_key.'/thumbnails/'.$thumb_info->filename);
@@ -869,31 +937,31 @@ class AdminController extends Controller
                 $arr_ready_for_sale[] = $template_info;
             }
         }
-        
+
         return view('admin.templates_format_ready', [
             'templates' => $arr_ready_for_sale,
             'language_code' => 'en',
             'country' => 'mx'
         ]);
-        
+
     }
     
     function getMissingTranslationTemplates(){
         
         // Get all templates already formated
-        $formated_templates = Redis::keys('product:production_ready:*');
+        $formated_templates = Redis::keys('product:format_ready:*');
         $formated_templates_total = sizeof($formated_templates);
         $arr_ready_for_sale = [];
         
         for ($i=0; $i < $formated_templates_total; $i++) { 
-            $template_key = str_replace('product:production_ready:', null, $formated_templates[$i]);
+            $template_key = str_replace('product:format_ready:', null, $formated_templates[$i]);
             
             $template_info['key'] = $template_key;
             // Template elements has been formated
-            $template_info['format_ready'] = Redis::exists('product:production_ready:'.$template_key);
-            $template_info['translation_ready'] = Redis::exists('template:es:'.$template_key.':jsondata');
+            $template_info['format_ready'] = Redis::exists('product:format_ready:'.$template_key);
+            $template_info['translation_ready'] = Redis::exists('template:es:'.$template_key.':jsondata') && Redis::exists('product:translation_ready:'.$template_key);
             // Has metadata for mercado pago product description
-            $template_info['metadata_ready'] = Redis::exists('mercadopago:template:metadata:'.$template_key);
+            // $template_info['metadata_ready'] = Redis::exists('mercadopago:template:metadata:'.$template_key);
             $template_info['mp_modelo'] = Redis::exists('wayak:mercadopago:template:modelo:'.$template_key);
 
             if ( $template_info['format_ready'] 
@@ -924,16 +992,16 @@ class AdminController extends Controller
     function getTranslationReadyTemplates(){
         
         // Get all templates already formated
-        $formated_templates = Redis::keys('product:production_ready:*');
+        $formated_templates = Redis::keys('product:format_ready:*');
         $formated_templates_total = sizeof($formated_templates);
         $arr_ready_for_sale = [];
         
         for ($i=0; $i < $formated_templates_total; $i++) { 
-            $template_key = str_replace('product:production_ready:', null, $formated_templates[$i]);
+            $template_key = str_replace('product:format_ready:', null, $formated_templates[$i]);
             
             $template_info['key'] = $template_key;
             // Template elements has been formated
-            $template_info['format_ready'] = Redis::exists('product:production_ready:'.$template_key);
+            $template_info['format_ready'] = Redis::exists('product:format_ready:'.$template_key);
             $template_info['translation_ready'] = Redis::exists('template:es:'.$template_key.':jsondata') && Redis::exists('product:translation_ready:'.$template_key);
             $template_info['thumbnail_ready'] = Redis::exists('product:thumbnail_ready:'.$template_key);
             
@@ -975,16 +1043,16 @@ class AdminController extends Controller
     function getThumbnailReady(){
         
         // Get all templates already formated
-        $formated_templates = Redis::keys('product:production_ready:*');
+        $formated_templates = Redis::keys('product:format_ready:*');
         $formated_templates_total = sizeof($formated_templates);
         $arr_ready_for_sale = [];
         
         for ($i=0; $i < $formated_templates_total; $i++) { 
-            $template_key = str_replace('product:production_ready:', null, $formated_templates[$i]);
+            $template_key = str_replace('product:format_ready:', null, $formated_templates[$i]);
             
             $template_info['key'] = $template_key;
             // Template elements has been formated
-            $template_info['format_ready'] = Redis::exists('product:production_ready:'.$template_key);
+            $template_info['format_ready'] = Redis::exists('product:format_ready:'.$template_key);
             $template_info['translation_ready'] = Redis::exists('template:es:'.$template_key.':jsondata') && Redis::exists('product:translation_ready:'.$template_key);
             $template_info['thumbnail_ready'] = Redis::exists('product:thumbnail_ready:'.$template_key);
             
@@ -1026,16 +1094,16 @@ class AdminController extends Controller
     function getMissingMetadataTemplates(){
         
         // Get all templates already formated
-        $formated_templates = Redis::keys('product:production_ready:*');
+        $formated_templates = Redis::keys('product:format_ready:*');
         $formated_templates_total = sizeof($formated_templates);
         $arr_ready_for_sale = [];
         
         for ($i=0; $i < $formated_templates_total; $i++) { 
-            $template_key = str_replace('product:production_ready:', null, $formated_templates[$i]);
+            $template_key = str_replace('product:format_ready:', null, $formated_templates[$i]);
             
             $template_info['key'] = $template_key;
             // Template elements has been formated
-            $template_info['format_ready'] = Redis::exists('product:production_ready:'.$template_key);
+            $template_info['format_ready'] = Redis::exists('product:format_ready:'.$template_key);
             $template_info['translation_ready'] = Redis::exists('template:es:'.$template_key.':jsondata') && Redis::exists('product:translation_ready:'.$template_key);
             $template_info['thumbnail_ready'] = Redis::exists('product:thumbnail_ready:'.$template_key);
             $template_info['metadata_ready'] = Redis::exists('template:'.$template_key.':metadata');
@@ -1093,11 +1161,11 @@ class AdminController extends Controller
         // exit;
 
         // echo "<pre>";
-        // print_r( Redis::keys('product:production_ready:*') );
+        // print_r( Redis::keys('product:format_ready:*') );
         // exit;
         
         // Get formated templates
-        $ready_for_sale = Redis::keys('product:production_ready:*');
+        $ready_for_sale = Redis::keys('product:format_ready:*');
 
         $template_total = sizeof($ready_for_sale); // Array size of format ready templates
         $template_text = '';
@@ -1105,12 +1173,12 @@ class AdminController extends Controller
         $templates_per_page = 10;
         $templates_on_page = 0;
         for ($i=0; $i < $template_total; $i++) {
-            $template_key = str_replace('product:production_ready:', null, $ready_for_sale[$i]);
+            $template_key = str_replace('product:format_ready:', null, $ready_for_sale[$i]);
             $source_template_key = 'template:'.$origin_lang.':'.$template_key.':jsondata';
             
             $source_template_exists = Redis::exists( $source_template_key );
             $template_translation_ready = Redis::exists('template:'.$destination_lang.':'.$template_key.':jsondata') && Redis::exists('product:translation_ready:'.$template_key);
-            $template_format_ready = Redis::exists('product:production_ready:'.$template_key);
+            $template_format_ready = Redis::exists('product:format_ready:'.$template_key);
             
             
             if( $source_template_exists
@@ -1206,25 +1274,26 @@ class AdminController extends Controller
     
     function generateProductThumbnails() {
         // Get all templates already formated
-        $formated_templates = Redis::keys('product:production_ready:*');
+        $formated_templates = Redis::keys('product:format_ready:*');
         $formated_templates_total = sizeof($formated_templates);
         $arr_ready_for_sale = [];
+
+        // echo "<pre>";
+        // print_r($formated_templates);
+        // exit;
         
         for ($i=0; $i < $formated_templates_total; $i++) { 
-            $template_key = str_replace('product:production_ready:', null, $formated_templates[$i]);
+            $template_key = str_replace('product:format_ready:', null, $formated_templates[$i]);
             
             $template_info['key'] = $template_key;
             // Template elements has been formated
-            $template_info['format_ready'] = Redis::exists('product:production_ready:'.$template_key);
-            $template_info['translation_ready'] = Redis::exists('template:es:'.$template_key.':jsondata');
-            // Has metadata for mercado pago product description
-            $template_info['metadata_ready'] = Redis::exists('mercadopago:template:metadata:'.$template_key);
-            $template_info['mp_modelo'] = Redis::exists('wayak:mercadopago:template:modelo:'.$template_key);
-
+            $template_info['format_ready'] = Redis::exists('product:format_ready:'.$template_key);
+            $template_info['translation_ready'] = Redis::exists('template:es:'.$template_key.':jsondata') && Redis::exists('product:translation_ready:'.$template_key);
+            $template_info['thumbnail_ready'] = Redis::exists('product:thumbnail_ready:'.$template_key);
+            
             if ( $template_info['format_ready'] 
                 && $template_info['translation_ready'] 
-                // && $template_info['metadata_ready'] == false 
-                ){
+                && $template_info['thumbnail_ready'] ){
                 
                 $thumb_info = DB::table('thumbnails')
                 ->where('template_id','=', $template_key )
@@ -1244,16 +1313,24 @@ class AdminController extends Controller
                     exit;
                 }
                 
-                // echo "<pre>";
-                // print_r($mercadolibre_path);
-                // exit;
+                self::emptyFolder($template_info);
+
+                $preview_images = [];
                 
-                self::processMockup($template_info,10);
-                self::processMockup($template_info,2);
-                self::processMockup($template_info,6);
+                array_push($preview_images, self::processMockup($template_info,10) );
+                array_push($preview_images, self::processMockup($template_info,6) );
+                array_push($preview_images, self::processMockup($template_info,2) );
+                array_push($preview_images, self::processMockup($template_info,18) );
+                
+                // echo "<pre>";
+                // print_r($preview_images);
+                // exit;
+
+                Redis::set('product:preview_images:'.$template_info['key'], json_encode($preview_images));
+
                 // self::processMockup($template_info,18);
                 // 10, 2, 6, 18
-                exit;
+                // exit;
                 
                 $arr_missing_metadata[] = $template_info;
             }
@@ -1262,6 +1339,22 @@ class AdminController extends Controller
         echo "<pre>";
         print_r($arr_missing_metadata);
         exit;
+
+    }
+
+    function emptyFolder($template_info){
+        $folter_to_clean = public_path( 'product/preview-images/'. $template_info['key'] .'/*');
+        // echo "<pre>";
+        // print_r($folter_to_clean);
+        // exit;
+
+        $files = glob( $folter_to_clean ); // get all file names
+        
+        foreach($files as $file){ // iterate files
+            if(is_file($file)) {
+                unlink($file); // delete file
+            }
+        }
 
     }
 
@@ -1332,10 +1425,17 @@ class AdminController extends Controller
                 $img_url = self::generateMock16($template_info);
                 break;
             
+            case 18:
+                $img_url = self::generateMock18($template_info);
+                break;
+            
             default:
                 $img_url = self::generateMock1($template_info);
                 break;
         }
+        
+        return $img_url;
+
     }
 
     function createImagePreview(){
@@ -1397,15 +1497,16 @@ class AdminController extends Controller
         $mockup_img->insert($overlay_img, 'top-left', 410, 357);
         
         $mercadolibre_preview_path = public_path( 'product/preview-images/'. $product_info['key'] .'/');
-        $filename = 'preview_2_'.rand(111111,999999).'.jpg';
+        $filename = 'preview_3_'.rand(111111,999999).'.jpg';
         $preview_path = $mercadolibre_preview_path.$filename;
         @mkdir($mercadolibre_preview_path, 0777, true);
         $mockup_img->save( $preview_path );
 
+        $url_path = asset( 'product/preview-images/'. $product_info['key'] .'/'.$filename);
+
         // echo '<img src="'.asset( 'product/preview-images/'. $product_info['key'] .'/'.$filename ).'">';
         // exit;
-
-        return $preview_path;
+        return $url_path;
     }
 
     function generateMock3($product_info){
@@ -1483,12 +1584,14 @@ class AdminController extends Controller
         $mockup_img->insert($overlay_img, 'top-left', 122, 283);
         $mockup_img->insert($overlay_2_img, 'top-left', 985, 520);
 
+        $filename = 'preview_2_'.rand(111111,999999).'.jpg';
         $mercadolibre_preview_path = public_path( 'product/preview-images/'. $product_info['key'] .'/');
-        $preview_path = $mercadolibre_preview_path.'preview_3_'.rand(111111,999999).'.jpg';
+        $preview_path = $mercadolibre_preview_path.$filename;
+        $url_path = asset( 'product/preview-images/'. $product_info['key'] .'/'.$filename);
         @mkdir($mercadolibre_preview_path, 0777, true);
         $mockup_img->save( $preview_path );
 
-        return $preview_path;
+        return $url_path;
     }
     
     function generateMock7($product_info){
@@ -1567,12 +1670,14 @@ class AdminController extends Controller
 
         $mockup_img->insert($overlay_img, 'top-left', 349, 303);
 
+        $filename = 'preview_1_'.rand(111111,999999).'.jpg';
         $mercadolibre_preview_path = public_path( 'product/preview-images/'. $product_info['key'] .'/');
-        $preview_path = $mercadolibre_preview_path.'preview_1_'.rand(111111,999999).'.jpg';
+        $preview_path = $mercadolibre_preview_path.$filename;
         @mkdir($mercadolibre_preview_path, 0777, true);
         $mockup_img->save( $preview_path );
+        $url_path = asset( 'product/preview-images/'. $product_info['key'] .'/'.$filename);
 
-        return $preview_path;
+        return $url_path;
     }
 
     function generateMock11($product_info){
@@ -1597,7 +1702,7 @@ class AdminController extends Controller
         return asset('mockups/final_thumbs.jpg');
     }
 
-    function generateMock12($product_info){
+    function generateMock12($product_info) {
         $mockup_img_path = public_path('mockups/mockup_12.jpg');
         $overlay_img_path = $product_info['thumbnail'];
         
@@ -1703,5 +1808,33 @@ class AdminController extends Controller
         $mockup_img->save( public_path('mockups/final_thumbs.jpg') );
         
         return asset('mockups/final_thumbs.jpg');
+    }
+
+    function generateMock18($product_info){
+        $mockup_img_path = public_path('mockups/mockup_18.png');
+        // $overlay_img_path = $product_info['thumbnail'];
+        
+        // create new Intervention Image
+        $mockup_img = Image::make($mockup_img_path);
+        // $overlay_img = Image::make($overlay_img_path);
+
+        // $overlay_img->resize(null, 999, function ($constraint) {
+        //     $constraint->aspectRatio();
+        // });
+
+        // $overlay_img->rotate(0);
+        // $mockup_img->insert($overlay_img, 'top-left', 410, 357);
+        
+        $mercadolibre_preview_path = public_path( 'product/preview-images/'. $product_info['key'] .'/');
+        $filename = 'preview_4_'.rand(111111,999999).'.jpg';
+        $preview_path = $mercadolibre_preview_path.$filename;
+        @mkdir($mercadolibre_preview_path, 0777, true);
+        $mockup_img->save( $preview_path );
+        $url_path = asset( 'product/preview-images/'. $product_info['key'] .'/'.$filename);
+
+        // echo '<img src="'.asset( 'product/preview-images/'. $product_info['key'] .'/'.$filename ).'">';
+        // exit;
+
+        return $url_path;
     }
 }
