@@ -59,6 +59,12 @@ Route::get('/scrapper/templett', [TemplettScrapperController::class, 'downloadOr
     Route::post('/admin/{country}/generate-code', [AdminController::class, 'generateCode'])->name('code.generate');
 
 // MERCADO LIBRE
+    Route::get('/admin/create-product/{template_key}', [AdminController::class, 'createProduct'])->name('admin.createTemplate');
+    Route::post('/admin/create-product/{template_key}', [AdminController::class, 'createDBProduct']);
+
+    Route::get('/admin/ml/templates/description', [AdminController::class, 'mlDescriptionTemplate'])->name('ml.getDescriptionMetadata');
+    Route::post('/admin/ml/templates/description', [AdminController::class, 'editMlDescriptionTemplate'])->name('ml.editDescriptionMetadata');
+
     Route::get('/admin/mercadolibre/catalogo', [AdminController::class, 'mercadoLibreCatalog'])->name('admin.ml.mercadoLibreCatalog');
     Route::get('/admin/mercadolibre/excel/productos/{excel_id}', [AdminController::class, 'mercadoLibreExcelProducts'])->name('admin.ml.mercadoLibreExcelProducts');
     Route::get('/admin/ml/catalogo-excel', [AdminController::class, 'mercadoLibreExcel'])->name('admin.ml.generateProductExcel');
@@ -75,8 +81,8 @@ Route::get('/scrapper/templett', [TemplettScrapperController::class, 'downloadOr
     Route::get('/admin/ml/templates/missing-metadata', [AdminController::class, 'getMissingMetadataTemplates'])->name('admin.ml.getMissingMetadataTemplates');
 
 // ETSY
-    Route::get('/admin/etsy/templates/description', [AdminController::class, 'descriptionTemplate'])->name('etsy.editMetadata');
-    Route::post('/admin/etsy/templates/description', [AdminController::class, 'editDescriptionTemplate']);
+    Route::get('/admin/etsy/templates/description', [AdminController::class, 'etsyDescriptionTemplate'])->name('etsy.editMetadata');
+    Route::post('/admin/etsy/templates/description', [AdminController::class, 'editEtsyDescriptionTemplate']);
 
 // DESYGNER
     Route::get('/admin/desygner/download-templates', [DesygnerController::class, 'index']);
@@ -95,10 +101,9 @@ Route::get('/scrapper/templett', [TemplettScrapperController::class, 'downloadOr
     Route::get('/admin/green/translate-templates', [greenController::class, 'translateTemplate']);
     Route::get('/admin/green/download-templates', [greenController::class, 'index']);
 
-Route::get('/admin/create-product/{template_key}', [AdminController::class, 'createProduct'])->name('admin.createTemplate');
-Route::post('/admin/create-product/{template_key}', [AdminController::class, 'createDBProduct']);
 
-Route::get('/admin/generate-thumbs', [AdminController::class, 'generateProductThumbnails'])->name('admin.generateProductThumbnails');
+
+    Route::get('/admin/generate-thumbs', [AdminController::class, 'generateProductThumbnails'])->name('admin.generateProductThumbnails');
 
 // DESIGNER
     // Route::get('/open',  [EditorController::class,'open']);

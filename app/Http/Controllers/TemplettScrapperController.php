@@ -20,7 +20,7 @@ class TemplettScrapperController extends Controller
 {
 
 	private function storeJSONTemplate($template_id, $json_data){
-		print_r("			Inserting JSON >> ".$template_info['templateid']);
+		print_r("			Inserting JSON >> ".$template_id);
 
 		$template_key = 'template:'.$template_id.':jsondata';
 		Redis::set($template_key, $json_data);
@@ -73,6 +73,7 @@ class TemplettScrapperController extends Controller
 							// ->where('username','!=', 'asterandrose')
 							->where('status', '<>', 3)
 							->where('templett_url', 'not like', "%asterandrose%")
+							// ->where('templett_url', 'like', "%4168392,4171985%")
 							->get();
 		
 		
@@ -87,18 +88,23 @@ class TemplettScrapperController extends Controller
 			
 			foreach ($template_ids as $template_id) {
 				
-				// print_r($template_id);
-				
 				$template_key = 'template:'.$template_id.':jsondata';
+
+				// echo "<pre>";
+				// print_r($template_key);
+				// exit;
 				
 				// IF template does not exists on REDIS database
-				
 				if( Redis::exists($template_key) == false ) {
-					
-					echo "<br>$template_key does not exist >> Start scrapping";
 
+					echo "<br>$template_key does not exist >> Start scrapping";
 					// $templett_url = $this->sanitizeExtraLargeURL( $template->templett_url );
+
 					$templett_url = $template->templett_url;
+
+					// echo "<pre>";
+					// print_r($templett_url);
+					// exit;
 	
 					// echo "NO EXISTE::>";
 					// echo "<pre>";
@@ -126,7 +132,7 @@ class TemplettScrapperController extends Controller
 					// }
 	
 				} else {
-					echo "<br>$template_key >> Already exists on db";
+					// echo "<br>$template_key >> Already exists on db";
 					DB::table('templates')
 						->where('id', $template->id)
 						->update(['status' => 3]);
@@ -303,13 +309,13 @@ class TemplettScrapperController extends Controller
 		$url_info = trim(str_replace('*', null, str_replace('https://templett.com/design/demo/', null, str_replace('http://templett.com/design/demo/', null, $url))));
 		$url_info = explode('/', $url_info);
 
-		// echo 'AQUI >>'.$url;
+		// echo '<br>AQUI >> '.$url;
 		// exit;
 
 		// if( $etsy_template_id == '1851109' ){
-		// 	echo "<pre>";
-		// 	print_r($url_info);
-		// 	exit;
+			// echo "<pre>";
+			// print_r($url_info);
+			// exit;
 		// }
 
 		// Extract username and template ids
@@ -322,7 +328,7 @@ class TemplettScrapperController extends Controller
 			
 			echo "<pre>";
 			print_r("\n<br>		username >> $username");
-			print_r("\n<br>		templates >>");
+			print_r("\n<br>		templates >>\t\t");
 			print_r($templates);
 
 			// print_r($parent_template_id);
@@ -352,7 +358,11 @@ class TemplettScrapperController extends Controller
 		$template_metadata = DB::table('thumbnails')
     		->select('id')
     		->where('tmp_templates','=',$templates)
-    		->first();
+			->first();
+		
+		// echo '<hr>';
+		// print_r($templates);
+		// exit;
 
 		// We dont have any thumbnail registered on db
     	if( isset($template_metadata->id) == false ){
@@ -436,11 +446,12 @@ class TemplettScrapperController extends Controller
     		->first();
 
     	// echo "<pre>";
-    	// print_r($templates);
+    	// print_r($template_id);
 		// exit;
 		
-    	// echo "<hr>";
-    	// print_r( ( isset($demo_id_query->demo_as_id) ? 'TENEMOS DEMO AS ID':'NO TENEMOS DEMO AS ID' ) );
+    	echo "<hr>";
+		print_r( ( isset($demo_id_query->demo_as_id) ? 'TENEMOS DEMO AS ID >> '.$demo_id_query->demo_as_id  : 'NO TENEMOS DEMO AS ID' ) );
+		echo "<hr>";
     	// exit;
 
 		// If this user has not been previously parsed and we already have demo as id
@@ -526,7 +537,9 @@ class TemplettScrapperController extends Controller
 		}
 
 		print_r( $template_config );
-		
+		// print_r( $templates );
+		// exit;
+
 		print_r("\n				PARSING TEMPLATE >> $template_id");
 		// Register thumbnails on database, based on templett html code
 		$this->registerThumbnailsOnDB($templates, $template_config['demo_as_id']);
@@ -549,12 +562,16 @@ class TemplettScrapperController extends Controller
     		->select('template_id')
     		->where('template_id','=',$template_id)
 			->first();
-		// echo "<pre>";
-		// print_r($template_id_query);
+		
+		echo '<hr>registerJSONTemplateOnDB FOR TEMPLATE >><br>';
+		print_r($template_id_query);
+		print_r($etsy_template_id);
+		echo '<hr>';
 		// exit;
 
 		// If template does not exists on db
-		if( isset($template_id_query->template_id) == false ){
+		// if( isset($template_id_query->template_id) == false ){
+		if( Redis::exists('template:'.$template_id.':jsondata') == false ){
 
 			// echo "<pre>";
 			// print_r("BUSCAME TON");
@@ -572,11 +589,16 @@ class TemplettScrapperController extends Controller
 			);
 			
 			$context = stream_context_create($opts);
+			$template_json_url = 'https://templett.com/design/loadtemplate.php?id='.$template_id.'&design_as_id='.$design_as_id.'&demo_as_id='.$demo_as_id.'&demo_templates='.$template_id;
+			// echo $template_json_url;
+			// exit;
 
 			//Open the file using the HTTP headers set above
-			$template_raw_data = file_get_contents('https://templett.com/design/loadtemplate.php?id='.$template_id.'&design_as_id='.$design_as_id.'&demo_as_id='.$demo_as_id.'&demo_templates='.$template_id.'', false, $context);
-
+			$template_raw_data = file_get_contents($template_json_url, false, $context);
 			$array_template = json_decode($template_raw_data);
+			
+			// print_r($array_template);
+			// exit;
 			
 			if(isset($array_template->data)){
 
@@ -642,13 +664,17 @@ class TemplettScrapperController extends Controller
 
 				return $this->saveTemplateOnDB($template_info);
 
-			} else {
+			// } else {
 
-				DB::table('tmp_etsy_metadata')
-					->where('id', $etsy_template_id)
-						->update(['status' => 4 ]); // No se pudo descargar de la plataforma
+			// 	DB::table('tmp_etsy_metadata')
+			// 		->where('id', $etsy_template_id)
+			// 			->update(['status' => 4 ]); // No se pudo descargar de la plataforma
 
 			}
+		} elseif(isset($template_id_query->template_id) == false) {
+			echo '<hr>';
+			echo $template_id.' >> Does not exists on MySQL Table';
+			echo '<hr>';
 		}
 
 		return 0;

@@ -403,23 +403,24 @@ class AdminController extends Controller
         // print_r( $template_key );
         // exit;
 
-        // print_r( $request->all() );
-        // '_token' => $request->_token;
-        // 'title' => $request->title;
-        // 'tags' => $request->tags;
-        // 'primaryColor' => $request->primaryColor;
-        // 'secondaryColor' => $request->secondaryColor;
-        // 'occasion' => $request->occasion;
-        // 'holiday' => $request->holiday;
-        // 'description' => $request->description;
+        $template_info = $request->all();
+        // echo "<pre>";
+        // print_r( $template_info );
+        // exit;
 
-        Redis::set('template:'.$template_key.':metadata', json_encode($request->all()));
+        $template_info['descripcion'] = str_replace('{{templateDemoUrl}}', url('mx/demo/'.$template_info['modelo'] ), $template_info['descripcion']);
+        $template_info['descripcion'] = str_replace('{{wayakCatalogUrl}}', url('mx/plantillas' ), $template_info['descripcion']);
+        $template_info['descripcion'] = str_replace('{{estyStoreName}}', 'jazmin.studio / wayak.app', $template_info['descripcion']);
+        $template_info['descripcion'] = str_replace('{{template_id}}', $template_info['modelo'], $template_info['descripcion']);
+        $template_info['descripcion'] = str_replace('https://www.mercadolibre.com.mx/perfil/DANIELGTM', 'https://www.mercadolibre.com.mx/perfil/JAZMIN.STUDIO', $template_info['descripcion']);
+
+        Redis::set('template:'.$template_key.':metadata', json_encode( $template_info ));
         
         return redirect()->route('admin.ml.getMissingMetadataTemplates');
 
     }
 
-    function descriptionTemplate(){
+    function etsyDescriptionTemplate(){
         $description = null;
 
         if( Redis::exists('wayak:etsy:description_template') ){
@@ -431,13 +432,34 @@ class AdminController extends Controller
         ]);
     }
 
-    function editDescriptionTemplate(Request $request){
+    function editEtsyDescriptionTemplate(Request $request){
         // echo "<pre>";
         // print_r( $request->all() );
         
         Redis::set('wayak:etsy:description_template', $request->description);
         return redirect()->action(
-            [AdminController::class,'editDescriptionTemplate'], []
+            [AdminController::class,'etsyDescriptionTemplate'], []
+        );
+    }
+    
+    function mlDescriptionTemplate(){
+        $description = null;
+
+        if( Redis::exists('wayak:mercadopago:description_template') ){
+            $description = Redis::get('wayak:mercadopago:description_template');
+        }
+        return view('admin.ml_description_template', [
+            'description' => $description
+        ]);
+    }
+
+    function editMlDescriptionTemplate(Request $request){
+        // echo "<pre>";
+        // print_r( $request->all() );
+        
+        Redis::set('wayak:mercadopago:description_template', $request->description);
+        return redirect()->action(
+            [AdminController::class,'mlDescriptionTemplate'], []
         );
     }
 
@@ -1339,6 +1361,7 @@ class AdminController extends Controller
         echo "<pre>";
         print_r($arr_missing_metadata);
         exit;
+        
 
     }
 
