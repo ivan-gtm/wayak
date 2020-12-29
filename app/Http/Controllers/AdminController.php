@@ -464,6 +464,7 @@ class AdminController extends Controller
             $template_info->descripcion = str_replace('{{estyStoreName}}', 'jazmin.studio / wayak.app', $template_info->descripcion);
             $template_info->descripcion = str_replace('{{template_id}}', $template_info->modelo, $template_info->descripcion);
             $template_info->descripcion = str_replace('https://www.mercadolibre.com.mx/perfil/DANIELGTM', 'https://www.mercadolibre.com.mx/perfil/JAZMIN.STUDIO', $template_info->descripcion);
+            $template_info->descripcion = str_replace('♥', null, $template_info->descripcion);
             Redis::set($key, json_encode( $template_info ));
         }
     }
