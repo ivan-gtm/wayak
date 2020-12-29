@@ -79,6 +79,8 @@ Route::get('/scrapper/templett', [TemplettScrapperController::class, 'downloadOr
     Route::get('/admin/ml/templates/thumbnail-ready', [AdminController::class, 'getThumbnailReady'])->name('admin.ml.getThumbnailReady');
     Route::get('/admin/ml/templates/ready-for-sale', [AdminController::class, 'templatesReadyForSale'])->name('admin.ml.templatesReadyForSale');
     Route::get('/admin/ml/templates/missing-metadata', [AdminController::class, 'getMissingMetadataTemplates'])->name('admin.ml.getMissingMetadataTemplates');
+    
+    Route::get('/admin/ml/update-url', [AdminController::class, 'updateURL']);
 
 // ETSY
     Route::get('/admin/etsy/templates/description', [AdminController::class, 'etsyDescriptionTemplate'])->name('etsy.editMetadata');

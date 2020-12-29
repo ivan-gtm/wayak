@@ -15,6 +15,10 @@ error_reporting(E_ALL);
 
 class CanvaController extends Controller
 {
+    // Scrapp URL
+    // https://www.canva.com/design/play?template=EAEDP7Np4sI
+
+
     public function index(){
         
         $thumb_urls = self::getThumbUrls();
