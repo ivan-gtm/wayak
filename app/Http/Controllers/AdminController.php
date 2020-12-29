@@ -1373,7 +1373,7 @@ class AdminController extends Controller
                 array_push($preview_images, self::processMockup($template_info,10) );
                 array_push($preview_images, self::processMockup($template_info,6) );
                 array_push($preview_images, self::processMockup($template_info,2) );
-                array_push($preview_images, self::processMockup($template_info,18) );
+                // array_push($preview_images, self::processMockup($template_info,18) );
                 
                 // echo "<pre>";
                 // print_r($preview_images);
