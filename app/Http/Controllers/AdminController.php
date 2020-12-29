@@ -521,6 +521,11 @@ class AdminController extends Controller
                 
                 $product_metadata = Redis::get($template_key);
                 $product_metadata = json_decode($product_metadata);
+                
+                if( isset($product_metadata->codigo_universal) == false ){
+                    echo $template_key.'<br>';
+                    exit;
+                }
 
                 // echo "<pre>";
                 // print_r($product_metadata);
