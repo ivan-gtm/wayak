@@ -466,6 +466,15 @@ class AdminController extends Controller
             $template_info->descripcion = str_replace('{{template_id}}', $template_info->modelo, $template_info->descripcion);
             $template_info->descripcion = str_replace('https://www.mercadolibre.com.mx/perfil/DANIELGTM', 'https://www.mercadolibre.com.mx/perfil/JAZMIN.STUDIO', $template_info->descripcion);
             $template_info->descripcion = str_replace('♥', null, $template_info->descripcion);
+            
+            
+            $template_key = str_replace('template:', null, $key);
+            $template_key = str_replace(':metadata', null, $template_key);
+            $product_preview_imgs = Redis::get('product:preview_images:'.$template_key);
+            $product_preview_imgs = json_decode($product_preview_imgs);
+            $product_preview_urls = implode(', ', $product_preview_imgs);
+            $template_info->imagenes = $product_preview_urls;
+
             Redis::set($key, json_encode( $template_info ));
         }
     }
