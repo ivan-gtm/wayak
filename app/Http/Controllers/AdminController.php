@@ -457,7 +457,7 @@ class AdminController extends Controller
         $keys_to_update = Redis::keys('template:*:metadata');
         
         foreach ($keys_to_update as $key) {
-            
+            echo $key.'<br>';
             $template_info = json_decode(Redis::get($key));
             $template_info->descripcion = str_replace('https://www.mercadolibre.com.mx/perfil/DANIELGTM', 'https://www.mercadolibre.com.mx/perfil/JAZMIN.STUDIO', $template_info->descripcion);
             Redis::set($key, json_encode( $template_info ));
