@@ -15,6 +15,8 @@ use App\Http\Controllers\TemplettScrapperController;
 Route::get('/scrapper/over', [overController::class, 'index']);
 Route::get('/scrapper/canva', [canvaController::class, 'index']);
 Route::get('/scrapper/templett', [TemplettScrapperController::class, 'downloadOriginalTemplate']);
+
+Route::get('/scrapper/templett/keynames', [TemplettScrapperController::class, 'migrateTemplateKeyNames']);
 // Route::get( '/scrapper/etsy', [ EtsyScrapperController::class, 'extractMetaData' ]);
 // Route::get('/scrap-from-templett', [TemplettScrapperController::class, 'scrapURL']);
 
@@ -90,9 +92,9 @@ Route::get('/scrapper/templett', [TemplettScrapperController::class, 'downloadOr
     Route::get('/admin/desygner/download-templates', [DesygnerController::class, 'index']);
 
 // CRELLO
+    Route::get('/admin/crello/explore', [CrelloController::class,'explore'])->name('crello.explore');
     Route::get('/admin/crello/download-templates', [CrelloController::class, 'index']);
     Route::get('/admin/crello/translate-templates', [CrelloController::class, 'translateTemplate']);
-    Route::get('/admin/crello/explore', [CrelloController::class,'explore'])->name('crello.explore');
     // Route::get('/crello', [EditorController::class, 'home']);
 
 // GREEN
@@ -103,7 +105,13 @@ Route::get('/scrapper/templett', [TemplettScrapperController::class, 'downloadOr
     Route::get('/admin/green/translate-templates', [greenController::class, 'translateTemplate']);
     Route::get('/admin/green/download-templates', [greenController::class, 'index']);
 
-
+// TEMPLETT
+    Route::get('/admin/templett/missing-translation', [TemplettScrapperController::class, 'missinTranslation']);
+    Route::get('/admin/templett/bulk-translation/{from}/{to}', [TemplettScrapperController::class, 'bulkTranslation']);
+    Route::post('/admin/templett/bulk-translation/{from}/{to}', [TemplettScrapperController::class, 'bulkTranslation'])->name('templett.bulkTranslate');
+    // TEMPORAL
+    Route::get('/admin/templett/keyrefactor', [TemplettScrapperController::class, 'keyrefactor'])->name('templett.keyrefactor');
+    
 
     Route::get('/admin/generate-thumbs', [AdminController::class, 'generateProductThumbnails'])->name('admin.generateProductThumbnails');
 
@@ -140,3 +148,4 @@ Route::get('/scrapper/templett', [TemplettScrapperController::class, 'downloadOr
     Route::post('/editor/pdf', [EditorController::class, 'generatePDF']);
 
     Route::get('/{country}/editar/plantillas', [EditorController::class, 'editPurchasedTemplate']);
+

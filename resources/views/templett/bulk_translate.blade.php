@@ -104,7 +104,7 @@
                 },
                 success:function(data) {
                     console.log("RECARGA AHORA");
-                    // location.reload();
+                    location.reload();
                 }
             });
             

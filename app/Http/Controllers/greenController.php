@@ -685,8 +685,6 @@ class greenController extends Controller
         // print_r( $request->category_id );
         // exit;
         
-        // 
-        
         // $templates = Redis::keys('green:ready_template:*');
         // foreach ($templates as $template_key) {
         //     $template_id = str_replace('green:ready_template:', null,$template_key);
@@ -695,7 +693,6 @@ class greenController extends Controller
         // echo "<pre>";
         // print_r( Redis::keys('product:production_ready:*') );
         // exit;
-        
         
         $products = [];
         $category_id = $request->category_id;
@@ -717,7 +714,7 @@ class greenController extends Controller
                     $product_result[$i]->PreviewImage = asset('/design/template/'.$product_result[$i]->Id.'/thumbnails/'.$thumbnail_info->filename);
                 }
                 
-                if( Redis::exists('product:production_ready:'.$product_result[$i]->Id) ){
+                if( Redis::exists('product:format_ready:'.$product_result[$i]->Id) ){
                     unset($product_result[$i]);
                 }
             }

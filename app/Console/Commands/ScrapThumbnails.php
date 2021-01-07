@@ -74,16 +74,14 @@ class ScrapThumbnails extends Command
     }
 
     function bulkThumbnailDownload(){
-
         // Check if font/template relationship already exist
         // $thumbs_to_download = $mysqli->query("SELECT id, template_id, filename, tmp_original_url FROM thumbnails WHERE status = 0 LIMIT 100");
 
-        $thumbs_to_download = DB::table('thumbnails')
-                            ->select('id', 'template_id', 'filename', 'tmp_original_url')
-                            ->where('status','=',0)
-                            // ->where('template_id','=',943770)
-                            ->limit(2000)
-                            ->get();
+        $thumbs_to_download = DB::select('
+        SELECT id,template_id,filename,tmp_original_url FROM thumbnails
+        WHERE 
+            status = 0
+        LIMIT 5000');
 
         // print_r($thumbs_to_download);
         // exit;

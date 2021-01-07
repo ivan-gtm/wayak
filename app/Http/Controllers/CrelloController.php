@@ -16,6 +16,44 @@ error_reporting(E_ALL);
 class CrelloController extends Controller
 {
     public function index(){
+        // NEW METHOD 1 // Parsing all templates
+        // for($page=1; $page <= 297; $page++) {
+        //     echo "PARSING PAGE >>$page<br>";
+        //     $search_results = self::getNewSearchResults($page);
+        // }
+        // exit;
+        
+        $crello = Redis::keys('crello:search:results:page:*');
+        
+        echo "<pre>";
+        $limite = 0;
+        foreach ($crello as $search_result_key) {
+            // print_r("\n".$search_result_key);
+            $search_results = Redis::get( $search_result_key );
+            $search_results = json_decode( $search_results );
+
+            // print_r( $search_results->searchMeta->responseMeta->coreItems );
+            // exit;
+            $template_keys = $search_results->searchMeta->responseMeta->coreItems;
+            foreach ($template_keys as $template_key) {
+                if( Redis::exists( "crello:template:" . $template_key ) ){
+                    print_r("\n> EXISTE - ".$template_key);
+                } else {
+                    print_r("\n> NO EXISTE - ".$template_key);
+                    self::getTemplate( $template_key );
+                    // exit;
+                }
+
+                $limite++;
+
+                if($limite > 6000) {
+                    print_r("\n> TERMINE - ".$template_key);
+                    exit;
+                }
+            }
+        }
+        exit;
+        
         // $crello = Redis::keys('crello:template:*');
         // foreach ($crello as $crello_key) {
         //     Redis::del( $crello_key);
@@ -134,11 +172,14 @@ class CrelloController extends Controller
                 }
             }
         }
+
         echo "TERMINE";
     }
 
     function explore(Request $request){
         
+        $crello_template = Redis::get('crello:template:5abd17b54b568b8eecb5dde6');
+
         // echo "<pre>";
         // for ($current_page_number=1; $current_page_number < $total_pages_number; $current_page_number++) {
             // print_r($product_result);
@@ -148,11 +189,11 @@ class CrelloController extends Controller
         $page_from = $request->page;
         $page_to = $request->page + 10;
 
-        $total_pages_number = sizeof(Redis::keys('crello:search:results:page*'));
+        $total_pages_number = sizeof(Redis::keys('crello:search:results:page:*'));
         $product_result = json_decode(Redis::get('crello:search:results:page:'.$page));
 
         // echo "<pre>";
-        // print_r($product_result);
+        // print_r($total_pages_number);
         // exit;
         
         return view('crello.products',[ 
@@ -219,7 +260,6 @@ class CrelloController extends Controller
                 // // print_r($template_obj);
                 // print_r($dummy_template);
                 // echo "<br>";
-
 
                 $page_objects = [];
 
@@ -597,7 +637,7 @@ class CrelloController extends Controller
     }
 
     function parseAllSearchResults(){
-
+        
         $cats = self::getCategories();
         $size_cats = sizeof($cats);
 
@@ -645,6 +685,44 @@ class CrelloController extends Controller
         // print_r($cats);
         // exit;
 
+    }
+
+    function getNewSearchResults($page){
+        $page = ( $page > 297 ) ? 297 : $page;
+        $skip = (100 * ($page-1) );
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+        CURLOPT_URL => "https://crello.com/api/v2/search/templates?limit=100&skip=$skip&templateType=regular%2Canimated&searchByKeyword=false&group=&format=&sort=-order%2C-acceptedAt",
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => "",
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => "GET",
+        CURLOPT_HTTPHEADER => array(
+            "authority: crello.com",
+            "sec-ch-ua: \"Google Chrome\";v=\"87\", \" Not;A Brand\";v=\"99\", \"Chromium\";v=\"87\"",
+            "accept: application/json",
+            "_ga: GA1.2.2025952942.1610051328",
+            "sec-ch-ua-mobile: ?0",
+            "user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36",
+            "sec-fetch-site: same-origin",
+            "sec-fetch-mode: cors",
+            "sec-fetch-dest: empty",
+            "referer: https://crello.com/home/templates/?page=28",
+            "accept-language: en"
+        ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+
+        Redis::set('crello:search:results:page:'.$page, $response);
+
+        return $response;
     }
 
     public function getSearchResult( $limit, $skip, $page){

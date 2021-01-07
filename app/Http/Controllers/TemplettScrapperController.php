@@ -22,12 +22,12 @@ class TemplettScrapperController extends Controller
 	private function storeJSONTemplate($template_id, $json_data){
 		print_r("			Inserting JSON >> ".$template_id);
 
-		$template_key = 'template:'.$template_id.':jsondata';
+		$template_key = 'template:en:'.$template_id.':jsondata';
 		Redis::set($template_key, $json_data);
 	}
 
 	function getJSONTemplate($template_id){
-		$template_key = 'template:'.$template_id.':jsondata';
+		$template_key = 'template:en:'.$template_id.':jsondata';
 		return Redis::get($template_key);
 	}
 
@@ -43,14 +43,14 @@ class TemplettScrapperController extends Controller
 
 		$templates = DB::table('templates')
 										->select('id', 'template_id')
-										// ->where('status', '=' , 3)
+										->where('status', '=' , 8)
 										->orderBy('id','DESC')
-										->limit(3000)
+										->limit(1000)
 										->get();
 		// echo sizeof($templates);
 		// exit;
 		foreach ($templates as $template) {
-			$template_key = 'template:'.$template->template_id.'ss:jsondata';
+			$template_key = 'template:en:'.$template->template_id.'ss:jsondata';
 			if( Redis::exists($template_key) == 0 ) {
 				echo $template_key."- NO EXISTE";
 			} else {
@@ -58,7 +58,7 @@ class TemplettScrapperController extends Controller
 			}
 		}
 	}
-
+	
 	function downloadOriginalTemplate(){
 		echo '<style type="text/css">
 			body{
@@ -70,13 +70,17 @@ class TemplettScrapperController extends Controller
 		$templates = DB::table('tmp_etsy_metadata')
                             ->select('id', 'templett_url')
 							->whereNotNull('templett_url')
+							->whereRaw('id IN (SELECT fk_etsy_template_id FROM templates WHERE `status` = 8 AND fk_etsy_template_id IS NOT NULL GROUP BY fk_etsy_template_id)')
 							// ->where('username','!=', 'asterandrose')
-							->where('status', '<>', 3)
-							->where('templett_url', 'not like', "%asterandrose%")
+							// ->where('status', '<>', 3)
+							// ->where('templett_url', 'not like', "%asterandrose%")
 							// ->where('templett_url', 'like', "%4168392,4171985%")
 							->get();
 		
-		
+		// echo "<pre>";
+		// print_r($templates);
+		// exit;
+
 		foreach ($templates as $template) {
 			
 			$template_ids = substr($template->templett_url, strrpos($template->templett_url, '/')+1, strlen($template->templett_url));
@@ -88,7 +92,7 @@ class TemplettScrapperController extends Controller
 			
 			foreach ($template_ids as $template_id) {
 				
-				$template_key = 'template:'.$template_id.':jsondata';
+				$template_key = 'template:en:'.$template_id.':jsondata';
 
 				// echo "<pre>";
 				// print_r($template_key);
@@ -106,11 +110,6 @@ class TemplettScrapperController extends Controller
 					// print_r($templett_url);
 					// exit;
 	
-					// echo "NO EXISTE::>";
-					// echo "<pre>";
-					// print_r($templett_url);
-					// exit;
-	
 					// if(strlen($templett_url) > 0 && strpos($templett_url, 'templett.com/design/demo/') > 0 ){
 						// echo "-------------------------\n";
 						// print_r('<pre>');
@@ -118,14 +117,16 @@ class TemplettScrapperController extends Controller
 						// // print_r($template_id);
 						// exit;
 						
-						echo '<br>	Start parsing for URL:: '.$templett_url."<br>\n";
+						echo "<br>	Start parsing for URL:: ".$templett_url."<br>\n";
 						$this->startScrapping($templett_url, $template->id);
-						echo '<br>	Parsing complete - '.$templett_url."-\n\n<br><br>";
-						echo '<br><br><br><br><br>';
+						echo "<br>	Parsing complete - ".$templett_url."-\n\n<br>";
+						echo "<br><br><br><br><br>";
+
+						// exit;
 						
-						DB::table('templates')
-							->where('id', $template->id)
-							->update(['status' => 3]);
+						// DB::table('templates')
+						// 	->where('id', $template->id)
+						// 	->update(['status' => 3]);
 	
 						usleep(50000);
 	
@@ -140,6 +141,28 @@ class TemplettScrapperController extends Controller
 			}
 		}
 		
+	}
+
+	function migrateTemplateKeyNames(){
+		$templates = Redis::keys('template:*:jsondata');
+		echo "<pre>";
+		// exit;
+		
+		foreach ($templates as $template_key) {
+			$language_token_en = strpos($template_key,':en:');
+			$language_token_es = strpos($template_key,':es:');
+			
+			// print_r($template_key);
+			// print_r("\n");
+
+			if ($language_token_es == false && $language_token_en == false) {
+				// echo $template_key;
+				$new_keyname = str_replace('template:','template:en:',$template_key);
+				print_r( $new_keyname."\n");
+				Redis::rename($template_key, $new_keyname );
+				// exit;
+			}
+		}
 	}
 
 	function downloadMissingREDISTemplates(){
@@ -169,7 +192,7 @@ class TemplettScrapperController extends Controller
 
         foreach ($templates as $template) {
             
-            $template_key = 'template:'.$template->template_id.':jsondata';
+            $template_key = 'template:en:'.$template->template_id.':jsondata';
 			
 			// IF template does not exists on REDIS database
             if(Redis::exists($template_key) == 0) {
@@ -196,9 +219,11 @@ class TemplettScrapperController extends Controller
 					// // print_r($template_id);
 					// exit;
 					
+					echo "<hr>";
 					echo 'Start parsing for URL:: '.$templett_url."<br>\n";
 						$this->startScrapping($templett_url, $template->id);
-					echo '<br>Parsing complete - '.$templett_url."-\n\n<br><br>";
+					echo '<br>Parsing complete - '.$templett_url."-\n\n<br>";
+					echo "<hr>";
 					
 					DB::table('templates')
 						->where('id', $template->id)
@@ -256,7 +281,7 @@ class TemplettScrapperController extends Controller
 					// echo 'Parsing '.$templett_url."<br>\n";
 					// exit;
 					$this->startScrapping($templett_url, $template->id);
-					echo '<br>Parsing complete - '.$templett_url."-\n\n<br><br>";
+					echo '<br>Parsing complete - '.$templett_url."-\n\n<br>";
 					usleep(500000);
 				}
     	}
@@ -309,13 +334,13 @@ class TemplettScrapperController extends Controller
 		$url_info = trim(str_replace('*', null, str_replace('https://templett.com/design/demo/', null, str_replace('http://templett.com/design/demo/', null, $url))));
 		$url_info = explode('/', $url_info);
 
-		// echo '<br>AQUI >> '.$url;
 		// exit;
-
-		// if( $etsy_template_id == '1851109' ){
-			// echo "<pre>";
-			// print_r($url_info);
-			// exit;
+		
+		// echo '<br>AQUI PUTO >> '.$url;
+		// if( $etsy_template_id == '216803' ){
+		// 	echo "<pre>";
+		// 	print_r($url_info);
+		// 	exit;
 		// }
 
 		// Extract username and template ids
@@ -327,9 +352,9 @@ class TemplettScrapperController extends Controller
 			$templates_with_commas = $url_info[1];
 			
 			echo "<pre>";
-			print_r("\n<br>		username >> $username");
-			print_r("\n<br>		templates >>\t\t");
-			print_r($templates);
+			print_r("\n		Parsed Username >> $username");
+			print_r("\n		Parsed Templates >>\t\t".$templates_with_commas);
+			// print_r($templates);
 
 			// print_r($parent_template_id);
 			// print_r($templates_with_commas);
@@ -432,6 +457,8 @@ class TemplettScrapperController extends Controller
 				}
 			}
 			
+		} else {
+			print_r("\n			>> Thumbs for $templates already exists");
 		}
 	}
 
@@ -449,9 +476,9 @@ class TemplettScrapperController extends Controller
     	// print_r($template_id);
 		// exit;
 		
-    	echo "<hr>";
-		print_r( ( isset($demo_id_query->demo_as_id) ? 'TENEMOS DEMO AS ID >> '.$demo_id_query->demo_as_id  : 'NO TENEMOS DEMO AS ID' ) );
-		echo "<hr>";
+    	// echo "<hr>";
+		print_r( ( isset($demo_id_query->demo_as_id) ? "\n\n			>> DEMO AS ID >> ".$demo_id_query->demo_as_id  : 'NO TENEMOS DEMO AS ID' ) );
+		// echo "<hr>";
     	// exit;
 
 		// If this user has not been previously parsed and we already have demo as id
@@ -514,7 +541,7 @@ class TemplettScrapperController extends Controller
 
 				$this->registerDemoAsIDOnDB( $username, $demo_as_id );
 			} else {
-				echo "\n<br>Error al obtener demo id de el template $template_id, este template no se va a parsear\n<br>";
+				echo "\nError al obtener demo id de el template $template_id, este template no se va a parsear\n";
 				
 				DB::table('tmp_etsy_metadata')
 				    ->where('id', $etsy_template_id)
@@ -536,11 +563,11 @@ class TemplettScrapperController extends Controller
 			$template_config['parentTemplateId'] = $parent_template_id;
 		}
 
-		print_r( $template_config );
+		// print_r( $template_config );
 		// print_r( $templates );
 		// exit;
 
-		print_r("\n				PARSING TEMPLATE >> $template_id");
+		print_r("\n			>> PARSING TEMPLATE >> $template_id");
 		// Register thumbnails on database, based on templett html code
 		$this->registerThumbnailsOnDB($templates, $template_config['demo_as_id']);
 
@@ -563,15 +590,14 @@ class TemplettScrapperController extends Controller
     		->where('template_id','=',$template_id)
 			->first();
 		
-		echo '<hr>registerJSONTemplateOnDB FOR TEMPLATE >><br>';
-		print_r($template_id_query);
-		print_r($etsy_template_id);
-		echo '<hr>';
+		print_r("\n			>> registerJSONTemplateOnDB FOR TEMPLATE >> ");
+		if(isset($template_id_query->template_id)){
+			print_r($template_id_query->template_id);
+		}
+		print_r(" etsy_template_id - ".$etsy_template_id);
 		// exit;
 
-		// If template does not exists on db
-		// if( isset($template_id_query->template_id) == false ){
-		if( Redis::exists('template:'.$template_id.':jsondata') == false ){
+		if( Redis::exists('template:en:'.$template_id.':jsondata') == false ){
 
 			// echo "<pre>";
 			// print_r("BUSCAME TON");
@@ -645,7 +671,6 @@ class TemplettScrapperController extends Controller
 				// }
 
 				foreach ($pages as $page) {
-
 					$objects = $page->objects;
 					foreach ($objects as $index => $object) {
 						if($object->type == 'image'){
@@ -664,17 +689,27 @@ class TemplettScrapperController extends Controller
 
 				return $this->saveTemplateOnDB($template_info);
 
-			// } else {
-
-			// 	DB::table('tmp_etsy_metadata')
-			// 		->where('id', $etsy_template_id)
-			// 			->update(['status' => 4 ]); // No se pudo descargar de la plataforma
+			} else {
+				print_r("\n			>> No se pudo descargar de la plataforma el template id:".$template_id);
+				// DB::table('tmp_etsy_metadata')
+				// 	->where('id', $etsy_template_id)
+				// 		->update(['status' => 4 ]); // No se pudo descargar de la plataforma
 
 			}
-		} elseif(isset($template_id_query->template_id) == false) {
+
+		// If template does not exists on db
+		} elseif( isset($template_id_query->template_id) == false ) {
+			
 			echo '<hr>';
 			echo $template_id.' >> Does not exists on MySQL Table';
 			echo '<hr>';
+
+		} elseif( Redis::exists('template:en:'.$template_id.':jsondata') ) {
+			print_r("\n			>> $template_id - Already exists on redis database");
+			
+			DB::table('templates')
+				->where('template_id', $template_id)
+				->update(['status' => 3 ]);
 		}
 
 		return 0;
@@ -727,6 +762,10 @@ class TemplettScrapperController extends Controller
 							->update(['status' => 5 ]); // Error al insertar el template ( archivo muy grande )
 			}
 
+		} else {
+			DB::table('templates')
+							->where('id', $template_info['templateid'])
+							->update(['status' => 3]);
 		}
 	}
 
@@ -820,4 +859,330 @@ class TemplettScrapperController extends Controller
 			'status' => 0
 		]);
 	}
+
+	function missinTranslation(){
+		// $thumbs_to_download = DB::select('
+		// 	SELECT id,template_id,filename,tmp_original_url FROM thumbnails
+		// 	WHERE 
+		// 		template_id IN(
+		// 		SELECT
+		// 		templates.template_id 
+		// 	FROM
+		// 		templates,
+		// 		images 
+		// 	WHERE
+		// 		templates.template_id REGEXP \'^-?[0-9]+$\'
+		// 		AND templates.template_id = images.template_id
+		// 		AND images.`status` = 1 
+		// 	GROUP BY
+		// 		template_id
+		// 		)
+		// 	AND status = 1');
+		$thumbs_to_download = DB::select('
+			SELECT
+				thumbnails.id,
+				thumbnails.template_id,
+				thumbnails.filename,
+				thumbnails.tmp_original_url,
+				tmp_etsy_product.title
+			FROM
+				thumbnails,
+				templates,
+				tmp_etsy_product,
+				tmp_etsy_metadata
+			WHERE
+				thumbnails.template_id = templates.template_id
+				AND templates.fk_etsy_template_id = tmp_etsy_metadata.id
+				AND tmp_etsy_metadata.fk_product_id = tmp_etsy_product.id
+				AND thumbnails.template_id IN (
+					SELECT
+						templates.template_id 
+					FROM
+						templates,
+						images 
+					WHERE
+						templates.template_id REGEXP \'^-?[0-9]+$\' 
+						AND templates.template_id = images.template_id 
+						AND images.`status` = 1 
+						AND templates.`status` = 5
+				GROUP BY
+					template_id 
+				) 
+				AND thumbnails.`status` = 1
+				ORDER BY tmp_etsy_product.review DESC');
+
+        $products = [];
+        foreach ($thumbs_to_download as $key => $product) {
+			// $product->Id
+			$product->PreviewImage = asset('/design/template/'.$product->template_id.'/thumbnails/'.$product->filename);
+			$products[] = $product;
+		}
+
+		return view('templett.missing_translation',[
+            'product_result' => $products
+        ]);
+	}
+
+	function bulkTranslation($origin_lang, $destination_lang, Request $request){
+
+		$templates_per_page = 30;
+
+		$ready_for_translation = DB::table('templates')
+						->select('template_id')
+						->where('status', '=' , 5)
+						// ->limit($templates_per_page)
+						->get();
+		
+		// echo "<pre>";
+		// print_r( $ready_for_translation );
+		// exit;
+		
+		// // Save translated Google data on database
+        if( isset($request->templates_text) ){
+			$templates_metadata = $request->templates_text;
+			
+			// echo "<pre>";
+			// print_r( $templates_metadata );
+			// exit;
+
+            foreach ($templates_metadata as $template_info) {
+                self::saveTemplateTranslation( $template_info );
+            }
+        }
+        
+        // Get formated templates
+        $template_total = sizeof($ready_for_translation); // Array size of format ready templates
+		$template_text = '';
+		$templates_on_page = 0;
+		
+        foreach ($ready_for_translation as $template) {
+			$template_key = $template->template_id;
+			$source_template_key = 'template:'.$origin_lang.':'.$template_key.':jsondata';
+
+            $source_template_exists = Redis::exists( $source_template_key );
+			$template_translation_ready = Redis::exists('template:'.$destination_lang.':'.$template_key.':jsondata') && Redis::exists('product:translation_ready:'.$template_key);
+			
+			// echo '<br><br>';
+			// echo $source_template_key.'<br>';
+			// echo 'template:'.$destination_lang.':'.$template_key.':jsondata'.'<br>';
+			// echo 'product:translation_ready:'.$template_key.'<br>';
+			
+			if( $source_template_exists
+                && $template_translation_ready == false  ){
+
+				$template_text .= self::getTemplateHTMLText($source_template_key);
+				if(strlen( $template_text ) > 0){
+					$templates_on_page++;
+				}
+				
+                if($templates_on_page == $templates_per_page) {
+                    break;
+				}
+				
+            }
+        }
+
+        return view('templett.bulk_translate', [
+            'template_key' => $template_key,
+            'template_text' => $template_text,
+            'from' => $origin_lang,
+            'to' => $destination_lang
+        ]);
+	}
+	
+	function keyrefactor(){
+		$thumbs_to_download = DB::select('
+			SELECT
+				thumbnails.id,
+				thumbnails.template_id,
+				thumbnails.filename,
+				thumbnails.tmp_original_url,
+				tmp_etsy_product.title
+			FROM
+				thumbnails,
+				templates,
+				tmp_etsy_product,
+				tmp_etsy_metadata
+			WHERE
+				thumbnails.template_id = templates.template_id
+				AND templates.fk_etsy_template_id = tmp_etsy_metadata.id
+				AND tmp_etsy_metadata.fk_product_id = tmp_etsy_product.id
+				AND thumbnails.template_id IN (
+					SELECT
+						templates.template_id 
+					FROM
+						templates,
+						images 
+					WHERE
+						templates.template_id REGEXP \'^-?[0-9]+$\' 
+						AND templates.template_id = images.template_id 
+						AND images.`status` = 1 
+						AND templates.`status` = 5
+				GROUP BY
+					template_id 
+				) 
+				AND thumbnails.`status` = 1
+				ORDER BY tmp_etsy_product.review DESC');
+
+        foreach ($thumbs_to_download as $key => $product) {
+			print_r( $product->template_id . "\n" );
+			$template_key = $product->template_id;
+
+			if( Redis::exists('product:format_ready:'.$template_key) == false ){
+				Redis::set('product:format_ready:'.$template_key, 1);
+			}
+		}
+	}
+
+	function getTemplateHTMLText($template_key){
+
+        $template_obj = json_decode( Redis::get($template_key) );
+
+        // echo "<pre>";
+        // print_r( $template_obj );
+        // exit;GET 
+
+        if(isset($template_obj[1]->objects) == false){
+            echo $template_key;
+            exit;
+        }
+        
+        // echo "<pre>";
+        // // print_r( $template_key );
+        // print_r( $template_obj );
+		// exit;
+		
+        if( isset($template_obj[1]->objects) && sizeof( $template_obj[1]->objects ) > 0 ){
+			$template_text = '<br><br> <ul class="template-content" data-template-id="'.$template_key.'">';
+			$text_i = 0;
+	
+			foreach($template_obj[1]->objects as $object ){
+				if( $object->type == 'textbox'){
+					// echo '<span>'.$object->text.'</span>';
+					// exit;
+					$text = $object->text;
+					
+					$text = str_replace('sat.','saturday,',$text);
+					$text = str_replace('sun.','sunday,',$text);
+	
+					if( strpos($text, '  ') ){
+						// echo "Tiene doble espacio";
+						// exit;
+						$text = str_replace('  ','_',$text);
+						$text = str_replace(' ',null,$text);
+						$text = str_replace('_',' ',$text);
+						// $text = strtolower($text);
+					}
+					// $text = str_replace(' ','_',$object->text);
+					
+					// $text = ucfirst($text);
+					// $text = ucwords(strtolower($text));
+					// $text = preg_replace('/(\s  )+/', '', $text);
+	
+					$tmp = '<li lang="en" data-index="'.$text_i.'">'.$text.' </li>';
+					$template_text .= str_replace("\n", ', ', $tmp);
+					$text_i++;
+				}
+			}
+	
+			$template_text .= '</ul>';
+			// If template does not have text, is not worthy list it for translation
+			if( $text_i == 0){
+				$template_text = '';
+			}
+		}
+
+        return $template_text;
+	}
+	
+	function saveTemplateTranslation( $template_info ){
+        $language_from = 'en';
+        $language_to = 'es';
+        
+        $template_key = str_replace('template:'.$language_from.':',null, $template_info['key']);
+        $template_key = str_replace(':jsondata',null, $template_key);
+
+        // echo $template_key;
+        // exit;
+
+        // $translations = Redis::keys('template:es:*:jsondata');
+        // foreach ($translations as $template_key) {
+        //     Redis::del($template_key);
+        // }
+        // exit;
+
+        if( isset($template_info['key']) && isset($template_info['template_text']) ){
+            // $template_key = ;
+            $template_obj = json_decode( Redis::get( $template_info['key'] ) );
+            $template_objects = sizeof( $template_obj[1]->objects );
+
+            // echo "<pre>";
+            // // print_r($template_info['template_text']);
+            // // print_r( $template_objects );
+            // // print_r( $template_obj );
+            // exit;
+
+            
+            $phrase_index = 0;
+            for ($i=0; $i < $template_objects; $i++) { 
+                
+                if( $template_obj[1]->objects[$i]->type == 'textbox' ){
+                    $template_obj[1]->objects[$i]->text =  str_replace(',', "\n", $template_info['template_text'][$phrase_index] ) ;
+                    $template_obj[1]->objects[$i]->text =  str_replace( 'u0021', "!", urldecode($template_obj[1]->objects[$i]->text));
+                    $phrase_index++;
+                }
+
+            }
+
+            // echo "<pre>";
+            // print_r( $template_obj );
+            // // print_r( $language_to );
+            // exit;
+            
+            $destination_template_key = str_replace(':'.$language_from.':', ':'.$language_to.':', $template_info['key']);
+            // print_r( $template_key );
+            // exit;
+
+            Redis::set($destination_template_key, json_encode($template_obj) );
+            Redis::set('product:translation_ready:'.$template_key, 1);
+
+            
+            $original_thumb_data = DB::table('thumbnails')
+                ->where('template_id','=',$template_key)
+                ->where('language_code','=',$language_from)
+                ->first();
+
+            $destination_lang_template = DB::table('thumbnails')
+                ->where('template_id','=',$template_key)
+                ->where('language_code','=',$language_to)
+                ->count();
+
+            // print_r( $template_info['key'] );
+            // print_r($template_key);
+            // print_r($original_thumb_data);
+            // print_r($destination_lang_template);
+            // exit;
+
+            if( $original_thumb_data && $destination_lang_template == 0 ){
+                DB::table('thumbnails')->insert([
+                    'id' => null,
+                    'template_id' => $template_key,
+                    'language_code' => $language_to,
+                    'title' => $original_thumb_data->title,
+                    'filename' => $original_thumb_data->filename,
+                    'tmp_original_url' => null,
+                    'dimentions' => $original_thumb_data->dimentions,
+                    'tmp_templates' => $template_key,
+                    'status' => 1
+                ]);
+            }
+            
+            // echo "<pre>";
+            // print_r( $original_thumb_data );
+            // exit;
+        
+            return $original_thumb_data;
+            
+        }
+    }
 }

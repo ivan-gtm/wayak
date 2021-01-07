@@ -50,7 +50,7 @@ class ScrapAssets extends Command
                     ->select('id', 'template_id','tmp_path', 'filename','status')
                     ->where('status', '=', '0')
                     // ->where('template_id', '=', 799782)
-                    ->limit(5000)
+                    ->limit(10000)
                     ->get();
 
         // echo "<pre>";

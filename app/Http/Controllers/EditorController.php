@@ -216,7 +216,27 @@ class EditorController extends Controller
 		$template_key = 'template:'.$language_code.':'.$template_id.':jsondata';
 		
 		if( App::environment() == 'local' ){
-			return str_replace('http:\/\/localhost:8001', url('/'), Redis::get($template_key) );
+			$template = str_replace('http://localhost', url('/'), Redis::get($template_key) );
+			$template = str_replace('http:\/\/localhost:8001', url('/'), $template );
+			$template = str_replace('http:\/\/localhost', url('/'), $template );
+			$template = str_replace('https:\/\/wayak.app', url('/'), $template );
+			
+			// echo "<pre>";
+			// print_r( $template );
+			// exit;
+			// $template = str_replace('http:\\\/ \\\/wayak.app', url('/'), $template );
+			
+			// $template = json_decode($template);
+			// if( isset($template[1]->background) ){
+			// 	unset($template[1]->background);
+			// }
+
+			// echo "<pre>";
+			// print_r( $template[1] );
+			// exit;
+			// $template = json_encode($template);
+
+			return $template;
 		} else {
 			return str_replace('https:\/\/wayak.app', 'http:\/\/localhost:8001', Redis::get($template_key) );
 		}

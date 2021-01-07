@@ -57,33 +57,41 @@
                               <li class="side-nav-title side-nav-item">Navigation</li>
                               <li class="side-nav-item mm-active">
                                  <a href="javascript: void(0);" class="side-nav-link active">
-                                 <i class="uil-home-alt"></i>
-                                 <span class="badge badge-success float-right">4</span>
-                                 <span> Plantillas </span>
+                                    <i class="uil-home-alt"></i>
+                                    <span class="badge badge-success float-right">4</span>
+                                    <span> Mercado Pago </span>
                                  </a>
                                  <ul class="side-nav-second-level mm-collapse mm-show" aria-expanded="false">
                                     <li class="mm-active">
                                        <a href="index.html" class="active">Green</a>
                                     </li>
-                                    <li>
-                                       <a href="dashboard-projects.html">Templett</a>
-                                    </li>
-                                    <li>
-                                       <a href="dashboard-projects.html">Over</a>
-                                    </li>
-                                    <li>
-                                       <a href="dashboard-projects.html">Crello</a>
-                                    </li>
-                                    <li>
-                                       <a href="dashboard-projects.html">Canva</a>
-                                    </li>
-                                    <li>
-                                       <a href="dashboard-projects.html">Desygner</a>
-                                    </li>
-                                    <li>
-                                       <a href="dashboard-projects.html">Corjl</a>
-                                    </li>
+                                    <!-- 
+                                       <li>
+                                          <a href="dashboard-projects.html">Templett</a>
+                                       </li>
+                                       <li>
+                                          <a href="dashboard-projects.html">Over</a>
+                                       </li>
+                                       <li>
+                                          <a href="dashboard-projects.html">Crello</a>
+                                       </li>
+                                       <li>
+                                          <a href="dashboard-projects.html">Canva</a>
+                                       </li>
+                                       <li>
+                                          <a href="dashboard-projects.html">Desygner</a>
+                                       </li>
+                                       <li>
+                                          <a href="dashboard-projects.html">Corjl</a>
+                                       </li> 
+                                    -->
                                  </ul>
+                              </li>
+                              <li class="side-nav-item mm-active">
+                                 <a href="javascript: void(0);" class="side-nav-link active">
+                                    <i class="uil-home-alt"></i>
+                                    <span> Templett</span>
+                                 </a>
                               </li>
                            </ul>
                            <!-- End Sidebar -->
