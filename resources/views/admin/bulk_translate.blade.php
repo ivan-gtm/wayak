@@ -90,7 +90,7 @@
 
             $.ajax({
                 type:'POST',
-                url:'{{ route('templett.bulkTranslate', [
+                url:'{{ route('admin.bulkTranslate', [
                     'from' => $from,
                     'to' => $to
                 ]) }}',

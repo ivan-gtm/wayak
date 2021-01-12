@@ -57,7 +57,11 @@
             </div>
             @foreach ($templates as $product_info )
                 <div class="col-3 box">
-                    <a href="{{ route('admin.ml.editMLMetadata',['template_key' => $product_info['key']]) }}">
+                    <a class="translate-template" 
+                            href="{{ route('admin.edit.template', [
+                              'language_code' => $language_code,
+                              'template_key' => $product_info['key']
+                          ]) }}">
                         <img class="img-fluid" src="{{ $product_info['thumbnail'] }}">
                     </a>
                     <br>
@@ -79,5 +83,36 @@
                     </div>
                 </div>
             @endforeach
+        </div>
+        <div class="row">
+          <!-- <div class="col-sm-12 col-md-5">
+              <div class="dataTables_info" id="selection-datatable_info" role="status" aria-live="polite">Showing 1 to 10 of 57 entries</div>
+          </div> -->
+          <div class="col-12 col-md-12">
+              <div class="dataTables_paginate paging_simple_numbers" id="selection-datatable_paginate">
+                <ul class="pagination pagination-rounded">
+                    <li class="paginate_button page-item previous" id="selection-datatable_previous">
+                      <a href="{{ route('admin.ml.getTranslationReady',['page' => $current_page-1]) }}" tabindex="0" class="page-link">
+                        <i class="mdi mdi-chevron-left"></i>
+                        </a>
+                    </li>
+                    @for ($page = ($current_page-5 < 0 ? 1 : $current_page-5); $page < ($current_page+5 > $total_pages ? $total_pages : $current_page+5); $page++)
+                      @if($current_page == $page)
+                        <li class="paginate_button page-item active">
+                      @else
+                        <li class="paginate_button page-item ">
+                      @endif
+                        <a href="{{ route('admin.ml.getTranslationReady',['page' => $page]) }}" tabindex="0" class="page-link">{{ $page }}</a>
+                      </li>
+                    @endfor
+                    
+                    <li class="paginate_button page-item next" id="selection-datatable_next">
+                      <a href="{{ route('admin.ml.getTranslationReady',['page' => $total_pages]) }}" tabindex="0" class="page-link">
+                        <i class="mdi mdi-chevron-right"></i>
+                      </a>
+                    </li>
+                </ul>
+              </div>
+          </div>
         </div>
 @endsection

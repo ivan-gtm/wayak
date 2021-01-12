@@ -10,7 +10,7 @@ services:
       # - mysql-test
     volumes:
       - ./:/application:cached
-  wayak-db:
+  mysql-db:
     image: mysql:8
     command: --default-authentication-plugin=mysql_native_password
     ports:
@@ -21,7 +21,7 @@ services:
     volumes:
       - db-data:/var/lib/mysql:cached
 
-  w-nginx:
+  nginx:
     image: nginx:alpine
     ports:
       - "8001:8001"
@@ -31,7 +31,7 @@ services:
     depends_on:
       - wayak-server
 
-  w-redis:
+  redis:
     image: redis:alpine
     ports:
       - "6379:6379"

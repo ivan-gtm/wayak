@@ -23,36 +23,35 @@ class CrelloController extends Controller
         // }
         // exit;
         
-        $crello = Redis::keys('crello:search:results:page:*');
-        
-        echo "<pre>";
-        $limite = 0;
-        foreach ($crello as $search_result_key) {
-            // print_r("\n".$search_result_key);
-            $search_results = Redis::get( $search_result_key );
-            $search_results = json_decode( $search_results );
+        // DOWNLOAD TEMPLATE METADATA
+        // $crello = Redis::keys('crello:search:results:page:*');
+        // echo "<pre>";
+        // $limit = 0;
+        // foreach ($crello as $search_result_key) {
+        //     // print_r("\n".$search_result_key);
+        //     $search_results = Redis::get( $search_result_key );
+        //     $search_results = json_decode( $search_results );
 
-            // print_r( $search_results->searchMeta->responseMeta->coreItems );
-            // exit;
-            $template_keys = $search_results->searchMeta->responseMeta->coreItems;
-            foreach ($template_keys as $template_key) {
-                if( Redis::exists( "crello:template:" . $template_key ) ){
-                    print_r("\n> EXISTE - ".$template_key);
-                } else {
-                    print_r("\n> NO EXISTE - ".$template_key);
-                    self::getTemplate( $template_key );
-                    // exit;
-                }
+        //     // print_r( $search_results->searchMeta->responseMeta->coreItems );
+        //     // exit;
+        //     $template_keys = $search_results->searchMeta->responseMeta->coreItems;
+        //     foreach ($template_keys as $template_key) {
+        //         if( Redis::exists( "crello:template:" . $template_key ) ){
+        //             print_r("\n> EXISTE - ".$template_key);
+        //         } else {
+        //             print_r("\n> NO EXISTE - ".$template_key);
+        //             self::getTemplate( $template_key );
+        //             // exit;
+        //             $limit++;
+        //             if($limit > 10000) {
+        //                 print_r("\n> TERMINE - ".$template_key);
+        //                 exit;
+        //             }
+        //         }
 
-                $limite++;
-
-                if($limite > 6000) {
-                    print_r("\n> TERMINE - ".$template_key);
-                    exit;
-                }
-            }
-        }
-        exit;
+        //     }
+        // }
+        // exit;
         
         // $crello = Redis::keys('crello:template:*');
         // foreach ($crello as $crello_key) {
@@ -131,41 +130,9 @@ class CrelloController extends Controller
                     foreach ( $template->elements as $page_element ) {
 
                         if( isset($page_element->type) ){
-
-                            // if( $page_element->type == 'maskElement' ){
-							// 	echo "\n >>> <pre>";
-                            //     print_r( $page_element );
-                            //     exit;
-                            // }
-
-                            if( $page_element->type == 'imageElement' ){
-								$this->downloadImageAsset($template_id, $page_element->mediaId);
-                            } elseif( $page_element->type == 'svgElement' ){
-								$this->downloadSVGAsset($template_id, $page_element->mediaId);
-							} elseif( $page_element->type == 'videoElement1' ){
-								$this->downloadMP4Asset($template_id, $page_element->mediaId);
-							}
-
-                            if( isset($page_element->elements) ){
-
-                                foreach ( $page_element->elements as $subelement_type ) {
-                                    if( $subelement_type->type == 'imageElement' ){
-                                        $this->downloadImageAsset($template_id, $subelement_type->mediaId);
-                                        // exit;
-                                    } elseif( $subelement_type->type == 'svgElement' ){
-                                        $this->downloadSVGAsset($template_id, $subelement_type->mediaId);
-                                        // exit;
-                                    } elseif( $page_element->type == 'videoElement1' ){
-                                        $this->downloadMP4Asset($template_id, $page_element->mediaId);
-                                        // exit;
-                                    }
-                                }
-
-                            }
-                            //     case 'textElement1':
-                            //     case 'coloredBackground1':
-                            //     case 'maskElement1'
-                            //     case 'persistGroupElement1':
+                            
+                            self::scrapAssets( $page_element,$template_id );
+                            // sleep(1);
                         }
 
                     }
@@ -174,6 +141,36 @@ class CrelloController extends Controller
         }
 
         echo "TERMINE";
+    }
+
+    function scrapAssets( $page_element, $template_id ){
+        if( $page_element->type == 'imageElement' && isset($page_element->mediaId) ){
+            $this->downloadImageAsset($template_id, $page_element->mediaId);
+        } elseif( $page_element->type == 'svgElement' ){
+            $this->downloadSVGAsset($template_id, $page_element->mediaId);
+        } elseif( $page_element->type == 'videoElement' ){
+            $this->downloadMP4Asset($template_id, $page_element->mediaId);
+        } elseif( $page_element->type == 'persistGroupElement' ){
+            foreach ($page_element->elements as $element) {
+                self::scrapAssets( $element, $template_id);
+            }
+        } elseif( $page_element->type == 'groupElement' ){
+            foreach ($page_element->children as $element) {
+                self::scrapAssets( $element, $template_id);
+            }
+        } elseif(
+            $page_element->type == 'textElement' 
+            OR $page_element->type =='coloredBackground'
+            OR $page_element->type =='maskElement'
+            OR $page_element->type =='imageElement'
+            ){
+            // NOTHING TO SCRAP
+        } else {
+            echo "<pre>";
+            print_r("\nUNKNOWN ELEMENT >>".$page_element->type." ");
+            print_r($page_element);
+            exit;
+        }
     }
 
     function explore(Request $request){

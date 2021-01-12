@@ -909,7 +909,8 @@ class TemplettScrapperController extends Controller
 					template_id 
 				) 
 				AND thumbnails.`status` = 1
-				ORDER BY tmp_etsy_product.review DESC');
+				ORDER BY tmp_etsy_product.review DESC
+				LIMIT 200');
 
         $products = [];
         foreach ($thumbs_to_download as $key => $product) {
@@ -923,6 +924,9 @@ class TemplettScrapperController extends Controller
         ]);
 	}
 
+	// Refactor thumbs to differentiate langs.
+	// Paginate missing translation to avoid bulk server requests (10,000+) and memory overload
+
 	function bulkTranslation($origin_lang, $destination_lang, Request $request){
 
 		$templates_per_page = 30;
@@ -930,9 +934,9 @@ class TemplettScrapperController extends Controller
 		$ready_for_translation = DB::table('templates')
 						->select('template_id')
 						->where('status', '=' , 5)
-						// ->limit($templates_per_page)
+						->where('template_id', '=', 1430645)
 						->get();
-		
+
 		// echo "<pre>";
 		// print_r( $ready_for_translation );
 		// exit;
@@ -1029,7 +1033,8 @@ class TemplettScrapperController extends Controller
 			$template_key = $product->template_id;
 
 			if( Redis::exists('product:format_ready:'.$template_key) == false ){
-				Redis::set('product:format_ready:'.$template_key, 1);
+				// Redis::set('product:format_ready:'.$template_key, 1);
+				Redis::del('product:format_ready:'.$template_key);
 			}
 		}
 	}

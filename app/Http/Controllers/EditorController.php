@@ -95,7 +95,35 @@ class EditorController extends Controller
 			[EditorController::class,'validateCode'], []
 		);
 	}
-	
+
+	function wayak_home(){
+
+		// $templates = Redis::keys('laravel_database_green:category:209:product:*');
+		// echo "<pre>";
+		// print_r($templates);
+		// exit;
+
+		// $template = Redis::keys('laravel_database_green:category:209:product:*');
+		// // $template = json_decode($template);
+
+		// echo "<pre>";
+		// print_r($template);
+		// exit;
+
+		// $templates = Redis::keys('laravel_database_template:*:jsondata');
+
+		// echo "<pre>";
+		// print_r($templates);
+		// exit;
+
+		// $template = Redis::get('laravel_database_template:g13780:jsondata');
+		// echo "<pre>";
+		// print_r(json_decode($template));
+		// exit;
+
+		return view('wayak',[ 'templates' => null ]);
+	}
+
 	function demoTemplateEditor($country, $modelo_mercado_pago){
 		// echo $country;
 		// exit;
@@ -182,34 +210,6 @@ class EditorController extends Controller
 
 	function category(){
 		return view('category',[ 'templates' => null ]);
-	}
-
-	function wayak(){
-
-		// $templates = Redis::keys('laravel_database_green:category:209:product:*');
-		// echo "<pre>";
-		// print_r($templates);
-		// exit;
-
-		// $template = Redis::keys('laravel_database_green:category:209:product:*');
-		// // $template = json_decode($template);
-
-		// echo "<pre>";
-		// print_r($template);
-		// exit;
-
-		// $templates = Redis::keys('laravel_database_template:*:jsondata');
-
-		// echo "<pre>";
-		// print_r($templates);
-		// exit;
-
-		// $template = Redis::get('laravel_database_template:g13780:jsondata');
-		// echo "<pre>";
-		// print_r(json_decode($template));
-		// exit;
-
-		return view('wayak',[ 'templates' => null ]);
 	}
 
 	function getJSONTemplate($template_id, $language_code) {
@@ -399,7 +399,7 @@ class EditorController extends Controller
 			$this->deleteCurrentThumbnails($template_id, $language_code);
 			$thumbnail_imgs = $this->createThumbnailFiles( $request->pngimageData, $template_id, $language_code );
 			// exit;
-	
+
 			$thumbnail_info = [
 				'filename' => $thumbnail_imgs['thumbnail'],
 				'language_code' => $language_code,
@@ -407,14 +407,23 @@ class EditorController extends Controller
 				'dimentions' => $template_dimensions,
 				'status' => 1
 			];
+
 			// exit;
-	
 			$this->updateThumbnailsOnDB( $thumbnail_info );
 			
-			Redis::set('product:format_ready:'.$template_id, 1);
-
+			// Redis::set('product:format_ready:'.$template_id, 1);
 			if( $language_code != 'en' ){
-				Redis::set('product:thumbnail_ready:'.$template_id, 1);
+				// echo "aqui >> $template_id";
+				// exit;
+
+				DB::table('templates')
+					->where('template_id','=', $template_id)
+					->update([
+						// 'translation_ready' => true,
+						// 'format_ready' => true,
+						'thumbnail_ready' => true
+					]);
+				// Redis::set('product:thumbnail_ready:'.$template_id, 1);
 			}
 		}
 		
@@ -810,7 +819,6 @@ class EditorController extends Controller
 		// print_r( $language_code );
 		// exit;
 
-
 		if (preg_match('/^data:image\/(\w+);base64,/', $croppie_code, $type)) {
 
 			$rand_filename_id = $this->randomNumber(6).'_'.$this->randomNumber(10);
@@ -821,7 +829,7 @@ class EditorController extends Controller
 
 			$img = \Image::make($decoded_image);
 			// exit;
-			$img_path = 'design/template/'.$template_id.'/thumbnails/';
+			$img_path = 'design/template/'.$template_id.'/thumbnails/'.$language_code.'/';
 			$path = public_path($img_path);
 
 			// print_r( $path );
@@ -831,23 +839,23 @@ class EditorController extends Controller
 
 			// Store mid-size thumbnail
 			// $unique_id = Str::random(10);
-			$full_thumbnail_path = public_path($img_path.$rand_filename_id.'_thumbnail.jpg');
+			$full_thumbnail_path = public_path($img_path.$rand_filename_id.'_large.jpg');
 			$img->save($full_thumbnail_path);
 
 			// Guardar en S3
 			// Storage::disk('s3')->put($img_path.$unique_id.'.jpg', $full_thumbnail_path);
 
 			// Create mini thumbnail
-			$img->resize(150, 210, function($constraint) {
+			$img->resize(278, 360, function($constraint) {
 				$constraint->aspectRatio();
 			});
 
-			$full_minithumbnail_path = public_path($img_path.$rand_filename_id.'_mini.jpg');
+			$full_minithumbnail_path = public_path($img_path.$rand_filename_id.'_thumbnail.jpg');
 			$img->save($full_minithumbnail_path);
 
 			return [
 				'thumbnail' => $rand_filename_id.'_thumbnail.jpg',
-				'mini' => $rand_filename_id.'_mini.jpg'
+				'preview' => $rand_filename_id.'_large.jpg'
 			];
 		}
 		// $image = str_replace('data:image/jpeg;base64,', '', $image);
@@ -922,11 +930,11 @@ class EditorController extends Controller
 						
 		if( isset( $thumbnail->filename ) ){
 
-			$img_folder = 'design/template/'.$template_id.'/thumbnails/';
+			$img_folder = 'design/template/'.$template_id.'/thumbnails/'.$language_code.'/';
 			$img_path = $img_folder.$thumbnail->filename;
 
 			$thumbnail_path = public_path($img_path);
-			$mini_thumbnail_path = str_replace('_thumbnail.jpg','_mini.jpg',$thumbnail_path);
+			$mini_thumbnail_path = str_replace('_thumbnail.jpg','_large.jpg',$thumbnail_path);
 
 			if(is_file($thumbnail_path)) {
 				unlink( $thumbnail_path );
@@ -943,16 +951,6 @@ class EditorController extends Controller
 		// print_r( $request->all() );
 		// exit;
 
-		// $template_ids = $request['demo_templates'];
-		// $response = array(
-		// 	'err' => 0,
-		//     'data' => '<div class="col-xs-6 thumb" id="987654"><a class="thumbnail" data-target="'.$template_ids.'"><span class="thumb-overlay"><h3>EJEMPLO</h3></span><div class="expired-notice" style="display:none;">EXPIRED</div><img class="tempImage img-responsive" src="http://localhost:8001/design/template/'.$template_ids.'/assets/preview.jpg" alt="" style=""></a><div class="badge-container"><span class="badge dims">5x7</span><span class="badge tempId">ID: xxxxx</span><i class="fa fa-trash-o deleteTemp" id="12345"></i></div></div>'
-		// );
-
-		// return json_encode($response);
-		// print_r($request->all());
-		// exit;
-		
 		// get mercado pago relationship
 		if( Redis::exists('temp:template:relation:temp:'.$request->design_as_id) ){
 			$template_ids = Redis::get('temp:template:relation:temp:'.$request->design_as_id);
@@ -975,7 +973,7 @@ class EditorController extends Controller
 				->get();
 
 	    	foreach($template_thumbnails as $thumbnail) {
-		    	$img_url = url('design/template/'.$thumbnail->template_id.'/thumbnails/'.$thumbnail->filename);
+		    	$img_url = url('design/template/'.$thumbnail->template_id.'/thumbnails/'.$request->language_code.'/'.$thumbnail->filename);
 		    	$thumbnails_html .= '<div class="col-xs-6 thumb" id="'.$request->demo_templates.'"><a class="thumbnail" data-target="'.$request->demo_templates.'"><span class="thumb-overlay"><h3>'.$thumbnail->title.'</h3></span><div class="expired-notice" style="display:none;">EXPIRED</div><img class="tempImage img-responsive" src="'.$img_url.'" alt="" style=""></a><div class="badge-container"><span class="badge dims">'.$thumbnail->dimentions.'</span><span class="badge tempId">ID: '.$request->demo_templates.'</span><i class="fa fa-trash-o deleteTemp" id="'.$request->demo_templates.'"></i></div></div>';
 		    }
 		}

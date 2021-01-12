@@ -32,12 +32,12 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 // use App\Exports\MercadoLibreExport;
 // use Maatwebsite\Excel\Facades\Excel;
 
-ini_set('memory_limit', -1);
-ini_set("max_execution_time", 0);   // no time-outs!
-ignore_user_abort(true);            // Continue downloading even after user closes the browser.
+// ini_set('memory_limit', -1);
+// ini_set("max_execution_time", 0);   // no time-outs!
+// ignore_user_abort(true);            // Continue downloading even after user closes the browser.
 
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+// error_reporting(E_ALL);
+// ini_set('display_errors', 1);
 
 
 class AdminController extends Controller
@@ -730,19 +730,19 @@ class AdminController extends Controller
         // echo $template_key;
         // exit;
 
-        // $translations = Redis::keys('template:es:*:jsondata');
+        // $translations = Redis::keys(' template:es:*:jsondata');
         // foreach ($translations as $template_key) {
         //     Redis::del($template_key);
         // }
         // exit;
 
-        if( $template_info['key'] && $template_info['template_text'] ){
+        if( isset($template_info['key']) && isset($template_info['template_text']) ){
             // $template_key = ;
             $template_obj = json_decode( Redis::get( $template_info['key'] ) );
             $template_objects = sizeof( $template_obj[1]->objects );
 
             // echo "<pre>";
-            // // print_r($template_info['template_text']);
+            // print_r($template_info);
             // // print_r( $template_objects );
             // // print_r( $template_obj );
             // exit;
@@ -770,7 +770,13 @@ class AdminController extends Controller
             // exit;
 
             Redis::set($destination_template_key, json_encode($template_obj) );
-            Redis::set('product:translation_ready:'.$template_key, 1);
+            
+            // Redis::set('product:translation_ready:'.$template_key, 1);
+            DB::table('templates')
+                ->where('template_id', $template_key)
+                ->update([
+                    'translation_ready' => true
+                ]);
 
             
             $original_thumb_data = DB::table('thumbnails')
@@ -802,6 +808,8 @@ class AdminController extends Controller
                     'status' => 1
                 ]);
             }
+
+            
             
             // echo "<pre>";
             // print_r( $original_thumb_data );
@@ -950,49 +958,71 @@ class AdminController extends Controller
         
     }
     
-    function getFormatReadyTemplates(){
+    function getFormatReadyTemplates(Request $request){
 
         $format_ready_keys = Redis::keys('product:production_ready:*');
         foreach ($format_ready_keys as $template_key) {
             Redis::rename($template_key, str_replace(':production_ready:', ':format_ready:',$template_key ) );
         }
         
+        $current_page = 1;
+        if( isset($request->page) ) {
+            $current_page = $request->page;
+        }
+
+        $page = $current_page-1;
+        $per_page = 100;
+        $offset = $page*$per_page;
+
+        $total_templates = DB::table('templates')
+                    ->join('thumbnails', 'templates.template_id', '=', 'thumbnails.template_id')
+                    ->select('templates.template_id','format_ready','translation_ready','thumbnail_ready', 'filename')
+                    // ->where('template_id','=', $template_key )
+                    ->where('thumbnails.language_code','=', 'en' )
+                    // ->where('thumbnails.dimentions','=', '5 x 7 in' )
+                    ->where('templates.status','=', 5 )
+                    ->where('templates.format_ready','1')
+                    ->where('templates.translation_ready','0')
+                    ->count();
+
+        $total_pages = ceil( $total_templates/$per_page );
+        
+        $format_ready_templates = DB::table('templates')
+                    ->join('thumbnails', 'templates.template_id', '=', 'thumbnails.template_id')
+                    ->select('templates.template_id','format_ready','translation_ready','thumbnail_ready', 'filename')
+                    // ->where('template_id','=', $template_key )
+                    ->where('thumbnails.language_code','=', 'en' )
+                    // ->where('thumbnails.dimentions','=', '5 x 7 in' )
+                    ->where('templates.status','=', 5 )
+                    ->where('templates.format_ready','1')
+                    ->where('templates.translation_ready','0')
+                    ->offset($offset)
+                    ->limit($per_page)
+                    ->get();
+
+        // echo "<pre>";
+        // print_r($format_ready_templates);
+        // exit;
+
         // Get all templates already formated
-        $formated_templates = Redis::keys('product:format_ready:*');
-        $formated_templates_total = sizeof($formated_templates);
         $arr_ready_for_sale = [];
         
-        for ($i=0; $i < $formated_templates_total; $i++) { 
-            $template_key = str_replace('product:format_ready:', null, $formated_templates[$i]);
+        foreach ($format_ready_templates as $template) {
+            $template_key = $template->template_id;
             
-            $template_info['key'] = $template_key;
-            
-            // Template elements has been formated by humans
-            $template_info['format_ready'] = Redis::exists('product:format_ready:'.$template_key);
-            $template_info['translation_not_ready'] = Redis::exists('template:es:'.$template_key.':jsondata') == false || Redis::exists('product:translation_ready:'.$template_key) == false;
-            $template_info['thumbnail_ready'] = Redis::exists('product:thumbnail_ready:'.$template_key) == false;
-
-            if ( $template_info['format_ready'] 
-                && $template_info['translation_not_ready'] 
-                && $template_info['thumbnail_ready'] ){
-                
-                $thumb_info = DB::table('thumbnails')
-                    ->where('template_id','=', $template_key )
-                    ->where('language_code','=', 'en' )
-                    ->first();
-
-                if($thumb_info){
-                    $template_info['thumbnail']  = asset( 'design/template/'. $template_key.'/thumbnails/'.$thumb_info->filename);
-                } else {
-                    $template_info['thumbnail']  = null;
-                }
-                
-                $arr_ready_for_sale[] = $template_info;
+            if( $template->filename ){
+                $template->thumbnail  = asset( 'design/template/'. $template_key.'/thumbnails/'.$template->filename);
+            } else {
+                $template->thumbnail  = null;
             }
+            
+            $arr_ready_for_sale[] = $template;
         }
 
         return view('admin.templates_format_ready', [
             'templates' => $arr_ready_for_sale,
+            'current_page' => $current_page,
+            'total_pages' => $total_pages,
             'language_code' => 'en',
             'country' => 'mx'
         ]);
@@ -1042,43 +1072,69 @@ class AdminController extends Controller
         
     }
     
-    function getTranslationReadyTemplates(){
+    function getTranslationReadyTemplates(Request $request){
+        // $translations = Redis::keys('template:es:*');
+        // foreach ($translations as $template_key) {
+        //     Redis::del($template_key);
+        // }
+        // exit;
+
+        $current_page = 1;
+        if( isset($request->page) ) {
+            $current_page = $request->page;
+        }
+
+        $page = $current_page-1;
+        $per_page = 10;
+        $offset = $page*$per_page;
+
+        $total_templates = DB::table('templates')
+                    ->join('thumbnails', 'templates.template_id', '=', 'thumbnails.template_id')
+                    ->select('templates.template_id','format_ready','translation_ready','thumbnail_ready', 'filename')
+                    // ->where('template_id','=', $template_key )
+                    ->where('thumbnails.language_code','=', 'en' )
+                    // ->where('thumbnails.dimentions','=', '5 x 7 in' )
+                    ->where('templates.status','=', 5 )
+                    ->where('templates.format_ready','1')
+                    ->where('templates.translation_ready','1')
+                    ->where('templates.thumbnail_ready','0')
+                    ->count();
+
+        $total_pages = ceil( $total_templates/$per_page );
         
-        // Get all templates already formated
-        $formated_templates = Redis::keys('product:format_ready:*');
-        $formated_templates_total = sizeof($formated_templates);
+        $translation_ready_templates = DB::table('templates')
+                    ->join('thumbnails', 'templates.template_id', '=', 'thumbnails.template_id')
+                    ->select('templates.template_id','format_ready','translation_ready','thumbnail_ready', 'filename')
+                    // ->where('template_id','=', $template_key )
+                    ->where('thumbnails.language_code','=', 'en' )
+                    // ->where('thumbnails.dimentions','=', '5 x 7 in' )
+                    ->where('templates.status','=', 5 )
+                    ->where('templates.format_ready','1')
+                    ->where('templates.translation_ready','1')
+                    ->where('templates.thumbnail_ready','0')
+                    ->offset($offset)
+                    ->limit($per_page)
+                    ->get();
+
+        // echo "<pre>";
+        // print_r( $translation_ready_templates );
+        // exit;
         $arr_ready_for_sale = [];
-        
-        for ($i=0; $i < $formated_templates_total; $i++) { 
-            $template_key = str_replace('product:format_ready:', null, $formated_templates[$i]);
-            
+        foreach ($translation_ready_templates as $template) {
+            $template_key = $template->template_id;
             $template_info['key'] = $template_key;
             // Template elements has been formated
-            $template_info['format_ready'] = Redis::exists('product:format_ready:'.$template_key);
-            $template_info['translation_ready'] = Redis::exists('template:es:'.$template_key.':jsondata') && Redis::exists('product:translation_ready:'.$template_key);
-            $template_info['thumbnail_ready'] = Redis::exists('product:thumbnail_ready:'.$template_key);
+            $template_info['format_ready'] = $template->format_ready;
+            $template_info['translation_ready'] = $template->translation_ready;
+            $template_info['thumbnail_ready'] = $template->thumbnail_ready;
             
-            // // Has metadata for mercado pago product description
-            // $template_info['metadata_ready'] = Redis::exists('mercadopago:template:metadata:'.$template_key);
-            // $template_info['mp_modelo'] = Redis::exists('wayak:mercadopago:template:modelo:'.$template_key);
-
-            if ( $template_info['format_ready'] 
-                && $template_info['translation_ready']
-                && $template_info['thumbnail_ready'] == false ){
-                
-                $thumb_info = DB::table('thumbnails')
-                ->where('template_id','=', $template_key )
-                ->where('language_code','=', 'es' )
-                ->first();
-
-                if($thumb_info){
-                    $template_info['thumbnail']  = asset( 'design/template/'. $template_key.'/thumbnails/'.$thumb_info->filename);
-                } else {
-                    $template_info['thumbnail']  = null;
-                }
-                
-                $arr_ready_for_sale[] = $template_info;
+            if( $template->filename ){
+                $template_info['thumbnail']  = asset( 'design/template/'. $template_key.'/thumbnails/'.$template->filename);
+            } else {
+                $template_info['thumbnail']  = null;
             }
+
+            $arr_ready_for_sale[] = $template_info; 
         }
 
         // echo "<pre>";
@@ -1087,49 +1143,74 @@ class AdminController extends Controller
         
         return view('admin.templates_ready_translation', [
             'templates' => $arr_ready_for_sale,
+            'current_page' => $current_page,
+            'total_pages' => $total_pages,
             'language_code' => 'es',
             'country' => 'mx'
         ]);
         
     }
     
-    function getThumbnailReady(){
+    function getThumbnailReady(Request $request){
         
         // Get all templates already formated
-        $formated_templates = Redis::keys('product:format_ready:*');
-        $formated_templates_total = sizeof($formated_templates);
-        $arr_ready_for_sale = [];
+        $destination_lang = 'es';
+        $current_page = 1;
+        if( isset($request->page) ) {
+            $current_page = $request->page;
+        }
+
+        $page = $current_page-1;
+        $per_page = 50;
+        $offset = $page*$per_page;
+
+        $total_templates = DB::table('templates')
+            ->join('thumbnails', 'templates.template_id', '=', 'thumbnails.template_id')
+            ->select('templates.template_id','format_ready','translation_ready','thumbnail_ready', 'filename')
+            // ->where('template_id','=', $template_key )
+            ->where('thumbnails.language_code','=', $destination_lang )
+            // ->where('thumbnails.dimentions','=', '5 x 7 in' )
+            ->where('templates.status','=', 5 )
+            ->where('templates.format_ready','1')
+            ->where('templates.translation_ready','1')
+            ->where('templates.thumbnail_ready','1')
+            ->count();
+
+        $total_pages = ceil( $total_templates/$per_page );
         
-        for ($i=0; $i < $formated_templates_total; $i++) { 
-            $template_key = str_replace('product:format_ready:', null, $formated_templates[$i]);
+        $thumb_ready_templates = DB::table('templates')
+            ->join('thumbnails', 'templates.template_id', '=', 'thumbnails.template_id')
+            ->select('templates.template_id','format_ready','translation_ready','thumbnail_ready', 'filename')
+            // ->where('template_id','=', $template_key )
+            ->where('thumbnails.language_code','=', $destination_lang )
+            // ->where('thumbnails.dimentions','=', '5 x 7 in' )
+            ->where('templates.status','=', 5 )
+            ->where('templates.format_ready','1')
+            ->where('templates.translation_ready','1')
+            ->where('templates.thumbnail_ready','1')
+            ->offset($offset)
+            ->limit($per_page)
+            ->get();
+
+        // echo "<pre>";
+        // print_r( $translation_ready_templates );
+        // exit;
+        $arr_ready_for_sale = [];
+        foreach ($thumb_ready_templates as $template) {
+            $template_key = $template->template_id;
             
             $template_info['key'] = $template_key;
             // Template elements has been formated
-            $template_info['format_ready'] = Redis::exists('product:format_ready:'.$template_key);
-            $template_info['translation_ready'] = Redis::exists('template:es:'.$template_key.':jsondata') && Redis::exists('product:translation_ready:'.$template_key);
-            $template_info['thumbnail_ready'] = Redis::exists('product:thumbnail_ready:'.$template_key);
-            
-            // // Has metadata for mercado pago product description
-            // $template_info['metadata_ready'] = Redis::exists('mercadopago:template:metadata:'.$template_key);
-            // $template_info['mp_modelo'] = Redis::exists('wayak:mercadopago:template:modelo:'.$template_key);
+            // $template_info['format_ready'] = $template->format_ready;
+            $template_info['translation_ready'] = $template->translation_ready;
+            // $template_info['thumbnail_ready'] = $template->thumbnail_ready;
 
-            if ( $template_info['format_ready'] 
-                && $template_info['translation_ready'] 
-                && $template_info['thumbnail_ready']){
-                
-                $thumb_info = DB::table('thumbnails')
-                ->where('template_id','=', $template_key )
-                ->where('language_code','=', 'es' )
-                ->first();
-
-                if($thumb_info){
-                    $template_info['thumbnail']  = asset( 'design/template/'. $template_key.'/thumbnails/'.$thumb_info->filename);
-                } else {
-                    $template_info['thumbnail']  = null;
-                }
-                
-                $arr_ready_for_sale[] = $template_info;
+            if( $template->filename ){
+                $template_info['thumbnail']  = asset( 'design/template/'.$template_key.'/thumbnails/'.$destination_lang.'/'.$template->filename);
+            } else {
+                $template_info['thumbnail']  = null;
             }
+            $arr_ready_for_sale[] = $template_info;
         }
 
         // echo "<pre>";
@@ -1138,6 +1219,8 @@ class AdminController extends Controller
         
         return view('admin.templates_ready_translation', [
             'templates' => $arr_ready_for_sale,
+            'current_page' => $current_page,
+            'total_pages' => $total_pages,
             'language_code' => 'es',
             'country' => 'mx'
         ]);
@@ -1192,18 +1275,65 @@ class AdminController extends Controller
         
     }
 
-    function bulkTranslate($origin_lang, $destination_lang, Request $request){
+    function refactor(){
+        $template_info = [];
 
-        // $translations = Redis::keys('template:es:*:jsondata');
-        // foreach ($translations as $template_key) {
-        //     Redis::del($template_key);
-        // }
-        // exit;
+        $format_ready_templates = Redis::keys('template:en:*:jsondata');
+        
+        echo "<pre>";
+        print_r($format_ready_templates);
+        exit;
+
+        foreach ($format_ready_templates as $template_key) {
+            $template_key = str_replace('template:en:', null, $template_key);
+            $template_key = str_replace(':jsondata', null, $template_key);
+            // print_r("\n".$template_key);
+            // exit;
+
+            $template_info['format_ready'] = Redis::exists('product:format_ready:'.$template_key);
+            // $template_info['translation_ready'] = Redis::exists('template:es:'.$template_key.':jsondata') && Redis::exists('product:translation_ready:'.$template_key);
+            // $template_info['thumbnail_ready'] = Redis::exists('product:thumbnail_ready:'.$template_key);
+            // $template_info['metadata_ready'] = Redis::exists('template:'.$template_key.':metadata');
+            
+            $template_metadata = DB::table('templates')
+    		->select('id','template_id')
+    		->where('template_id','=',$template_key)
+			->first();
+		
+            if( isset($template_metadata->id) ){
+                print_r("\nUPDATING >> $template_key");
+            //     // print_r($template_info);
+            //     // print_r($template_metadata);
+            //     // exit;
+            //     DB::table('templates')
+			// 	    ->where('template_id', $template_key)
+			// 	    ->update([
+            //             'format_ready' => $template_info['format_ready'],
+            //             'translation_ready' => $template_info['translation_ready'],
+            //             'thumbnail_ready' => $template_info['thumbnail_ready'],
+            //             'metadata_ready' => $template_info['metadata_ready']
+            //         ]);
+            } else {
+                print_r("\nINSERTING >> $template_key");
+            //     DB::table('templates')->insert([
+            //         'id' => null,
+            //         'template_id' => $template_key,
+            //         'status' => 5,
+            //         'format_ready' => $template_info['format_ready'],
+            //         'translation_ready' => $template_info['translation_ready'],
+            //         'thumbnail_ready' => $template_info['thumbnail_ready'],
+            //         'metadata_ready' => $template_info['metadata_ready']
+            //     ]);
+            }
+
+        }
+    }
+
+    function bulkTranslate($origin_lang, $destination_lang, Request $request){
 
         // Save translated Google data on database
         if( isset($request->templates_text) ){
             $templates_metadata = $request->templates_text;
-
             foreach ($templates_metadata as $template_info) {
                 self::saveTemplateTranslation( $template_info );
             }
@@ -1213,25 +1343,35 @@ class AdminController extends Controller
         // print_r( $request->all() );
         // exit;
 
-        // echo "<pre>";
-        // print_r( Redis::keys('product:format_ready:*') );
-        // exit;
+        $limit = 30;
+        // Get format ready templates
+        $ready_for_translation = DB::table('templates')
+                    ->join('thumbnails', 'templates.template_id', '=', 'thumbnails.template_id')
+                    ->select('templates.template_id','format_ready','translation_ready','thumbnail_ready', 'filename')
+                    // ->where('template_id','=', $template_key )
+                    ->where('thumbnails.language_code','=', 'en' )
+                    // ->where('thumbnails.dimentions','=', '5 x 7 in' )
+                    ->where('templates.status','=', 5 )
+                    ->where('templates.format_ready','1')
+                    ->where('templates.translation_ready','0')
+                    ->limit($limit)
+                    ->get();
         
-        // Get formated templates
-        $ready_for_sale = Redis::keys('product:format_ready:*');
-
-        $template_total = sizeof($ready_for_sale); // Array size of format ready templates
+        // echo "<pre>";
+        // print_r( $ready_for_translation );
+        // exit;
+                    
         $template_text = '';
         
-        $templates_per_page = 10;
-        $templates_on_page = 0;
-        for ($i=0; $i < $template_total; $i++) {
-            $template_key = str_replace('product:format_ready:', null, $ready_for_sale[$i]);
+        // $templates_on_page = 0;
+
+        foreach ($ready_for_translation as $template) {
+            $template_key = $template->template_id;
             $source_template_key = 'template:'.$origin_lang.':'.$template_key.':jsondata';
             
             $source_template_exists = Redis::exists( $source_template_key );
-            $template_translation_ready = Redis::exists('template:'.$destination_lang.':'.$template_key.':jsondata') && Redis::exists('product:translation_ready:'.$template_key);
-            $template_format_ready = Redis::exists('product:format_ready:'.$template_key);
+            $template_format_ready = $template->format_ready;
+            $template_translation_ready = $template->translation_ready;
             
             
             if( $source_template_exists
@@ -1239,10 +1379,6 @@ class AdminController extends Controller
                 && $template_translation_ready == false 
                 ){
                 $template_text .= self::getTemplateHTMLText($source_template_key);
-                $templates_on_page++;
-                if($templates_on_page == $templates_per_page) {
-                    break;
-                }
             }
         }
 
@@ -1326,67 +1462,74 @@ class AdminController extends Controller
     }
     
     function generateProductThumbnails() {
-        // Get all templates already formated
-        $formated_templates = Redis::keys('product:format_ready:*');
-        $formated_templates_total = sizeof($formated_templates);
-        $arr_ready_for_sale = [];
+        
+        $destination_lang = 'es';
+        $limit = 10;
+        $thumb_missing_product_preview = DB::table('templates')
+            ->join('thumbnails', 'templates.template_id', '=', 'thumbnails.template_id')
+            ->select('templates.template_id','format_ready','translation_ready','thumbnail_ready', 'filename')
+            // ->where('template_id','=', $template_key )
+            ->where('thumbnails.language_code','=', $destination_lang )
+            // ->where('thumbnails.dimentions','=', '5 x 7 in' )
+            ->where('templates.status','=', 5 )
+            ->where('templates.format_ready','1')
+            ->where('templates.translation_ready','1')
+            ->where('templates.thumbnail_ready','1')
+            ->limit($limit)
+            ->get();
 
         // echo "<pre>";
-        // print_r($formated_templates);
+        // print_r( $thumb_missing_product_preview );
         // exit;
-        
-        for ($i=0; $i < $formated_templates_total; $i++) { 
-            $template_key = str_replace('product:format_ready:', null, $formated_templates[$i]);
-            
+
+        $arr_missing_metadata = [];
+
+        foreach ($thumb_missing_product_preview as $template) {
+            $template_key = $template->template_id;
             $template_info['key'] = $template_key;
-            // Template elements has been formated
-            $template_info['format_ready'] = Redis::exists('product:format_ready:'.$template_key);
-            $template_info['translation_ready'] = Redis::exists('template:es:'.$template_key.':jsondata') && Redis::exists('product:translation_ready:'.$template_key);
-            $template_info['thumbnail_ready'] = Redis::exists('product:thumbnail_ready:'.$template_key);
             
-            if ( $template_info['format_ready'] 
-                && $template_info['translation_ready'] 
-                && $template_info['thumbnail_ready'] ){
-                
-                $thumb_info = DB::table('thumbnails')
-                ->where('template_id','=', $template_key )
-                ->where('language_code','=', 'es' )
-                ->first();
-                
-
-                if($thumb_info){
-                    $template_info['thumbnail']  = public_path( 'design/template/'. $template_key.'/thumbnails/'.$thumb_info->filename);
-                } else {
-                    $template_info['thumbnail']  = null;
-                }
-
-                if (file_exists($template_info['thumbnail']) == false ) {
-                    echo "The file does not exist\n<br>";
-                    echo $product_info['thumbnail'];
-                    exit;
-                }
-                
-                self::emptyFolder($template_info);
-
-                $preview_images = [];
-                
-                array_push($preview_images, self::processMockup($template_info,10) );
-                array_push($preview_images, self::processMockup($template_info,6) );
-                array_push($preview_images, self::processMockup($template_info,2) );
-                // array_push($preview_images, self::processMockup($template_info,18) );
-                
-                // echo "<pre>";
-                // print_r($preview_images);
-                // exit;
-
-                Redis::set('product:preview_images:'.$template_info['key'], json_encode($preview_images));
-
-                // self::processMockup($template_info,18);
-                // 10, 2, 6, 18
-                // exit;
-                
-                $arr_missing_metadata[] = $template_info;
+            
+            if( $template->filename ){
+                $filename = $template->filename;
+                $filename = str_replace('_thumbnail.jpg', '_large.jpg', $filename);
+                $template_info['thumbnail']  = public_path( 'design/template/'. $template_key.'/thumbnails/'.$destination_lang.'/'.$filename);
+            } else {
+                $template_info['thumbnail']  = null;
             }
+
+            if ( file_exists($template_info['thumbnail']) == false ) {
+                echo "The file does not exist\n<br>";
+                echo $template_info['thumbnail'];
+                exit;
+            }
+            
+            self::emptyFolder($template_key);
+
+            $preview_images = [];
+            
+            array_push($preview_images, self::processMockup($template_info,31) );
+            array_push($preview_images, self::processMockup($template_info,10) );
+            array_push($preview_images, self::processMockup($template_info,6) );
+            array_push($preview_images, self::processMockup($template_info,2) );
+            // array_push($preview_images, self::processMockup($template_info,18) );
+            
+            // echo "<pre>";
+            // print_r($preview_images);
+            // exit;
+
+            DB::table('templates')
+					->where('template_id','=', $template_key)
+					->update([
+						'preview_ready' => true
+                    ]);
+
+            // Redis::set('product:preview_images:'.$template_info['key'], json_encode($preview_images));
+
+            // self::processMockup($template_info,18);
+            // 10, 2, 6, 18
+            // exit;
+            
+            $arr_missing_metadata[] = $template_info;
         }
 
         echo "<pre>";
@@ -1396,8 +1539,8 @@ class AdminController extends Controller
 
     }
 
-    function emptyFolder($template_info){
-        $folter_to_clean = public_path( 'product/preview-images/'. $template_info['key'] .'/*');
+    function emptyFolder($template_id){
+        $folter_to_clean = public_path( 'product/preview-images/'. $template_id .'/*');
         // echo "<pre>";
         // print_r($folter_to_clean);
         // exit;
@@ -1483,6 +1626,10 @@ class AdminController extends Controller
                 $img_url = self::generateMock18($template_info);
                 break;
             
+            case 31:
+                $img_url = self::generateMock31($template_info);
+                break;
+            
             default:
                 $img_url = self::generateMock1($template_info);
                 break;
@@ -1549,6 +1696,10 @@ class AdminController extends Controller
 
         $overlay_img->rotate(0);
         $mockup_img->insert($overlay_img, 'top-left', 410, 357);
+
+        $mockup_img->resize(null, 547, function ($constraint) {
+            $constraint->aspectRatio();
+        });
         
         $mercadolibre_preview_path = public_path( 'product/preview-images/'. $product_info['key'] .'/');
         $filename = 'preview_3_'.rand(111111,999999).'.jpg';
@@ -1620,7 +1771,7 @@ class AdminController extends Controller
     }
     
     function generateMock6($product_info){
-        $mockup_img_path = public_path('mockups/mockup_6.png');
+        $mockup_img_path = public_path('mockups/mockup_6.jpg');
         $overlay_img_path = $product_info['thumbnail'];
         
         $mockup_img = Image::make($mockup_img_path);
@@ -1637,6 +1788,10 @@ class AdminController extends Controller
 
         $mockup_img->insert($overlay_img, 'top-left', 122, 283);
         $mockup_img->insert($overlay_2_img, 'top-left', 985, 520);
+
+        $mockup_img->resize(null, 547, function ($constraint) {
+            $constraint->aspectRatio();
+        });
 
         $filename = 'preview_2_'.rand(111111,999999).'.jpg';
         $mercadolibre_preview_path = public_path( 'product/preview-images/'. $product_info['key'] .'/');
@@ -1723,6 +1878,10 @@ class AdminController extends Controller
         });
 
         $mockup_img->insert($overlay_img, 'top-left', 349, 303);
+
+        $mockup_img->resize(null, 547, function ($constraint) {
+            $constraint->aspectRatio();
+        });
 
         $filename = 'preview_1_'.rand(111111,999999).'.jpg';
         $mercadolibre_preview_path = public_path( 'product/preview-images/'. $product_info['key'] .'/');
@@ -1888,6 +2047,37 @@ class AdminController extends Controller
 
         // echo '<img src="'.asset( 'product/preview-images/'. $product_info['key'] .'/'.$filename ).'">';
         // exit;
+
+        return $url_path;
+    }
+
+    function generateMock31($product_info){
+        $mockup_img_path = public_path('mockups/mockup_31.jpg');
+        $overlay_img_path = $product_info['thumbnail'];
+        
+        $mockup_img = Image::make($mockup_img_path);
+        $overlay_img = Image::make($overlay_img_path);
+        $overlay_2_img = Image::make($overlay_img_path);
+        
+        $overlay_img->resize(325, null, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+        
+        $overlay_2_img->resize(null, 169, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+
+        $overlay_img->rotate(4);
+
+        $mockup_img->insert($overlay_img, 'top-left', 22, 40);
+        $mockup_img->insert($overlay_2_img, 'top-left', 417, 155);
+
+        $filename = 'preview_0_'.rand(111111,999999).'.jpg';
+        $mercadolibre_preview_path = public_path( 'product/preview-images/'. $product_info['key'] .'/');
+        $preview_path = $mercadolibre_preview_path.$filename;
+        @mkdir($mercadolibre_preview_path, 0777, true);
+        $mockup_img->save( $preview_path );
+        $url_path = asset( 'product/preview-images/'. $product_info['key'] .'/'.$filename);
 
         return $url_path;
     }

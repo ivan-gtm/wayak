@@ -15,8 +15,8 @@ use App\Http\Controllers\TemplettScrapperController;
 Route::get('/scrapper/over', [overController::class, 'index']);
 Route::get('/scrapper/canva', [canvaController::class, 'index']);
 Route::get('/scrapper/templett', [TemplettScrapperController::class, 'downloadOriginalTemplate']);
-
 Route::get('/scrapper/templett/keynames', [TemplettScrapperController::class, 'migrateTemplateKeyNames']);
+
 // Route::get( '/scrapper/etsy', [ EtsyScrapperController::class, 'extractMetaData' ]);
 // Route::get('/scrap-from-templett', [TemplettScrapperController::class, 'scrapURL']);
 
@@ -24,13 +24,12 @@ Route::get('/scrapper/templett/keynames', [TemplettScrapperController::class, 'm
 
 // CUSTOMER
     Route::get('/', [EditorController::class, 'home']);
-    Route::get('mx', [EditorController::class, 'home']);
+    Route::get('mx', [EditorController::class, 'wayak_home']);
     // Route::get('mx/plantillas', [EditorController::class, 'home']);
     Route::get('{country}/demo/{modelo_mercado_pago}', [EditorController::class, 'demoTemplateEditor'])->name('plantilla.demo');
     Route::get('/{country}/editar/plantilla/{template_key}', [EditorController::class, 'customerTemplate'])->name('plantilla.editar');
 
 // FRONTEND EJEMPLO
-    Route::get('mx/wayak', [EditorController::class, 'wayak']);
     Route::get('mx/plantillas/invitaciones', [EditorController::class, 'home1']);
     Route::get('mx/plantillas/producto-ejemplo', [EditorController::class, 'product']);
     Route::get('mx/plantillas/category', [EditorController::class, 'category']);
@@ -46,6 +45,8 @@ Route::get('/scrapper/templett/keynames', [TemplettScrapperController::class, 'm
 // ADMIN
     Route::get('/admin', [AdminController::class, 'adminHome'])->name('admin.home');
     Route::get('/admin/template/edit/{language_code}/{template_key}', [EditorController::class, 'adminTemplateEditor'])->name('admin.edit.template');
+    // TEMPORAL
+    Route::get('/admin/refactor', [AdminController::class, 'refactor'])->name('admin.keyrefactor');
 
 // TEMPLATES TRANLATION
     Route::get('/admin/bulk-translate/{from}/{to}', [AdminController::class, 'bulkTranslate'])->name('admin.bulkTranslateText');
@@ -109,8 +110,7 @@ Route::get('/scrapper/templett/keynames', [TemplettScrapperController::class, 'm
     Route::get('/admin/templett/missing-translation', [TemplettScrapperController::class, 'missinTranslation']);
     Route::get('/admin/templett/bulk-translation/{from}/{to}', [TemplettScrapperController::class, 'bulkTranslation']);
     Route::post('/admin/templett/bulk-translation/{from}/{to}', [TemplettScrapperController::class, 'bulkTranslation'])->name('templett.bulkTranslate');
-    // TEMPORAL
-    Route::get('/admin/templett/keyrefactor', [TemplettScrapperController::class, 'keyrefactor'])->name('templett.keyrefactor');
+    
     
 
     Route::get('/admin/generate-thumbs', [AdminController::class, 'generateProductThumbnails'])->name('admin.generateProductThumbnails');

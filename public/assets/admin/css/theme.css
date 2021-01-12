@@ -597,3 +597,52 @@ body[data-leftbar-theme=dark] .side-nav .side-nav-forth-level li a:focus,body[da
 /*! CSS Used keyframes */
 @-webkit-keyframes DropDownSlide{100%{-webkit-transform:translateY(0);transform:translateY(0);}0%{-webkit-transform:translateY(20px);transform:translateY(20px);}}
 @keyframes DropDownSlide{100%{-webkit-transform:translateY(0);transform:translateY(0);}0%{-webkit-transform:translateY(20px);transform:translateY(20px);}}
+
+/* CSS FOR PAGINATION */
+
+/*! CSS Used from: https://coderthemes.com/hyper/saas/assets/css/vendor/dataTables.bootstrap4.css */
+div.dataTables_wrapper div.dataTables_info{padding-top:0.85em;white-space:nowrap;}
+div.dataTables_wrapper div.dataTables_paginate{margin:0;white-space:nowrap;text-align:right;}
+div.dataTables_wrapper div.dataTables_paginate ul.pagination{margin:2px 0;white-space:nowrap;justify-content:flex-end;}
+@media screen and (max-width: 767px){
+div.dataTables_wrapper div.dataTables_info,div.dataTables_wrapper div.dataTables_paginate{text-align:center;}
+div.dataTables_wrapper div.dataTables_paginate ul.pagination{justify-content:center!important;}
+}
+/*! CSS Used from: https://coderthemes.com/hyper/saas/assets/css/icons.min.css */
+.mdi:before{display:inline-block;font:normal normal normal 24px/1 "Material Design Icons";font-size:inherit;text-rendering:auto;line-height:inherit;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;}
+.mdi-chevron-left::before{content:"\F0141";}
+.mdi-chevron-right::before{content:"\F0142";}
+/*! CSS Used from: https://coderthemes.com/hyper/saas/assets/css/app.min.css */
+*,::after,::before{-webkit-box-sizing:border-box;box-sizing:border-box;}
+ul{margin-top:0;margin-bottom:1rem;}
+a{color:#727cf5;text-decoration:none;background-color:transparent;}
+a:hover{color:#2b3af0;text-decoration:none;}
+.row{display:-webkit-box;display:-ms-flexbox;display:flex;-ms-flex-wrap:wrap;flex-wrap:wrap;margin-right:-12px;margin-left:-12px;}
+.col-md-5,.col-md-7,.col-sm-12{position:relative;width:100%;padding-right:12px;padding-left:12px;}
+@media (min-width:576px){
+.col-sm-12{-webkit-box-flex:0;-ms-flex:0 0 100%;flex:0 0 100%;max-width:100%;}
+}
+@media (min-width:768px){
+.col-md-5{-webkit-box-flex:0;-ms-flex:0 0 41.66667%;flex:0 0 41.66667%;max-width:41.66667%;}
+.col-md-7{-webkit-box-flex:0;-ms-flex:0 0 58.33333%;flex:0 0 58.33333%;max-width:58.33333%;}
+}
+.pagination{display:-webkit-box;display:-ms-flexbox;display:flex;padding-left:0;list-style:none;border-radius:.25rem;}
+.page-link{position:relative;display:block;padding:.5rem .75rem;margin-left:-1px;line-height:1.25;color:#313a46;background-color:#fff;border:1px solid #dee2e6;}
+.page-link:hover{z-index:2;color:#313a46;text-decoration:none;background-color:#e9ecef;border-color:#dee2e6;}
+.page-link:focus{z-index:3;outline:0;-webkit-box-shadow:0 0 0 .1rem rgba(114,124,245,.25);box-shadow:0 0 0 .1rem rgba(114,124,245,.25);}
+.page-item:first-child .page-link{margin-left:0;border-top-left-radius:.25rem;border-bottom-left-radius:.25rem;}
+.page-item:last-child .page-link{border-top-right-radius:.25rem;border-bottom-right-radius:.25rem;}
+.page-item.active .page-link{z-index:3;color:#fff;background-color:#727cf5;border-color:#727cf5;}
+.page-item.disabled .page-link{color:#6c757d;pointer-events:none;cursor:auto;background-color:#fff;border-color:#dee2e6;}
+@media print{
+*,::after,::before{text-shadow:none!important;-webkit-box-shadow:none!important;box-shadow:none!important;}
+a:not(.btn){text-decoration:underline;}
+}
+.pagination-rounded .page-link{border-radius:30px!important;margin:0 3px;border:none;}
+a{outline:0!important;}
+.dataTables_info{font-weight:600;}
+@media (max-width:767.98px){
+li.paginate_button.next,li.paginate_button.previous{display:inline-block;font-size:1.5rem;}
+li.paginate_button{display:none;}
+.dataTables_paginate ul{text-align:center;display:block;margin:1.5rem 0 0!important;}
+}
