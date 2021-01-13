@@ -1290,9 +1290,9 @@ class AdminController extends Controller
             // exit;
 
             $template_info['format_ready'] = Redis::exists('product:format_ready:'.$template_key);
-            // $template_info['translation_ready'] = Redis::exists('template:es:'.$template_key.':jsondata') && Redis::exists('product:translation_ready:'.$template_key);
-            // $template_info['thumbnail_ready'] = Redis::exists('product:thumbnail_ready:'.$template_key);
-            // $template_info['metadata_ready'] = Redis::exists('template:'.$template_key.':metadata');
+            $template_info['translation_ready'] = Redis::exists('template:es:'.$template_key.':jsondata') && Redis::exists('product:translation_ready:'.$template_key);
+            $template_info['thumbnail_ready'] = Redis::exists('product:thumbnail_ready:'.$template_key);
+            $template_info['metadata_ready'] = Redis::exists('template:'.$template_key.':metadata');
             
             $template_metadata = DB::table('templates')
     		->select('id','template_id')
