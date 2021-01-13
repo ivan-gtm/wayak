@@ -1278,7 +1278,7 @@ class AdminController extends Controller
     function refactor(){
         $template_info = [];
 
-        // $format_ready_templates = Redis::keys('template:en:*:jsondata');
+        $format_ready_templates = Redis::keys('template:en:*:jsondata');
         // echo "<pre>";
         // print_r($format_ready_templates);
         // exit;
