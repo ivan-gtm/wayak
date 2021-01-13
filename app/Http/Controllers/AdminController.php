@@ -1278,11 +1278,10 @@ class AdminController extends Controller
     function refactor(){
         $template_info = [];
 
-        $format_ready_templates = Redis::keys('template:en:*:jsondata');
-        
-        echo "<pre>";
-        print_r($format_ready_templates);
-        exit;
+        // $format_ready_templates = Redis::keys('template:en:*:jsondata');
+        // echo "<pre>";
+        // print_r($format_ready_templates);
+        // exit;
 
         foreach ($format_ready_templates as $template_key) {
             $template_key = str_replace('template:en:', null, $template_key);
@@ -1302,28 +1301,28 @@ class AdminController extends Controller
 		
             if( isset($template_metadata->id) ){
                 print_r("\nUPDATING >> $template_key");
-            //     // print_r($template_info);
-            //     // print_r($template_metadata);
-            //     // exit;
-            //     DB::table('templates')
-			// 	    ->where('template_id', $template_key)
-			// 	    ->update([
-            //             'format_ready' => $template_info['format_ready'],
-            //             'translation_ready' => $template_info['translation_ready'],
-            //             'thumbnail_ready' => $template_info['thumbnail_ready'],
-            //             'metadata_ready' => $template_info['metadata_ready']
-            //         ]);
+                // print_r($template_info);
+                // print_r($template_metadata);
+                // exit;
+                DB::table('templates')
+				    ->where('template_id', $template_key)
+				    ->update([
+                        'format_ready' => $template_info['format_ready'],
+                        'translation_ready' => $template_info['translation_ready'],
+                        'thumbnail_ready' => $template_info['thumbnail_ready'],
+                        'metadata_ready' => $template_info['metadata_ready']
+                    ]);
             } else {
                 print_r("\nINSERTING >> $template_key");
-            //     DB::table('templates')->insert([
-            //         'id' => null,
-            //         'template_id' => $template_key,
-            //         'status' => 5,
-            //         'format_ready' => $template_info['format_ready'],
-            //         'translation_ready' => $template_info['translation_ready'],
-            //         'thumbnail_ready' => $template_info['thumbnail_ready'],
-            //         'metadata_ready' => $template_info['metadata_ready']
-            //     ]);
+                DB::table('templates')->insert([
+                    'id' => null,
+                    'template_id' => $template_key,
+                    'status' => 5,
+                    'format_ready' => $template_info['format_ready'],
+                    'translation_ready' => $template_info['translation_ready'],
+                    'thumbnail_ready' => $template_info['thumbnail_ready'],
+                    'metadata_ready' => $template_info['metadata_ready']
+                ]);
             }
 
         }
