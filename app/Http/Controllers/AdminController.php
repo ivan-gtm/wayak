@@ -251,7 +251,7 @@ class AdminController extends Controller
         // Get all templates already formated
         // $formated_templates = Redis::keys('product:format_ready:*');
         // $formated_templates_total = sizeof($formated_templates);
-        $total_pages = DB::table('templates')
+        $total_templates = DB::table('templates')
                     ->join('thumbnails', 'templates.template_id', '=', 'thumbnails.template_id')
                     ->select('templates.template_id','format_ready','translation_ready','thumbnail_ready', 'filename','thumbnails.title', 'thumbnails.dimentions')
                     // ->where('template_id','=', $template_key )
