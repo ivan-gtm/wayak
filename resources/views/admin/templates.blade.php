@@ -121,7 +121,7 @@
                         <i class="mdi mdi-chevron-left"></i>
                         </a>
                     </li>
-                    @for ($page = ($current_page-5 < 0 ? 1 : $current_page-5); $page < ($current_page+5 > $total_pages ? $total_pages : $current_page+5); $page++)
+                    @for ($page = 1; $page < $total_pages; $page++)
                       @if($current_page == $page)
                         <li class="paginate_button page-item active">
                       @else
