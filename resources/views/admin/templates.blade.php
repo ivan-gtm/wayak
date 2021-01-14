@@ -60,34 +60,33 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
-                <h1 class="text-center">GESTIÓN DE PLANTILLAS</h1>
+                <h1 class="text-center">PLANTILLAS A LA VENTA</h1>
             </div>
             @foreach ($templates as $product_info )
-                <div class="col-3 box">
-                    <a href="/admin/mp/create-product/{{ $product_info['key'] }}">
+                <div class="col-6 col-sm-2 box">
+                    <a href="{{ route('admin.edit.template', [
+                              'language_code' => $language_code,
+                              'template_key' => $product_info['key']
+                          ]) }}">
                         <img class="img-fluid" src="{{ $product_info['thumbnail'] }}">
                     </a>
                     <br>
                     <div class="row text-center">
                       <div class="col-12">
-                        <p>{{ $product_info['key'] }}</p>
+                        <p>
+                          {{ $product_info['key'] }}<br>
+                          {{ $product_info['title'] }}<br>
+                          {{ $product_info['dimentions'] }}</p>
                       </div>
-                      <div class="col-3">
-                        <a href="{{ route( 'admin.translate.template', [
-                          'template_key' => $product_info['key'],
-                          'from' => 'en',
-                          'to' => $language_code
-                        ] ) }}">TRANSLATE</a>
-                      </div>
-                      <div class="col-3">
+                      <div class="col-4">
                         <a href="{{ route('code.create', [
                           'country' => $country,
                           'code' => $product_info['key']
                         ] ) }}">
-                          GENERAR CODIGO
+                          GENERAR CODIGO DEMO
                         </a>
                       </div>
-                      <div class="col-3">
+                      <div class="col-4">
                         @if( $product_info['translation_ready'] )
                           <a href="{{ route('admin.edit.template', [
                               'language_code' => $language_code,
@@ -95,7 +94,7 @@
                           ]) }}">EDITAR PLANTILLA</a>
                         @endif
                       </div>
-                      <div class="col-3">
+                      <div class="col-4">
                         @if( $product_info['mercadopago'] > 0 )
                           <a href="{{ route('plantilla.demo', [
                             'modelo_mercado_pago' => $product_info['mercadopago'],
@@ -107,7 +106,6 @@
                 </div>
             @endforeach
         </div>
-
     </div>
 
     <!-- Optional JavaScript; choose one of the two! -->

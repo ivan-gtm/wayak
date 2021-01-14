@@ -66,11 +66,13 @@
                         <p>{{ $product_info['key'] }}</p>
                       </div>
                       <div class="col-12">
+                        @if( $product_info['translation_ready'] )
                           <a class="translate-template"  
                             href="{{ route('admin.edit.template', [
                               'language_code' => $language_code,
                               'template_key' => $product_info['key']
                           ]) }}">EDITAR PLANTILLA</a>
+                        @endif
                       </div>
                     </div>
                 </div>
@@ -84,7 +86,7 @@
               <div class="dataTables_paginate paging_simple_numbers" id="selection-datatable_paginate">
                 <ul class="pagination pagination-rounded">
                     <li class="paginate_button page-item previous" id="selection-datatable_previous">
-                      <a href="{{ route('admin.ml.templatesReadyForSale',['page' => $current_page-1]) }}" tabindex="0" class="page-link">
+                      <a href="{{ route('admin.ml.getMissingMetadataTemplates',['page' => $current_page-1]) }}" tabindex="0" class="page-link">
                         <i class="mdi mdi-chevron-left"></i>
                         </a>
                     </li>
@@ -94,12 +96,12 @@
                       @else
                         <li class="paginate_button page-item ">
                       @endif
-                        <a href="{{ route('admin.ml.templatesReadyForSale',['page' => $page]) }}" tabindex="0" class="page-link">{{ $page }}</a>
+                        <a href="{{ route('admin.ml.getMissingMetadataTemplates',['page' => $page]) }}" tabindex="0" class="page-link">{{ $page }}</a>
                       </li>
                     @endfor
                     
                     <li class="paginate_button page-item next" id="selection-datatable_next">
-                      <a href="{{ route('admin.ml.templatesReadyForSale',['page' => $total_pages]) }}" tabindex="0" class="page-link">
+                      <a href="{{ route('admin.ml.getMissingMetadataTemplates',['page' => $total_pages]) }}" tabindex="0" class="page-link">
                         <i class="mdi mdi-chevron-right"></i>
                       </a>
                     </li>
