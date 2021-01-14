@@ -261,10 +261,10 @@ class AdminController extends Controller
                     ->where('templates.format_ready','1')
                     ->where('templates.translation_ready','1')
                     ->where('templates.thumbnail_ready','1')
-                    ->offset($offset)
-                    ->limit($per_page)
                     ->count();
-        
+                    
+        $total_pages = ceil( $total_templates/$per_page );
+
         $translation_ready_templates = DB::table('templates')
                     ->join('thumbnails', 'templates.template_id', '=', 'thumbnails.template_id')
                     ->select('templates.template_id','format_ready','translation_ready','thumbnail_ready', 'filename','thumbnails.title', 'thumbnails.dimentions')
@@ -300,7 +300,7 @@ class AdminController extends Controller
         // echo "<pre>";
         // print_r($templates);
         // exit;
-        
+
         return view('admin.templates', [
             'templates' => $templates,
             'current_page' => $current_page,
