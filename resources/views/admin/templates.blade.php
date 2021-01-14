@@ -106,6 +106,46 @@
                 </div>
             @endforeach
         </div>
+        <div class="row">
+          <!-- <div class="col-sm-12 col-md-5">
+              <div class="dataTables_info" id="selection-datatable_info" role="status" aria-live="polite">Showing 1 to 10 of 57 entries</div>
+          </div> -->
+          <div class="col-12 col-md-12">
+              <div class="dataTables_paginate paging_simple_numbers" id="selection-datatable_paginate">
+                <ul class="pagination pagination-rounded">
+                    <li class="paginate_button page-item previous" id="selection-datatable_previous">
+                      <a href="{{ route('admin.template.gallery',[
+                        'country' => $country,
+                        'page' => $current_page
+                        -1]) }}" tabindex="0" class="page-link">
+                        <i class="mdi mdi-chevron-left"></i>
+                        </a>
+                    </li>
+                    @for ($page = ($current_page-5 < 0 ? 1 : $current_page-5); $page < ($current_page+5 > $total_pages ? $total_pages : $current_page+5); $page++)
+                      @if($current_page == $page)
+                        <li class="paginate_button page-item active">
+                      @else
+                        <li class="paginate_button page-item ">
+                      @endif
+                        <a href="{{ route('admin.template.gallery',[
+                          'country' => $country,
+                          'page' => $page
+                          ]) }}" tabindex="0" class="page-link">{{ $page }}</a>
+                      </li>
+                    @endfor
+                    
+                    <li class="paginate_button page-item next" id="selection-datatable_next">
+                      <a href="{{ route('admin.template.gallery',[
+                        'country' => $country,
+                        'page' => $total_pages
+                        ]) }}" tabindex="0" class="page-link">
+                        <i class="mdi mdi-chevron-right"></i>
+                      </a>
+                    </li>
+                </ul>
+              </div>
+          </div>
+        </div>
     </div>
 
     <!-- Optional JavaScript; choose one of the two! -->

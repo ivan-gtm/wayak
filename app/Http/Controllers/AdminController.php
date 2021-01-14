@@ -235,7 +235,7 @@ class AdminController extends Controller
         return $language_code;
     }
 
-    function viewGallery($country){
+    function viewGallery($country, Request $request){
 
         $language_code = self::getCountryLanguage($country);
         $current_page = 1;
@@ -251,6 +251,20 @@ class AdminController extends Controller
         // Get all templates already formated
         // $formated_templates = Redis::keys('product:format_ready:*');
         // $formated_templates_total = sizeof($formated_templates);
+        $total_pages = DB::table('templates')
+                    ->join('thumbnails', 'templates.template_id', '=', 'thumbnails.template_id')
+                    ->select('templates.template_id','format_ready','translation_ready','thumbnail_ready', 'filename','thumbnails.title', 'thumbnails.dimentions')
+                    // ->where('template_id','=', $template_key )
+                    ->where('thumbnails.language_code','=', $language_code )
+                    // ->where('thumbnails.dimentions','=', '5 x 7 in' )
+                    ->where('templates.status','=', 5 )
+                    ->where('templates.format_ready','1')
+                    ->where('templates.translation_ready','1')
+                    ->where('templates.thumbnail_ready','1')
+                    ->offset($offset)
+                    ->limit($per_page)
+                    ->count();
+        
         $translation_ready_templates = DB::table('templates')
                     ->join('thumbnails', 'templates.template_id', '=', 'thumbnails.template_id')
                     ->select('templates.template_id','format_ready','translation_ready','thumbnail_ready', 'filename','thumbnails.title', 'thumbnails.dimentions')
@@ -268,6 +282,7 @@ class AdminController extends Controller
         // echo "<pre>";
         // print_r( $translation_ready_templates );
         // exit;
+
         $templates = [];
         foreach ($translation_ready_templates as $template) {
             $template_key = $template->template_id;
@@ -281,13 +296,15 @@ class AdminController extends Controller
 
             $templates[] = $product_info;
         }
-        
+
         // echo "<pre>";
         // print_r($templates);
         // exit;
-
+        
         return view('admin.templates', [
             'templates' => $templates,
+            'current_page' => $current_page,
+            'total_pages' => $total_pages,
             'language_code' => $language_code,
             'country' => $country
         ]);
