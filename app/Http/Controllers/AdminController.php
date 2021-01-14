@@ -239,32 +239,55 @@ class AdminController extends Controller
 
         $language_code = self::getCountryLanguage($country);
 
-        $tmp_template_keys = Redis::keys('product:format_ready:*');
-        
-        // echo "<pre>";
-        // print_r($tmp_template_keys);
-        // exit;
+        $language_code = 'es';
+        $current_page = 1;
+        if( isset($request->page) ) {
+            $current_page = $request->page;
+        }
+        $page = $current_page-1;
+        $per_page = 10;
+        $offset = $page*$per_page;
 
-        $templates = [];
-        foreach ($tmp_template_keys as $template) {
-            $template_key = str_replace('product:format_ready:',null, $template);
+        // Get all templates already formated
+        // $formated_templates = Redis::keys('product:format_ready:*');
+        // $formated_templates_total = sizeof($formated_templates);
+        $translation_ready_templates = DB::table('templates')
+                    ->join('thumbnails', 'templates.template_id', '=', 'thumbnails.template_id')
+                    ->select('templates.template_id','format_ready','translation_ready','thumbnail_ready', 'filename','thumbnails.title', 'thumbnails.dimentions')
+                    // ->where('template_id','=', $template_key )
+                    ->where('thumbnails.language_code','=', $language_code )
+                    // ->where('thumbnails.dimentions','=', '5 x 7 in' )
+                    ->where('templates.status','=', 5 )
+                    ->where('templates.format_ready','1')
+                    ->where('templates.translation_ready','1')
+                    ->where('templates.thumbnail_ready','1')
+                    ->offset($offset)
+                    ->limit($per_page)
+                    ->get();
+
+        // echo "<pre>";
+        // print_r( $translation_ready_templates );
+        // exit;
+        $arr_ready_for_sale = [];
+        foreach ($translation_ready_templates as $template) {
+            $template_key = $template->template_id;
             
-            $thumb_info = DB::table('thumbnails')
-                ->where('template_id','=',$template_key)
-                ->where('language_code','=',$language_code)
-                ->first();
+            // $thumb_info = DB::table('thumbnails')
+            //     ->where('template_id','=',$template_key)
+            //     ->where('language_code','=',$language_code)
+            //     ->first();
 
             // print_r($thumb_info->filename);
-            if($thumb_info == false){
-                echo "NO EXISTE ROW EN [thumbnails] PARA: <br>";
-                echo $template_key;
-                exit;
-            }
+            // if($thumb_info == false){
+            //     echo "NO EXISTE ROW EN [thumbnails] PARA: <br>";
+            //     echo $template_key;
+            //     exit;
+            // }
 
             $product_info['key'] = $template_key;
-            $product_info['thumbnail'] = asset( 'design/template/'. $template_key.'/thumbnails/'.$language_code.'/'.$thumb_info->filename);
-            $product_info['title'] = $thumb_info->title;
-            $product_info['dimentions'] = $thumb_info->dimentions;
+            $product_info['thumbnail'] = asset( 'design/template/'. $template_key.'/thumbnails/'.$language_code.'/'.$template->filename);
+            $product_info['title'] = $template->title;
+            $product_info['dimentions'] = $template->dimentions;
             $product_info['mercadopago'] = ( Redis::exists('wayak:mercadopago:template:modelo:'.$template_key) ) ? Redis::get('wayak:mercadopago:template:modelo:'.$template_key) : 0;
             $product_info['translation_ready'] = ( Redis::exists('template:'.$language_code.':'.$template_key.':jsondata') ) ? true : false;
 
@@ -1343,56 +1366,56 @@ class AdminController extends Controller
     }
 
     function refactor(){
-        $language_code = 'es';
-        $format_ready_templates = Redis::keys('template:'.$language_code.':*:jsondata');
+        // $language_code = 'es';
+        // $format_ready_templates = Redis::keys('template:'.$language_code.':*:jsondata');
+        // // echo "<pre>";
+        // // print_r($format_ready_templates);
+        // // exit;
+
         // echo "<pre>";
-        // print_r($format_ready_templates);
+
+        // foreach ($format_ready_templates as $template_key) {
+        //     $template_key = str_replace('template:'.$language_code.':', null, $template_key);
+        //     $template_key = str_replace(':jsondata', null, $template_key);
+        //     // print_r("\n".$template_key);
+        //     // exit;
+
+        //     $thumb = DB::table('thumbnails')
+    	// 	->select('filename')
+    	// 	->where('template_id','=',$template_key)
+    	// 	->where('language_code','=',$language_code)
+        //     ->first();
+
+        //     if( isset($thumb->filename) ){
+        //         $old_img_path = 'design/template/'.$template_key.'/thumbnails/';
+        //         $new_img_path = 'design/template/'.$template_key.'/thumbnails/'.$language_code.'/';
+                
+        //         $old_img_path = public_path($old_img_path);
+        //         $new_img_path = public_path($new_img_path);
+                
+
+        //         // $path = pathinfo($new_path); // dirname, filename, extension
+        //         if (file_exists($old_img_path.$thumb->filename)) {
+        //             print_r("\n PARSING >>>".$thumb->filename);
+        //             print_r("\n".$old_img_path);
+        //             print_r("\n".$new_img_path);
+
+        //             @mkdir( $new_img_path, 0777, true);
+
+        //             if (!@rename($old_img_path.$thumb->filename, $new_img_path.$thumb->filename)) {
+        //                 echo "<pre>";
+        //                 echo "copy failed \n";
+        //                 print_r("\n".$thumb->filename);
+        //                 print_r("\n".$old_img_path);
+        //                 print_r("\n".$new_img_path);
+        //                 exit;
+        //             }
+        //         }
+                
+        //     }
+        // }
+
         // exit;
-
-        echo "<pre>";
-
-        foreach ($format_ready_templates as $template_key) {
-            $template_key = str_replace('template:'.$language_code.':', null, $template_key);
-            $template_key = str_replace(':jsondata', null, $template_key);
-            // print_r("\n".$template_key);
-            // exit;
-
-            $thumb = DB::table('thumbnails')
-    		->select('filename')
-    		->where('template_id','=',$template_key)
-    		->where('language_code','=',$language_code)
-            ->first();
-
-            if( isset($thumb->filename) ){
-                $old_img_path = 'design/template/'.$template_key.'/thumbnails/';
-                $new_img_path = 'design/template/'.$template_key.'/thumbnails/'.$language_code.'/';
-                
-                $old_img_path = public_path($old_img_path);
-                $new_img_path = public_path($new_img_path);
-                
-
-                // $path = pathinfo($new_path); // dirname, filename, extension
-                if (file_exists($old_img_path.$thumb->filename)) {
-                    print_r("\n PARSING >>>".$thumb->filename);
-                    print_r("\n".$old_img_path);
-                    print_r("\n".$new_img_path);
-
-                    @mkdir( $new_img_path, 0777, true);
-
-                    if (!@rename($old_img_path.$thumb->filename, $new_img_path.$thumb->filename)) {
-                        echo "<pre>";
-                        echo "copy failed \n";
-                        print_r("\n".$thumb->filename);
-                        print_r("\n".$old_img_path);
-                        print_r("\n".$new_img_path);
-                        exit;
-                    }
-                }
-                
-            }
-        }
-
-        exit;
 
         $template_info = [];
 
