@@ -251,7 +251,7 @@ class AdminController extends Controller
             
             $thumb_info = DB::table('thumbnails')
                 ->where('template_id','=',$template_key)
-                // ->where('language_code','=',$language_code)
+                ->where('language_code','=',$language_code)
                 ->first();
 
             // print_r($thumb_info->filename);
@@ -262,7 +262,7 @@ class AdminController extends Controller
             }
 
             $product_info['key'] = $template_key;
-            $product_info['thumbnail'] = asset( 'design/template/'. $template_key.'/thumbnails/'.$thumb_info->filename);
+            $product_info['thumbnail'] = asset( 'design/template/'. $template_key.'/thumbnails/'.$language_code.'/'.$thumb_info->filename);
             $product_info['title'] = $thumb_info->title;
             $product_info['dimentions'] = $thumb_info->dimentions;
             $product_info['mercadopago'] = ( Redis::exists('wayak:mercadopago:template:modelo:'.$template_key) ) ? Redis::get('wayak:mercadopago:template:modelo:'.$template_key) : 0;
@@ -1608,7 +1608,7 @@ class AdminController extends Controller
             
             if( $template->filename ){
                 $filename = $template->filename;
-                $filename = str_replace('_thumbnail.jpg', '_large.jpg', $filename);
+                // $filename = str_replace('_thumbnail.jpg', '_large.jpg', $filename);
                 $template_info['thumbnail']  = public_path( 'design/template/'. $template_key.'/thumbnails/'.$destination_lang.'/'.$filename);
             } else {
                 $template_info['thumbnail']  = null;
