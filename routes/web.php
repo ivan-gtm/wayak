@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ContentController;
 use App\Http\Controllers\EditorController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\greenController;
@@ -23,11 +24,6 @@ Route::get('/scrapper/templett/keynames', [TemplettScrapperController::class, 'm
 // https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes#UNI2
 
 // CUSTOMER
-    Route::get('/', [EditorController::class, 'home']);
-    Route::get('mx', [EditorController::class, 'wayak_home']);
-    // Route::get('mx/plantillas', [EditorController::class, 'home']);
-    Route::get('{country}/demo/{modelo_mercado_pago}', [EditorController::class, 'demoTemplateEditor'])->name('plantilla.demo');
-    Route::get('/{country}/editar/plantilla/{template_key}', [EditorController::class, 'customerTemplate'])->name('plantilla.editar');
 
 // FRONTEND EJEMPLO
     Route::get('mx/plantillas/invitaciones', [EditorController::class, 'home1']);
@@ -71,6 +67,7 @@ Route::get('/scrapper/templett/keynames', [TemplettScrapperController::class, 'm
     Route::get('/admin/mercadolibre/catalogo', [AdminController::class, 'mercadoLibreCatalog'])->name('admin.ml.mercadoLibreCatalog');
     Route::get('/admin/mercadolibre/excel/productos/{excel_id}', [AdminController::class, 'mercadoLibreExcelProducts'])->name('admin.ml.mercadoLibreExcelProducts');
     Route::get('/admin/ml/catalogo-excel', [AdminController::class, 'mercadoLibreExcel'])->name('admin.ml.generateProductExcel');
+    Route::get('/admin/facebook/catalogo', [AdminController::class, 'facebookCSV'])->name('admin.fb.facebookCSV');
     
     // Route::get('/admin/ml/products/missing-metadata', [AdminController::class, 'getMissingMetadataTemplates'])->name('admin.ml.getMissingMetadataTemplates');
     Route::get('/admin/ml/product/edit-metadata/{template_key}', [AdminController::class, 'editMLMetadata'])->name('admin.ml.editMLMetadata');
@@ -148,4 +145,30 @@ Route::get('/scrapper/templett/keynames', [TemplettScrapperController::class, 'm
     Route::post('/editor/pdf', [EditorController::class, 'generatePDF']);
 
     Route::get('/{country}/editar/plantillas', [EditorController::class, 'editPurchasedTemplate']);
+    
+    
+    // CONTENT
+        Route::get('/{country}/search', [ContentController::class, 'showSearchPage']);
+
+        Route::get('/{country}/templates/{category}', [ContentController::class, 'showCategoryPage']);
+        // Route::get('/{country}/templates/{category}/{subcategory}', [EditorController::class, 'editPurchasedTemplate']);
+        Route::get('/{country}/template/{template_id}/{slug}', [ContentController::class, 'showTemplatePage']);
+        Route::get('/{country}/create/{category}', [ContentController::class, 'showCreatePage']);
+        
+        
+        Route::get('/{country}/plantillas/{category}', [ContentController::class, 'showCategoryPage']);
+        Route::get('/{country}/plantilla/{template_id}/{slug}', [ContentController::class, 'showTemplatePage']);
+        Route::get('/{country}/crear/{category}', [ContentController::class, 'showCreatePage']);
+        
+        Route::get('/{country}/criar/{category}', [ContentController::class, 'showCategoryPage']);
+        Route::get('/{country}/modelos/{category}', [ContentController::class, 'showCreatePage']);
+
+        Route::get('/', [ContentController::class, 'showHome']);
+        Route::get('mx', [EditorController::class, 'wayak_home']);
+
+        // Route::get('mx/plantillas', [EditorController::class, 'home']);
+        Route::get('{country}/demo/{modelo_mercado_pago}', [EditorController::class, 'demoTemplateEditor'])->name('plantilla.demo');
+        Route::get('/{country}/editar/plantilla/{template_key}', [EditorController::class, 'customerTemplate'])->name('plantilla.editar');
+        
+    // -- https://wayak.app/us/templates/instagram-stories/
 

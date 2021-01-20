@@ -523,6 +523,148 @@ class AdminController extends Controller
         );
     }
 
+    function facebookCSV(){
+        $language_code = 'es';
+        $translation_ready_templates = DB::table('templates')
+                    ->join('thumbnails', 'templates.template_id', '=', 'thumbnails.template_id')
+                    ->select('templates.template_id','filename')
+                    // ->where('template_id','=', $template_key )
+                    ->where('thumbnails.language_code','=', $language_code )
+                    // ->where('thumbnails.dimentions','=', '5 x 7 in' )
+                    ->where('templates.status','=', 5 )
+                    ->where('templates.format_ready','1')
+                    ->where('templates.translation_ready','1')
+                    ->where('templates.thumbnail_ready','1')
+                    ->where('templates.metadata_ready','1')
+                    ->where('templates.preview_ready','1')
+                    ->get();
+
+        // echo "<pre>";
+
+        $document = [];
+        foreach ($translation_ready_templates as $template) {
+            
+            // print_r( "\n".$template->template_id );
+            $metadata = Redis::get('template:'.$template->template_id.':metadata');
+            $metadata = json_decode($metadata);
+            // print_r( $metadata );
+
+            $row = [];
+            // # Obligatorio | Identificador √∫nico del art√≠culo. Se recomienda usar el SKU. Ingresa cada identificador una sola vez; de lo contrario; no se subir√° el art√≠culo. En el caso de los anuncios din√°micos; debe coincidir exactamente con el identificador de contenido del mismo art√≠culo en el p√≠xel de Facebook. L√≠mite de caracteres: 100.
+            // id
+            $row[] = $template->template_id;
+
+            // # Obligatorio | T√≠tulo espec√≠fico y relevante del art√≠culo. Incluye palabras clave; como la marca; caracter√≠sticas o el estado en que se encuentra. L√≠mite de caracteres: 150.
+            // title
+            $row[] = $metadata->titulo;
+            
+            // # Obligatorio | Descripci√≥n breve y relevante del art√≠culo. Incluye caracter√≠sticas del producto espec√≠ficas o exclusivas; como el material o el color. Usa texto sin formato y no escribas palabras enteras en may√∫sculas. L√≠mite de caracteres: 5.000.
+            // description
+            $row[] = $metadata->descripcion;
+
+            // # Obligatorio | Disponibilidad actual del art√≠culo en tu tienda. | Supported values: in stock; available for order; preorder; out of stock; discontinued
+            // availability
+            $row[] = 'in stock';
+
+            // # Obligatorio | Cantidad del art√≠culo en tu inventario. Las personas no podr√°n comprarlo si el inventario no es igual o superior a 1. Nota: En la tienda de la p√°gina; se indicar√° que un determinado art√≠culo est√° agotado si el inventario es 0; incluso si en el campo "Disponibilidad" figura como disponible.
+            // inventory
+            $row[] = $metadata->cantidad;
+
+            // # Obligatorio | Estado en que se encuentra el art√≠culo. | Supported values: new; refurbished; used
+            // condition
+            $row[] = 'new';
+
+            // # Obligatorio | Costo y divisa del art√≠culo. El precio es un n√∫mero seguido del c√≥digo de divisa de 3 d√≠gitos (est√°ndar ISO 4217). Usa un punto (".") como separador decimal.
+            // price
+            // 10.00 USD
+            $row[] = '50 MXN';
+
+            // # Obligatorio | URL de la p√°gina del producto espec√≠fica en la que las personas pueden comprar el art√≠culo. Si no tienes una URL; proporciona una alternativa; como un enlace a la p√°gina de Facebook de tu negocio.
+            // link
+            // https://www.facebook.com/facebook_t_shirt
+            $row[] = url('mx/demo/'.$metadata->modelo );
+
+            // # Obligatorio | URL de la imagen principal del art√≠culo. Usa una imagen en formato cuadrado (1:1) con una resoluci√≥n de 1.024 x 1.024 p√≠xeles o superior.
+            // image_link
+            $row[] = $metadata->imagenes;
+
+            // # Obligatorio | Nombre de la marca; n√∫mero de pieza del fabricante (MPN) √∫nico o n√∫mero mundial de art√≠culo comercial (GTIN) del art√≠culo. Solo debes ingresar uno de estos datos; no todos. Para el GTIN; ingresa el UPC; EAN; JAN o ISBN del art√≠culo. L√≠mite de caracteres: 100.
+            // brand
+            $row[] = 'Wayak';
+
+            // # Opcional | La categor√≠a de productos de Google para el art√≠culo. Obt√©n m√°s informaci√≥n sobre las categor√≠as de productos en https://www.facebook.com/business/help/526764014610932. Proporciona en los campos "fb_product_category" o "google_product_category"; o en ambos; una categor√≠a.
+            // google_product_category
+            $row[] = 'Arte y ocio > Fiestas y celebraciones > Productos para fiestas > Invitaciones';
+
+            // # Opcional | La categor√≠a de productos de Facebook para el art√≠culo. Obt√©n m√°s informaci√≥n sobre las categor√≠as de productos en https://www.facebook.com/business/help/526764014610932. Proporciona una categor√≠a en los campos "fb_product_category" o "google_product_category"; o en ambos.
+            // fb_product_category
+            // Clothing & Accessories > Clothing > Baby Clothing
+
+            // # Opcional | Precio con descuento y divisa del art√≠culo si est√° en oferta. El precio es un n√∫mero seguido del c√≥digo de divisa (est√°ndar ISO 4217). Usa un punto (".") como separador decimal. Es obligatorio indicar el precio de oferta si se quiere usar texto superpuesto para mostrar precios con descuento.
+            // sale_price
+            // $row[] = '30 MXN';
+
+            // # Opcional | Intervalo del per√≠odo de oferta; incluidas la fecha; hora y zona horaria del inicio y la finalizaci√≥n de la oferta. Si no ingresas las fechas; los art√≠culos con el campo "sale_price" permanecer√°n en oferta hasta que elimines el precio de oferta. Usa este formato: YYYY-MM-DDT23:59+00:00/YYYY-MM-DDT23:59+00:00. Ingresa la fecha de inicio de la siguiente manera: YYYY-MM-DD. Escribe una "T". A continuaci√≥n; ingresa la hora de inicio en formato de 24 horas (00:00 a 23:59) seguida de la zona horaria UTC (-12:00 a +14:00). Escribe una barra ("/") y repite el mismo formato para la fecha y hora de finalizaci√≥n. En la siguiente fila de ejemplo se usa la zona horaria del Pac√≠fico (-08:00).
+            // sale_price_effective_date
+            // 2020-04-30T09:30-08:00/2020-05-30T23:59-08:00
+
+            // # Opcional | Si el art√≠culo es una variante; usa esta columna para ingresar el mismo identificador de grupo para todas las variantes dentro del mismo grupo de productos. Por ejemplo; "camiseta de Facebook azul" es una variante de "camiseta de Facebook". Facebook seleccionar√° una variante para mostrar de cada grupo de productos en funci√≥n de su relevancia o popularidad. L√≠mite de caracteres: 100.
+            // item_group_id
+            // FB_T_Shirt
+
+            // # Opcional | Sexo de una persona a la cual se dirige el art√≠culo. | Supported values: female; male; unisex
+            // gender
+            // unisex
+
+            // # Opcional | Color del art√≠culo. Usa una o m√°s palabras para describir el color en lugar de un c√≥digo hexadecimal. L√≠mite de caracteres: 200.
+            // color
+            // royal blue
+
+            // # Opcional | Tama√±o o talle del art√≠culo escrito como una palabra; abreviatura o n√∫mero; por ejemplo; peque√±o; XL o 12. L√≠mite de caracteres: 200.
+            // size
+            $row[] = $metadata->largo.' '.$metadata->unidad_largo.' x '.$metadata->ancho.' '.$metadata->unidad_ancho;
+
+            // # Opcional | Grupo de edad al que se dirige el art√≠culo. | Supported values: adult; all ages; infant; kids; newborn; teen; toddler
+            // age_group
+            $row[] = 'all ages';
+
+            // # Opcional | Material con el que se fabric√≥ el art√≠culo; como algod√≥n; denim o cuero. L√≠mite de caracteres: 200.
+            // material
+            $row[] = 'jpg,png,pdf';
+
+            // # Opcional | Estampado o impresi√≥n gr√°fica del art√≠culo. L√≠mite de caracteres: 100.
+            // pattern
+            // stripes
+
+            // # Opcional | Detalles de env√≠o del art√≠culo; escritos como "Pa√≠s:Regi√≥n:Servicio:Precio". Incluye el c√≥digo de divisa ISO de 3 d√≠gitos en el precio. Para usar el texto superpuesto "Env√≠o gratuito" en tus anuncios; ingresa un precio de "0.0". Usa ";" para separar varios detalles de env√≠o para distintas regiones o pa√≠ses. Solo las personas de una regi√≥n o pa√≠s especificado ver√°n los detalles de env√≠o correspondientes a su ubicaci√≥n. Puedes omitir la regi√≥n (conserva ambos signos "::") si los detalles de env√≠o son los mismos para todo el pa√≠s.
+            // shipping
+            // US:CA:Ground:9.99 USD,US:NY:Air:15.99 USD
+
+            // # Opcional | Peso de env√≠o del art√≠culo expresado en lb; oz; g o kg.
+            // shipping_weight
+            // 0.3 kg
+
+            $document[] = $row;
+        }
+        // print_r($document);
+        // exit;
+
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="fb_catalogo_tienda.csv"');
+        // $data = array(
+        //         'aaa,bbb,ccc,dddd',
+        //         '123,456,789',
+        //         '"aaa","bbb"'
+        // );
+        
+        $fp = fopen('php://output', 'wb');
+        foreach ( $document as $line ) {
+            // $val = explode(",", $line);
+            fputcsv($fp, $line);
+        }
+        fclose($fp);
+    }
+
     function mercadoLibreExcel(){
         $helper = new Sample();
         

@@ -14,7 +14,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     locales \
     zip \
     jpegoptim optipng pngquant gifsicle \
-    && pecl install imagick
+    && apt-get install -y autoconf pkg-config libssl-dev \
+    && pecl install imagick \
+    && pecl install mongodb && docker-php-ext-enable mongodb \
+    && pecl config-set php_ini /etc/php.ini
 
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*

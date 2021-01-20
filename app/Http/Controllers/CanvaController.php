@@ -17,6 +17,14 @@ class CanvaController extends Controller
 {
     // Scrapp URL
     // https://www.canva.com/design/play?template=EAEDP7Np4sI
+    
+    // https://template.canva.com/EAD2sNM0yN8/1/0/web-2-xI3H3ZHHMv8.cdf
+    // https://media-public.canva.com/MADPrKzWEpA/2/screen.svg
+
+    // BLOCK URL's
+    //     https://www.canva.com/_ajax/search/media/usage
+    //     https://media-public.canva.com/MADPrKzWEpA/2/screen.svg
+    //     https://www.canva.com/_online?1610896377951
 
 
     public function index(){
