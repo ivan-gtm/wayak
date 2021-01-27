@@ -8,261 +8,250 @@ use App\Models\Template;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Str;
 
-ini_set("max_execution_time", 0);   // no time-outs!
-ini_set("request_terminate_timeout", 2000);   // no time-outs!
-ini_set('memory_limit', -1);
-ini_set('display_errors', 1);
+// ini_set("max_execution_time", 0);   // no time-outs!
+// ini_set("request_terminate_timeout", 2000);   // no time-outs!
+// ini_set('memory_limit', -1);
+// ini_set('display_errors', 1);
 
-ignore_user_abort(true);            // Continue downloading even after user closes the browser.
-error_reporting(E_ALL);
+// ignore_user_abort(true);            // Continue downloading even after user closes the browser.
+// error_reporting(E_ALL);
 
 
 class ContentController extends Controller
 {
     
-    public function showHome() {
-        $certain_templates = Template::whereIn('_id', [
-            "3952688",
-            "5502933",
-            "2302240",
-            "2302364"
-        ])->get();
+    public function showHome(Request $request) {
+        $country = 'us';
+        $language_code = 'en';
 
-        echo "<pre>";
-        print_r($certain_templates);
-        exit;
+        $search_result = Template::where('title', 'like', '%baby shower%')
+            ->where('width','=','5')
+            ->where('height','=','7')
+            ->take(40)
+            ->get([
+                'title',
+                'previewImageUrls',
+                'width',
+                'height',
+                'forSubscribers',
+                'previewImageUrls'
+            ]);
 
-        // $search_result = Template::where('title', 'like', '%tag%')
-        //     ->skip(0)
-        //     ->take(50)
-        //     ->get([
-        //         'title',
-        //         'format',
-        //         'width',
-        //         'height',
-        //         'measureUnits',
-        //         'forSubscribers',
-        //         'category',
-        //         'categoryCaption',
-        //         'previewImageUrls',
-        //     ]);
+        $carousels[] = [
+            'slider_id' => Str::random(5),
+            'title' => 'Templates for "Baby shower"',
+            'items' => $search_result
+        ];
 
+        $search_result = Template::where('title', 'like', '%unicorn%')
+            ->where('width','=','5')
+            ->where('height','=','7')
+            ->take(40)
+            ->get([
+                'title',
+                'previewImageUrls',
+                'width',
+                'height',
+                'forSubscribers',
+                'previewImageUrls'
+            ]);
+
+        $carousels[] = [
+            'slider_id' => Str::random(5),
+            'title' => 'Unicorn',
+            'items' => $search_result
+        ];
+
+        $search_result = Template::where('title', 'like', '%save the date%')
+            ->where('width','=','5')
+            ->where('height','=','7')
+            ->take(40)
+            ->get([
+                'title',
+                'previewImageUrls',
+                'width',
+                'height',
+                'forSubscribers',
+                'previewImageUrls'
+            ]);
+
+        $carousels[] = [
+            'slider_id' => Str::random(5),
+            'title' => 'Templates for "Wedding Invitations"',
+            'items' => $search_result
+        ];
+
+        $search_result = Template::where('title', 'like', '%floral%wedding%invitation%')
+            ->where('width','=','5')
+            ->where('height','=','7')
+            ->take(40)
+            ->get([
+                'title',
+                'previewImageUrls',
+                'width',
+                'height',
+                'forSubscribers',
+                'previewImageUrls'
+            ]);
+
+        $carousels[] = [
+            'slider_id' => Str::random(5),
+            'title' => 'Templates for "Wedding Invitations"',
+            'items' => $search_result
+        ];
+
+        $search_result = Template::where('title', 'like', '%birthday%')
+            ->where('width','=','5')
+            ->where('height','=','7')
+            ->take(40)
+            ->get([
+                'title',
+                'previewImageUrls',
+                'width',
+                'height',
+                'forSubscribers',
+                'previewImageUrls'
+            ]);
+
+        $carousels[] = [
+            'slider_id' => Str::random(5),
+            'title' => 'Birthday Invitation Templates',
+            'items' => $search_result
+        ];
+
+        $search_result = Template::where('title', 'like', '%glitter%')
+            ->where('width','=','5')
+            ->where('height','=','7')
+            ->take(40)
+            ->get([
+                'title',
+                'previewImageUrls',
+                'width',
+                'height',
+                'forSubscribers',
+                'previewImageUrls'
+            ]);
+
+        $carousels[] = [
+            'slider_id' => Str::random(5),
+            'title' => 'Glitter',
+            'items' => $search_result
+        ];
         
+        $search_result = Template::where('title', 'like', '%tropical%')
+            ->where('width','=','5')
+            ->where('height','=','7')
+            ->take(40)
+            ->get([
+                'title',
+                'previewImageUrls',
+                'width',
+                'height',
+                'forSubscribers',
+                'previewImageUrls'
+            ]);
+
+        $carousels[] = [
+            'slider_id' => Str::random(5),
+            'title' => 'Tropical',
+            'items' => $search_result
+        ];
         
-        // // echo "<pre>";
-        // // print_r( Redis::get('crello:search:results:page:115') );
-        // // exit;
-
-        // // {
-        // //     id: "5db98076abc8ea6d1c716500",
-        // //     format: "Full HD video",
-        // //     group: "AN",
-        // //     itemsCount: 1,
-        // //     width: 1920,
-        // //     height: 1080,
-        // //     itemType: "templateElement",
-        // //     subType: "animated",
-        // //     premium: true,
-        // //     previewImageUrls: [
-        // //     "/common/3dff7461-1e84-4874-9de7-f4ddf63e1967.jpg"
-        // //     ],
-        // //     categories: [
-        // //     "educationScience"
-        // //     ],
-        // //     title: "Education Courses Woman Holding Book",
-        // //     previewVideoUrl: "/video-convert/b239a357-1b72-4157-82c4-f20da6b8c04c.mp4"
-        // // }
-
-        // foreach ($search_result as $template) {
-        //     echo "ID >>".$template->_id."<br>";
-        //     echo "TITLE >>".$template->title."<br>";
-        //     echo "TITLE_ >>";
-        //     print_r( $template->title_ );
-        //     echo "<hr>";
-        // }
-        // // echo "<pre>";
-        // // print_r($search_result);
-        // exit;
-
-        $source_templates = DB::table('templates')
-            // ->join('contacts', 'users.id', '=', 'contacts.user_id')
-            ->join('tmp_etsy_metadata', 'tmp_etsy_metadata.id', '=', 'templates.fk_etsy_template_id')
-            ->join('thumbnails', 'thumbnails.template_id', '=', 'templates.template_id')
-            ->where('thumbnails.language_code','=','en')
-            ->where('templates.status','=',5)
-            ->whereNotNull('templates.fk_etsy_template_id')
-            ->select('templates.template_id', 'templates.width', 'templates.height','templates.metrics','tmp_etsy_metadata.title','tmp_etsy_metadata.username','thumbnails.filename','thumbnails.title as title_','thumbnails.dimentions')
-            ->get();
-
-        echo "<pre>";
-        foreach ($source_templates as $db_template) {
-            // print_r($db_template);
-            $dimentions = $db_template->dimentions;
-            $dimentions = trim(str_replace($db_template->metrics, null, $db_template->dimentions));
-            $dimentions = explode('x', $dimentions);
-
-            if( Template::where("_id",'=', $db_template->template_id )->count() == 0 ){
-                echo $db_template->template_id.'<br>';
-                
-                $template = new Template;
-                $template->_id = $db_template->template_id;
-                $template->title = $db_template->title .'-'. $db_template->title_;
-                $template->category = "Party Invitations";
-                $template->categoryCaption = "partyInvitations";
-                $template->status = "completed";
-                $template->format = "Invitation";
-                $template->templateType = "regular";
-                $template->measureUnits = trim($db_template->metrics);
-                $template->width = trim($dimentions[0]);
-                $template->height = trim($dimentions[1]);
-                $template->group = null;
-                $template->language = "en";
-                $template->forSubscribers = false;
-                $template->hasAnimatedPreview = false;
-                $template->hasAnimatedScreenPreview = false;
-                $template->downloadUrl = null;
-                $template->name = null;
-                $template->folder = null;
-                $template->pixelWidth = null;
-                $template->pixelHeight = null;
-                $template->hash = null;
-                $template->studioName = $db_template->username;
-                $template->createdAt = 1560162764361;
-                $template->updatedAt = 1598402668055;
-                $template->acceptedAt = 1571737232366;
-                $template->attributedAt = 1582635551101;
-                $template->template = [];
-                $template->driveFileIds = [];
-                $template->previewImageUrls = [
-                    $db_template->filename
-                ];
-                $template->suitability = [
-                    "web"
-                ];
-                $template->keywords = [
-                    "en" => [
-                        "invitation"
-                    ]
-                ];
-                $template->industries = [
-                ];
-                $template->languages = [
-                    "en"
-                ];
-                $template->localizedTitle = [
-                    "en" => $template->title
-                ];
-                $template->userState = [
-                    "purchased" => false,
-                    "collected" => false
-                ];
-        
-                $template->save();
-            }
-
-            // exit;
-        }
-
         // echo "<pre>";
-        // print_r($source_template);
-        exit;
-        // phpinfo();
+        // print_r($carousels);
         // exit;
-        $templates = Template::all();
         
-        echo "<pre>";
-        print_r( Template::where("_id",'=',"5cfe31cc8cba87f943e4a6cf")->count() );
-        exit;
-
-        // print_r( Redis::get('crello:template:5cfe31cc8cba87f943e4a6cf') );
-        // print_r( Redis::get('laravel_database_green:categories') );
-        // print_r( Redis::get('laravel_database_green:product_metadata:17763') );
-        // print_r( Redis::get('over:category:39:offset:600') );
-        // print_r( Redis::get('laravel_database_green:categories:356:page:2') );
-        // print_r( Templates::count() );
-        
-        // "crello:search:results:page:129"
-        // print_r( Redis::get('crello:search:results:page:115') );
-        // print_r( Redis::get('crello:search:results:url:6:page:23') );
-        
-        // print_r( Redis::get('crello:template:5cfe31cc8cba87f943e4a6cf') );
-        print_r(json_encode($template));
-
-        /*
-        {
-            id: "5cfe31cc8cba87f943e4a6cf",
-            format: "Instagram",
-            group: "SM",
-            itemsCount: 1,
-            width: 1080,
-            height: 1080,
-            itemType: "templateElement",
-            subType: "regular",
-            premium: true,
-            previewImageUrls: [
-            "/common/5cbfc1b7-453e-4c84-9b2f-a9f65bf429a6.jpg"
-            ],
-            categories: [
-            "fashionStyle"
-            ],
-            title: "Summer Offer with Couple at the Beach"
-        }
-        */
-        exit;
-
-        // $flight = new Flight;
-        // $flight->name = $request->name;
-        // $flight->save();
-
-        foreach (Templates::all() as $template) {
-            print_r($template->glossary['title']);
-        }
-        exit;
-
-        return view('content.home',[]);
-    }
-
-    public function migrateToMongo(){
-        /*
-        {
-            
-        }
-        */
+        return view('content.home',[
+            'language_code' => $language_code,
+            'country' => $country,
+            'carousels' => $carousels
+        ]);
     }
 
     public function showCategoryPage($country, $category_slug){
         return view('content.category',[]);
     }
 
-    public function showCreatePage($country, $category_slug){
+    public function showCreatePage($country){
         return view('content.create',[]);
     }
 
     public function showTemplatePage($country, $template_id, $slug){
-        return view('content.template',[]);
-    }
-
-    public function showSearchPage($country){
         $language_code = 'en';
-
-        $search_result = Template::where('title', 'like', '%wedding%')
-            // ->skip(0)
-            ->take(100)
-            ->get([
+        $template = Template::where('_id','=',$template_id)
+            ->first([
                 'title',
                 'format',
+                'category',
+                'previewImageUrls',
                 'width',
                 'height',
-                'measureUnits',
                 'forSubscribers',
-                'category',
-                'categoryCaption',
-                'previewImageUrls',
+                'measureUnits',
+                'createdAt',
+                'updatedAt'
             ]);
+        
+        // echo "<pre>";
+        // print_r($template->previewImageUrls);
+        // exit;
+
+        // return view('content.template',[]);
+        return view('content.product-detail',[
+            'country' => $country,
+            'language_code' => $language_code,
+            'template' => $template
+        ]);
+    }
+
+    public function showSearchPage($country, Request $request){
+        $language_code = 'en';
+        $search_query = '';
+        
+        $page = 1;
+        $per_page = 100;
+        $skip = 0;
+
+        if( isset($request->searchQuery) ) {
+            $search_query = $request->searchQuery;
+            // print_r($search_query);
+            // exit;
+        }
+
+        if( isset($request->page) ) {
+            // print_r($page);
+            // exit;
+            $page = $request->page;
+            $skip = $per_page*($page-1);
+        }
+
+        $search_result = Template::where('title', 'like', '%'.$search_query.'%')
+            ->skip($skip)
+            ->take($per_page)
+            ->get([
+                'title',
+                'forSubscribers',
+                // 'category',
+                // 'categoryCaption',
+                'previewImageUrls'
+            ]);
+        
+        $total_documents = Template::where('title', 'like', '%'.$search_query.'%')->count();
+        $from_document = $skip + 1;
+        $to_document = $skip + $per_page;
+        // echo $total_documents;
+        // exit;
 
         return view('content.search',[
+            'country' => $country,
             'language_code' => $language_code,
+            'search_query' => $search_query,
+            'page' => $page,
+            'from_document' => $from_document,
+            'to_document' => $to_document,
+            'total_documents' => $total_documents,
             'templates' => $search_result
         ]);
     }

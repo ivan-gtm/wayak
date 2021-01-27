@@ -9,6 +9,7 @@ use App\Http\Controllers\CrelloController;
 use App\Http\Controllers\DesygnerController;
 use App\Http\Controllers\overController;
 use App\Http\Controllers\canvaController;
+use App\Http\Controllers\PlaceitController;
 
 use App\Http\Controllers\EtsyScrapperController;
 use App\Http\Controllers\TemplettScrapperController;
@@ -50,6 +51,11 @@ Route::get('/scrapper/templett/keynames', [TemplettScrapperController::class, 'm
     Route::get('/admin/template/translate/{template_key}/{from}/{to}', [AdminController::class, 'translateTemplateForm'])->name('admin.translate.templateForm');
     Route::post('/admin/template/translate/{template_key}/{from}/{to}', [AdminController::class, 'translateTemplate'])->name('admin.translate.template');
     Route::get('/admin/template/gallery/{country}', [AdminController::class, 'viewGallery'])->name('admin.template.gallery');
+// KEYWORDS
+    Route::get('/admin/metadata/keywords/manage', [AdminController::class, 'manageKeywords']);
+    Route::post('/admin/metadata/keywords/manage', [AdminController::class, 'manageKeywords'])->name('admin.keywords.manage');
+    Route::get('/admin/metadata/product', [AdminController::class, 'editProductName']);
+    Route::post('/admin/metadata/product', [AdminController::class, 'editProductName'])->name('admin.metadata.product');
 
 // CODES ADMINISTRATION
     Route::get('/admin/{country}/manage-codes', [AdminController::class, 'manageCodes'])->name('admin.manageCodes');
@@ -103,6 +109,9 @@ Route::get('/scrapper/templett/keynames', [TemplettScrapperController::class, 'm
     Route::get('/admin/green/translate-templates', [greenController::class, 'translateTemplate']);
     Route::get('/admin/green/download-templates', [greenController::class, 'index']);
 
+// PLACEIT
+    Route::get('/admin/placeit', [PlaceitController::class, 'index']);
+
 // TEMPLETT
     Route::get('/admin/templett/missing-translation', [TemplettScrapperController::class, 'missinTranslation']);
     Route::get('/admin/templett/bulk-translation/{from}/{to}', [TemplettScrapperController::class, 'bulkTranslation']);
@@ -148,20 +157,25 @@ Route::get('/scrapper/templett/keynames', [TemplettScrapperController::class, 'm
     
     
     // CONTENT
-        Route::get('/{country}/search', [ContentController::class, 'showSearchPage']);
+        Route::get('/{country}/search', [ContentController::class, 'showSearchPage'])->name('user.search');
+        // Route::post('/{country}/search', [ContentController::class, 'showSearchPage'])->name('user.search.post');
 
         Route::get('/{country}/templates/{category}', [ContentController::class, 'showCategoryPage']);
         // Route::get('/{country}/templates/{category}/{subcategory}', [EditorController::class, 'editPurchasedTemplate']);
-        Route::get('/{country}/template/{template_id}/{slug}', [ContentController::class, 'showTemplatePage']);
-        Route::get('/{country}/create/{category}', [ContentController::class, 'showCreatePage']);
+        Route::get('/{country}/template/{template_id}/{slug}', [ContentController::class, 'showTemplatePage'])->name('plantilla.detalle');
+        Route::get('/{country}/create/{category}', [ContentController::class, 'showCreatePerCategoryPage']);
+        Route::get('/{country}/create', [ContentController::class, 'showCreatePage']);
         
         
         Route::get('/{country}/plantillas/{category}', [ContentController::class, 'showCategoryPage']);
         Route::get('/{country}/plantilla/{template_id}/{slug}', [ContentController::class, 'showTemplatePage']);
-        Route::get('/{country}/crear/{category}', [ContentController::class, 'showCreatePage']);
+        Route::get('/{country}/crear/{category}', [ContentController::class, 'showCreatePerCategoryPage']);
+        Route::get('/{country}/crear', [ContentController::class, 'showCreatePage']);
         
         Route::get('/{country}/criar/{category}', [ContentController::class, 'showCategoryPage']);
         Route::get('/{country}/modelos/{category}', [ContentController::class, 'showCreatePage']);
+        // Route::get('/{country}/modelos/{category}', [ContentController::class, 'showProductDetail']);
+        // ($country, $template_id, $slug)
 
         Route::get('/', [ContentController::class, 'showHome']);
         Route::get('mx', [EditorController::class, 'wayak_home']);

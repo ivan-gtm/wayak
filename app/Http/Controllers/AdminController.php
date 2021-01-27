@@ -32,12 +32,12 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 // use App\Exports\MercadoLibreExport;
 // use Maatwebsite\Excel\Facades\Excel;
 
-ini_set('memory_limit', -1);
-ini_set("max_execution_time", 0);   // no time-outs!
-ignore_user_abort(true);            // Continue downloading even after user closes the browser.
+// ini_set('memory_limit', -1);
+// ini_set("max_execution_time", 0);   // no time-outs!
+// ignore_user_abort(true);            // Continue downloading even after user closes the browser.
 
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+// error_reporting(E_ALL);
+// ini_set('display_errors', 1);
 
 
 class AdminController extends Controller
@@ -159,10 +159,9 @@ class AdminController extends Controller
     }
     
     function manageCodes($country){
+
         // $codes = Redis::keys('*crello*');
-        
         // $templates_to_delete = Redis::keys('*crello*');
-        
         // foreach ($templates_to_delete as $template_key) {
             //     Redis::del( $template_key );
             // }
@@ -2358,5 +2357,136 @@ class AdminController extends Controller
         $url_path = asset( 'product/preview-images/'. $product_info['key'] .'/'.$filename);
 
         return $url_path;
+    }
+
+    function manageKeywords(Request $request){
+        $db_word = DB::table('keywords')
+                        ->where('language_code','=','en')
+                        ->whereRaw('`is_reviewed` = false')
+                        ->orderBy('counter','desc')
+                        ->first();
+        
+        if( isset($request->_token) ){
+            // print_r($request->all());
+            // exit;
+            $is_valid_for_title = 0;
+            $is_tag = 0;
+
+            if($request->is_valid_for_title == "on"){
+                $is_valid_for_title = 1;
+            }
+            
+            if($request->is_tag == "on"){
+                $is_tag = 1;
+            }
+            
+            DB::table('keywords')
+            ->where('id','=',$request->id)
+            ->update([
+                'is_valid_for_title' => $is_valid_for_title,
+                'is_tag' => $is_tag,
+                'is_reviewed' => 1
+            ]);
+            
+            return redirect()->action(
+                [AdminController::class,'manageKeywords'], []
+            );
+        }
+
+        if( isset($db_word->id) ){
+            // print_r($db_word);
+            
+            return view('admin.keywords.manage_keywords', [
+                'word' => $db_word
+            ]);
+        }
+    }
+
+    function editProductName(Request $request){
+        $language_code = 'en';
+        $template = DB::table('templates')
+            ->join('tmp_etsy_metadata', 'tmp_etsy_metadata.id', '=', 'templates.fk_etsy_template_id')
+            ->join('thumbnails', 'thumbnails.template_id', '=', 'templates.template_id')
+            ->where('thumbnails.language_code','=',$language_code)
+            ->where('templates.status','=',5)
+            ->whereNull('templates.name')
+            ->whereNotNull('templates.fk_etsy_template_id')
+            ->select(
+                'templates.id',
+                'templates.name',
+                'templates.slug',
+                'templates.template_id',
+                'templates.width',
+                'templates.height',
+                'templates.metrics',
+                'tmp_etsy_metadata.title',
+                'tmp_etsy_metadata.username',
+                'thumbnails.filename',
+                'thumbnails.title as title_',
+                'thumbnails.dimentions'
+            )
+            ->first();
+
+        $title = $template->title.' '.$template->title_;
+        $tmp_title = "";
+        $slug = "";
+        preg_match_all('/([a-zA-Z])+/', $title, $final_title);
+
+        if( isset($final_title[0]) ){
+            $words = $final_title[0];
+            foreach ($words as $word) {
+                
+                $word = trim( strtolower($word) );
+                
+                $db_word = DB::table('keywords')
+                    ->where('word','=',$word)
+                    // ->where('language_code','=','en')
+                    // ->where('is_valid_for_title','=','1')
+                    // ->where('is_reviewed','=','1')
+                    ->first();
+                
+                if( ( isset($db_word->is_reviewed) 
+                    && $db_word->is_reviewed == 1
+                    && $db_word->is_valid_for_title == 1)
+                    || ( isset($db_word->is_reviewed) 
+                    && $db_word->is_reviewed == 0)
+                ){
+                    $tmp_title = $tmp_title.' '.ucwords($db_word->word);
+                    $slug = $slug.'-'.$db_word->word;
+                }
+    
+            }
+        }
+
+        $thumbnail = asset( 'design/template/'. $template->template_id.'/thumbnails/'.$language_code.'/'.$template->filename);
+        
+        if( isset($request->id) ){
+            // echo "<pre>";
+            // print_r($request->all());
+            // exit;
+            
+            DB::table('templates')
+            ->where('id', '=', $request->id)
+            ->update([
+                'name' => trim($request->name),
+                'slug' => trim($request->slug)
+            ]);
+            
+            return redirect()->action(
+                [AdminController::class,'editProductName'], []
+            );
+        }
+
+        if( isset($request->id) ){
+
+        }
+        return view('admin.content.metadata', [
+            'language_code' => $language_code,
+            'thumbnail' => $thumbnail,
+            'template' => $template,
+            'title' => trim($tmp_title),
+            'slug' => trim($slug)
+        ]);
+            // print_r($db_word);
     }
 }

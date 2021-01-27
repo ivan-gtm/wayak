@@ -175,22 +175,24 @@ class CrelloController extends Controller
 
     function explore(Request $request){
         
-        $crello_template = Redis::get('crello:template:5abd17b54b568b8eecb5dde6');
-
+        // $crello_template = Redis::get('crello:template:5abd17b54b568b8eecb5dde6');
         // echo "<pre>";
-        // for ($current_page_number=1; $current_page_number < $total_pages_number; $current_page_number++) {
-            // print_r($product_result);
-            // }
-        $page = $request->page;
+        // print_r($crello_template);
+        // exit;
         
+        $page = 1;
+        if( isset($request->page) ){
+            $page = $request->page;
+        }
+
         $page_from = $request->page;
         $page_to = $request->page + 10;
-
-        $total_pages_number = sizeof(Redis::keys('crello:search:results:page:*'));
-        $product_result = json_decode(Redis::get('crello:search:results:page:'.$page));
+        $total_pages_number = sizeof( Redis::keys('crello:search:results:page:*') ) - 1;
+        $product_result = json_decode( Redis::get('crello:search:results:page:'.$page) );
 
         // echo "<pre>";
         // print_r($total_pages_number);
+        // print_r($product_result);
         // exit;
         
         return view('crello.products',[ 
@@ -212,12 +214,9 @@ class CrelloController extends Controller
         // Example text structure required for new json schema
         $base_txt_obj = $base_json[1]->objects[1];
         $base_SVG_obj = json_decode('{"type":"group","version":"2.7.0","originX":"center","originY":"center","left":540,"top":960,"width":1087.8,"height":1087.8,"fill":"rgb(0,0,0)","stroke":null,"strokeWidth":0,"strokeDashArray":null,"strokeLineCap":"butt","strokeDashOffset":0,"strokeLineJoin":"miter","strokeMiterLimit":4,"scaleX":1,"scaleY":1,"angle":0,"flipX":false,"flipY":false,"opacity":1,"shadow":null,"visible":true,"clipTo":null,"backgroundColor":"","fillRule":"nonzero","paintFirst":"fill","globalCompositeOperation":"source-over","transformMatrix":null,"skewX":0,"skewY":0,"src":"http://localhost:8001/design/template/ejemplo/5a2fb0dbd8141396fe9b528b.svg","svg_custom_paths":[],"selectable":true,"evented":true,"lockMovementX":false,"lockMovementY":false,"objects":[],"path":[]}');
-
         $total_pages_number = sizeof(Redis::keys('crello:search:results:page*'));
-        
         // print_r($total_pages_number);
         // exit;
-
 
         echo "<pre>";
         for ($current_page_number=1; $current_page_number < $total_pages_number; $current_page_number++) {
@@ -228,87 +227,89 @@ class CrelloController extends Controller
             for ($template_index=0; $template_index < $total_products_per_page; $template_index++) {
                 $dummy_template = $base_json;
                 $template_info = $product_result->results[$template_index];
+                
+                // print_r($template_info);
+                // exit;
 
                 $template_obj = json_decode(Redis::get('crello:template:'.$template_info->id));
                 // $template_obj = json_decode(Redis::get('crello:template:590af68595a7a863ddcd6a90'));
                 
                 if( isset($template_obj->id) ){
                     $template_id = $template_obj->id;
+                    if( Redis::exists('template:'.$template_id.':jsondata') == false ){
+                        
+                        if($template_obj->measureUnits == 'inch'){
+                            $dummy_template[0] = str_replace(1728, ceil($template_obj->width *100) , $dummy_template[0]);
+                            $dummy_template[0] = str_replace(2304, ceil($template_obj->height *100 ) , $dummy_template[0]);
+        
+                            $dummy_template[1]->cwidth = ceil($template_obj->width *100);
+                            $dummy_template[1]->cheight = ceil($template_obj->height *100);    
+                        } else {
+                            $dummy_template[0] = str_replace(1728, ceil($template_obj->width  / 3.125) , $dummy_template[0]);
+                            $dummy_template[0] = str_replace(2304, ceil($template_obj->height  / 3.125) , $dummy_template[0]);
+            
+                            $dummy_template[1]->cwidth = ceil($template_obj->width / 3.125);
+                            $dummy_template[1]->cheight = ceil($template_obj->height / 3.125);
+                        }
+        
+                        // // print_r($template_obj);
+                        // print_r($dummy_template);
+                        // echo "<br>";
+        
+                        $page_objects = [];
+        
+                        foreach( $template_obj->template as $template_pages ){
+                            foreach( $template_pages->elements as $element ){
+                                // print_r($element);
+                                // exit;
+                                if( $element->type == 'imageElement'){
+                                    $new_img_obj = self::transformToImgObj($base_img_obj, $template_id, $element, $template_obj->measureUnits );
+                                    $page_objects[] = $new_img_obj;
+                                } elseif( $element->type == 'maskElement'){
+                                    
+                                    if( isset( $element->elements ) ){
+                                        
+                                        foreach ($element->elements as $subelement) {
+                                            if( $subelement->type == 'imageElement'){
+            
+                                                $subelement->top = $element->top;
+                                                $subelement->left = $element->left;
+
+                                                // print_r($subelement);
+                                                // exit;
+            
+                                                $new_img_obj = self::transformToImgObj($base_img_obj, $template_id, $subelement, $template_obj->measureUnits);
+                                                $page_objects[] = $new_img_obj;
+                                            } elseif( $subelement->type == 'textElement'){
+                                                $new_txt_obj = self::transformToTxtObj($base_txt_obj, $subelement, $template_obj->measureUnits );
+                                                $page_objects[] = $new_txt_obj;
+                                            }
+                                        }
+                                    } else {
+                                        // print_r( $element );
+                                        // exit;
+                                    }
+        
+                                } elseif( $element->type == 'svgElement'){
+                                    $new_SVG_obj = self::transformToSVGObj($base_SVG_obj, $template_id, $element, $template_obj->measureUnits );
+                                    $page_objects[] = $new_SVG_obj;
+                                } elseif( $element->type == 'textElement'){
+                                    $new_txt_obj = self::transformToTxtObj($base_txt_obj, $element, $template_obj->measureUnits );
+                                    $page_objects[] = $new_txt_obj;
+                                }
+                            }
+                        }
+
+                        $dummy_template[1]->objects = $page_objects;
+
+                        // Redis::set('template:18625:jsondata', json_encode($dummy_template));
+                        Redis::set('template:'.$template_id.':jsondata', json_encode($dummy_template));
+                    }
                 } else {
                     // print_r($template_obj);
                     // exit;
                     continue;
                 }
-                
-                if($template_obj->measureUnits == 'inch'){
-                    $dummy_template[0] = str_replace(1728, ceil($template_obj->width *100) , $dummy_template[0]);
-                    $dummy_template[0] = str_replace(2304, ceil($template_obj->height *100 ) , $dummy_template[0]);
-
-                    $dummy_template[1]->cwidth = ceil($template_obj->width *100);
-                    $dummy_template[1]->cheight = ceil($template_obj->height *100);    
-                } else {
-                    $dummy_template[0] = str_replace(1728, ceil($template_obj->width  / 3.125) , $dummy_template[0]);
-                    $dummy_template[0] = str_replace(2304, ceil($template_obj->height  / 3.125) , $dummy_template[0]);
-    
-                    $dummy_template[1]->cwidth = ceil($template_obj->width / 3.125);
-                    $dummy_template[1]->cheight = ceil($template_obj->height / 3.125);
-                }
-
-                // // print_r($template_obj);
-                // print_r($dummy_template);
-                // echo "<br>";
-
-                $page_objects = [];
-
-                foreach( $template_obj->template as $template_pages ){
-                    foreach( $template_pages->elements as $element ){
-                        // print_r($element);
-                        // exit;
-                        if( $element->type == 'imageElement'){
-                            $new_img_obj = self::transformToImgObj($base_img_obj, $template_id, $element, $template_obj->measureUnits );
-                            $page_objects[] = $new_img_obj;
-                        } elseif( $element->type == 'maskElement'){
-                            
-                            if( isset( $element->elements ) ){
-                                
-                                foreach ($element->elements as $subelement) {
-                                    if( $subelement->type == 'imageElement'){
-    
-                                        $subelement->top = $element->top;
-                                        $subelement->left = $element->left;
-                                        
-    
-                                        // print_r($subelement);
-                                        // exit;
-    
-                                        $new_img_obj = self::transformToImgObj($base_img_obj, $template_id, $subelement, $template_obj->measureUnits);
-                                        $page_objects[] = $new_img_obj;
-                                    } elseif( $subelement->type == 'textElement'){
-                                        $new_txt_obj = self::transformToTxtObj($base_txt_obj, $subelement, $template_obj->measureUnits );
-                                        $page_objects[] = $new_txt_obj;
-                                    }
-                                }
-                            } else {
-                                // print_r( $element );
-                                // exit;
-                            }
-
-                        } elseif( $element->type == 'svgElement'){
-                            $new_SVG_obj = self::transformToSVGObj($base_SVG_obj, $template_id, $element, $template_obj->measureUnits );
-                            $page_objects[] = $new_SVG_obj;
-                        } elseif( $element->type == 'textElement'){
-                            $new_txt_obj = self::transformToTxtObj($base_txt_obj, $element, $template_obj->measureUnits );
-                            $page_objects[] = $new_txt_obj;
-                        }
-                    }
-                }
-
-                $dummy_template[1]->objects = $page_objects;
-
-
-                // Redis::set('template:18625:jsondata', json_encode($dummy_template));
-                Redis::set('template:'.$template_id.':jsondata', json_encode($dummy_template));
-                
                 // print_r("dummy_template");
                 // print_r($dummy_template);
                 // exit;

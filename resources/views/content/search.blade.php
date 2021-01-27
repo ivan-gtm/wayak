@@ -1,6 +1,9 @@
 <html lang="es_MX" dark="" data-rh="lang,dark">
 
 <head>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=PT+Sans+Caption&display=swap" rel="stylesheet">
+        
 
     <title>Wayak - Buscar </title>
     <meta data-rh="true" charset="UTF-8">
@@ -282,7 +285,8 @@
             width: 100%;
             height: 64px;
             padding: 0 24px;
-            background-color: var(--header-background-color);
+            background-color: white;
+            z-index: 1;
         }
         
         .headerShadow {
@@ -319,7 +323,7 @@
             content: "";
         }
         
-        .headerContentLeft___tlZaq {
+        .headerContentLeft {
             z-index: 4;
         }
         
@@ -330,7 +334,7 @@
             align-items: center;
         }
         
-        .navLinksWrapper___1I469 {
+        .navLinksWrapper {
             position: absolute;
             top: 0;
             left: 50%;
@@ -524,7 +528,7 @@
             color: #94949f;
         }
         
-        .mainView___1AZDR {
+        .mainView {
             display: -ms-flexbox;
             display: flex;
             -ms-flex-direction: column;
@@ -534,12 +538,12 @@
             --scroll-view-offset-top: calc(var(--header-height, 0px) + var(--notification-height, 0px) + var(--aurora-header-height, 0px) + var(--promo-banner-header-height, 0px));
         }
         
-        .mainView___1AZDR.notificationVisible___2vHFy {
-            --notification-height: 40px;
+        .mainView.notificationVisible {
+            /* --notification-height: 40px; */
             padding-top: calc(var(--notification-height, 0px) + var(--promo-banner-header-height, 0px));
         }
         
-        .mainView___1AZDR.headerVisible___1wiub {
+        .mainView.headerVisible {
             --header-height: 64px;
         }
         
@@ -565,10 +569,9 @@
             flex-direction: column;
             min-height: calc(100vh - var(--scroll-view-offset-top));
         }
-        
-        .routeWrapper___26Hc9.hasFooter___25yVq {
+        /* .routeWrapper___26Hc9.hasFooter___25yVq {
             padding-bottom: 40px;
-        }
+        } */
         
         .footerContent___3RBwi {
             -ms-flex-negative: 0;
@@ -837,42 +840,42 @@
             --settings-sidebar-separator: transparent;
         }
         
-        .paginationWrapper___uVjtw {
+        .paginationWrapper {
             display: -ms-flexbox;
             display: flex;
             -ms-flex-align: center;
             align-items: center;
         }
         
-        .paginationWrapper___uVjtw .pageInput___1mj0B {
+        .paginationWrapper .pageInput___1mj0B {
             max-width: 56px;
             height: 40px;
             margin: 0 8px;
             text-align: center;
         }
         
-        .paginationWrapper___uVjtw .button___33J2d {
+        .paginationWrapper .button___33J2d {
             height: 40px;
             padding: 12px 16px;
         }
         
         .search-header,
-        .containerBottom___3PuXd {
+        .containerBottom {
             margin: 0 80px;
         }
         
         @media screen and (min-width:1920px) {
             .search-header,
-            .containerBottom___3PuXd {
+            .containerBottom {
                 margin: 0 160px;
             }
         }
         
         .search-header {
-            padding-top: 40px;
+            padding-top: 64px;
         }
         
-        .containerBottom___3PuXd {
+        .containerBottom {
             padding-top: 28px;
         }
         
@@ -880,18 +883,18 @@
             color: #121316;
         }
         
-        .paginationWrapper___1nA0m {
+        .paginationWrapper {
             display: -ms-flexbox;
             display: flex;
             -ms-flex-align: center;
             align-items: center;
         }
         
-        .paginationRange___3Hoxv {
+        .paginationRange {
             margin-right: 16px;
         }
         
-        .pagination___3z6sQ {
+        .pagination {
             display: -ms-flexbox;
             display: flex;
             -ms-flex-align: center;
@@ -900,11 +903,11 @@
             justify-content: space-between;
         }
         
-        .pagination___3z6sQ.top___a0m8H {
+        .pagination.top {
             margin: 40px 0 32px;
         }
         
-        .pagination___3z6sQ.bottom___2OkNp {
+        .pagination.bottom___2OkNp {
             position: relative;
             -ms-flex-pack: end;
             justify-content: flex-end;
@@ -920,7 +923,7 @@
             padding-bottom: 104px;
         }
         
-        .wrapper___2hP9G.hasPagination___ZYKch {
+        .wrapper___2hP9G.hasPagination {
             padding-bottom: 80px;
         }
         
@@ -2420,68 +2423,164 @@
         }
     </style>
 
+    <style>/*! CSS Used from: Embedded */
+        *{box-sizing:border-box;}
+        a{color:inherit;text-decoration:none;background-color:transparent;outline:none;cursor:pointer;-webkit-text-decoration-skip:objects;text-decoration-skip:objects;}
+        a:active,a:hover{outline-width:0;}
+        a{font-family:Geometria;}
+        [data-categ]>*{pointer-events:none!important;}
+        .link___3OiRu{position:relative;display:-ms-flexbox;display:flex;-ms-flex-align:center;align-items:center;height:100%;padding:4px;color:var(--header-nav-link-color);transition:color .3s;}
+        .link___3OiRu:hover .linkLabel___ot3V1{background:var(--header-nav-ling-color-hover);}
+        .link___3OiRu.active___2JazE{border-bottom:4px solid;color:black;}
+        .link___3OiRu.active___2JazE:before{position:absolute;bottom:0;left:0;width:100%;height:3px;background-color:var(--header-nav-link-color-active);border-radius:3px 3px 0 0;content:"";}
+        .linkLabel___ot3V1{height:100%;padding:18px 28px;border-radius:8px;transition:background .3s,border-radius .3s;}
+        .headerWrapper___3eklQ{position:relative;display:-ms-flexbox;display:flex;-ms-flex-negative:0;flex-shrink:0;-ms-flex-pack:justify;justify-content:space-between;width:100%;height:64px;padding:0 24px;background-color:var(--header-background-color);}
+        .headerShadow___2L53V{position:absolute;right:0;bottom:0;left:0;z-index:3;height:6px;overflow:hidden;transform:translateY(100%);opacity:0;transition:opacity .2s ease-in-out;pointer-events:none;}
+        .headerShadow___2L53V:before{position:absolute;top:-1px;right:0;left:0;height:1px;box-shadow:0 2px 4px rgba(0,0,0,.04),0 0 1px rgba(0,0,0,.12);transform:translateY(-6px);transition:transform .2s ease-in-out;content:"";}
+        .headerContentLeft___tlZaq{z-index:4;}
+        .flex___2XWAk{display:-ms-flexbox;display:flex;-ms-flex-align:center;align-items:center;}
+        .navLinksWrapper___1I469{position:absolute;top:0;left:50%;height:100%;transform:translateX(-50%);}
+        .logoWrapper___g2Okg{margin-right:8px;}
+        .logoIconWrapper___2aVXl,.logoWrapper___g2Okg{display:-ms-flexbox;display:flex;-ms-flex-align:center;align-items:center;}
+        .logoIconWrapper___2aVXl{height:100%;color:black;font-size:28px;}
+        .typography-subheading-m{font-family:'PT Sans Caption';font-size:14px;line-height:20px;}
+        .typography-body-m{color:black;font-family:'PT Sans Caption';font-size:14px;line-height:20px;}
+        *{box-sizing:border-box;}
+        [data-categ]>*{pointer-events:none!important;}
+        a{-webkit-text-decoration-skip:objects;background-color:transparent;color:#fff;color:inherit;cursor:pointer;cursor:pointer;outline:none;text-decoration:none;text-decoration:none;text-decoration-skip:objects;}
+        a{font-family:'PT Sans Caption';}
+        a:active,a:hover{outline-width:0;}
+        *{box-sizing:border-box;}
+        [data-categ]>*{pointer-events:none!important;}
+        a{-webkit-text-decoration-skip:objects;background-color:transparent;color:inherit;cursor:pointer;outline:none;text-decoration:none;text-decoration-skip:objects;}
+        a{font-family:'PT Sans Caption';}
+        a:active,a:hover{outline-width:0;}
+        a{background-color:transparent;background-color:transparent;}
+        a:active,a:hover{outline:0;outline:0;}
+        a{background-color:transparent;background-color:transparent;background-color:transparent;background-color:transparent;color:#fff;color:#fff;cursor:pointer;cursor:pointer;text-decoration:none;text-decoration:none;}
+        a:active,a:hover{outline:0;outline:0;outline:0;outline:0;}
+        a{color:#fff;cursor:pointer;text-decoration:none;}
+        /*! CSS Used from: Embedded */
+        *{box-sizing:border-box;}
+        a{color:inherit;text-decoration:none;background-color:transparent;outline:none;cursor:pointer;-webkit-text-decoration-skip:objects;text-decoration-skip:objects;}
+        a:active,a:hover{outline-width:0;}
+        a{font-family:Geometria;}
+        [data-categ]>*{pointer-events:none!important;}
+        .link___3OiRu{position:relative;display:-ms-flexbox;display:flex;-ms-flex-align:center;align-items:center;height:100%;padding:4px;color:var(--header-nav-link-color);transition:color .3s;}
+        .link___3OiRu:hover .linkLabel___ot3V1{background:var(--header-nav-ling-color-hover);}
+        .link___3OiRu.active___2JazE{border-bottom:4px solid;color:black;}
+        .link___3OiRu.active___2JazE:before{position:absolute;bottom:0;left:0;width:100%;height:3px;background-color:var(--header-nav-link-color-active);border-radius:3px 3px 0 0;content:"";}
+        .linkLabel___ot3V1{height:100%;padding:18px 28px;border-radius:8px;transition:background .3s,border-radius .3s;}
+        .headerWrapper___3eklQ{position:relative;display:-ms-flexbox;display:flex;-ms-flex-negative:0;flex-shrink:0;-ms-flex-pack:justify;justify-content:space-between;width:100%;height:64px;padding:0 24px;background-color:var(--header-background-color);}
+        .headerShadow___2L53V{position:absolute;right:0;bottom:0;left:0;z-index:3;height:6px;overflow:hidden;transform:translateY(100%);opacity:0;transition:opacity .2s ease-in-out;pointer-events:none;}
+        .headerShadow___2L53V:before{position:absolute;top:-1px;right:0;left:0;height:1px;box-shadow:0 2px 4px rgba(0,0,0,.04),0 0 1px rgba(0,0,0,.12);transform:translateY(-6px);transition:transform .2s ease-in-out;content:"";}
+        .headerContentLeft___tlZaq{z-index:4;}
+        .flex___2XWAk{display:-ms-flexbox;display:flex;-ms-flex-align:center;align-items:center;}
+        .navLinksWrapper___1I469{position:absolute;top:0;left:50%;height:100%;transform:translateX(-50%);}
+        .logoWrapper___g2Okg{margin-right:8px;}
+        .logoIconWrapper___2aVXl,.logoWrapper___g2Okg{display:-ms-flexbox;display:flex;-ms-flex-align:center;align-items:center;}
+        .logoIconWrapper___2aVXl{height:100%;color:black;font-size:28px;}
+        .typography-subheading-m{font-family:'PT Sans Caption';font-size:14px;line-height:20px;}
+        .typography-body-m{color:black;font-family:'PT Sans Caption';font-size:14px;line-height:20px;}
+        *{box-sizing:border-box;}
+        [data-categ]>*{pointer-events:none!important;}
+        a{-webkit-text-decoration-skip:objects;background-color:transparent;color:#fff;color:inherit;cursor:pointer;cursor:pointer;outline:none;text-decoration:none;text-decoration:none;text-decoration-skip:objects;}
+        a{font-family:'PT Sans Caption';}
+        a:active,a:hover{outline-width:0;}
+        *{box-sizing:border-box;}
+        [data-categ]>*{pointer-events:none!important;}
+        a{-webkit-text-decoration-skip:objects;background-color:transparent;color:inherit;cursor:pointer;outline:none;text-decoration:none;text-decoration-skip:objects;}
+        a{font-family:'PT Sans Caption';}
+        a:active,a:hover{outline-width:0;}
+        a{background-color:transparent;background-color:transparent;}
+        a:active,a:hover{outline:0;outline:0;}
+        a{background-color:transparent;background-color:transparent;background-color:transparent;background-color:transparent;color:#fff;color:#fff;cursor:pointer;cursor:pointer;text-decoration:none;text-decoration:none;}
+        a:active,a:hover{outline:0;outline:0;outline:0;outline:0;}
+        a{color:#fff;cursor:pointer;text-decoration:none;}
+        /*! CSS Used fontfaces */
+        @font-face{font-family:'PT Sans Caption';font-style:normal;font-weight:400;font-display:swap;src:url(https://fonts.gstatic.com/s/ptsanscaption/v13/0FlMVP6Hrxmt7-fsUFhlFXNIlpcadw_xYS2ix0YK.woff2) format('woff2');unicode-range:U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;}
+        @font-face{font-family:'PT Sans Caption';font-style:normal;font-weight:400;font-display:swap;src:url(https://fonts.gstatic.com/s/ptsanscaption/v13/0FlMVP6Hrxmt7-fsUFhlFXNIlpcafg_xYS2ix0YK.woff2) format('woff2');unicode-range:U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;}
+        @font-face{font-family:'PT Sans Caption';font-style:normal;font-weight:400;font-display:swap;src:url(https://fonts.gstatic.com/s/ptsanscaption/v13/0FlMVP6Hrxmt7-fsUFhlFXNIlpcadA_xYS2ix0YK.woff2) format('woff2');unicode-range:U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;}
+        @font-face{font-family:'PT Sans Caption';font-style:normal;font-weight:400;font-display:swap;src:url(https://fonts.gstatic.com/s/ptsanscaption/v13/0FlMVP6Hrxmt7-fsUFhlFXNIlpcaeg_xYS2ixw.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;}
+        @font-face{font-family:'PT Sans Caption';font-style:normal;font-weight:400;font-display:swap;src:url(https://fonts.gstatic.com/s/ptsanscaption/v13/0FlMVP6Hrxmt7-fsUFhlFXNIlpcadw_xYS2ix0YK.woff2) format('woff2');unicode-range:U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;}
+        @font-face{font-family:'PT Sans Caption';font-style:normal;font-weight:400;font-display:swap;src:url(https://fonts.gstatic.com/s/ptsanscaption/v13/0FlMVP6Hrxmt7-fsUFhlFXNIlpcafg_xYS2ix0YK.woff2) format('woff2');unicode-range:U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;}
+        @font-face{font-family:'PT Sans Caption';font-style:normal;font-weight:400;font-display:swap;src:url(https://fonts.gstatic.com/s/ptsanscaption/v13/0FlMVP6Hrxmt7-fsUFhlFXNIlpcadA_xYS2ix0YK.woff2) format('woff2');unicode-range:U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;}
+        @font-face{font-family:'PT Sans Caption';font-style:normal;font-weight:400;font-display:swap;src:url(https://fonts.gstatic.com/s/ptsanscaption/v13/0FlMVP6Hrxmt7-fsUFhlFXNIlpcaeg_xYS2ixw.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;}
+    </style>
 </head>
 
 <body>
-    <div id="react-view" style="position: absolute; left: 0; right: 0; top: 0; bottom: 0; overflow: auto; height: 100vh;">
-        <div class="mainView___1AZDR notificationVisible___2vHFy headerVisible___1wiub" id="app-view">
-            <div class="headerWrapper___3eklQ">
-                <div class="flex___2XWAk headerContentLeft___tlZaq">
-                    <div class="logoWrapper___g2Okg">
-                        <a class="logoIconWrapper___2aVXl" data-categ="homeHeader" data-value="link_logo" href="/mx/home/">
-                            <svg class="logo_svg" viewBox="0 0 96 30" width="96" height="30"><path fill-rule="evenodd" clip-rule="evenodd" d="M10.2819 8.24109C15.2993 8.24109 19.648 11.5836 20.3713 16.8994L15.0483 16.9001C14.5054 14.5744 12.621 13.1881 10.3047 13.1881C7.34022 13.195 5.23118 15.4463 5.24095 18.6687C5.23118 21.9934 7.45814 24.1558 10.275 24.1627C12.6275 24.1627 14.5416 22.7038 15.0483 20.4437L20.3717 20.4445C19.6483 25.7374 15.3286 29.1097 10.3112 29.1097C4.43256 29.1097 0 24.6056 0 18.6756C0 12.7452 4.40327 8.24109 10.2819 8.24109ZM35.5506 13.1592H28.2042V28.578H23.0347V8.63986H35.5506V13.1592ZM47.2619 8.24146C52.396 8.2411 56.8222 11.7149 57.4509 17.1735C57.5761 18.2218 57.4968 19.0367 57.4183 19.6723C57.3217 19.6723 57.2492 19.6723 57.2009 19.6723C53.8838 19.6723 48.9082 19.6723 42.2741 19.6723C42.4539 22.7548 44.5651 24.6892 47.4391 24.6961C49.6736 24.6961 51.5835 23.572 52.061 21.4003H57.3935C56.5814 26.3086 52.2567 29.1097 47.4163 29.1097C41.3894 29.1097 37.0153 24.6057 37.0153 18.6857C37.0153 12.748 41.4151 8.24509 47.2619 8.24146ZM47.4244 12.3616C45.1158 12.3679 43.3405 13.8187 42.7406 16.0834H52.061C51.5825 13.5924 49.5008 12.3616 47.4244 12.3616ZM65.3759 28.578H60.1831V0H65.3759V28.578ZM72.8322 28.578H67.6394V0H72.8322V28.578ZM85.6148 8.24109C91.3494 8.24218 95.9982 12.6634 96 18.6781C95.9982 24.6873 91.4219 29.1086 85.6159 29.1097C79.8117 29.1086 75.2289 24.6576 75.2289 18.6752C75.2289 12.6569 79.8842 8.24182 85.6148 8.24109ZM85.5482 13.1592C82.6648 13.1538 80.4206 15.3548 80.4216 18.6073C80.4206 21.8742 82.6811 24.059 85.5489 24.0587C88.4424 24.059 90.6733 21.8807 90.6741 18.6087C90.6733 15.3613 88.4356 13.1538 85.5482 13.1592Z" fill="#fff"></path></svg>
-                        </a>
-                    </div>
-                    <div class="dd__wrapper dd__wrapper___3GaM8">
-                        <div class="dd__selectControl">
-                            <div class="dd__selected">
-                                <div data-categ="homeHeader" data-value="select_language" class="sc-bYEvPH sc-gWHgXt eHNofp bqEzOS typography-body-m">
-                                    <div class="sc-kLgntA iHaOcn"><i class="sc-iktFzd gaGeRK"><img alt="mx" src="https://static.crello.com/images/flags/mx.svg" class=""></i></div><svg viewBox="0 0 16 16" width="16" height="16" class="sc-fubCfw jpHeDI sc-hiSbYr iHnRgU"><path d="M11.862 7.06A.519.519 0 0012 6.705a.519.519 0 00-.138-.355l-.187-.2A.443.443 0 0011.34 6H4.66a.442.442 0 00-.335.15l-.187.2A.519.519 0 004 6.705c0 .133.05.261.138.355l3.535 3.79a.434.434 0 00.327.152.434.434 0 00.326-.152l3.536-3.79z"></path></svg></div>
-                            </div>
-                        </div>
-                    </div>
+    <div class="headerWrapper___3eklQ">
+            <div class="flex___2XWAk headerContentLeft___tlZaq">
+                <div class="logoWrapper___g2Okg">
+                    <a class="logoIconWrapper___2aVXl"
+                        href="{{ url('') }}">
+                        WAYAK
+                    </a>
                 </div>
-                <div class="flex___2XWAk navLinksWrapper___1I469"><a class="link___3OiRu typography-body-m" data-categ="homeHeader" data-value="link_home" href="/mx/home/"><span class="linkLabel___ot3V1">Inicio</span></a><a class="link___3OiRu typography-subheading-m active___2JazE" data-categ="homeHeader"
-                        data-value="link_templates" href="/mx/home/templates/?q=Winter"><span class="linkLabel___ot3V1">Plantillas</span></a>
-                    <a class="link___3OiRu typography-body-m" data-categ="homeHeader" data-value="link_myDesigns" href="/mx/user/projects/"><span class="linkLabel___ot3V1">Mis proyectos</span></a>
-                </div>
-                <div class="flex___2XWAk">
-                    <div class="userAvatarWrapper___1_s-3">
-                        <div data-bubble="true" data-categ="homeHeader" data-value="dropdown_profile" class="sc-bYEvPH sc-gWHgXt eHNofp bqEzOS typography-body-m">
-                            <div class="sc-kLgntA iHaOcn"><i class="sc-iktFzd gaGeRK"><div class="nameContainer___2j7q6 typography-subheading-m iconM___hNzkq userAvatar___1Wy79" style="background-color:#2153cc;color:#ffffff"><svg viewBox="0 0 14 14" width="14" height="14" class="sc-fubCfw bunAU"><path d="M13.5809 5.7722C13.0986 2.22834 10.1995 0 6.85459 0C2.93551 0 0 3.00275 0 6.95631C0 10.9096 2.95504 13.9124 6.87412 13.9124C10.2191 13.9124 13.0989 11.6642 13.5811 8.13558L10.0322 8.1351C9.69437 9.6418 8.41831 10.6144 6.85001 10.6144C4.97209 10.6098 3.48746 9.1682 3.49397 6.95172C3.48746 4.80347 4.89348 3.30259 6.86978 3.29799C8.41397 3.29799 9.67026 4.22219 10.0322 5.77269L13.5809 5.7722Z"></path></svg></div></i></div>
-                            <svg viewBox="0 0 16 16" width="16" height="16" class="sc-fubCfw jpHeDI sc-hiSbYr iHnRgU">
-                            <path d="M11.862 7.06A.519.519 0 0012 6.705a.519.519 0 00-.138-.355l-.187-.2A.443.443 0 0011.34 6H4.66a.442.442 0 00-.335.15l-.187.2A.519.519 0 004 6.705c0 .133.05.261.138.355l3.535 3.79a.434.434 0 00.327.152.434.434 0 00.326-.152l3.536-3.79z"></path>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-                <div class="headerShadow headerShadowVisible"></div>
             </div>
-            <div class="scrollableView___3-vpm notificationVisible___2vHFy">
-                <div class="routeWrapper___26Hc9 hasFooter___25yVq">
+            <div class="flex___2XWAk navLinksWrapper___1I469">
+                <a class="link___3OiRu typography-subheading-m" 
+                    href="{{ url('') }}">
+                    <span class="linkLabel___ot3V1">Inicio</span>
+                </a>
+                <a class="link___3OiRu typography-body-m active___2JazE" 
+                    href="{{ route('user.search',[
+                        'country' => $country,
+                        'searchQuery' => 'invitation'
+                        ]) }}">
+                    <span class="linkLabel___ot3V1">Plantillas</span>
+                </a>
+            </div>
+            <div class="flex___2XWAk">
+            </div>
+            <div class="headerShadow___2L53V"></div>
+    </div>
+
+    <div id="react-view" style="position: absolute; left: 0; right: 0; top: 0; bottom: 0; overflow: auto; height: 100vh;">
+        <div class="mainView notificationVisible headerVisible" id="app-view">
+            <div class="scrollableView___3-vpm notificationVisible">
+                <div class="routeWrapper___26Hc9">
                     <div class="routeContent___pkfmU">
-                        <div class="wrapper___2hP9G hasPagination___ZYKch">
+                        <div class="wrapper___2hP9G hasPagination">
                             <div>
                                 <div class="search-header">
                                     <div class="search-form-wrapper">
-                                        <form class="form___1I3Xs" novalidate="">
+                                        <form class="form___1I3Xs" novalidate="" method="GET" action="{{ route('user.search',['country' => $country, 'page' => $page]) }}">
+                                            @csrf
                                             <div class="sc-dmlrTW guKkvw">
-                                                <input type="text" autocomplete="off" name="searchQuery" class="sc-kfzAmx sc-fKFyDc fTLfYv fYNCUl proxima-regular___3FDdY clearButtonVisible___qtH0n" placeholder="Busca entre miles de formatos y diseños" value="Blue" style="padding-left: 20px;">
+                                                <input type="text" autocomplete="off" name="searchQuery" class="sc-kfzAmx sc-fKFyDc fTLfYv fYNCUl proxima-regular___3FDdY clearButtonVisible___qtH0n" placeholder="Busca entre miles de formatos y diseños" style="padding-left: 20px;" value="{{ $search_query }}">
                                             </div>
                                             <div class="inputControls___BVQJr left___1UDlV"></div>
-                                            <div class="inputControls___BVQJr right___3zI72"><button type="button" data-categ="homeSearchForm" data-value="clearText" class="sc-eCssSg sc-jSgupP cvSgtG eYItKN typography-subheading-m clearBtn___OIzx7"><svg viewBox="0 0 24 24" width="24" height="24" class="sc-fubCfw hxbxfY"><path d="M18.8274 17.1818C18.9379 17.2914 19 17.4405 19 17.5961C19 17.7517 18.9379 17.9009 18.8274 18.0104L18.0104 18.8274C17.9009 18.9379 17.7517 19 17.5961 19C17.4405 19 17.2914 18.9379 17.1818 18.8274L12 13.6456L6.81819 18.8274C6.70862 18.9379 6.55947 19 6.40387 19C6.24828 19 6.09913 18.9379 5.98956 18.8274L5.17261 18.0104C5.06214 17.9009 5 17.7517 5 17.5961C5 17.4405 5.06214 17.2914 5.17261 17.1818L10.3544 12L5.17261 6.81819C5.06214 6.70862 5 6.55947 5 6.40387C5 6.24828 5.06214 6.09913 5.17261 5.98956L5.98956 5.17261C6.09913 5.06214 6.24828 5 6.40387 5C6.55947 5 6.70862 5.06214 6.81819 5.17261L12 10.3544L17.1818 5.17261C17.2914 5.06214 17.4405 5 17.5961 5C17.7517 5 17.9009 5.06214 18.0104 5.17261L18.8274 5.98956C18.9379 6.09913 19 6.24828 19 6.40387C19 6.55947 18.9379 6.70862 18.8274 6.81819L13.6456 12L18.8274 17.1818Z"></path></svg></button>
-                                                <button type="submit" class="sc-gsTCUz bhdLno sc-dlfnbm llxIqU searchBtn___3JEWS" data-categ="homeSearchForm" data-value="submit">
-                                                <div class="sc-hKgILt chrFRV"><svg viewBox="0 0 24 24" width="24" height="24" class="sc-fubCfw hxbxfY"><path fill-rule="evenodd" clip-rule="evenodd" d="M17.4138 15.8368L21.8574 20.2857C22.0558 20.5064 22.046 20.8443 21.8352 21.0532L21.0575 21.8317C20.9532 21.937 20.8113 21.9962 20.6632 21.9962C20.5151 21.9962 20.3731 21.937 20.2688 21.8317L15.8252 17.3828C15.7023 17.2596 15.5907 17.1256 15.4919 16.9824L14.6587 15.8701C13.2802 16.9723 11.5682 17.5724 9.80409 17.5719C6.16878 17.5845 3.00983 15.0738 2.19744 11.5261C1.38504 7.97844 3.13601 4.34066 6.41372 2.76643C9.69143 1.1922 13.6211 2.10166 15.8763 4.95639C18.1314 7.81111 18.1102 11.8492 15.8252 14.68L16.9361 15.4475C17.1096 15.5586 17.2698 15.6892 17.4138 15.8368ZM4.24951 9.78627C4.24951 12.8576 6.73635 15.3475 9.80402 15.3475C11.2772 15.3475 12.69 14.7616 13.7317 13.7186C14.7733 12.6757 15.3585 11.2612 15.3585 9.78627C15.3585 6.7149 12.8717 4.22507 9.80402 4.22507C6.73635 4.22507 4.24951 6.7149 4.24951 9.78627Z"></path></svg></div>
+                                            <div class="inputControls___BVQJr right___3zI72">
+                                                <a class="sc-eCssSg sc-jSgupP cvSgtG eYItKN typography-subheading-m clearBtn___OIzx7" href="{{ route('user.search',['country' => $country]) }}">
+                                                    <svg viewBox="0 0 24 24" width="24" height="24" class="sc-fubCfw hxbxfY"><path d="M18.8274 17.1818C18.9379 17.2914 19 17.4405 19 17.5961C19 17.7517 18.9379 17.9009 18.8274 18.0104L18.0104 18.8274C17.9009 18.9379 17.7517 19 17.5961 19C17.4405 19 17.2914 18.9379 17.1818 18.8274L12 13.6456L6.81819 18.8274C6.70862 18.9379 6.55947 19 6.40387 19C6.24828 19 6.09913 18.9379 5.98956 18.8274L5.17261 18.0104C5.06214 17.9009 5 17.7517 5 17.5961C5 17.4405 5.06214 17.2914 5.17261 17.1818L10.3544 12L5.17261 6.81819C5.06214 6.70862 5 6.55947 5 6.40387C5 6.24828 5.06214 6.09913 5.17261 5.98956L5.98956 5.17261C6.09913 5.06214 6.24828 5 6.40387 5C6.55947 5 6.70862 5.06214 6.81819 5.17261L12 10.3544L17.1818 5.17261C17.2914 5.06214 17.4405 5 17.5961 5C17.7517 5 17.9009 5.06214 18.0104 5.17261L18.8274 5.98956C18.9379 6.09913 19 6.24828 19 6.40387C19 6.55947 18.9379 6.70862 18.8274 6.81819L13.6456 12L18.8274 17.1818Z"></path></svg>
+                                                </a>
+                                                <button type="submit" class="bhdLno llxIqU searchBtn___3JEWS" data-categ="homeSearchForm" data-value="submit">
+                                                    <div class="sc-hKgILt chrFRV"><svg viewBox="0 0 24 24" width="24" height="24" class="sc-fubCfw hxbxfY"><path fill-rule="evenodd" clip-rule="evenodd" d="M17.4138 15.8368L21.8574 20.2857C22.0558 20.5064 22.046 20.8443 21.8352 21.0532L21.0575 21.8317C20.9532 21.937 20.8113 21.9962 20.6632 21.9962C20.5151 21.9962 20.3731 21.937 20.2688 21.8317L15.8252 17.3828C15.7023 17.2596 15.5907 17.1256 15.4919 16.9824L14.6587 15.8701C13.2802 16.9723 11.5682 17.5724 9.80409 17.5719C6.16878 17.5845 3.00983 15.0738 2.19744 11.5261C1.38504 7.97844 3.13601 4.34066 6.41372 2.76643C9.69143 1.1922 13.6211 2.10166 15.8763 4.95639C18.1314 7.81111 18.1102 11.8492 15.8252 14.68L16.9361 15.4475C17.1096 15.5586 17.2698 15.6892 17.4138 15.8368ZM4.24951 9.78627C4.24951 12.8576 6.73635 15.3475 9.80402 15.3475C11.2772 15.3475 12.69 14.7616 13.7317 13.7186C14.7733 12.6757 15.3585 11.2612 15.3585 9.78627C15.3585 6.7149 12.8717 4.22507 9.80402 4.22507C6.73635 4.22507 4.24951 6.7149 4.24951 9.78627Z"></path></svg></div>
                                                 </button>
                                             </div>
                                         </form>
                                         <div></div>
                                     </div>
-                                    <div class="pagination___3z6sQ top___a0m8H">
-                                        <div class="typography-marketing-display-s title___3sRwO">Plantillas de Blue</div>
-                                        <div class="paginationWrapper___1nA0m"><span class="typography-body-m paginationRange___3Hoxv">1-100 de 4,929</span>
-                                            <div class="paginationWrapper___uVjtw"><button class="sc-gsTCUz bhdLno sc-dlfnbm lhRPKu button___33J2d" disabled=""><div class="sc-hKgILt chrFRV"><svg viewBox="0 0 16 16" width="16" height="16" direction="left" class="sc-fubCfw ecgval"><path d="M14.463 4.11761C14.5381 4.04234 14.6403 4 14.747 4C14.8536 4 14.9558 4.04234 15.0309 4.11761L15.8788 4.96052C15.9561 5.03267 16 5.13341 16 5.23884C16 5.34427 15.9561 5.44501 15.8788 5.51716L8.52792 12.8251C8.41552 12.9369 8.26304 12.9999 8.10398 13H7.89602C7.73696 12.9999 7.58448 12.9369 7.47208 12.8251L0.121197 5.51716C0.0438665 5.44501 0 5.34427 0 5.23884C0 5.13341 0.0438665 5.03267 0.121197 4.96052L0.969068 4.11761C1.04416 4.04234 1.14639 4 1.25302 4C1.35966 4 1.46189 4.04234 1.53698 4.11761L8 10.5428L14.463 4.11761Z"></path></svg></div></button>
-                                                <div class="sc-dmlrTW guKkvw"><input type="text" class="sc-kfzAmx sc-fKFyDc fTLfYv ikXwLi pageInput___1mj0B" value="1"></div><button class="sc-gsTCUz bhdLno sc-dlfnbm lhRPKu button___33J2d"><div class="sc-hKgILt chrFRV"><svg viewBox="0 0 16 16" width="16" height="16" direction="right" class="sc-fubCfw cnhfsE"><path d="M14.463 4.11761C14.5381 4.04234 14.6403 4 14.747 4C14.8536 4 14.9558 4.04234 15.0309 4.11761L15.8788 4.96052C15.9561 5.03267 16 5.13341 16 5.23884C16 5.34427 15.9561 5.44501 15.8788 5.51716L8.52792 12.8251C8.41552 12.9369 8.26304 12.9999 8.10398 13H7.89602C7.73696 12.9999 7.58448 12.9369 7.47208 12.8251L0.121197 5.51716C0.0438665 5.44501 0 5.34427 0 5.23884C0 5.13341 0.0438665 5.03267 0.121197 4.96052L0.969068 4.11761C1.04416 4.04234 1.14639 4 1.25302 4C1.35966 4 1.46189 4.04234 1.53698 4.11761L8 10.5428L14.463 4.11761Z"></path></svg></div></button></div>
+                                    <div class="pagination top">
+                                        <div class="typography-marketing-display-s title___3sRwO">Plantillas de "{{ $search_query }}"</div>
+                                        <div class="paginationWrapper"><span class="typography-body-m paginationRange">{{ $from_document }}-{{ $to_document }} de {{ $total_documents }}</span>
+                                            <div class="paginationWrapper">
+                                                <a class="bhdLno lhRPKu button___33J2d" href="{{ route('user.search',['page' => ($page-1), 'country' => $country, 'searchQuery' => $search_query]) }}">
+                                                    <div class="sc-hKgILt chrFRV"><svg viewBox="0 0 16 16" width="16" height="16" direction="left" class="sc-fubCfw ecgval"><path d="M14.463 4.11761C14.5381 4.04234 14.6403 4 14.747 4C14.8536 4 14.9558 4.04234 15.0309 4.11761L15.8788 4.96052C15.9561 5.03267 16 5.13341 16 5.23884C16 5.34427 15.9561 5.44501 15.8788 5.51716L8.52792 12.8251C8.41552 12.9369 8.26304 12.9999 8.10398 13H7.89602C7.73696 12.9999 7.58448 12.9369 7.47208 12.8251L0.121197 5.51716C0.0438665 5.44501 0 5.34427 0 5.23884C0 5.13341 0.0438665 5.03267 0.121197 4.96052L0.969068 4.11761C1.04416 4.04234 1.14639 4 1.25302 4C1.35966 4 1.46189 4.04234 1.53698 4.11761L8 10.5428L14.463 4.11761Z"></path></svg></div>
+                                                </a>
+                                                <div class="sc-dmlrTW guKkvw">
+                                                    <form class="form___1I3Xs" novalidate="" method="GET" action="{{ route('user.search',['country' => $country]) }}">
+                                                        @csrf
+                                                        <input type="text" class="sc-kfzAmx sc-fKFyDc fTLfYv ikXwLi pageInput___1mj0B" value="{{ $page }}">
+                                                    </form>
+                                                </div>
+                                                <a class="bhdLno lhRPKu button___33J2d" href="{{ route('user.search',['page' => ($page+1), 'country' => $country, 'searchQuery' => $search_query]) }}">
+                                                    <div class="sc-hKgILt chrFRV"><svg viewBox="0 0 16 16" width="16" height="16" direction="right" class="sc-fubCfw cnhfsE"><path d="M14.463 4.11761C14.5381 4.04234 14.6403 4 14.747 4C14.8536 4 14.9558 4.04234 15.0309 4.11761L15.8788 4.96052C15.9561 5.03267 16 5.13341 16 5.23884C16 5.34427 15.9561 5.44501 15.8788 5.51716L8.52792 12.8251C8.41552 12.9369 8.26304 12.9999 8.10398 13H7.89602C7.73696 12.9999 7.58448 12.9369 7.47208 12.8251L0.121197 5.51716C0.0438665 5.44501 0 5.34427 0 5.23884C0 5.13341 0.0438665 5.03267 0.121197 4.96052L0.969068 4.11761C1.04416 4.04234 1.14639 4 1.25302 4C1.35966 4 1.46189 4.04234 1.53698 4.11761L8 10.5428L14.463 4.11761Z"></path></svg>
+                                                    </div>
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -2495,14 +2594,16 @@
                                                 ] )
                                             }}" style="width: calc(var(--row-height) * 0.714286); flex-grow: 7.14286;">
                                             <div class="preview imgWrapper imgWrapper_" style="padding-bottom: 140%;">
-                                                <img alt="{{ $template->title }}" crossorigin="anonymous" loading="lazy" data-categ="invitations" data-value="{{ $template->_id }}" src="{{ asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls[0] ) }}"
+                                                <img alt="{{ $template->title }}" crossorigin="anonymous" loading="lazy" data-categ="invitations" data-value="{{ $template->_id }}" 
+                                                    src="{{ asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls[0] ) }}"
                                                     class="itemImg">
                                             </div>
                                             <div class="caption proxima-semibold___1HNzk proxima-s___29loE noSubTitle">
-                                                <div class="title___3aJ-x">{{ $template->category }}</div>
+                                                <div class="title___3aJ-x">{{ $template->title }}</div>
                                             </div>
                                         </a>
                                         @endforeach
+                                        <!--                                         
                                         <a target="_blank" class="captionWrapper item bottomIndentSmall" href="/mx/artboard/?template=5b23c9891eb1c99e2a1f4534&amp;keyword=Blue" style="width: calc(var(--row-height) * 1); flex-grow: 10;">
                                             <div class="preview imgWrapper imgWrapper_" style="padding-bottom: 100%;">
                                                 <div class="itemImg">
@@ -3341,242 +3442,44 @@
                                             <div class="caption proxima-semibold___1HNzk proxima-s___29loE noSubTitle">
                                                 <div class="title___3aJ-x">Anuncio de Instagram</div>
                                             </div>
-                                        </a>
+                                        </a> -->
                                     </div>
                                 </div>
                             </div>
-                            <div class="containerBottom___3PuXd">
-                                <div class="pagination___3z6sQ bottom___2OkNp"><button class="sc-gsTCUz bhdLno sc-dlfnbm iISRbV nextPageButton___rOiwa"><div class="sc-hKgILt chrFRV">Página siguiente</div></button>
-                                    <div class="paginationWrapper___1nA0m"><span class="typography-body-m paginationRange___3Hoxv">1-100 de 4,929</span>
-                                        <div class="paginationWrapper___uVjtw"><button class="sc-gsTCUz bhdLno sc-dlfnbm lhRPKu button___33J2d" disabled=""><div class="sc-hKgILt chrFRV"><svg viewBox="0 0 16 16" width="16" height="16" direction="left" class="sc-fubCfw ecgval"><path d="M14.463 4.11761C14.5381 4.04234 14.6403 4 14.747 4C14.8536 4 14.9558 4.04234 15.0309 4.11761L15.8788 4.96052C15.9561 5.03267 16 5.13341 16 5.23884C16 5.34427 15.9561 5.44501 15.8788 5.51716L8.52792 12.8251C8.41552 12.9369 8.26304 12.9999 8.10398 13H7.89602C7.73696 12.9999 7.58448 12.9369 7.47208 12.8251L0.121197 5.51716C0.0438665 5.44501 0 5.34427 0 5.23884C0 5.13341 0.0438665 5.03267 0.121197 4.96052L0.969068 4.11761C1.04416 4.04234 1.14639 4 1.25302 4C1.35966 4 1.46189 4.04234 1.53698 4.11761L8 10.5428L14.463 4.11761Z"></path></svg></div></button>
-                                            <div class="sc-dmlrTW guKkvw"><input type="text" class="sc-kfzAmx sc-fKFyDc fTLfYv ikXwLi pageInput___1mj0B" value="1"></div><button class="sc-gsTCUz bhdLno sc-dlfnbm lhRPKu button___33J2d"><div class="sc-hKgILt chrFRV"><svg viewBox="0 0 16 16" width="16" height="16" direction="right" class="sc-fubCfw cnhfsE"><path d="M14.463 4.11761C14.5381 4.04234 14.6403 4 14.747 4C14.8536 4 14.9558 4.04234 15.0309 4.11761L15.8788 4.96052C15.9561 5.03267 16 5.13341 16 5.23884C16 5.34427 15.9561 5.44501 15.8788 5.51716L8.52792 12.8251C8.41552 12.9369 8.26304 12.9999 8.10398 13H7.89602C7.73696 12.9999 7.58448 12.9369 7.47208 12.8251L0.121197 5.51716C0.0438665 5.44501 0 5.34427 0 5.23884C0 5.13341 0.0438665 5.03267 0.121197 4.96052L0.969068 4.11761C1.04416 4.04234 1.14639 4 1.25302 4C1.35966 4 1.46189 4.04234 1.53698 4.11761L8 10.5428L14.463 4.11761Z"></path></svg></div></button></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="footerContent___3RBwi">
-                        <footer class="footerWrapper___3SH7S">
-                            <div class="flex___2dArY">
-                                <div class="dd__wrapper dd__wrapper___3GaM8">
-                                    <div class="dd__selectControl">
-                                        <div class="dd__selected">
-                                            <div data-categ="homeFooter" data-value="select_language" class="sc-bYEvPH sc-gWHgXt hHPkIi GOxAW typography-body-m">
-                                                <div class="sc-kLgntA iHaOcn"><i class="sc-iktFzd gaGeRK"><img alt="mx" src="https://static.crello.com/images/flags/mx.svg" class=""></i><span class="sc-jJEJSO laquCT">Español (México)</span></div><svg viewBox="0 0 16 16" width="16"
-                                                    height="16" class="sc-fubCfw jpHeDI sc-hiSbYr MZExO"><path d="M11.862 7.06A.519.519 0 0012 6.705a.519.519 0 00-.138-.355l-.187-.2A.443.443 0 0011.34 6H4.66a.442.442 0 00-.335.15l-.187.2A.519.519 0 004 6.705c0 .133.05.261.138.355l3.535 3.79a.434.434 0 00.327.152.434.434 0 00.326-.152l3.536-3.79z"></path></svg></div>
+                            <div class="containerBottom">
+                                <div class="pagination bottom___2OkNp">
+                                    <!-- <a class="bhdLno iISRbV nextPageButton___rOiwa" href="{{ route('user.search',['page' => ($page+1), 'country' => $country, 'searchQuery' => $search_query]) }}">
+                                        <div class="sc-hKgILt chrFRV">Página siguiente</div>
+                                    </a> -->
+                                    <div class="paginationWrapper"><span class="typography-body-m paginationRange">{{ $from_document }}-{{ $to_document }} de {{ $total_documents }}</span>
+                                        <div class="paginationWrapper">
+                                            <a class="bhdLno lhRPKu button___33J2d" disabled="">
+                                                <div class="sc-hKgILt chrFRV"><svg viewBox="0 0 16 16" width="16" height="16" direction="left" class="sc-fubCfw ecgval"><path d="M14.463 4.11761C14.5381 4.04234 14.6403 4 14.747 4C14.8536 4 14.9558 4.04234 15.0309 4.11761L15.8788 4.96052C15.9561 5.03267 16 5.13341 16 5.23884C16 5.34427 15.9561 5.44501 15.8788 5.51716L8.52792 12.8251C8.41552 12.9369 8.26304 12.9999 8.10398 13H7.89602C7.73696 12.9999 7.58448 12.9369 7.47208 12.8251L0.121197 5.51716C0.0438665 5.44501 0 5.34427 0 5.23884C0 5.13341 0.0438665 5.03267 0.121197 4.96052L0.969068 4.11761C1.04416 4.04234 1.14639 4 1.25302 4C1.35966 4 1.46189 4.04234 1.53698 4.11761L8 10.5428L14.463 4.11761Z"></path></svg></div>
+                                            </a>
+                                            <div class="sc-dmlrTW guKkvw">
+                                                <form class="form___1I3Xs" novalidate="" method="GET" action="{{ route('user.search',['country' => $country]) }}">
+                                                    @csrf
+                                                    <input type="text" class="sc-kfzAmx sc-fKFyDc fTLfYv ikXwLi pageInput___1mj0B" name="page" value="{{ $page }}">
+                                                </form>
+                                            </div>
+                                            <a class="bhdLno lhRPKu button___33J2d" href="{{ route('user.search',['page' => ($page+1), 'country' => $country, 'searchQuery' => $search_query]) }}">
+                                                <div class="sc-hKgILt chrFRV"><svg viewBox="0 0 16 16" width="16" height="16" direction="right" class="sc-fubCfw cnhfsE"><path d="M14.463 4.11761C14.5381 4.04234 14.6403 4 14.747 4C14.8536 4 14.9558 4.04234 15.0309 4.11761L15.8788 4.96052C15.9561 5.03267 16 5.13341 16 5.23884C16 5.34427 15.9561 5.44501 15.8788 5.51716L8.52792 12.8251C8.41552 12.9369 8.26304 12.9999 8.10398 13H7.89602C7.73696 12.9999 7.58448 12.9369 7.47208 12.8251L0.121197 5.51716C0.0438665 5.44501 0 5.34427 0 5.23884C0 5.13341 0.0438665 5.03267 0.121197 4.96052L0.969068 4.11761C1.04416 4.04234 1.14639 4 1.25302 4C1.35966 4 1.46189 4.04234 1.53698 4.11761L8 10.5428L14.463 4.11761Z"></path></svg></div>
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="proxima-regular___3FDdY small___1Vvfz ltd___viT5w">©
-                                <!-- -->Crello Ltd.
-                                <!-- -->
-                                <!-- -->2021</div>
-                            <ul class="flex___2dArY">
-                                <li class="item___2MiFd"><a class="link___3DrjV" href="https://www.linkedin.com/company/crello/" rel="external noopener noreferrer" target="_blank" data-categ="homeFooter" data-value="button_linkedin"><svg viewBox="0 0 16 16" width="16" height="16" class="sc-fubCfw jpHeDI"><path fill-rule="evenodd" clip-rule="evenodd" d="M1.77778 0H14.2222C15.2041 0 16 0.795938 16 1.77778V14.2222C16 15.2041 15.2041 16 14.2222 16H1.77778C0.795938 16 0 15.2041 0 14.2222V1.77778C0 0.795938 0.795938 0 1.77778 0ZM4.44379 13.3334C4.68925 13.3334 4.88824 13.1345 4.88824 12.889V6.66678C4.88824 6.42132 4.68925 6.22233 4.44379 6.22233H3.11046C2.865 6.22233 2.66602 6.42132 2.66602 6.66678V12.889C2.66602 13.1345 2.865 13.3334 3.11046 13.3334H4.44379ZM3.77799 5.3335C3.04162 5.3335 2.44466 4.73654 2.44466 4.00016C2.44466 3.26378 3.04162 2.66683 3.77799 2.66683C4.51437 2.66683 5.11133 3.26378 5.11133 4.00016C5.11133 4.73654 4.51437 5.3335 3.77799 5.3335ZM12.8882 13.3333C13.1336 13.3333 13.3326 13.1343 13.3326 12.8888V8.79992C13.3615 7.38728 12.3172 6.18172 10.9149 6.00881C9.93443 5.91925 8.98442 6.37717 8.44374 7.19992V6.66659C8.44374 6.42113 8.24475 6.22214 7.99929 6.22214H6.66596C6.4205 6.22214 6.22152 6.42113 6.22152 6.66659V12.8888C6.22152 13.1343 6.4205 13.3333 6.66596 13.3333H7.99929C8.24475 13.3333 8.44374 13.1343 8.44374 12.8888V9.55548C8.44374 8.8191 9.04069 8.22214 9.77707 8.22214C10.5135 8.22214 11.1104 8.8191 11.1104 9.55548V12.8888C11.1104 13.1343 11.3094 13.3333 11.5548 13.3333H12.8882Z"></path></svg></a></li>
-                                <li class="item___2MiFd"><a class="link___3DrjV" href="https://www.instagram.com/crellogram" rel="external noopener noreferrer" target="_blank" data-categ="homeFooter" data-value="button_instagram"><svg viewBox="0 0 16 16" width="16" height="16" class="sc-fubCfw jpHeDI"><path fill-rule="evenodd" clip-rule="evenodd" d="M11.5575 0H4.4464C1.9918 0 0.00195312 1.98985 0.00195312 4.44444V11.5556C0.00195312 14.0102 1.9918 16 4.4464 16H11.5575C14.0121 16 16.002 14.0102 16.002 11.5556V4.44444C16.002 1.98985 14.0121 0 11.5575 0ZM14.4464 11.5556C14.4415 13.149 13.151 14.4396 11.5575 14.4444H4.4464C2.85293 14.4396 1.56239 13.149 1.55751 11.5556V4.44444C1.56239 2.85098 2.85293 1.56044 4.4464 1.55556H11.5575C13.151 1.56044 14.4415 2.85098 14.4464 4.44444V11.5556ZM12.2242 4.66667C12.7151 4.66667 13.1131 4.2687 13.1131 3.77778C13.1131 3.28686 12.7151 2.88889 12.2242 2.88889C11.7333 2.88889 11.3353 3.28686 11.3353 3.77778C11.3353 4.2687 11.7333 4.66667 12.2242 4.66667ZM8.00195 4.00001C5.79281 4.00001 4.00195 5.79087 4.00195 8.00001C4.00195 10.2091 5.79281 12 8.00195 12C10.2111 12 12.002 10.2091 12.002 8.00001C12.0043 6.93842 11.5837 5.91963 10.833 5.16897C10.0823 4.41831 9.06354 3.99764 8.00195 4.00001ZM5.55751 8C5.55751 9.35003 6.65192 10.4444 8.00195 10.4444C9.35198 10.4444 10.4464 9.35003 10.4464 8C10.4464 6.64997 9.35198 5.55556 8.00195 5.55556C6.65192 5.55556 5.55751 6.64997 5.55751 8Z"></path></svg></a></li>
-                                <li class="item___2MiFd"><a class="link___3DrjV" href="https://www.twitter.com/crelloapp" rel="external noopener noreferrer" target="_blank" data-categ="homeFooter" data-value="button_twitter"><svg viewBox="0 0 16 16" width="16" height="16" class="sc-fubCfw jpHeDI"><path d="M15.9766 3.029C15.5638 3.59587 15.0647 4.09036 14.4988 4.49337C14.4988 4.64145 14.4988 4.78954 14.4988 4.94585C14.5034 7.63501 13.4599 10.2136 11.6023 12.1035C9.74478 13.9934 7.22854 15.0365 4.61769 14.999C3.10831 15.0042 1.61825 14.6494 0.264241 13.9624C0.191233 13.9296 0.144144 13.8553 0.144421 13.7732V13.6827C0.144421 13.5646 0.237406 13.4688 0.352109 13.4688C1.8358 13.4185 3.26656 12.8889 4.44196 11.9551C3.09901 11.9273 1.8907 11.1083 1.33463 9.84903C1.30654 9.78025 1.31529 9.70137 1.35771 9.64087C1.40013 9.58038 1.47009 9.54703 1.54232 9.55287C1.95047 9.5951 2.3627 9.556 2.75649 9.43769C1.27399 9.1209 0.160059 7.85395 0.000637719 6.30327C-0.00502834 6.22888 0.0273554 6.15683 0.0860901 6.11314C0.144825 6.06946 0.22142 6.06045 0.288205 6.08938C0.686044 6.27008 1.11551 6.36526 1.55031 6.36909C0.251285 5.4914 -0.309806 3.822 0.184361 2.30504C0.235371 2.15763 0.357922 2.04874 0.506978 2.01837C0.656035 1.98801 0.80961 2.04065 0.911268 2.15695C2.66422 4.07749 5.07279 5.22192 7.62916 5.34896C7.56368 5.07999 7.53147 4.80357 7.5333 4.52628C7.55721 3.07229 8.43115 1.77706 9.74596 1.24694C11.0608 0.716833 12.5563 1.05676 13.5323 2.10759C14.1976 1.97712 14.8408 1.74708 15.4414 1.42477C15.4854 1.39649 15.5412 1.39649 15.5852 1.42477C15.6126 1.47008 15.6126 1.52754 15.5852 1.57285C15.2943 2.25864 14.8028 2.83383 14.1793 3.21821C14.7253 3.15304 15.2617 3.02046 15.7769 2.82333C15.8203 2.79293 15.8773 2.79293 15.9207 2.82333C15.957 2.84044 15.9842 2.87317 15.995 2.9128C16.0057 2.95243 15.999 2.99494 15.9766 3.029Z"></path></svg></a></li>
-                                <li class="item___2MiFd"><a class="link___3DrjV" href="https://www.facebook.com/crelloapp" rel="external noopener noreferrer" target="_blank" data-categ="homeFooter" data-value="button_facebook"><svg viewBox="0 0 16 16" width="16" height="16" class="sc-fubCfw jpHeDI"><path fill-rule="evenodd" clip-rule="evenodd" d="M16.0009 8.04921C16.0009 3.60375 12.419 0 8.00047 0C3.58193 0 0 3.60375 0 8.04921C0 12.0668 2.92566 15.3968 6.7504 16.0006V10.3759H4.71903V8.04921H6.7504V6.27587C6.7504 4.25853 7.94481 3.14422 9.77229 3.14422C10.6476 3.14422 11.5632 3.30143 11.5632 3.30143V5.28229H10.5543C9.56048 5.28229 9.25054 5.90276 9.25054 6.5393V8.04921H11.4694L11.1147 10.3759H9.25054V16.0006C13.0753 15.3968 16.0009 12.0668 16.0009 8.04921Z"></path></svg></a></li>
-                                <li class="item___2MiFd"><a class="link___3DrjV" href="https://www.youtube.com/channel/UCEqlVgQWGG1C244zpvy94ZQ" rel="external noopener noreferrer" target="_blank" data-categ="homeFooter" data-value="button_youtube"><svg viewBox="0 0 16 16" width="16" height="16" class="sc-fubCfw jpHeDI"><path fill-rule="evenodd" clip-rule="evenodd" d="M12.7581 2.25319L13.8199 2.36573C15.077 2.5123 16.0209 3.61916 16.0017 4.92403V11.076C16.0209 12.3808 15.077 13.4877 13.8199 13.6343L12.8018 13.7468C9.62485 14.0844 6.4227 14.0844 3.24576 13.7468L2.18398 13.6343C0.926949 13.4877 -0.01699 12.3808 0.00224178 11.076V4.92403C-0.01699 3.61916 0.926949 2.5123 2.18398 2.36573L3.20213 2.25319C6.37906 1.9156 9.58121 1.9156 12.7581 2.25319ZM7.35461 10.4158L10.1836 8.46515H10.2272C10.3797 8.36268 10.4716 8.18769 10.4716 8C10.4716 7.81231 10.3797 7.63732 10.2272 7.53485L7.39824 5.58424C7.23122 5.46777 7.01554 5.45585 6.83741 5.55323C6.65927 5.65061 6.54773 5.84141 6.54736 6.04939V9.95061C6.55674 10.1442 6.66208 10.3192 6.82614 10.4138C6.9902 10.5083 7.18988 10.5091 7.35461 10.4158Z"></path></svg></a></li>
-                            </ul>
-                        </footer>
+                        </div>
                     </div>
+
                 </div>
             </div>
             <div></div>
-            <div class="emailVerificationContainer___3WLdt visible___3-WK1">
-                <div class="emailVerifiedWrapper___2sRGa">
-                    <div class="proxima-regular___3FDdY information___3ZfgV"><svg viewBox="0 0 18 18" width="18" height="18" class="sc-fubCfw bydJWw icon___3JlF6"><path fill-rule="evenodd" clip-rule="evenodd" d="M13.61 0.88L17.12 4.39C17.6779 4.94716 17.994 5.70156 18 6.49V11.49C18.0046 12.2825 17.6954 13.0447 17.14 13.61L13.63 17.12C13.0679 17.6828 12.3054 17.9993 11.51 18H6.51C5.71748 18.0046 4.95533 17.6954 4.39 17.14L0.88 13.63C0.31723 13.0679 0.000700208 12.3054 0 11.51V6.51C0.000700208 5.71462 0.31723 4.95207 0.88 4.39L4.37 0.88C4.93207 0.31723 5.69462 0.000700208 6.49 0H11.49C12.2854 0.000700208 13.0479 0.31723 13.61 0.88ZM15.71 12.19C15.8947 12.0037 15.9989 11.7523 16 11.49L16.02 6.51C16.0189 6.24766 15.9147 5.99626 15.73 5.81L12.21 2.29C12.0237 2.10526 11.7723 2.0011 11.51 2H6.51C6.24766 2.0011 5.99626 2.10526 5.81 2.29L2.29 5.79C2.10526 5.97626 2.0011 6.22766 2 6.49V11.49C2.0011 11.7523 2.10526 12.0037 2.29 12.19L5.79 15.71C5.97626 15.8947 6.22766 15.9989 6.49 16H11.49C11.7523 15.9989 12.0037 15.8947 12.19 15.71L15.71 12.19ZM9.5 11H8.5C8.22386 11 8 11.2239 8 11.5V12.5C8 12.7761 8.22386 13 8.5 13H9.5C9.77614 13 10 12.7761 10 12.5V11.5C10 11.2239 9.77614 11 9.5 11ZM8.32 5H9.68C9.82369 4.99896 9.96088 5.05979 10.0566 5.16698C10.1523 5.27417 10.1972 5.41735 10.18 5.56L9.78 8.78C9.76474 8.90624 9.65716 9.00092 9.53 9H8.47C8.34284 9.00092 8.23526 8.90624 8.22 8.78L7.82 5.56C7.80275 5.41735 7.84771 5.27417 7.94342 5.16698C8.03912 5.05979 8.17631 4.99896 8.32 5Z"></path></svg>
-                        <p class="typography-body-m">Confirme su correo electrónico para completar el registro.</p>
-                    </div><button class="sc-idOhPF kGntgQ sc-dIUggk fSMFFj typography-body-m btn___2R2Fl" data-categ="emailVerifiedNotification" data-value="resentEmailButton">Reenviar el correo electrónico de confirmación<i class="sc-bkzZxe jtoZmK"><svg viewBox="0 0 16 16" width="16" height="16" direction="right" class="sc-fubCfw cnhfsE"><path d="M8.60021 10.8095C8.48307 10.9313 8.32415 10.9998 8.15839 11H7.84161C7.67621 10.998 7.51793 10.9297 7.39979 10.8095L3.12329 6.3579C3.04438 6.27659 3 6.16591 3 6.05045C3 5.93499 3.04438 5.8243 3.12329 5.743L3.71517 5.12809C3.792 5.04662 3.89716 5.00072 4.00694 5.00072C4.11672 5.00072 4.22187 5.04662 4.2987 5.12809L8 8.98207L11.7013 5.12809C11.7796 5.04611 11.8861 5 11.9972 5C12.1084 5 12.2149 5.04611 12.2932 5.12809L12.8767 5.743C12.9556 5.8243 13 5.93499 13 6.05045C13 6.16591 12.9556 6.27659 12.8767 6.3579L8.60021 10.8095Z"></path></svg></i></button></div>
-                <button data-categ="emailVerifiedNotification" data-value="close" class="sc-eCssSg sc-jSgupP cvSgtG ezRehF typography-subheading-m close___2ytk_"><svg viewBox="0 0 16 16" width="16" height="16" class="sc-fubCfw jpHeDI"><path d="M13.3644 12.0714C13.4512 12.1575 13.5 12.2747 13.5 12.397C13.5 12.5192 13.4512 12.6364 13.3644 12.7225L12.7225 13.3644C12.6364 13.4512 12.5192 13.5 12.397 13.5C12.2747 13.5 12.1575 13.4512 12.0714 13.3644L8 9.29295L3.92857 13.3644C3.84248 13.4512 3.7253 13.5 3.60304 13.5C3.48079 13.5 3.3636 13.4512 3.27751 13.3644L2.63562 12.7225C2.54882 12.6364 2.5 12.5192 2.5 12.397C2.5 12.2747 2.54882 12.1575 2.63562 12.0714L6.70705 8L2.63562 3.92857C2.54882 3.84248 2.5 3.7253 2.5 3.60304C2.5 3.48079 2.54882 3.3636 2.63562 3.27751L3.27751 2.63562C3.3636 2.54882 3.48079 2.5 3.60304 2.5C3.7253 2.5 3.84248 2.54882 3.92857 2.63562L8 6.70705L12.0714 2.63562C12.1575 2.54882 12.2747 2.5 12.397 2.5C12.5192 2.5 12.6364 2.54882 12.7225 2.63562L13.3644 3.27751C13.4512 3.3636 13.5 3.48079 13.5 3.60304C13.5 3.7253 13.4512 3.84248 13.3644 3.92857L9.29295 8L13.3644 12.0714Z"></path></svg></button>
-            </div>
         </div>
     </div>
-    <meta name="google-site-verification" content="">
+    <!-- <meta name="google-site-verification" content=""> -->
+    <!-- <div style="width:0px; height:0px; display:none; visibility:hidden;" id="batBeacon183254530036"><img style="width:0px; height:0px; display:none; visibility:hidden;" id="batBeacon966510314538" width="0" height="0" alt="" src="https://bat.bing.com/action/0?ti=56305916&amp;Ver=2&amp;mid=7e47ba01-f86d-43df-bc0c-a54ea92a35bb&amp;sid=95ffe9405a8d11eb89bc47deb50efd0b&amp;vid=f245ec70512611eb90d0a310eac65bd9&amp;vids=0&amp;pi=1200101525&amp;lg=es&amp;sw=1920&amp;sh=1080&amp;sc=24&amp;tl=Crello&amp;p=https%3A%2F%2Fcrello.com%2Fmx%2Fhome%2F&amp;r=&amp;evt=pageLoad&amp;msclkid=N&amp;sv=1&amp;rn=102539"></div> -->
 
-    <div style="width:0px; height:0px; display:none; visibility:hidden;" id="batBeacon183254530036"><img style="width:0px; height:0px; display:none; visibility:hidden;" id="batBeacon966510314538" width="0" height="0" alt="" src="https://bat.bing.com/action/0?ti=56305916&amp;Ver=2&amp;mid=7e47ba01-f86d-43df-bc0c-a54ea92a35bb&amp;sid=95ffe9405a8d11eb89bc47deb50efd0b&amp;vid=f245ec70512611eb90d0a310eac65bd9&amp;vids=0&amp;pi=1200101525&amp;lg=es&amp;sw=1920&amp;sh=1080&amp;sc=24&amp;tl=Crello&amp;p=https%3A%2F%2Fcrello.com%2Fmx%2Fhome%2F&amp;r=&amp;evt=pageLoad&amp;msclkid=N&amp;sv=1&amp;rn=102539"></div>
-    <iframe name="_hjRemoteVarsFrame" title="_hjRemoteVarsFrame" id="_hjRemoteVarsFrame" src="https://vars.hotjar.com/box-469cf41adb11dc78be68c1ae7f9457a4.html" style="display: none !important; width: 1px !important; height: 1px !important; opacity: 0 !important; pointer-events: none !important;"></iframe>
-    <div>
-        <div id="_hj_feedback_container">
-
-
-
-
-
-            <div id="_hj-f5b2a1eb-9b07_feedback" class="_hj-f5b2a1eb-9b07_widget _hj-f5b2a1eb-9b07_ltr _hj-f5b2a1eb-9b07_en" data-state="minimized" data-minimized-position="middle_right" data-device="desktop" data-viewmode="desktop">
-
-                <!-- Minimized State -->
-                <div id="_hj-f5b2a1eb-9b07_feedback_minimized">
-                    <div class="_hj-f5b2a1eb-9b07_feedback_minimized_label">
-                        <div class="_hj-f5b2a1eb-9b07_feedback_minimized_label_text">
-                            Feedback
-                        </div>
-
-                    </div>
-                    <div class="_hj-f5b2a1eb-9b07_hotjar_buddy _hj-f5b2a1eb-9b07_icon _hj-f5b2a1eb-9b07_icon_emotion_default _hj-f5b2a1eb-9b07_bottom_position_launcher" data-emotion-score="3">
-                        <span class="_hj-f5b2a1eb-9b07_icon_emotion_path1"></span><span class="_hj-f5b2a1eb-9b07_icon_emotion_path2"></span>
-                    </div>
-                    <div id="_hj-f5b2a1eb-9b07_feedback_minimized_message" class="_hj-f5b2a1eb-9b07_feedback_minimized_message _hj-f5b2a1eb-9b07_transition _hj-f5b2a1eb-9b07_rounded_corners">
-                        <a class="_hj-f5b2a1eb-9b07_feedback_minimized_message_close _hj-f5b2a1eb-9b07_link_no_underline _hj-f5b2a1eb-9b07_icon _hj-f5b2a1eb-9b07_icon-x _hj-f5b2a1eb-9b07_transition"></a>
-                        <span id="_hj-f5b2a1eb-9b07_feedback_minimized_text_initial" class="_hj-f5b2a1eb-9b07_wordwrap">Help us improve by sharing your feedback.</span>
-                        <span id="_hj-f5b2a1eb-9b07_feedback_minimized_text_thankyou" class="_hj-f5b2a1eb-9b07_wordwrap">Thank you for sharing your feedback with us!</span>
-                    </div>
-                </div>
-
-                <!-- Opened State -->
-                <a id="_hj-f5b2a1eb-9b07_feedback_open_close">
-                    <span class="_hj-f5b2a1eb-9b07_link_no_underline _hj-f5b2a1eb-9b07_icon _hj-f5b2a1eb-9b07_icon-x"></span>
-                </a>
-                <div id="_hj-f5b2a1eb-9b07_feedback_open" class="_hj-f5b2a1eb-9b07_rounded_corners _hj-f5b2a1eb-9b07_transition">
-                    <a id="_hj-f5b2a1eb-9b07_feedback_open_close_phone">
-                        <span class="_hj-f5b2a1eb-9b07_link_no_underline _hj-f5b2a1eb-9b07_icon _hj-f5b2a1eb-9b07_icon-x"></span>
-                    </a>
-                    <!-- STEP 1: EMOTION -->
-                    <div id="_hj-f5b2a1eb-9b07_state-1" data-state="emotion">
-                        <p class="_hj-f5b2a1eb-9b07_widget_title">How would you rate your experience?</p>
-                        <div class="_hj-f5b2a1eb-9b07_widget_content">
-                            <div class="_hj-f5b2a1eb-9b07_emotion_content _hj-f5b2a1eb-9b07_emotion_type_emoji">
-                                <div class="_hj-f5b2a1eb-9b07_emotion_option" data-bind="emotion" data-emotion-option="0">
-
-                                    <span class="_hj-f5b2a1eb-9b07_icon _hj-f5b2a1eb-9b07_icon_emotion_emoji" data-emotion-score="0">
-                                  
-                            </span>
-
-
-                                    <span class="_hj-f5b2a1eb-9b07_emotion_text _hj-f5b2a1eb-9b07_transition">Hate</span>
-                                </div>
-                                <div class="_hj-f5b2a1eb-9b07_emotion_option" data-bind="emotion" data-emotion-option="1">
-
-                                    <span class="_hj-f5b2a1eb-9b07_icon _hj-f5b2a1eb-9b07_icon_emotion_emoji" data-emotion-score="1">
-                                
-                          </span>
-
-
-                                    <span class="_hj-f5b2a1eb-9b07_emotion_text _hj-f5b2a1eb-9b07_transition">Dislike</span>
-                                </div>
-                                <div class="_hj-f5b2a1eb-9b07_emotion_option" data-bind="emotion" data-emotion-option="2">
-
-                                    <span class="_hj-f5b2a1eb-9b07_icon _hj-f5b2a1eb-9b07_icon_emotion_emoji" data-emotion-score="2">
-                                
-                            </span>
-
-
-                                    <span class="_hj-f5b2a1eb-9b07_emotion_text _hj-f5b2a1eb-9b07_transition">Neutral</span>
-                                </div>
-                                <div class="_hj-f5b2a1eb-9b07_emotion_option" data-bind="emotion" data-emotion-option="3">
-
-                                    <span class="_hj-f5b2a1eb-9b07_icon _hj-f5b2a1eb-9b07_icon_emotion_emoji" data-emotion-score="3">
-                                  
-                              </span>
-
-
-                                    <span class="_hj-f5b2a1eb-9b07_emotion_text _hj-f5b2a1eb-9b07_transition">Like</span>
-                                </div>
-                                <div class="_hj-f5b2a1eb-9b07_emotion_option" data-bind="emotion" data-emotion-option="4">
-
-                                    <span class="_hj-f5b2a1eb-9b07_icon _hj-f5b2a1eb-9b07_icon_emotion_emoji" data-emotion-score="4">
-                                
-                              </span>
-
-
-                                    <span class="_hj-f5b2a1eb-9b07_emotion_text _hj-f5b2a1eb-9b07_transition">Love</span>
-                                </div>
-                                <div class="_hj-f5b2a1eb-9b07_clear_both"></div>
-                            </div>
-
-                            <div class="_hj-f5b2a1eb-9b07_emotion_comment_holder">
-                                <textarea maxlength="1000" class="_hj-f5b2a1eb-9b07_input_field" id="_hj-f5b2a1eb-9b07_emotion_comment" name="_hj-f5b2a1eb-9b07_emotion_comment" placeholder="Tell us about your experience..." rows="3" data-bind="comment"></textarea>
-                                <div class="_hj-f5b2a1eb-9b07_toolset_actions">
-                                    <div id="_hj-f5b2a1eb-9b07_toolset_action_select" class="_hj-f5b2a1eb-9b07_transition">
-                                        <span class="_hj-f5b2a1eb-9b07_icon _hj-f5b2a1eb-9b07_icon-select-element"></span>
-                                        <div class="_hj-f5b2a1eb-9b07_toolset_tooltip _hj-f5b2a1eb-9b07_transition">Select an element on the page.</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="_hj-f5b2a1eb-9b07_emotion_comment_footer">
-                                <p>Or contact us via <a href="https://support.crello.com/" rel="noopener noreferrer" target="_blank">https://support.crello.com/</a></p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- STEP 2: EMAIL -->
-                    <div id="_hj-f5b2a1eb-9b07_state-2" data-state="email">
-                        <p class="_hj-f5b2a1eb-9b07_widget_title"></p>
-                        <div class="_hj-f5b2a1eb-9b07_widget_content">
-                            <input maxlength="255" class="_hj-f5b2a1eb-9b07_input_field" type="email" id="_hj-f5b2a1eb-9b07_email" name="_hj-f5b2a1eb-9b07_email" placeholder="email@domain.com" data-bind="email">
-                        </div>
-                    </div>
-                    <!-- STEP 3: THANK YOU AND CONSENT -->
-                    <div id="_hj-f5b2a1eb-9b07_state-3" data-state="consent">
-                        <p class="_hj-f5b2a1eb-9b07_widget_title">Thank you for sharing your feedback with us!</p>
-                        <div class="_hj-f5b2a1eb-9b07_widget_content">
-                            <p class="_hj-f5b2a1eb-9b07_consent_message_text">
-                                Connecting your feedback with data related to your visits (device-specific, usage data, cookies, behavior and interactions) will help us improve faster. Do you give us your <a href="https://www.hotjarconsent.com" target="_blank"
-                                    rel="noopener noreferrer">consent</a> to do so for your previous and future visits?&nbsp;
-
-                            </p>
-                            <div class="_hj-f5b2a1eb-9b07_consent_actions">
-                                <button class="_hj-f5b2a1eb-9b07_btn_primary _hj-f5b2a1eb-9b07_rounded_corners" data-consent="false" type="button">
-                            <i class="_hj-f5b2a1eb-9b07_icon _hj-f5b2a1eb-9b07_icon-x"></i>
-                        </button>
-                                <button class="_hj-f5b2a1eb-9b07_btn_primary _hj-f5b2a1eb-9b07_rounded_corners" data-consent="true" type="button">
-                            <i class="_hj-f5b2a1eb-9b07_icon _hj-f5b2a1eb-9b07_icon-ok"></i>
-                        </button>
-                            </div>
-
-                        </div>
-                    </div>
-
-                    <!-- ALTERNATIVE STEP 3: THANK YOU (without the consent question) -->
-                    <div id="_hj-f5b2a1eb-9b07_state-3-2" data-state="thank-you">
-                        <p class="_hj-f5b2a1eb-9b07_widget_title">Thank you for sharing your feedback with us!</p>
-                        <div class="_hj-f5b2a1eb-9b07_widget_content">
-
-                        </div>
-                    </div>
-
-                    <!-- FOOTER -->
-                    <div class="_hj-f5b2a1eb-9b07_widget_footer">
-
-                        <div class="_hj-f5b2a1eb-9b07_pull_right">
-                            <button type="button" id="_hj-f5b2a1eb-9b07_action_skip" class="_hj-f5b2a1eb-9b07_btn_clear _hj-f5b2a1eb-9b07_rounded_corners _hj-f5b2a1eb-9b07_transition">Skip</button>
-                            <button type="button" id="_hj-f5b2a1eb-9b07_action_submit" class="_hj-f5b2a1eb-9b07_btn_primary _hj-f5b2a1eb-9b07_rounded_corners _hj-f5b2a1eb-9b07_transition _hj-f5b2a1eb-9b07_shadow _hj-f5b2a1eb-9b07_btn_disabled">Send</button>
-                        </div>
-                        <div class="_hj-f5b2a1eb-9b07_clear_both"></div>
-                    </div>
-                </div>
-
-                <!-- PAGE HIGHLIGHTER -->
-                <div id="_hj-f5b2a1eb-9b07_feedback_page_highlight" class="_hj-f5b2a1eb-9b07_feedback_selection_ignore">
-                    <div class="_hj-f5b2a1eb-9b07_feedback_page_highlight_line _hj-f5b2a1eb-9b07_transition" id="_hj-f5b2a1eb-9b07_feedback_page_highlight_line_top"></div>
-                    <div class="_hj-f5b2a1eb-9b07_feedback_page_highlight_line _hj-f5b2a1eb-9b07_transition" id="_hj-f5b2a1eb-9b07_feedback_page_highlight_line_right"></div>
-                    <div class="_hj-f5b2a1eb-9b07_feedback_page_highlight_line _hj-f5b2a1eb-9b07_transition" id="_hj-f5b2a1eb-9b07_feedback_page_highlight_line_bottom"></div>
-                    <div class="_hj-f5b2a1eb-9b07_feedback_page_highlight_line _hj-f5b2a1eb-9b07_transition" id="_hj-f5b2a1eb-9b07_feedback_page_highlight_line_left"></div>
-
-                    <div id="_hj-f5b2a1eb-9b07_feedback_top_message_select">
-                        Select an element on the page.
-                        <a id="_hj-f5b2a1eb-9b07_feedback_top_message_select_close" class="_hj-f5b2a1eb-9b07_feedback_selection_ignore _hj-f5b2a1eb-9b07_transition">
-                            <span class="_hj-f5b2a1eb-9b07_icon _hj-f5b2a1eb-9b07_icon-x _hj-f5b2a1eb-9b07_feedback_selection_ignore"></span>
-                        </a>
-                    </div>
-
-                </div>
-
-                <!-- DIMMERS (OVERLAY) + ELEMENT HIGHLIGHTER -->
-                <div class="_hj-f5b2a1eb-9b07_feedback_content_dimmer" id="_hj-f5b2a1eb-9b07_feedback_content_dimmer_top" data-show-for="desktop"></div>
-                <div class="_hj-f5b2a1eb-9b07_feedback_content_dimmer" id="_hj-f5b2a1eb-9b07_feedback_content_dimmer_right" data-show-for="desktop"></div>
-                <div class="_hj-f5b2a1eb-9b07_feedback_content_dimmer" id="_hj-f5b2a1eb-9b07_feedback_content_dimmer_bottom" data-show-for="desktop"></div>
-                <div class="_hj-f5b2a1eb-9b07_feedback_content_dimmer" id="_hj-f5b2a1eb-9b07_feedback_content_dimmer_left" data-show-for="desktop"></div>
-                <div id="_hj-f5b2a1eb-9b07_feedback_content_highlighter" data-show-for="desktop">
-                    <a id="_hj-f5b2a1eb-9b07_feedback_content_highlighter_close">
-                        <span class="_hj-f5b2a1eb-9b07_icon _hj-f5b2a1eb-9b07_icon-x _hj-f5b2a1eb-9b07_feedback_selection_ignore"></span>
-                    </a>
-                </div>
-
-            </div>
-        </div>
-    </div>
 </body>
 
 </html>
