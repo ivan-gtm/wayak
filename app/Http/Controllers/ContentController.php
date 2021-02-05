@@ -193,17 +193,45 @@ class ContentController extends Controller
                 'createdAt',
                 'updatedAt'
             ]);
+
+        $category_name = 'invitations/birthday/milestone/50th-birthday';
+        $breadcrumbs_str = Redis::get('wayak:categories:'.$category_name);
+        $breadcrumbs_obj = json_decode($breadcrumbs_str);
+
+        $breadcrumbs_arr = self::getBreadCrumbs( $breadcrumbs_obj ) ;
+        
+        $url = "";
+        $total_breads = sizeof($this->bread_array);
+        for ($i=0; $i < $total_breads; $i++) { 
+            $url .= '/'.$this->bread_array[$i]->slug;
+            $this->bread_array[$i]->url = url($country.'/templates'.$url);
+        }
         
         // echo "<pre>";
-        // print_r($template->previewImageUrls);
+        // print_r($this->bread_array);
         // exit;
 
-        // return view('content.template',[]);
         return view('content.product-detail',[
             'country' => $country,
             'language_code' => $language_code,
+            'breadcrumbs' => $this->bread_array,
+            'breadcrumb' => $breadcrumbs_obj,
             'template' => $template
         ]);
+    }
+    
+    public $bread_array = [];
+
+    
+    function getBreadCrumbs( $breadcrumbs_obj ){
+        
+        if( isset( $breadcrumbs_obj->parent ) ){
+            self::getBreadCrumbs( $breadcrumbs_obj->parent );
+        }
+
+        $this->bread_array[] = $breadcrumbs_obj;
+
+        // return  $bread_array;
     }
 
     public function showSearchPage($country, Request $request){

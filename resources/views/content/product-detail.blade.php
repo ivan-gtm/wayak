@@ -372,18 +372,6 @@
             a:active,a:hover{outline:0;outline:0;outline:0;outline:0;}
             a{color:#fff;cursor:pointer;text-decoration:none;}
             /*! CSS Used fontfaces */
-            @font-face{font-family:'PT Sans Caption';font-style:normal;font-weight:400;font-display:swap;src:url(https://fonts.gstatic.com/s/ptsanscaption/v13/0FlMVP6Hrxmt7-fsUFhlFXNIlpcadw_xYS2ix0YK.woff2) format('woff2');unicode-range:U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;}
-            @font-face{font-family:'PT Sans Caption';font-style:normal;font-weight:400;font-display:swap;src:url(https://fonts.gstatic.com/s/ptsanscaption/v13/0FlMVP6Hrxmt7-fsUFhlFXNIlpcafg_xYS2ix0YK.woff2) format('woff2');unicode-range:U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;}
-            @font-face{font-family:'PT Sans Caption';font-style:normal;font-weight:400;font-display:swap;src:url(https://fonts.gstatic.com/s/ptsanscaption/v13/0FlMVP6Hrxmt7-fsUFhlFXNIlpcadA_xYS2ix0YK.woff2) format('woff2');unicode-range:U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;}
-            @font-face{font-family:'PT Sans Caption';font-style:normal;font-weight:400;font-display:swap;src:url(https://fonts.gstatic.com/s/ptsanscaption/v13/0FlMVP6Hrxmt7-fsUFhlFXNIlpcaeg_xYS2ixw.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;}
-            @font-face{font-family:'PT Sans Caption';font-style:normal;font-weight:400;font-display:swap;src:url(https://fonts.gstatic.com/s/ptsanscaption/v13/0FlMVP6Hrxmt7-fsUFhlFXNIlpcadw_xYS2ix0YK.woff2) format('woff2');unicode-range:U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;}
-            @font-face{font-family:'PT Sans Caption';font-style:normal;font-weight:400;font-display:swap;src:url(https://fonts.gstatic.com/s/ptsanscaption/v13/0FlMVP6Hrxmt7-fsUFhlFXNIlpcafg_xYS2ix0YK.woff2) format('woff2');unicode-range:U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;}
-            @font-face{font-family:'PT Sans Caption';font-style:normal;font-weight:400;font-display:swap;src:url(https://fonts.gstatic.com/s/ptsanscaption/v13/0FlMVP6Hrxmt7-fsUFhlFXNIlpcadA_xYS2ix0YK.woff2) format('woff2');unicode-range:U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;}
-            @font-face{font-family:'PT Sans Caption';font-style:normal;font-weight:400;font-display:swap;src:url(https://fonts.gstatic.com/s/ptsanscaption/v13/0FlMVP6Hrxmt7-fsUFhlFXNIlpcaeg_xYS2ixw.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;}
-            @font-face{font-family:'PT Sans Caption';font-style:normal;font-weight:400;font-display:swap;src:url(https://fonts.gstatic.com/s/ptsanscaption/v13/0FlMVP6Hrxmt7-fsUFhlFXNIlpcadw_xYS2ix0YK.woff2) format('woff2');unicode-range:U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;}
-            @font-face{font-family:'PT Sans Caption';font-style:normal;font-weight:400;font-display:swap;src:url(https://fonts.gstatic.com/s/ptsanscaption/v13/0FlMVP6Hrxmt7-fsUFhlFXNIlpcafg_xYS2ix0YK.woff2) format('woff2');unicode-range:U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;}
-            @font-face{font-family:'PT Sans Caption';font-style:normal;font-weight:400;font-display:swap;src:url(https://fonts.gstatic.com/s/ptsanscaption/v13/0FlMVP6Hrxmt7-fsUFhlFXNIlpcadA_xYS2ix0YK.woff2) format('woff2');unicode-range:U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;}
-            @font-face{font-family:'PT Sans Caption';font-style:normal;font-weight:400;font-display:swap;src:url(https://fonts.gstatic.com/s/ptsanscaption/v13/0FlMVP6Hrxmt7-fsUFhlFXNIlpcaeg_xYS2ixw.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;}
 </style>
     </head>
 
@@ -397,7 +385,7 @@
                     </div>
                 </div>
                 <div class="flex___2XWAk navLinksWrapper___1I469">
-                    <a class="link___3OiRu typography-subheading-m" href="http://localhost:8001">
+                    <a class="link___3OiRu typography-subheading-m" href="{{ url('') }}">
                         <span class="linkLabel___ot3V1">Inicio</span>
                     </a>
                     <a class="link___3OiRu typography-body-m active___2JazE" href="http://localhost:8001/us/search?searchQuery=invitation">
@@ -420,14 +408,12 @@
                         <div class="context-header ">
                             <div class="grid-container ">
                                 <nav class="breadcrumbs h-text-truncate ">
-                                    <a href="/">Home</a>
-                                    <a href="/category/all">Files</a>
-                                    <a class="js-breadcrumb-category" 
-                                        href="https://graphicriver.net/print-templates">Print Templates</a>
-                                    <a class="js-breadcrumb-category" 
-                                        href="https://graphicriver.net/print-templates/flyers">Flyers</a>
-                                    <a class="js-breadcrumb-category" 
-                                        href="https://graphicriver.net/print-templates/flyers/events">Events</a>
+                                    <a href="{{ url('') }}">Home</a>
+                                    @foreach ($breadcrumbs as $breadcrumb)
+                                        <a class="js-breadcrumb-category" 
+                                            href="{{ $breadcrumb->url }}">{{ $breadcrumb->name }}</a>
+                                    @endforeach
+                                    
                                 </nav>
                                 <div class="item-header" data-view="itemHeader">
                                     <div class="item-header__top">
@@ -541,7 +527,7 @@
                                                         <td class="meta-attributes__attr-name">Category</td>
                                                         <td class="meta-attributes__attr-detail">
                                                             <a rel="nofollow" href="/attributes/print-dimensions/4x4">
-                                                                {{ $template->category }}
+                                                                {{ $breadcrumb->name }}
                                                             </a>
                                                         </td>
                                                     </tr>

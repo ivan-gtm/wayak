@@ -42,63 +42,6 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
 class AdminController extends Controller
 {
-    function registerMissingTemplatesOnDB(){
-        $template_keys = Redis::keys('template:*:jsondata');
-        foreach ($template_keys as $template_key) {
-            $template_key = str_replace('template:', null, $template_key);
-            $template_key = str_replace(':jsondata', null, $template_key);
-
-            $thumbnail_rows = DB::table('thumbnails')
-                ->where('template_id','=',$template_key)
-                ->count();
-
-            if( $thumbnail_rows == 0 ){
-
-                $path = public_path().'/design/template/' . $template_key.'/thumbnails/';
-                $preview_path = public_path().'/design/template/' . $template_key.'/assets/';
-                File::makeDirectory($path, $mode = 0777, true, true);
-    
-                if (file_exists( $preview_path . 'preview.jpg')) {
-                    File::move($preview_path. 'preview.jpg', $path. 'preview.jpg');    
-                }
-                
-                if( Redis::exists('crello:template:'.$template_key) ){
-                    // echo "<pre>";
-                    // print_r( json_decode( Redis::get('crello:template:'.$template_key) ) );
-                    $template_obj = json_decode( Redis::get('crello:template:'.$template_key) );
-                    
-                    DB::table('thumbnails')->insert([
-                        'id' => null,
-                        'template_id' => $template_key,
-                        'title' => htmlspecialchars_decode( $template_obj->title ),
-                        'filename' => 'preview.jpg',
-                        'tmp_original_url' => null,
-                        'dimentions' => '4x7 in',
-                        'tmp_templates' => $template_key,
-                        'status' => 1
-                    ]);
-
-                }
-                // exit;
-            } else {
-                // $thumbnail_info = DB::table('thumbnails')
-                //     ->where('template_id','=',$template_key)
-                //     ->first();
-                // echo "<pre>";
-                // print_r( $thumbnail_info );
-                // exit;
-            }
-
-            // print_r($path);
-            // // print_r($template_key);
-            // exit;
-            // print_r($thumb_info);
-            // exit;
-        }
-
-        echo sizeof( Redis::keys('template:*:jsondata') );
-    }
-
     function generarModeloMercadoPago($template_key){
         // echo "<pre>";
         // print_r($template_key);

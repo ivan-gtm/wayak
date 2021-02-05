@@ -23,3 +23,4 @@ yarn-error.log
 /public/product/preview-images/*
 **/.DS_Store
 php
+public/corjl/*

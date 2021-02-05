@@ -30,14 +30,31 @@ services:
       - ./:/application:cached
     depends_on:
       - wayak-server
-
-  redis:
+  redis_dev:
     image: redis:alpine
     ports:
       - "6379:6379"
     command: --port 6379
     expose:
         - "6379"
+    volumes:
+      - .cloud/redis/data/dev:/data
+  redis_uat:
+    image: redis:alpine
+    ports:
+      - "6380:6380"
+    command: --port 6380
+    expose:
+        - "6380"
+    volumes:
+      - .cloud/redis/data:/data
+  redis_pro:
+    image: redis:alpine
+    ports:
+      - "6381:6381"
+    command: --port 6381
+    expose:
+        - "6381"
     volumes:
       - .cloud/redis/data:/data
   mongo:
@@ -46,18 +63,16 @@ services:
       - .cloud/mongodb/data:/data/db
     ports:
       - "27017:27017"
-  # nodejs:
-  #   build:
-  #     context: ./.cloud/nodejs
-  #   ports:
-  #     - 8080:8080
-  #     - 9229:9229
-  #   environment:
-  #     - SERVER_PORT=8080
-  #     - DATABASE_CONNECTIONSTRING=mongodb://mongo:27017/notes
-  #   volumes:
-  #     - ./.cloud/nodejs:/usr/src/app
-  #   # command: npm run debug
+  nodejs:
+    build:
+      context: ./.cloud/nodejs
+    ports:
+      - 8080:8080
+    environment:
+      - SERVER_PORT=8080
+    volumes:
+      - ./.cloud/nodejs:/usr/src/app
+    # command: npm run debug
   # elastic:
   #   image: docker.elastic.co/elasticsearch/elasticsearch:7.9.3
   #   # container_name: es01

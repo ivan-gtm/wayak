@@ -236,7 +236,7 @@ class CrelloController extends Controller
                 
                 if( isset($template_obj->id) ){
                     $template_id = $template_obj->id;
-                    if( Redis::exists('template:'.$template_id.':jsondata') == false ){
+                    if( Redis::exists('template:en:'.$template_id.':jsondata') == false ){
                         
                         if($template_obj->measureUnits == 'inch'){
                             $dummy_template[0] = str_replace(1728, ceil($template_obj->width *100) , $dummy_template[0]);
@@ -262,7 +262,7 @@ class CrelloController extends Controller
                             foreach( $template_pages->elements as $element ){
                                 // print_r($element);
                                 // exit;
-                                if( $element->type == 'imageElement'){
+                                if( $element->type == 'imageElement' && isset($element->mediaId) ){
                                     $new_img_obj = self::transformToImgObj($base_img_obj, $template_id, $element, $template_obj->measureUnits );
                                     $page_objects[] = $new_img_obj;
                                 } elseif( $element->type == 'maskElement'){
@@ -270,14 +270,12 @@ class CrelloController extends Controller
                                     if( isset( $element->elements ) ){
                                         
                                         foreach ($element->elements as $subelement) {
-                                            if( $subelement->type == 'imageElement'){
+                                            if( $subelement->type == 'imageElement' && isset($subelement->mediaId)){
             
                                                 $subelement->top = $element->top;
                                                 $subelement->left = $element->left;
-
                                                 // print_r($subelement);
                                                 // exit;
-            
                                                 $new_img_obj = self::transformToImgObj($base_img_obj, $template_id, $subelement, $template_obj->measureUnits);
                                                 $page_objects[] = $new_img_obj;
                                             } elseif( $subelement->type == 'textElement'){
@@ -303,7 +301,7 @@ class CrelloController extends Controller
                         $dummy_template[1]->objects = $page_objects;
 
                         // Redis::set('template:18625:jsondata', json_encode($dummy_template));
-                        Redis::set('template:'.$template_id.':jsondata', json_encode($dummy_template));
+                        Redis::set('template:en:'.$template_id.':jsondata', json_encode($dummy_template));
                     }
                 } else {
                     // print_r($template_obj);
@@ -411,20 +409,34 @@ class CrelloController extends Controller
         $tmp_obj = new \StdClass;;
         $tmp_obj = clone($base_img_obj);
 
-        $asset_id = $element->mediaId;
+        // if(isset($element->mediaId)){
+            $asset_id = $element->mediaId;
 
-        $tmp_obj->src = 'http://localhost:8001/design/template/'.$template_id.'/assets/'.$asset_id.'.jpg';
-        
-        $file_exists = false;
-        
-        if( file_exists( public_path('/design/template/'.$template_id.'/assets/'.$asset_id.'.jpg') ) ){
-            print_r('PARSING:>> '.'/design/template/'.$template_id.'/assets/'.$asset_id.'.jpg'."\n");
-            try {
-                list($img_width, $img_height, $img_type, $img_attr) = getimagesize(public_path('/design/template/'.$template_id.'/assets/'.$asset_id.'.jpg'));
-            } catch (\Throwable $th) {
-                echo "Error >> ".public_path('/design/template/'.$template_id.'/assets/'.$asset_id.'.jpg');
-                Redis::set('crello:missing_assets:'.$template_id.':'.$asset_id,1);
-                // throw $th;
+            $tmp_obj->src = 'http://localhost:8001/design/template/'.$template_id.'/assets/'.$asset_id.'.jpg';
+            
+            $file_exists = false;
+            
+            if( file_exists( public_path('/design/template/'.$template_id.'/assets/'.$asset_id.'.jpg') ) ){
+                print_r('PARSING:>> '.'/design/template/'.$template_id.'/assets/'.$asset_id.'.jpg'."\n");
+                try {
+                    list($img_width, $img_height, $img_type, $img_attr) = getimagesize(public_path('/design/template/'.$template_id.'/assets/'.$asset_id.'.jpg'));
+                } catch (\Throwable $th) {
+                    echo "Error >> ".public_path('/design/template/'.$template_id.'/assets/'.$asset_id.'.jpg');
+                    Redis::set('crello:missing_assets:'.$template_id.':'.$asset_id,1);
+                    // throw $th;
+                    if($unit == 'inch'){
+                        $img_width = ceil( $element->width *1.125);
+                        $img_height = ceil( $element->height*1.125 );
+                    } else {
+                        $img_width = ceil( $element->width / 3.125);
+                        $img_height = ceil( $element->height/ 3.125 );
+                    }
+
+                }
+            } else {
+                
+                Redis::set('crello:missing_assets:'.$template_id,1);
+
                 if($unit == 'inch'){
                     $img_width = ceil( $element->width *1.125);
                     $img_height = ceil( $element->height*1.125 );
@@ -432,33 +444,24 @@ class CrelloController extends Controller
                     $img_width = ceil( $element->width / 3.125);
                     $img_height = ceil( $element->height/ 3.125 );
                 }
-
             }
-        } else {
-            
-            Redis::set('crello:missing_assets:'.$template_id,1);
 
             if($unit == 'inch'){
-                $img_width = ceil( $element->width *1.125);
-                $img_height = ceil( $element->height*1.125 );
+                $tmp_obj->top = ceil( (( isset($element->top) == false ) ? $element->position->top : $element->top) *1.125 ) ;
+                $tmp_obj->left = ceil( (( isset($element->left) == false ) ? $element->position->left : $element->left) *1.125 );
             } else {
-                $img_width = ceil( $element->width / 3.125);
-                $img_height = ceil( $element->height/ 3.125 );
+                $tmp_obj->top = ceil( (( isset($element->top) == false ) ? $element->position->top : $element->top) / 3.125 ) ;
+                $tmp_obj->left = ceil( (( isset($element->left) == false ) ? $element->position->left : $element->left) / 3.125 );
             }
-        }
 
-        if($unit == 'inch'){
-            $tmp_obj->top = ceil( (( isset($element->top) == false ) ? $element->position->top : $element->top) *1.125 ) ;
-            $tmp_obj->left = ceil( (( isset($element->left) == false ) ? $element->position->left : $element->left) *1.125 );
-        } else {
-            $tmp_obj->top = ceil( (( isset($element->top) == false ) ? $element->position->top : $element->top) / 3.125 ) ;
-            $tmp_obj->left = ceil( (( isset($element->left) == false ) ? $element->position->left : $element->left) / 3.125 );
-        }
-
-        $tmp_obj->width = $img_width;
-        $tmp_obj->height = $img_height;
-        $tmp_obj->angle = isset( $element->angle ) ? $element->angle : null;
-        $tmp_obj->opacity = isset($element->opacity) ? $element->opacity : 1;
+            $tmp_obj->width = $img_width;
+            $tmp_obj->height = $img_height;
+            $tmp_obj->angle = isset( $element->angle ) ? $element->angle : null;
+            $tmp_obj->opacity = isset($element->opacity) ? $element->opacity : 1;
+        // } else {
+        //     // print_r($element);
+        //     // exit;
+        // }
 
         return $tmp_obj;
     }

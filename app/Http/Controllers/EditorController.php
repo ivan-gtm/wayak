@@ -842,6 +842,14 @@ class EditorController extends Controller
 			$full_thumbnail_path = public_path($img_path.$rand_filename_id.'_large.jpg');
 			$img->save($full_thumbnail_path);
 
+			
+			$img->resize(null, 600, function($constraint) {
+				$constraint->aspectRatio();
+			});
+
+			$product_preview_thumbnail_path = public_path($img_path.$rand_filename_id.'_product_preview.jpg');
+			$img->save($product_preview_thumbnail_path);
+
 			// Guardar en S3
 			// Storage::disk('s3')->put($img_path.$unique_id.'.jpg', $full_thumbnail_path);
 
@@ -852,7 +860,14 @@ class EditorController extends Controller
 
 			$full_minithumbnail_path = public_path($img_path.$rand_filename_id.'_thumbnail.jpg');
 			$img->save($full_minithumbnail_path);
+			
+			$img->resize(null, 256, function($constraint) {
+				$constraint->aspectRatio();
+			});
 
+			$carousel_thumbnail_path = public_path($img_path.$rand_filename_id.'_carousel.jpg');
+			$img->save($carousel_thumbnail_path);
+			
 			return [
 				'thumbnail' => $rand_filename_id.'_thumbnail.jpg',
 				'preview' => $rand_filename_id.'_large.jpg'
@@ -1035,70 +1050,19 @@ class EditorController extends Controller
 		// 	// print_r( str_replace('template:','template:en:',$original_template_key) );
 		// 	// print_r("\n");
 		// }
-
 		// exit;
 
-		// $array_final = [];
-		// $error = 1;
-		// $options = "";
+		$array_final = $this->getJSONTemplate($template_ids,$language_code);
+		// $options = array(
+		// 	'width' => 200,
+		// 	'height' => 400,
+		// 	'metrics' => '9x7',
+		// 	'type' => '',
+		// 	'instructionsId' => '',
+		// 	'scriptVersion' => 4
+		// );
 
-		// echo $template_ids;
-		// exit;
-
-		// // $array_final =  stripslashes(stripslashes($response));
-
-		// // $array_final =  str_replace('["','[', $array_final);
-
-		// // // $array_final =  str_replace('"]"',']', $array_final);
-		// // // $array_final =  str_replace('\\\"','"', $response);
-		// // // $array_final =  str_replace('\\"','"', $response);
-
-		// // $array_final =  str_replace('{\\','{', $array_final);
-		// // $array_final =  str_replace('"{','{', $array_final);
-		// // $array_final =  str_replace('}"','}', $array_final);
-		// // $array_final =  str_replace(']"',']', $array_final);
-		// // $array_final =  str_replace('\"','"', $array_final);
-
-		// $template = DB::table('templates')
-		// 		->select('*')
-		// 		->where('template_id','=',$template_ids)
-		// 		->first();
-
-	    // if(isset($template)){
-		// 	// printf("La selección devolvió %d filas.\n", $template->num_rows);
-
-		// 	// echo "<pre>";
-		// 	// print_r($template);
-		// 	// exit;
-
-
-			$array_final = $this->getJSONTemplate($template_ids,$language_code);
-			// $array_final = str_replace("\n", '\\n', $array_final);
-			// $array_final = preg_replace("/\"width\"/", '\\\"width\\\"', $array_final,1);
-			// $array_final = preg_replace("/\"height\"/", '\\\"height\\\"', $array_final,1);
-			// $array_final = preg_replace("/\"rows\"/", '\\\"rows\\\"', $array_final,1);
-			// $array_final = preg_replace("/\"cols\"/", '\\\"cols\\\"', $array_final,1);
-
-			// echo "<pre>";
-			// print_r($array_final);
-			// exit;
-
-			// $array_final =  str_replace('["{"','[{"', $array_final);
-			// $array_final =  str_replace('",{',',{', $array_final);
-
-			// $options = array(
-			// 	'width' => 200,
-			// 	'height' => 400,
-			// 	'metrics' => '9x7',
-			// 	'type' => '',
-			// 	'instructionsId' => '',
-			// 	'scriptVersion' => 4
-			// );
-
-			// $options = json_encode($options);
-
-			// $error = 0;
-		// }
+		// $options = json_encode($options);
 
 		echo json_encode(
 			array(
@@ -1123,12 +1087,12 @@ class EditorController extends Controller
 
 	function getWoffFontUrl(Request $request){
 		// {"success":true,"url":"https:\/\/templett.com\/design\/fonts_new\/KG_Second_Chances_Solid_1537862439.woff"}
-		$font_id = $request['font_id'];
 		$success = false;
 		$font_url = null;
-
-		if( isset($font_id) ){
-
+		
+		if( isset($request->font_id) ){
+			$font_id = $request->font_id;
+			
 			$font_info = DB::table('fonts')
 				->select('name')
 				->where('font_id','=',$font_id)
