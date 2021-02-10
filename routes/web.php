@@ -9,16 +9,24 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\greenController;
 use App\Http\Controllers\DesygnerController;
 use App\Http\Controllers\CrelloController;
-use App\Http\Controllers\overController;
+use App\Http\Controllers\OverController;
 use App\Http\Controllers\canvaController;
 use App\Http\Controllers\PlaceitController;
 use App\Http\Controllers\CorjlController;
+use App\Http\Controllers\FocoController;
 
 use App\Http\Controllers\EtsyScrapperController;
 use App\Http\Controllers\TemplettScrapperController;
 
-Route::get('/scrapper/over', [overController::class, 'index']);
-Route::get('/scrapper/canva', [canvaController::class, 'index']);
+// OVER
+    Route::get('/scrapper/over', [OverController::class, 'index']);
+// FOCO
+    Route::get('/scrapper/foco', [FocoController::class, 'index']);
+// CANVA
+    Route::get('/scrapper/canva', [canvaController::class, 'index']);
+    Route::get('/scrapper/canva/convert-json/{template_key}', [canvaController::class, 'convertToJSON']);
+    Route::post('/scrapper/canva/convert-json/{template_key}', [canvaController::class, 'convertToJSON'])->name('canva.convertToJSON');
+
 Route::get('/scrapper/corjl', [CorjlController::class, 'index']);
 Route::get('/scrapper/templett', [TemplettScrapperController::class, 'downloadOriginalTemplate']);
 Route::get('/scrapper/templett/keynames', [TemplettScrapperController::class, 'migrateTemplateKeyNames']);
@@ -44,6 +52,7 @@ Route::get('/scrapper/templett/keynames', [TemplettScrapperController::class, 'm
         Route::get('/admin/template/edit/{language_code}/{template_key}', [EditorController::class, 'adminTemplateEditor'])->name('admin.edit.template');
         // TEMPORAL
         Route::get('/admin/refactor', [AdminController::class, 'refactor'])->name('admin.keyrefactor');
+        Route::get('/admin/thumbnail-generation', [AdminController::class, 'thumbnailGeneration'])->name('admin.thumbnailGeneration');
 
     // TEMPLATES TRANLATION
         Route::get('/admin/bulk-translate/{from}/{to}', [AdminController::class, 'bulkTranslate'])->name('admin.bulkTranslateText');

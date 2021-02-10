@@ -45,119 +45,119 @@ class ContentController extends Controller
             'items' => $search_result
         ];
 
-        $search_result = Template::where('title', 'like', '%unicorn%')
-            ->where('width','=','5')
-            ->where('height','=','7')
-            ->take(40)
-            ->get([
-                'title',
-                'previewImageUrls',
-                'width',
-                'height',
-                'forSubscribers',
-                'previewImageUrls'
-            ]);
+        // $search_result = Template::where('title', 'like', '%unicorn%')
+        //     ->where('width','=','5')
+        //     ->where('height','=','7')
+        //     ->take(40)
+        //     ->get([
+        //         'title',
+        //         'previewImageUrls',
+        //         'width',
+        //         'height',
+        //         'forSubscribers',
+        //         'previewImageUrls'
+        //     ]);
 
-        $carousels[] = [
-            'slider_id' => Str::random(5),
-            'title' => 'Unicorn',
-            'items' => $search_result
-        ];
+        // $carousels[] = [
+        //     'slider_id' => Str::random(5),
+        //     'title' => 'Unicorn',
+        //     'items' => $search_result
+        // ];
 
-        $search_result = Template::where('title', 'like', '%save the date%')
-            ->where('width','=','5')
-            ->where('height','=','7')
-            ->take(40)
-            ->get([
-                'title',
-                'previewImageUrls',
-                'width',
-                'height',
-                'forSubscribers',
-                'previewImageUrls'
-            ]);
+        // $search_result = Template::where('title', 'like', '%save the date%')
+        //     ->where('width','=','5')
+        //     ->where('height','=','7')
+        //     ->take(40)
+        //     ->get([
+        //         'title',
+        //         'previewImageUrls',
+        //         'width',
+        //         'height',
+        //         'forSubscribers',
+        //         'previewImageUrls'
+        //     ]);
 
-        $carousels[] = [
-            'slider_id' => Str::random(5),
-            'title' => 'Templates for "Wedding Invitations"',
-            'items' => $search_result
-        ];
+        // $carousels[] = [
+        //     'slider_id' => Str::random(5),
+        //     'title' => 'Templates for "Wedding Invitations"',
+        //     'items' => $search_result
+        // ];
 
-        $search_result = Template::where('title', 'like', '%floral%wedding%invitation%')
-            ->where('width','=','5')
-            ->where('height','=','7')
-            ->take(40)
-            ->get([
-                'title',
-                'previewImageUrls',
-                'width',
-                'height',
-                'forSubscribers',
-                'previewImageUrls'
-            ]);
+        // $search_result = Template::where('title', 'like', '%floral%wedding%invitation%')
+        //     ->where('width','=','5')
+        //     ->where('height','=','7')
+        //     ->take(40)
+        //     ->get([
+        //         'title',
+        //         'previewImageUrls',
+        //         'width',
+        //         'height',
+        //         'forSubscribers',
+        //         'previewImageUrls'
+        //     ]);
 
-        $carousels[] = [
-            'slider_id' => Str::random(5),
-            'title' => 'Templates for "Wedding Invitations"',
-            'items' => $search_result
-        ];
+        // $carousels[] = [
+        //     'slider_id' => Str::random(5),
+        //     'title' => 'Templates for "Wedding Invitations"',
+        //     'items' => $search_result
+        // ];
 
-        $search_result = Template::where('title', 'like', '%birthday%')
-            ->where('width','=','5')
-            ->where('height','=','7')
-            ->take(40)
-            ->get([
-                'title',
-                'previewImageUrls',
-                'width',
-                'height',
-                'forSubscribers',
-                'previewImageUrls'
-            ]);
+        // $search_result = Template::where('title', 'like', '%birthday%')
+        //     ->where('width','=','5')
+        //     ->where('height','=','7')
+        //     ->take(40)
+        //     ->get([
+        //         'title',
+        //         'previewImageUrls',
+        //         'width',
+        //         'height',
+        //         'forSubscribers',
+        //         'previewImageUrls'
+        //     ]);
 
-        $carousels[] = [
-            'slider_id' => Str::random(5),
-            'title' => 'Birthday Invitation Templates',
-            'items' => $search_result
-        ];
+        // $carousels[] = [
+        //     'slider_id' => Str::random(5),
+        //     'title' => 'Birthday Invitation Templates',
+        //     'items' => $search_result
+        // ];
 
-        $search_result = Template::where('title', 'like', '%glitter%')
-            ->where('width','=','5')
-            ->where('height','=','7')
-            ->take(40)
-            ->get([
-                'title',
-                'previewImageUrls',
-                'width',
-                'height',
-                'forSubscribers',
-                'previewImageUrls'
-            ]);
+        // $search_result = Template::where('title', 'like', '%glitter%')
+        //     ->where('width','=','5')
+        //     ->where('height','=','7')
+        //     ->take(40)
+        //     ->get([
+        //         'title',
+        //         'previewImageUrls',
+        //         'width',
+        //         'height',
+        //         'forSubscribers',
+        //         'previewImageUrls'
+        //     ]);
 
-        $carousels[] = [
-            'slider_id' => Str::random(5),
-            'title' => 'Glitter',
-            'items' => $search_result
-        ];
+        // $carousels[] = [
+        //     'slider_id' => Str::random(5),
+        //     'title' => 'Glitter',
+        //     'items' => $search_result
+        // ];
         
-        $search_result = Template::where('title', 'like', '%tropical%')
-            ->where('width','=','5')
-            ->where('height','=','7')
-            ->take(40)
-            ->get([
-                'title',
-                'previewImageUrls',
-                'width',
-                'height',
-                'forSubscribers',
-                'previewImageUrls'
-            ]);
+        // $search_result = Template::where('title', 'like', '%tropical%')
+        //     ->where('width','=','5')
+        //     ->where('height','=','7')
+        //     ->take(40)
+        //     ->get([
+        //         'title',
+        //         'previewImageUrls',
+        //         'width',
+        //         'height',
+        //         'forSubscribers',
+        //         'previewImageUrls'
+        //     ]);
 
-        $carousels[] = [
-            'slider_id' => Str::random(5),
-            'title' => 'Tropical',
-            'items' => $search_result
-        ];
+        // $carousels[] = [
+        //     'slider_id' => Str::random(5),
+        //     'title' => 'Tropical',
+        //     'items' => $search_result
+        // ];
         
         // echo "<pre>";
         // print_r($carousels);
@@ -208,7 +208,8 @@ class ContentController extends Controller
         }
         
         // echo "<pre>";
-        // print_r($this->bread_array);
+        // // // print_r($this->bread_array);
+        // print_r($template);
         // exit;
 
         return view('content.product-detail',[

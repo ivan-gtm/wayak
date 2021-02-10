@@ -154,7 +154,13 @@ class MigrateToMongo extends Command
                 $template->template = [];
                 $template->driveFileIds = [];
                 $template->previewImageUrls = [
-                    $db_template->filename
+                    // $db_template->filename
+                    'carousel' => str_replace('_thumbnail.jpg', '_carousel.jpg', $db_template->filename),
+                    'large' => str_replace('_thumbnail.jpg', '_large.jpg', $db_template->filename),
+                    'product_preview' => str_replace('_thumbnail.jpg', '_product_preview.jpg', $db_template->filename),
+                    'thumbnail' => str_replace('_thumbnail.jpg', '_thumbnail.jpg', $db_template->filename)
+                    // ZyfN84_T2AChoNyOM_carousel.jpg
+                    // ZyfN84_T2AChoNyOM_product_preview.jpg
                 ];
                 $template->suitability = [
                     "web"

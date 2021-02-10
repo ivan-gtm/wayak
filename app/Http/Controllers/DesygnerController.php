@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Facades\DB;
 
 ini_set("max_execution_time", 0);   // no time-outs!
 ini_set("request_terminate_timeout", 2000);   // no time-outs!
@@ -33,46 +34,36 @@ class DesygnerController extends Controller
         // }
 
         // SCRAPP TEMPLATES
-        // $desygner_keys = Redis::keys('desygner:search:results:*');
-        // $tota_pages = sizeof($desygner_keys);
-
-        // for ($page=0; $page < $tota_pages; $page++) { 
-        //     $search_results = json_decode(Redis::get($desygner_keys[$page]));
-        //     // echo "<pre>";
-        //     // print_r($search_results);
-        //     // exit;
-        //     foreach ($search_results as $template) {
-        //         echo "<pre>";
-        //         // print_r($template);
-        //         self::downloadTemplateThumbnail($template->encoded_id, $template->cover);
-        //         self::getTemplate($template->encoded_id);
-        //         // exit;
-        //     }
-        // }
-        // exit;
+        self::translateTemplates();
+        exit;
 
         // SCRAPP TEMPLATES FROM THUMB URL's
-        // $thumb_urls = self::getThumbnailURLs();
+        $thumb_urls = self::getThumbnailURLs();
         
-        // $tota_pages = sizeof($thumb_urls);
+        $total_pages = sizeof($thumb_urls);
         
-        // for ($template_index=0; $template_index < $tota_pages; $template_index++) { 
+        for ($template_index=0; $template_index < $total_pages; $template_index++) { 
             
-        //     $template_cover = $thumb_urls[$template_index];
-        //     $template_id = str_replace('https://s3.amazonaws.com/virginia.webrand.com/virginia/344/',null, $thumb_urls[$template_index]);
-        //     $template_id = substr( $template_id, 0, strrpos( $template_id, "/") );
+            $template_thumbnail_url = $thumb_urls[$template_index];
+            $url_info = pathinfo($template_thumbnail_url);
+            $template_id = str_replace('https://s3.amazonaws.com/virginia.webrand.com/virginia/344/',null, $thumb_urls[$template_index]);
+            $template_id = substr( $template_id, 0, strrpos( $template_id, "/") );
             
-        //     // echo $template_id;
-        //     // exit;
+            // echo $template_id;
+            // exit;
 
-        //     echo "<pre>";
-        //     print_r( " TEMPLATE ID >> ". $template_id );
+            echo "<pre>";
+            print_r( " TEMPLATE ID >> ". $template_id );
+            // exit;
 
-        //     self::downloadTemplateThumbnail($template_id, $template_cover);
-        //     self::getTemplate($template_id);
+            self::downloadTemplateThumbnail($template_id, $url_info['basename'], $template_thumbnail_url);
+            self::registerThumbOnDB($template_id, $url_info['basename']);
 
-        // }        
-        // exit;
+            self::getTemplate($template_id);
+            // exit;
+
+        }        
+        exit;
 
         
         
@@ -91,7 +82,7 @@ class DesygnerController extends Controller
 
             if(isset( $template_assets->pageContent )){
 
-                $pattern = "/https:\/\/static.webrand.com\/virginia\/(original|web|tab|mobile|thumb)(\/\d+)*\/[A-Za-z0-9_-]*.jpg/";
+                $pattern = "/https:\/\/static.webrand.com\/virginia\/(original|web|tab|mobile|thumb)(\/\d+)*\/[A-Za-z0-9_-]*.(jpg|png|svg)/";
                 $pattern_img = "/\"https:\/\/static.webrand.com\/.+\/(photo[A-Za-z0-9_-]*)\"/";
 
                 $pattern = "/\<image.+xlink:href=\"(.+)\".+\/\>/";
@@ -155,6 +146,292 @@ class DesygnerController extends Controller
 
     }
 
+    function translateTemplates(){
+
+        $desygner_keys = Redis::keys('desygner:search:results:*');
+        $total_pages = sizeof($desygner_keys);
+        // print_r($total_pages);
+        // exit;
+
+        for ($page=0; $page < $total_pages; $page++) { 
+            $search_results = json_decode(Redis::get($desygner_keys[$page]));
+            // echo "<pre>";
+            // print_r($search_results);
+            // exit;
+
+            foreach ($search_results as $template) {
+                
+                // echo "<pre>";
+                // print_r($template);
+                // exit;
+                
+                $template_id = $template->encoded_id;
+                $template_name = $template->name;
+                $template_svg_content = json_decode(Redis::get('desygner:template:'.$template_id));
+                
+                // print_r($template_svg_content->pageContent);
+                // exit;
+
+                $template_json_content = json_decode(self::svgToJSON($template_svg_content->pageContent));
+                
+                // echo "<pre>";
+                // print_r('x');
+                // exit;
+                
+                self::extractPageMetadata($template_json_content);
+                
+                $template_metadata = Redis::get('wayak:tmp:desygner:template:metadata');
+                $template_metadata = json_decode($template_metadata);
+                Redis::del('wayak:tmp:desygner:template:metadata');
+                
+                
+                $height = $template_json_content->children[0]->properties->height;
+                $width = $template_json_content->children[0]->properties->width;
+
+                self::buildTemplateMetadata($template_id, $width, $height, $template_name, $template_metadata);
+                // exit;
+
+                // echo "<pre>";
+                // echo "\n<br> >>";
+                // print_r($template_metadata);
+                // exit;
+
+                // self::downloadTemplateThumbnail($template->encoded_id, $template->cover);
+                // self::getTemplate($template->encoded_id);
+            }
+        }
+    }
+
+    function buildTemplateMetadata($template_id, $width, $height, $template_name, $template_metadata){
+        // $new_template_id = self::generateRandString();
+        $new_template_id = $template_id;
+        $measureUnits = 'px';
+        $original_width = $width;
+        $original_height = $height;
+        
+        $base_json = '["{\"width\": 1728.00, \"height\": 2304.00, \"rows\": 1, \"cols\": 1}",{"version":"2.7.0","objects":[{"type":"image","version":"2.7.0","originX":"center","originY":"center","left":903.969858637,"top":1291.4128696969,"width":4878,"height":6757,"fill":"rgb(0,0,0)","stroke":null,"strokeWidth":0,"strokeDashArray":null,"strokeLineCap":"butt","strokeDashOffset":0,"strokeLineJoin":"miter","strokeMiterLimit":4,"scaleX":0.4035511785,"scaleY":0.4035511785,"angle":0,"flipX":false,"flipY":false,"opacity":1,"shadow":null,"visible":true,"clipTo":null,"backgroundColor":"","fillRule":"nonzero","paintFirst":"fill","globalCompositeOperation":"source-over","transformMatrix":null,"skewX":0,"skewY":0,"crossOrigin":"Anonymous","cropX":0,"cropY":0,"src":"https://dbzkr7khx0kap.cloudfront.net/11984_1548096343.png","locked":false,"selectable":true,"evented":true,"lockMovementX":false,"lockMovementY":false,"filters":[]},{"type":"textbox","version":"2.7.0","originX":"center","originY":"top","left":864,"top":1022.793,"width":521.6418220016,"height":257.414,"fill":"#666666","stroke":null,"strokeWidth":1,"strokeDashArray":null,"strokeLineCap":"butt","strokeDashOffset":0,"strokeLineJoin":"miter","strokeMiterLimit":4,"scaleX":1,"scaleY":1,"angle":0,"flipX":false,"flipY":false,"opacity":1,"shadow":null,"visible":true,"clipTo":null,"backgroundColor":"","fillRule":"nonzero","paintFirst":"fill","globalCompositeOperation":"source-over","transformMatrix":null,"skewX":0,"skewY":0,"text":"\nWelcome\n","fontSize":"67","fontWeight":"normal","fontFamily":"font30218","fontStyle":"normal","lineHeight":1.2,"underline":false,"overline":false,"linethrough":false,"textAlign":"center","textBackgroundColor":"","charSpacing":0,"minWidth":20,"splitByGrapheme":false,"selectable":true,"editable":true,"evented":true,"lockMovementX":false,"lockMovementY":false,"styles":{}}],"overlay":{"type":"pattern","source":"function(){return patternSourceCanvas.setDimensions({width:80*scale,height:80*scale}),patternSourceCanvas.renderAll(),patternSourceCanvas.getElement()}","repeat":"repeat","crossOrigin":"","offsetX":0,"offsetY":0,"patternTransform":null,"id":32},"cwidth":1728,"cheight":2304}]';
+        $base_json = json_decode($base_json);
+        
+        if($measureUnits == 'in'){
+            $base_json[0] = str_replace(1728, ceil($original_width *100) , $base_json[0]);
+            $base_json[0] = str_replace(2304, ceil($original_height *100 ) , $base_json[0]);
+
+            $width = ceil( $original_width *100);
+            $height = ceil( $original_height *100);    
+        } else {
+            $base_json[0] = str_replace(1728, ceil( $original_width  / 3.125) , $base_json[0]);
+            $base_json[0] = str_replace(2304, ceil( $original_height  / 3.125) , $base_json[0]);
+
+            $width = ceil( $original_width / 3.125);
+            $height = ceil( $original_height / 3.125);
+        }
+
+        // $base_json[0] = str_replace(1728, 480 , $base_json[0]);
+        // $base_json[0] = str_replace(2304, 672 , $base_json[0]);
+        $base_page = $base_json[1];
+        unset($base_json[1]);
+        $base_json = array_values($base_json);
+        
+        // print_r( $base_json );
+        // exit;
+
+        $page_objects = [];
+        $new_page_obj = clone($base_page);
+        $new_page_obj->cwidth = $width;
+        $new_page_obj->cwidth = $height;
+        
+        // Example image structure required for new json schema
+        $base_img_obj = $new_page_obj->objects[0];
+        
+        // Example text structure required for new json schema
+        $base_txt_obj = $new_page_obj->objects[1];
+        
+        
+        // print_r( "template_metadata>>" );
+        // echo "<pre>";
+        // print_r( $template_metadata );
+        // exit;
+
+        if(isset($template_metadata->images)){
+            foreach ($template_metadata->images as $page_img) {
+                
+                // print_r( $page_img->url );
+                // exit;
+                if( isset($page_img->url) ){
+                    $local_img_path = public_path('/desygner/design/template/'.$new_template_id.'/assets/');
+                    self::downloadImage( $page_img->url, $local_img_path,  $new_template_id);
+                }
+                
+                $path_info = pathinfo($page_img->url);
+                $new_img_obj = self::transformToImgObj($new_template_id, $base_img_obj, $path_info['basename'], $page_img );
+
+                $page_objects[] = $new_img_obj;
+            }
+        }
+
+        if(isset($template_metadata->text)){
+            foreach ($template_metadata->text as $page_txt_obj) {
+                // print_r( $page_txt_obj );
+                // exit;
+                $new_txt_obj = self::transformToTxtObj($base_txt_obj, $page_txt_obj, $measureUnits);
+                $page_objects[] = $new_txt_obj;
+            }
+        }
+
+        // echo "METADATA >>";
+        $new_page_obj->objects = $page_objects;
+        $new_page_obj->cwidth = $width;
+        $new_page_obj->cheight = $height;
+
+        $base_json[] = $new_page_obj;
+    
+
+        // DOWNLOAD THUMBNAIL 
+        // $thumb_url = $templates_obj->templates[$template_index]->thumb_url;
+        // $local_img_path = public_path().'/design/template/'.$new_template_id.'/thumbnails/en/';
+        // $file_name = self::downloadImage( $thumb_url, $local_img_path,  $new_template_id);
+        
+        // echo "<pre>";
+        // print_r($base_json);
+        // exit;
+
+        $final_json_template = json_encode($base_json);
+        
+        // print_r($base_json);
+        // print_r($final_json_template);
+        
+        // Saves template on wayak format
+        Redis::set('template:en:'.$new_template_id.':jsondata', $final_json_template);
+
+        print_r("\n".'  template:en:'.$new_template_id.':jsondata');
+
+        // $template_info['template_id'] = $new_template_id;
+        // $template_info['title'] = isset($original_template->config->title) ? $original_template->config->title : ' x ';
+        // $template_info['filename'] = $new_template_id.'_thumbnail.png';
+        // $template_info['dimentions'] = $dimentions;
+        
+        // self::registerThumbOnDB($new_template_id, $template_name, $file_name, $dimentions, $original_product_key);
+        self::registerTemplateOnDB($new_template_id, $template_name, null, null, $width, $height, $measureUnits);
+
+        
+    }
+
+    function transformToImgObj($new_template_id, $base_img_obj, $file_name, $img_obj){
+        
+        $tmp_obj = new \StdClass;;
+        $tmp_obj = clone($base_img_obj);
+        
+        // $img_path = public_path( str_replace('http://localhost:8001/', null, $file_name) );
+        // print_r($tmp_obj );
+        // print_r($img_obj );
+        // exit;
+
+        $tmp_obj->originX = 'left';
+        $tmp_obj->originY = 'top';
+        // $tmp_obj->top = ceil( $img_obj->y / 3.125 );
+        // $tmp_obj->left = ceil( $img_obj->x / 3.125 );
+        $tmp_obj->top = 0;
+        $tmp_obj->left = 0;
+        
+        $tmp_obj->scaleX = 0.1528156055;
+        $tmp_obj->scaleY = 0.1528156055;
+
+        
+        $path_info = pathinfo($img_obj->url);
+        $img_path = public_path('/design/template/'.$new_template_id.'/assets/'.$path_info['basename']);
+
+        if( file_exists($img_path) && filesize($img_path) > 0) {
+            list($width, $height, $type, $attr) = getimagesize($img_path);
+            
+            // print_r(getimagesize($img_path));
+            // exit;
+
+        }
+
+        $tmp_obj->width = $width;
+        $tmp_obj->height = $height;
+        $tmp_obj->src = asset('design/template/'.$new_template_id.'/assets/'.$file_name);
+        
+        // echo "<pre>";
+        // print_r($tmp_obj);
+        // exit;
+
+        return $tmp_obj;
+    }
+
+    function transformToTxtObj($base_txt_obj, $old_obj, $measureUnits){
+        $tmp_obj = new \StdClass;;
+        $tmp_obj = clone($base_txt_obj);
+
+        // print_r($old_obj->{'font-size'});
+
+         $fonts = DB::table('fonts')
+                ->select('font_id','name')
+                ->where('name', '=', $old_obj->{'font-family'})
+                ->first();
+
+        $tmp_obj->text = trim($old_obj->text);
+        $tmp_obj->textAlign = 'center';
+        $tmp_obj->originX = 'left';
+        // $tmp_obj->originY = 'top';
+        if( isset( $fonts->font_id ) ){
+            $tmp_obj->fontFamily = $fonts->font_id;
+        }
+        $tmp_obj->fill = $old_obj->{'fill'};
+        
+        $font_size = str_replace('px', null, $old_obj->{'font-size'});
+        // print_r($old_obj->{'font-size'});
+
+        // if($measureUnits == 'in'){
+            $tmp_obj->fontSize = ceil( $font_size / 3.125 );
+            $tmp_obj->top = ceil( $old_obj->y / 3.125 );
+            $tmp_obj->left = ceil( $old_obj->x / 3.125 );
+        // } else {
+        //     $tmp_obj->fontSize = ceil($font_size/ 3.125);
+        //     $tmp_obj->top = ceil( (( isset($old_obj->y) == false ) ? $old_obj->position->top : $old_obj->y ) / 3.125 );
+        //     $tmp_obj->left = ceil((( isset($old_obj->x) == false ) ? $old_obj->position->left : $old_obj->x) / 3.125);
+        // }
+
+        $tmp_obj->width = null;
+        $tmp_obj->height = null;
+        
+        // $tmp_obj->left = $old_obj->x;
+        // $tmp_obj->top = $old_obj->y;
+        
+        // echo "<pre>";
+        // print_r($old_obj);
+        // print_r($tmp_obj);
+        // exit;
+
+        return $tmp_obj;
+    }
+
+    function generateRandString($length = 15) {
+		$permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		return substr(str_shuffle($permitted_chars), 0, $length);
+	}
+
+    function registerTemplateOnDB($template_id, $name, $parent_template_id, $width, $height, $measureUnits){
+        
+        $thumbnail_rows = DB::table('templates')
+                            ->where('template_id','=',$template_id)
+                            ->count();
+    
+        if( $thumbnail_rows == 0 ){
+            DB::table('templates')->insert([
+                'id' => null,
+                'template_id' => $template_id,
+                'name' => htmlspecialchars_decode( $name ),
+                // 'fk_etsy_template_id' => $fk_etsy_template_id->id,
+                'status' => 0,
+                'parent_template_id' => $parent_template_id,
+                'width' => $width,
+                'height' => $height,
+                'metrics' => $measureUnits
+            ]);
+        }
+    }
+
     function downloadImageAsset($template_id, $img_url){
         
         set_time_limit(0);
@@ -165,7 +442,7 @@ class DesygnerController extends Controller
         // print_r($img_url_info);
         // exit;
         
-        $full_file_path = public_path( 'design/template/'.$template_id.'/assets/'.$img_url_info['basename'] );
+        $full_file_path = public_path( 'desygner/design/template/'.$template_id.'/assets/'.$img_url_info['basename'] );
         $path_info = pathinfo($full_file_path);
         $path = $path_info['dirname'];
         
@@ -209,12 +486,209 @@ class DesygnerController extends Controller
         }
     }
 
-    function downloadTemplateThumbnail($template_id, $thumb_url){
+    function downloadImage( $img_url, $local_img_path, $template_id ){
+        $url_info = pathinfo($img_url);
+        $full_local_img_path = $local_img_path.$url_info['basename'];
+       
+        $path_info = pathinfo($full_local_img_path);
+        $path = $path_info['dirname'];
+        $file_name = $path_info['basename'];
+
+        if (file_exists($full_local_img_path) == false) {
+            
+            
+            @mkdir($path, 0777, true);
+        
+            set_time_limit(0);
+        
+            //This is the file where we save the    information
+            $fp = fopen ($path . '/'.$file_name, 'w+');
+            //Here is the file we are downloading, replace spaces with %20
+            $ch = curl_init(str_replace(" ","%20",$img_url));
+            curl_setopt($ch, CURLOPT_TIMEOUT, 50);
+            // write curl response to file
+            curl_setopt($ch, CURLOPT_FILE, $fp); 
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            // get curl response
+            curl_exec($ch); 
+            curl_close($ch);
+            fclose($fp);
+        }
+
+        return $file_name;
+    }
+
+    function extractPageMetadata( $template_obj ) {
+        // print_r($template_obj);
+        // exit;
+        
+        if(isset($template_obj->children)){
+            foreach( $template_obj->children as $node){
+                
+                $template_metadata = json_decode( Redis::get('wayak:tmp:desygner:template:metadata') );
+
+                if( isset($node->tagName) && $node->tagName == 'image' ){
+                    
+                    // print_r($node);
+                    // exit;
+
+                    $node_info = [
+                        'url' => $node->properties->{'xlink:href'},
+                        'width' => $node->properties->width,
+                        'height' => $node->properties->height,
+                        // 'opacity' => $node->properties->opacity,
+                        'x' => $node->properties->x,
+                        'y' => $node->properties->y
+                    ];
+                    
+                    if( $template_metadata == '' ){
+                        $template_metadata = new \stdClass();    
+                    }
+                    $template_metadata->images[] = $node_info;
+                    Redis::set('wayak:tmp:desygner:template:metadata', json_encode( $template_metadata ) );
+                    
+                    // print_r($template_metadata);
+                    // exit;
+                    // $template_metadata = ;
+
+                } elseif( isset($node->tagName) 
+                    && isset( $node->properties->{'class'} )
+                    && $node->tagName == 'g'
+                    && $node->properties->{'class'} == 'text' ){
+                    
+                    // print_r($node);
+                    // exit;
+
+                    $node_info = [
+                        'font-family' => isset($node->properties->{'font-family'}) ? $node->properties->{'font-family'} : null,
+                        'font-size' => isset($node->properties->{'font-size'}) ? $node->properties->{'font-size'} : null,
+                        'font-weight' => isset($node->properties->{'font-weight'}) ? $node->properties->{'font-size'} : null,
+                        'fill' => isset($node->properties->{'fill'}) ? $node->properties->{'fill'} : null,
+                    ];
+
+                    self::getText($node);
+
+                    $node_info['text'] = urldecode(Redis::get('wayak:tmp:desygner:text'));
+                    $text_position = json_decode(Redis::get('wayak:tmp:desygner:text_properties'));
+                    $node_info['x'] = $text_position->x;
+                    $node_info['y'] = $text_position->y;
+
+                    Redis::del('wayak:tmp:desygner:text');
+                    Redis::del('wayak:tmp:desygner:text_properties');
+                    
+                    if( $template_metadata == '' ){
+                        $template_metadata = new \stdClass();    
+                    }
+
+                    // print_r( $node_info['text'] );
+                    // exit;
+
+                    $template_metadata->text[] = $node_info;
+                    Redis::set('wayak:tmp:desygner:template:metadata', json_encode( $template_metadata ) );
+                    
+                }
+
+                self::extractPageMetadata( $node );
+            }
+        }
+    }
+
+    function getText($node) {
+        
+        if( isset($node->type) 
+            && isset($node->tagName)
+            && $node->type == 'element'
+            && $node->tagName == 'text'){
+            
+            Redis::set('wayak:tmp:desygner:text_properties',json_encode([
+                'x' => isset($node->properties->{'x'}) ? $node->properties->{'x'} : 0,
+                'y' => isset($node->properties->{'y'}) ? $node->properties->{'y'} : 0,
+            ]));
+
+        } elseif(isset($node->type) && $node->type == 'text'){
+            // print_r($node);
+            // exit;
+            $db_text = Redis::get('wayak:tmp:desygner:text');
+            Redis::set('wayak:tmp:desygner:text', $db_text."\n".$node->value);
+        }
+
+        if(isset($node->children)){
+            foreach ($node->children as $child_node) {
+                // echo ' x >>'.$$child_node->properties->{'x'};
+                // echo ' dy >>'.$$child_node->properties->{'dy'};
+                self::getText($child_node);
+                // if( isset($child_node->children) ){
+                // }
+    
+            }
+        }
+    }
+
+    function svgToJSON($svg_content){
+        
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+        CURLOPT_URL => "nodejs:8080/api/svg2json",
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => "",
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => "POST",
+        CURLOPT_POSTFIELDS => "svg_content=".urlencode($svg_content),
+        CURLOPT_HTTPHEADER => array(
+            "Content-Type: application/x-www-form-urlencoded"
+        ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+        
+        return $response;
+
+    }
+
+    function registerThumbOnDB($template_id, $filename){
+        
+        $thumbnail_rows = DB::table('thumbnails')
+                            ->where('template_id','=',$template_id)
+                            ->count();
+    
+        if( $thumbnail_rows == 0 ){
+            DB::table('thumbnails')->insert([
+                'id' => null,
+                'template_id' => $template_id,
+                // 'title' => htmlspecialchars_decode( $title ),
+                'filename' => $filename,
+                // 'dimentions' => $dimentions,
+                // 'tmp_templates' => $template_id,
+                'language_code' => 'en',
+                'status' => 1,
+                'original_template_id' => 'desygner'
+            ]);
+        } else {
+            DB::table('thumbnails')
+            ->where('template_id', $template_id)
+            ->update([
+                'filename' => $filename,
+                'language_code' => 'en',
+                'status' => 1,
+                'original_template_id' => 'desygner'
+            ]);
+        }
+    }
+
+    function downloadTemplateThumbnail($template_id, $filename, $thumb_url){
 
         set_time_limit(0);
+        // $local_img_path = public_path().'/desygner/public/design/template/'.$template_id.'/thumbnails/en/';
+        $full_file_path = public_path('desygner/design/template/'.$template_id.'/thumbnails/en/'.$filename);
+        
+        // echo '<br>'.$full_file_path;
 
-        $full_file_path = public_path('design/template/'.$template_id.'/assets/preview.jpg');
-        echo $full_file_path;
         $path_info = pathinfo($full_file_path);
         $path = $path_info['dirname'];
 
@@ -380,6 +854,7 @@ class DesygnerController extends Controller
         // MAX first=3760
         // jYB8RHAUBha
         $curl = curl_init();
+        // URL FOR INSTAGRAM POST >> https://webrand.com/api/brand/companies/desygner/formats/1646/templates?public&first=320&limit=20
 
         curl_setopt_array($curl, array(
             CURLOPT_URL => "https://webrand.com/api/brand/companies/desygner/templates?public&first=$first&limit=$limit",

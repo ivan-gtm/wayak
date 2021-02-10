@@ -228,6 +228,7 @@ class CorjlController extends Controller
                                         $local_img_path = public_path().'/design/template/'.$new_template_id.'/assets/';
                                         self::downloadImage( $page_img->url, $local_img_path,  $new_template_id);
                                     }
+                                    
                                     $path_info = pathinfo($page_img->url);
                                     $new_img_obj = self::transformToImgObj($new_template_id, $base_img_obj, $path_info['basename'], $page_img );
             

@@ -12,7 +12,7 @@ ini_set("request_terminate_timeout", 2000);   // no time-outs!
 ini_set('memory_limit', -1);
 ini_set('display_errors', 1);
 
-ignore_user_abort(true);            // Continue downloading even after user closes the browser.
+// ignore_user_abort(true);            // Continue downloading even after user closes the browser.
 error_reporting(E_ALL);
 
 
@@ -25,6 +25,10 @@ class PlaceitController extends Controller
      */
     public function index(Request $request)
     {
+
+        self::createWayakTemplate();
+        exit;
+
         // echo "<pre>";
         // $products = Redis::keys('placeit*');
         // foreach ($products as $product_key_name) {
@@ -597,19 +601,7 @@ class PlaceitController extends Controller
         // // print_r( "--");
         // print_r( Redis::get('placeit:template:db5a5518549a508ccfdfbadb67730f6c:jsondata') );
         // exit;
-
-
-        // Place it - envato
-        // 1) Loads https://placeit.net/instagram-post-templates
-        //     Loads a ul>li of templates #item2wPro0 > li:nth-child(3)
-        //     Every li element has an data-preset-id="c994c4859d6009bda3ebca0fa43fa8bd" attribute
-        // 2) Load json from https://nice-assets-3.s3-accelerate.amazonaws.com/presets/ae83d787e0349f056583735d6ee03738/ui.json
-        //     Parse graphic property from json 
-        //         IMAGES
-        //             https://nice-assets-2.s3-accelerate.amazonaws.com/image_library/08533dbb608c7c86a0b48df17a799406/image.png
-        //         FONTS
-        //             https://nice-assets-2.s3-accelerate.amazonaws.com/fonts/e57deb519599baa7c80a41939506f8d4.ttf
-        
+                
         foreach ($templates as $template) {
             $template_id = str_replace('placeit:template:',null,$template);
             $template_id = str_replace(':metadata',null,$template_id);
@@ -628,6 +620,582 @@ class PlaceitController extends Controller
             // exit;
                         
         }
+    }
+
+    function createWayakTemplate(){
+
+        // Place it - envato
+        // 1) Loads https://placeit.net/instagram-post-templates
+        //     Loads a ul>li of templates #item2wPro0 > li:nth-child(3)
+        //     Every li element has an data-preset-id="c994c4859d6009bda3ebca0fa43fa8bd" attribute
+        // 2) Load json from https://nice-assets-3.s3-accelerate.amazonaws.com/presets/ae83d787e0349f056583735d6ee03738/ui.json
+        //     Parse graphic property from json 
+        //         IMAGES
+        //             https://nice-assets-2.s3-accelerate.amazonaws.com/image_library/08533dbb608c7c86a0b48df17a799406/image.png
+        //         FONTS
+        //             https://nice-assets-2.s3-accelerate.amazonaws.com/fonts/e57deb519599baa7c80a41939506f8d4.ttf
+
+        $placeit_templates = Redis::keys('placeit:template:*:metadata');
+        $template_index = 0;
+        echo "<pre>";
+
+        foreach ($placeit_templates as $key_template) {
+            
+            $parent_template_id = null;
+            $original_metadata = json_decode(Redis::get($key_template));
+            $metadata = self::extractTemplateMetadata($original_metadata);
+            $new_template_id = self::generateRandString();
+
+            // print_r( $original_metadata );
+            // print_r( $metadata );
+            // exit;
+
+            // echo "<pre>";
+            $original_width = ceil($metadata['width'] / 3.125);
+            $original_height = ceil($metadata['height'] / 3.125);
+            $width = $original_width;
+            $height = $original_height;
+            $measureUnits = 'px';
+
+            $dimentions = $width.'x'.$height.' px';
+            // print_r( $dimentions );
+            // exit;
+            
+            $templates_name = $original_metadata->title;
+            $parent_template_id = ( $parent_template_id == null ) ? $new_template_id : $parent_template_id;
+
+            // print_r( $dimentions_arr  );
+            // print_r( $original_width );
+            // print_r( $original_height );
+            // exit;
+
+            $base_json = '["{\"width\": 1728.00, \"height\": 2304.00, \"rows\": 1, \"cols\": 1}",{"version":"2.7.0","objects":[{"type":"image","version":"2.7.0","originX":"center","originY":"center","left":903.969858637,"top":1291.4128696969,"width":4878,"height":6757,"fill":"rgb(0,0,0)","stroke":null,"strokeWidth":0,"strokeDashArray":null,"strokeLineCap":"butt","strokeDashOffset":0,"strokeLineJoin":"miter","strokeMiterLimit":4,"scaleX":0.4035511785,"scaleY":0.4035511785,"angle":0,"flipX":false,"flipY":false,"opacity":1,"shadow":null,"visible":true,"clipTo":null,"backgroundColor":"","fillRule":"nonzero","paintFirst":"fill","globalCompositeOperation":"source-over","transformMatrix":null,"skewX":0,"skewY":0,"crossOrigin":"Anonymous","cropX":0,"cropY":0,"src":"https://dbzkr7khx0kap.cloudfront.net/11984_1548096343.png","locked":false,"selectable":true,"evented":true,"lockMovementX":false,"lockMovementY":false,"filters":[]},{"type":"textbox","version":"2.7.0","originX":"center","originY":"top","left":864,"top":1022.793,"width":521.6418220016,"height":257.414,"fill":"#666666","stroke":null,"strokeWidth":1,"strokeDashArray":null,"strokeLineCap":"butt","strokeDashOffset":0,"strokeLineJoin":"miter","strokeMiterLimit":4,"scaleX":1,"scaleY":1,"angle":0,"flipX":false,"flipY":false,"opacity":1,"shadow":null,"visible":true,"clipTo":null,"backgroundColor":"","fillRule":"nonzero","paintFirst":"fill","globalCompositeOperation":"source-over","transformMatrix":null,"skewX":0,"skewY":0,"text":"\nWelcome\n","fontSize":"67","fontWeight":"normal","fontFamily":"font30218","fontStyle":"normal","lineHeight":1.2,"underline":false,"overline":false,"linethrough":false,"textAlign":"center","textBackgroundColor":"","charSpacing":0,"minWidth":20,"splitByGrapheme":false,"selectable":true,"editable":true,"evented":true,"lockMovementX":false,"lockMovementY":false,"styles":{}}],"overlay":{"type":"pattern","source":"function(){return patternSourceCanvas.setDimensions({width:80*scale,height:80*scale}),patternSourceCanvas.renderAll(),patternSourceCanvas.getElement()}","repeat":"repeat","crossOrigin":"","offsetX":0,"offsetY":0,"patternTransform":null,"id":32},"cwidth":1728,"cheight":2304}]';
+            $base_json = json_decode($base_json);
+            
+            $base_json[0] = str_replace(1728, ceil($original_width) , $base_json[0]);
+            $base_json[0] = str_replace(2304, ceil($original_height) , $base_json[0]);
+            
+            $base_page = $base_json[1];
+            unset($base_json[1]);
+            $base_json = array_values($base_json);
+
+            $page_objects = [];
+            $new_page_obj = clone($base_page);
+            
+            $new_page_obj->cwidth = $width;
+            $new_page_obj->cheight = $height;
+            
+            // Example image structure required for new json schema
+            $base_img_obj = $new_page_obj->objects[0];
+            
+            // Example text structure required for new json schema
+            $base_txt_obj = $new_page_obj->objects[1];
+            
+            if( isset($metadata['images']) ){
+                foreach( $metadata['images'] as $img_obj) {
+                    // print_r( $metadata['images'] );
+                    // exit;
+
+                    // https://nice-assets-2.s3-accelerate.amazonaws.com/image_library/08533dbb608c7c86a0b48df17a799406/image.png
+                    if( isset($img_obj->url) ){
+                        $img_url = $img_obj->url;
+                    } else {
+                        if( isset( $img_obj->path ) ){
+                            $img_url = 'https://nice-assets-2.s3-accelerate.amazonaws.com/'.$img_obj->path;
+                        } else {
+                            echo "DEBUG: 707 ";
+                            print_r($img_obj);
+                            exit;
+                        }
+                    }
+                    
+                    // echo '<img src="'.$img_url.'"><br>';
+                    $path_info = pathinfo( $img_url );
+                    // print_r($path_info);
+                    // exit;
+
+                    $local_img_path = public_path('/design/template/'.$new_template_id.'/assets/');
+                    self::downloadImage( $img_url, $local_img_path,  $new_template_id);
+
+                    $new_img_obj = self::transformToImgObj($new_template_id, $base_img_obj, $path_info['basename'] );
+                    $page_objects[] = $new_img_obj;
+                }
+            }
+
+            if( isset($metadata['text']) ){
+                $template_text = self::extractTemplateText($metadata['text']);
+                foreach ($template_text as $txt_obj) {
+                    $new_txt_obj = self::transformToTxtObj($base_txt_obj, $txt_obj, $measureUnits);
+                    $page_objects[] = $new_txt_obj;
+                }
+            } else {
+                // echo "dEBUG: 730: NO TEXT";
+                // print_r($metadata);
+                // exit;
+            }
+            
+
+            $new_page_obj->objects = $page_objects;
+            $new_page_obj->cwidth = $width;
+            $new_page_obj->cheight = $height;
+
+            $base_json[] = $new_page_obj;
+
+            // print_r( $base_json );
+            // print_r( $template_text );
+            // print_r( $page_objects );
+            // print_r( $page_objects );
+            // exit;
+
+            // print_r( $original_metadata );
+            // print_r( $metadata );
+            // exit;
+            
+            $final_json_template = json_encode($base_json);
+            
+            // print_r($base_json);
+            // print_r($final_json_template);
+            
+            // Saves template on wayak format
+            Redis::set('template:en:'.$new_template_id.':jsondata', $final_json_template);
+
+            print_r("\n".'  template:en:'.$new_template_id.':jsondata');
+
+            $template_info['template_id'] = $new_template_id;
+            $template_info['title'] = isset($original_template->config->title) ? $original_template->config->title : ' x ';
+            $template_info['filename'] = $new_template_id.'_thumbnail.png';
+            $template_info['dimentions'] = $dimentions;
+            
+            $local_img_path = public_path('/design/template/'.$new_template_id.'/thumbnails/en/');
+            $file_name = self::downloadImage( $original_metadata->thumb_img_url, $local_img_path, $new_template_id);
+            self::registerThumbOnDB($new_template_id, $original_metadata->title, $file_name, $dimentions, $key_template);
+            self::registerTemplateOnDB($new_template_id, $templates_name, $parent_template_id, $width, $height, $measureUnits);
+            // exit;
+
+            if($template_index == 100){
+                echo "\n<br>TERMINE";
+                exit;
+            }
+
+        }
+    }
+
+    function downloadImage( $img_url, $local_img_path, $template_id ){
+        $url_info = pathinfo($img_url);
+        $full_local_img_path = $local_img_path.$url_info['basename'];
+       
+        $path_info = pathinfo($full_local_img_path);
+        $path = $path_info['dirname'];
+        $file_name = $path_info['basename'];
+
+        if (file_exists($full_local_img_path) == false) {
+            
+            
+            @mkdir($path, 0777, true);
+        
+            set_time_limit(0);
+        
+            //This is the file where we save the    information
+            $fp = fopen ($path . '/'.$file_name, 'w+');
+            //Here is the file we are downloading, replace spaces with %20
+            $ch = curl_init(str_replace(" ","%20",$img_url));
+            curl_setopt($ch, CURLOPT_TIMEOUT, 50);
+            // write curl response to file
+            curl_setopt($ch, CURLOPT_FILE, $fp); 
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            // get curl response
+            curl_exec($ch); 
+            curl_close($ch);
+            fclose($fp);
+        }
+
+        return $file_name;
+    }
+
+    function registerThumbOnDB($template_id, $title, $filename,$dimentions, $product_key){
+        
+        $thumbnail_rows = DB::table('thumbnails')
+                            ->where('template_id','=',$template_id)
+                            ->count();
+    
+        if( $thumbnail_rows == 0 ){
+            DB::table('thumbnails')->insert([
+                'id' => null,
+                'template_id' => $template_id,
+                'title' => htmlspecialchars_decode( $title ),
+                'filename' => $filename,
+                'dimentions' => $dimentions,
+                'tmp_templates' => $template_id,
+                'language_code' => 'en',
+                'status' => 1,
+                'original_template_id' => $product_key
+            ]);
+        }
+    }
+
+    function registerTemplateOnDB($template_id, $name, $parent_template_id, $width, $height, $measureUnits){
+        
+        $thumbnail_rows = DB::table('templates')
+                            ->where('template_id','=',$template_id)
+                            ->count();
+    
+        if( $thumbnail_rows == 0 ){
+            DB::table('templates')->insert([
+                'id' => null,
+                'template_id' => $template_id,
+                'name' => htmlspecialchars_decode( $name ),
+                'status' => 0,
+                'parent_template_id' => $parent_template_id,
+                'width' => $width,
+                'height' => $height,
+                'metrics' => $measureUnits
+            ]);
+        }
+    }
+
+    function transformToTxtObj($base_txt_obj, $old_obj, $measureUnits){
+        $tmp_obj = new \StdClass;;
+        $tmp_obj = clone($base_txt_obj);
+
+        // print_r($old_obj->{'font-size'});
+        // print_r($old_obj);
+        // exit;
+
+        $tmp_obj->text = trim($old_obj['text']);
+        $tmp_obj->textAlign = 'center';
+        $tmp_obj->originX = 'left';
+        $tmp_obj->originY = 'top';
+        $tmp_obj->fontFamily = $old_obj['font_id'];
+        $tmp_obj->fill = $old_obj['color'];
+        $tmp_obj->fontSize = $old_obj['fontSize'];
+        $tmp_obj->top = $old_obj['y'];
+        $tmp_obj->left = $old_obj['x'];
+        
+        $tmp_obj->width = $old_obj['width'];
+        $tmp_obj->height = $old_obj['height'];
+        
+        return $tmp_obj;
+    }
+
+    function extractTemplateText($metadata_fonts){
+        // print_r( $metadata_fonts );
+        // exit;
+        $text = [];
+        foreach($metadata_fonts as $font) {
+            if(isset($font['allowedFonts'])){
+                // print_r($font);
+                // exit;
+                foreach($font['allowedFonts'] as $font_assets) {
+                    // print_r("font_assets");
+                    // https://nice-assets-2.s3-accelerate.amazonaws.com/fonts/e57deb519599baa7c80a41939506f8d4.ttf
+                    $font_url = 'https://nice-assets-2.s3-accelerate.amazonaws.com/'.$font_assets->file;
+                    $local_font_path = public_path('design/fonts_new/');
+
+                    $insert_result = self::registerFontOnDB( $font_assets->displayName, $font_assets->name, $font_url);
+                    if( $insert_result == 0 ){
+                        self::downloadFont( $font_url, $local_font_path);
+                    }
+
+                    $font_db_info = DB::table('fonts')
+                                    ->select('font_id')
+                                    ->where('name', '=', $font_assets->displayName)
+                                    ->first();
+                    $font['font_id'] = $font_db_info->font_id;
+
+                }
+
+                $text[] = $font;
+            }
+            // print_r($font);
+            // exit;
+        }
+        
+        return $text;
+    }
+
+    function registerFontOnDB($displayName, $filename, $url){
+
+        
+        $thumbnail_rows = DB::table('fonts')
+                            // ->select('font_id')
+                            ->where('name','=',$displayName)
+                            ->count();
+        
+        // print_r('<br><br>'.$displayName.' - '.$thumbnail_rows.'<br>');
+
+        if( $thumbnail_rows == 0 ){
+
+            $font_id = self::generateRandString(10);
+
+            DB::table('fonts')->insert([
+                'id' => null,
+                'name' => $displayName,
+                'filename' => $filename,
+                'url' => $url,
+                'font_id' => $font_id,
+                'status' => 1,
+                'source' => 'placeit'
+            ]);
+            
+            return 0;
+
+        } else {
+            return 1;
+        }
+    }
+
+    function generateRandString($length = 15) {
+		$permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		return substr(str_shuffle($permitted_chars), 0, $length);
+	}
+
+    function downloadFont( $font_url, $local_font_path){
+
+        $url_info = pathinfo($font_url);
+        $full_local_font_path = $local_font_path.$url_info['basename'];
+
+        $path_info = pathinfo($full_local_font_path);
+        $path = $path_info['dirname'];
+        $file_name = $path_info['basename'];
+
+        if (file_exists($full_local_font_path) == false 
+            OR (
+                file_exists($full_local_font_path)
+                && filesize($full_local_font_path) == 0
+            )) {
+
+            // print_r("\n\n".$font_url.'-');
+            // print_r("\n\n".$full_local_font_path.'-');
+            // exit;
+            
+            
+            @mkdir($path, 0777, true);
+        
+            set_time_limit(0);
+        
+            //This is the file where we save the    information
+            $fp = fopen ($path . '/'.$file_name, 'w+');
+            //Here is the file we are downloading, replace spaces with %20
+            $ch = curl_init(str_replace(" ","%20",$font_url));
+            curl_setopt($ch, CURLOPT_TIMEOUT, 50);
+            // write curl response to file
+            curl_setopt($ch, CURLOPT_FILE, $fp); 
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            // get curl response
+            curl_exec($ch); 
+            curl_close($ch);
+            fclose($fp);
+        }
+
+        return filesize($full_local_font_path);
+    }
+
+    function extractTemplateMetadata( $template_metadata ){
+        
+        $template = json_decode( Redis::get( 'placeit:template:'.$template_metadata->template_id.':jsondata' ) );
+        // print_r($template->graphic);
+        // exit;
+
+        $template_content = [];
+
+        $template_content['width'] = $template->original->size->high->width;
+        $template_content['height'] = $template->original->size->high->height;
+        $template_content['previewImage'] = $template->previewImage->value;
+        $template_content['backgroundColor'] = $template->backgroundColor->color;
+        $template_content['category'] = isset($template->category) ? $template->category : null;
+
+        foreach ($template->text as $text_node) {
+            // print_r( $text_node );
+            // exit;
+
+            $node = [
+                'text' => $text_node->contents,
+                'x' => ceil($text_node->x / 3.125),
+                'y' => ceil($text_node->y / 3.125),
+                'color' => $text_node->color,
+                'width' => ceil($text_node->width / 3.125),
+                'height' => ceil($text_node->height / 3.125),
+                'font' => $text_node->font,
+                'fontFamily' => $text_node->fontFamily,
+                'fontSize' => ceil($text_node->fontSize / 3.125),
+                'opacity' => $text_node->opacity,
+                'allowedFonts' => $text_node->allowedFonts,
+                // 'x' => $text_node->x,
+                // 'y' => $text_node->y,
+            ];
+
+            $template_content['text'][] = $node;
+
+        }
+        
+        foreach ($template->graphic as $node) {
+            
+            // if( isset( $node->type ) && $node->type == 'Folder' ){
+                $tmp_node = [
+                    'opacity' => $node->opacity,
+                    // 'x' => $text_node->x,
+                    // 'y' => $text_node->y,
+                    'width' => $node->width,
+                    'height' => $node->height,
+                    'color' => $node->color            
+                ];
+
+                // print_r($node);
+                // exit;
+                if( isset($node->layers) 
+                    && is_array($node->layers) 
+                    && sizeof($node->layers) > 0 ){
+                        
+                    foreach ($node->layers as $layer) {
+                        
+                        if(isset($layer->assetType) && $layer->assetType == 'image'){
+                            
+                            if( strpos($layer->path, 'imagedocument') > 0 ){
+                                $layer->path = str_replace('small', 'medium', $layer->image);
+                                $json_structure = self::downloadStructureJSON( $layer->id );
+                                
+                                self::parseStructure( $layer->id, $json_structure);
+                                $structure_images = json_decode(Redis::get('placeit:tmp:structure'));
+                                Redis::del('placeit:tmp:structure');
+                                
+                                if( isset( $structure_images->images ) ){
+                                    foreach ($structure_images->images as $image) {
+                                        $template_content['images'][] = $image;
+                                    }
+                                }
+                            }
+
+                            $tmp_obj = new \stdClass();
+                            $tmp_obj->name = $layer->name;
+                            $tmp_obj->image = $layer->image;
+                            $tmp_obj->path = $layer->path;
+                            $tmp_obj->originalFile = $layer->originalFile;
+                            $tmp_obj->id = $layer->id;
+                            // $tmp_obj->/'src' = $layer->src
+                            $template_content['images'][] = $tmp_obj;
+                        }
+                    }
+                }
+                // $template_content['images'][] = $node;
+            // }
+            // print_r($template_content);
+            // exit;
+
+        }
+        
+        foreach ($template->background as $node) {
+            // print_r( $text_node );
+            // exit;
+            // if( isset( $node->type ) && $node->type == 'Folder' ){
+                $tmp_node = [
+                    'color' => $node->color,
+                    'contents' => $node->contents
+                ];
+
+                // print_r($node);
+                // exit;
+                if( isset($node->layers) 
+                    && is_array($node->layers) 
+                    && sizeof($node->layers) ){
+                        
+                    foreach ($node->layers as $layer) {
+                        if(isset($layer->assetType) && $layer->assetType == 'image'){
+                            $tmp_obj = new \stdClass();
+                            
+                            $tmp_obj->name = $layer->name;
+                            $tmp_obj->image = $layer->image;
+                            $tmp_obj->path = $layer->path;
+                            $tmp_obj->originalFile = isset($layer->originalFile) ? $layer->originalFile : '';
+                            // $tmp_obj->/'src' = $layer->sr;
+                            $template_content['images'][] = $tmp_obj;
+                            
+                        }
+                    }
+                }
+                // $template_content['images'][] = $node;
+            // }
+
+        }
+
+        // print_r($template);
+
+        return $template_content;
+    }
+
+    function parseStructure( $parent_id, $parent_layer ){
+        
+        $tmp = json_decode(Redis::get('placeit:tmp:structure'));
+        
+        if( isset($tmp->parent_id) == false ){
+            $tmp = new \stdClass();
+            $tmp->parent_id = $parent_id;
+            
+            // print_r($tmp->parent_id);
+            // exit; 
+
+            Redis::set('placeit:tmp:structure', json_encode($tmp) );
+        }
+
+        if( isset( $parent_layer->image ) && strlen($parent_layer->image) > 0 ){
+            $img_obj = new \stdClass();
+            $img_obj->name = $parent_layer->name;
+            $img_obj->image = $parent_layer->image;
+            $img_obj->path = $parent_layer->image;
+            $img_obj->url = 'https://nice-assets-2.s3-accelerate.amazonaws.com/image_library/'.$tmp->parent_id.'/'.$parent_layer->image;
+            $img_obj->originalFile = 'https://nice-assets-2.s3-accelerate.amazonaws.com/image_library/'.$tmp->parent_id.'/'.$parent_layer->image;
+            $img_obj->id = $parent_layer->id;
+
+            $tmp->images[] = $img_obj;
+            
+            Redis::set('placeit:tmp:structure', json_encode($tmp) );
+        }
+
+        // print_r($tmp);
+        // exit;
+
+
+        if( isset($parent_layer->layers) && is_array($parent_layer->layers) && sizeof($parent_layer->layers) > 0 ){
+            foreach ($parent_layer->layers as $layer) {
+                self::parseStructure( $tmp->parent_id,  $layer );
+            }
+        }
+
+        
+    }
+
+    function downloadStructureJSON( $structure_id ){
+
+        if( Redis::exists('placeit:template:'.$structure_id.':structure') == false ){
+
+            $structure_url = 'https://nice-assets-2.s3-accelerate.amazonaws.com/image_library/'.$structure_id.'/structure.json';
+
+            $curl = curl_init();
+        
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => $structure_url,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => "",
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => "GET",
+            ));
+        
+            $response = curl_exec($curl);
+    
+            Redis::set('placeit:template:'.$structure_id.':structure', $response);
+    
+            curl_close($curl);
+
+            // print_r("\n");
+            // print_r($response);
+            // exit;
+        
+        }
+
+        return json_decode(Redis::get('placeit:template:'.$structure_id.':structure'));
+        
     }
 
     function downloadTemplateJSON( $template_id, $img_url ){
@@ -660,189 +1228,40 @@ class PlaceitController extends Controller
         
     }
 
-    // Transfer current template
-    function translateTemplate(){
-        // echo $template_id;
-
-        $base_json = '["{\"width\": 1728.00, \"height\": 2304.00, \"rows\": 1, \"cols\": 1}",{"version":"2.7.0","objects":[{"type":"image","version":"2.7.0","originX":"center","originY":"center","left":903.969858637,"top":1291.4128696969,"width":4878,"height":6757,"fill":"rgb(0,0,0)","stroke":null,"strokeWidth":0,"strokeDashArray":null,"strokeLineCap":"butt","strokeDashOffset":0,"strokeLineJoin":"miter","strokeMiterLimit":4,"scaleX":0.4035511785,"scaleY":0.4035511785,"angle":0,"flipX":false,"flipY":false,"opacity":1,"shadow":null,"visible":true,"clipTo":null,"backgroundColor":"","fillRule":"nonzero","paintFirst":"fill","globalCompositeOperation":"source-over","transformMatrix":null,"skewX":0,"skewY":0,"crossOrigin":"Anonymous","cropX":0,"cropY":0,"src":"https://dbzkr7khx0kap.cloudfront.net/11984_1548096343.png","locked":false,"selectable":true,"evented":true,"lockMovementX":false,"lockMovementY":false,"filters":[]},{"type":"textbox","version":"2.7.0","originX":"center","originY":"top","left":864,"top":1022.793,"width":521.6418220016,"height":257.414,"fill":"#666666","stroke":null,"strokeWidth":1,"strokeDashArray":null,"strokeLineCap":"butt","strokeDashOffset":0,"strokeLineJoin":"miter","strokeMiterLimit":4,"scaleX":1,"scaleY":1,"angle":0,"flipX":false,"flipY":false,"opacity":1,"shadow":null,"visible":true,"clipTo":null,"backgroundColor":"","fillRule":"nonzero","paintFirst":"fill","globalCompositeOperation":"source-over","transformMatrix":null,"skewX":0,"skewY":0,"text":"\nWelcome\n","fontSize":"67","fontWeight":"normal","fontFamily":"font30218","fontStyle":"normal","lineHeight":1.2,"underline":false,"overline":false,"linethrough":false,"textAlign":"center","textBackgroundColor":"","charSpacing":0,"minWidth":20,"splitByGrapheme":false,"selectable":true,"editable":true,"evented":true,"lockMovementX":false,"lockMovementY":false,"styles":{}}],"overlay":{"type":"pattern","source":"function(){return patternSourceCanvas.setDimensions({width:80*scale,height:80*scale}),patternSourceCanvas.renderAll(),patternSourceCanvas.getElement()}","repeat":"repeat","crossOrigin":"","offsetX":0,"offsetY":0,"patternTransform":null,"id":32},"cwidth":1728,"cheight":2304}]';
-        $base_json = json_decode($base_json);
-
-        $base_json[0] = str_replace(1728, 480 , $base_json[0]);
-        $base_json[0] = str_replace(2304, 672 , $base_json[0]);
-        $base_json[1]->cwidth = 480;
-        $base_json[1]->cheight = 672;
-        
-        // echo "<pre>";
-        // print_r( $base_json );
-        // exit;
-
-        // Example image structure required for new json schema
-        $base_img_obj = $base_json[1]->objects[0];
-        
-        // Example text structure required for new json schema
-        $base_txt_obj = $base_json[1]->objects[1];
-
-        // echo "<pre>";
-        // print_r($base_txt_obj);
-        // exit;
-
-        echo "<pre>";
-        // // print_r( Redis::keys('laravel_database_green:product:*') );
-        $products = Redis::keys('laravel_database_green:product:*');
-        
-        // Parse green island product by product
-        foreach ($products as $product_key_name) {
-            // print_r("\n$product_key_name");
-            
-            $original_template_id = str_replace('laravel_database_green:product:', null, $product_key_name);
-            
-            if( Redis::exists('green:template:'.$original_template_id) ){
-                $new_template_id = Redis::get('green:template:'.$original_template_id);
-                // echo $new_template_id;
-                // exit;
-            } else {
-                $new_template_id = self::randomNumber(15);
-            }
-            
-            $original_template = json_decode( Redis::get('laravel_database_green:product_metadata:'.$original_template_id ) );
-            
-            // Transform object to known json format for wayak
-            $page_objects = [];
-
-            $thumb_url = str_replace('w=220', 'w=660', $original_template->config->thumbnail);
-            $thumb_path = public_path('design/template/'.$new_template_id.'/thumbnails/'.$new_template_id.'_thumbnail.png');
-            
-            // $path_info = pathinfo($thumb_path);
-            // print_r($original_template->config->title);
-            // exit;
-
-            // Download template thumbnail
-            self::downloadTemplateJSON(  $thumb_path, $thumb_url );
-            // exit;
-
-            foreach ($original_template->config->pages as $page) {
-
-                $new_img_obj = self::transformToImgObj($new_template_id, $base_img_obj, 'http://localhost:8001'.$page->name);
-                $page_objects[] = $new_img_obj;
-
-                foreach ($page->fields as $tmp_obj) {
-                    $new_txt_obj = self::transformToTxtObj($base_txt_obj, $tmp_obj);
-                    $page_objects[] = $new_txt_obj;
-                }
-
-                // print_r($page_objects);
-                // exit;
-
-            }
-
-            // $page_objects[] = $new_img_obj;
-            // print_r($page_objects);
-            // exit;
-
-            $base_json[1]->objects = $page_objects;
-            
-            // if( $original_template_id == 19815){
-            //     print_r( $original_template );
-            //     print_r( $base_json );
-            //     exit;
-            // }
-
-            $final_json_template = json_encode($base_json);
-            $final_json_template = str_replace('~',"\\n",$final_json_template);
-            
-            // print_r( $base_json );
-            // exit;
-
-            // Saves template on wayak format
-            Redis::set('template:'.$new_template_id.':jsondata', $final_json_template);
-            Redis::set('green:template:'.$original_template_id, $new_template_id);
-
-            $template_info['template_id'] = $new_template_id;
-            $template_info['title'] = isset($original_template->config->title) ? $original_template->config->title : ' x ';
-            $template_info['filename'] = $new_template_id.'_thumbnail.png';
-            $template_info['dimentions'] = '4x7 in';
-            
-            self::registerThumbnailsOnDB($template_info);
-            
-            // print_r($template_info);
-            // exit;
-            
-        }
-        
-    }
-
-    function registerThumbnailsOnDB($template_info){
-		$thumbnail = DB::table('thumbnails')
-						->select('id')
-						->where('template_id','=', $template_info['template_id'] )
-						->first();
-
-		if( isset( $thumbnail->id ) == false ){
-			DB::table('thumbnails')->insert([
-				'id' => null,
-				'template_id' => $template_info['template_id'],
-				'title' => htmlspecialchars_decode($template_info['title']),
-				'filename' => $template_info['filename'],
-				'tmp_original_url' => null,
-				'dimentions' => $template_info['dimentions'],
-				'tmp_templates' => $template_info['template_id'],
-				'status' => 1
-			]);
-			return true;
-		}
-		return false;
-	}
-    
-    function transformToImgObj($new_template_id, $base_img_obj, $background_img_url ){
+    function transformToImgObj($new_template_id, $base_img_obj, $file_name){
         
         $tmp_obj = new \StdClass;;
         $tmp_obj = clone($base_img_obj);
         
-        $img_path = public_path( str_replace('http://localhost:8001/', null, $background_img_url) );
-        $img_path = str_replace('’', null, $img_path);
-        $img_path = str_replace('ñ', 'n', $img_path);
-        $img_path = str_replace('‘', null, $img_path);
-        $img_path = str_replace('é', 'e', $img_path);
+        // $img_path = public_path( str_replace('http://localhost:8001/', null, $file_name) );
+        // print_r($tmp_obj );
+        // print_r($img_obj );
+        // exit;
 
-        $tmp_obj->src = $background_img_url;
+        $tmp_obj->originX = 'left';
+        $tmp_obj->originY = 'top';
+        // $tmp_obj->top = ceil( $img_obj->y / 3.125 );
+        // $tmp_obj->left = ceil( $img_obj->x / 3.125 );
         $tmp_obj->top = 0;
         $tmp_obj->left = 0;
+        
+        $tmp_obj->scaleX = 0.1528156055;
+        $tmp_obj->scaleY = 0.1528156055;
 
-        if( file_exists( $img_path ) ){
+        // $path_info = pathinfo($img_obj->url);
+        $img_path = public_path('/design/template/'.$new_template_id.'/assets/'.$file_name);
 
-            if( filesize($img_path) == 0 ){
-                echo $img_path;
-                exit;
-            }
-
-            list($img_width, $img_height, $img_type, $img_attr) = getimagesize( $img_path );
-            $tmp_obj->width = $img_width;
-            $tmp_obj->height = $img_height;
+        if( file_exists($img_path) && filesize($img_path) > 0) {
+            list($width, $height, $type, $attr) = getimagesize($img_path);
             
-            
-            $original_path_info = pathinfo($img_path);
-            // $template_id = self::randomNumber(10);
-            $media_id = self::randomNumber(10);
-            
-            $full_file_path = public_path('design/template/'.$new_template_id.'/assets/'.$media_id.'.'.$original_path_info['extension']);
-            $path_info = pathinfo($full_file_path);
-            $path = $path_info['dirname'];
-            
-            @mkdir( $path_info['dirname'] , 0777, true);
-            
-            // echo "<pre>";
-            // print_r($path_info);
-            // print_r(  );
+            // print_r(getimagesize($img_path));
             // exit;
-            
-            if (!copy($img_path, $full_file_path)) {
-                echo "failed to copy $file...\n";
-                exit;
-            }
-            
-            $tmp_obj->src = asset('design/template/'.$new_template_id.'/assets/'.$media_id.'.'.$original_path_info['extension']);
 
         }
+
+        $tmp_obj->width = $width;
+        $tmp_obj->height = $height;
+        $tmp_obj->src = asset('design/template/'.$new_template_id.'/assets/'.$file_name);
         
         // echo "<pre>";
         // print_r($tmp_obj);
@@ -850,294 +1269,5 @@ class PlaceitController extends Controller
 
         return $tmp_obj;
     }
-
-    function randomNumber($length = 15) {
-		$permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-		return substr(str_shuffle($permitted_chars), 0, $length);
-	}
-
-    function transformToTxtObj($base_txt_obj, $old_obj){
-        $tmp_obj = new \StdClass;;
-        $tmp_obj = clone($base_txt_obj);
-
-        $tmp_obj->text = trim($old_obj->text);
-        $tmp_obj->textAlign = $old_obj->align;
-        // $tmp_obj->fontFamily = $old_obj->font;
-        $tmp_obj->fill = '#'.$old_obj->color;
-        // falta mapear $old_obj->rotation
-        $tmp_obj->fill = $old_obj->color;
-        $tmp_obj->fontSize = $old_obj->size;
-        $tmp_obj->fontFamily = 'font7';
-        // $tmp_obj->left = $old_obj->x;
-        $tmp_obj->top = $old_obj->y;
-        $tmp_obj->left = 240;
-        
-        
-        $tmp_obj->originY = 'center';
-
-        // print_r($tmp_obj);
-        // echo "<pre>";
-        // print_r($tmp_obj->text);
-        // print_r($old_obj->text);
-        // print_r($tmp_obj);
-        // exit;
-
-        return $tmp_obj;
-    }
-
-    function parseCategoryAndProducts(){
-        // $user = Redis::set('user:profile', "daniel");
-        // $user = Redis::get('user:profile');
-
-        // echo $user;
-        // exit;
-
-        // echo "<pre>";
-        // echo "<style>body{ background-color:black;color:white;font-size:16px; }</style>";
-
-        // $categories = self::getCategories();
-        // Redis::set('laravel_database_green:categories', $categories);
-
-        $cats_arr = [];
-        $categories = json_decode(Redis::get('laravel_database_green:categories'));
-
-        // print_r($categories);
-        // exit;
-
-        foreach($categories->CategoryTree as $category){
-            self::parseCategoryIds($category);
-        }
-
-        // print_r("\n");
-        // print_r( self::getCategoryIds() );
-        // exit;
-
-        $categoryIds = self::getCategoryIds();
-
-        foreach ($categoryIds as $category_id) {
-            // print_r("\n");
-            // print_r( $category_id );
-            $total_page_number = 100;
-            $itemsPerPage = 14;
-            
-            for ($current_page=0; $current_page < $total_page_number; $current_page++) { 
-                
-                $product_result = self::getProducts($current_page, $itemsPerPage, $category_id);
-                $total_page_number = ceil($product_result->ResultsCount / $itemsPerPage);
-
-                // Store product´s resulset per page
-                Redis::set('laravel_database_green:categories:'.$category_id.':page:'.$current_page, json_encode($product_result) );
-                
-                // print_r("\n");
-                // print_r( "\n PARSING:: ". $current_page );
-                // print_r( "\n TOTAL PAGES:: ". $total_page_number );
-                // print_r("\n");
-                // print_r( $product_result );
-                foreach ($product_result->Results as $product) {
-                    // echo '<img src="'.$product->PreviewImage.'">';
-                    
-                    Redis::set('laravel_database_green:category:'.$category_id.':product:'.$product->Id, json_encode($product) );
-                    Redis::set('laravel_database_green:product:'.$product->Id, json_encode($product) );
-
-                    // print_r("\n");
-                    // print_r( $product );
-                    // exit;
-                    
-                    // // $path_info = pathinfo($new_path); // dirname, filename, extension
-                    // $template_id = $product->Id;
-                    
-                    // $path = 'design/template/'.$template_id.'/assets';
-                    // $download_url = $product->PreviewImage;
-
-                    // if( file_exists($path . '/preview.jpg')  == false ) {
-                    //     // echo "existe";
-                    //     // exit;
-                    //     self::downloadTemplateJSON( $template_id, 'preview.jpg', $download_url );
-                    // }
-
-                }
-                // exit;
-                
-            }
-
-            // exit;
-        }
-
-        // getProducts(1, 14, 592);
-        // self::getTemplate(21389);
-
-        // self::downloadTemplateJSON( 23123, 'ejemplo.jpg', 'https://images.greetingsisland.com/images/invitations/wedding/garden%20wreath%20&%20rings1.jpg');
-    }
-
-    function getCategories(){
-        
-        $curl = curl_init();
-    
-        curl_setopt_array($curl, array(
-        CURLOPT_URL => "https://www.greetingsisland.com/mobile/GetMobileAppData?samVer=dev",
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_ENCODING => "",
-        CURLOPT_MAXREDIRS => 10,
-        CURLOPT_TIMEOUT => 0,
-        CURLOPT_FOLLOWLOCATION => true,
-        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        CURLOPT_CUSTOMREQUEST => "GET",
-        CURLOPT_HTTPHEADER => array(
-            "Host: www.greetingsisland.com",
-            "accept: application/json, text/plain, */*",
-            "origin: ionic://localhost",
-            "user-agent: Mozilla/5.0 (iPhone; CPU iPhone OS 13_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148",
-            "accept-language: en-us",
-            "Pragma: no-cache",
-            "Cache-Control: no-cache",
-            "Cookie: __cfduid=dcea7e29d5a091be256d9fd4fffc21dc51600427362; lang=en"
-        ),
-        ));
-    
-        $response = curl_exec($curl);
-    
-        curl_close($curl);
-        
-        // echo "<pre>";
-        // echo "<style>body{ background-color:black;color:white;font-size:16px; }</style>";
-        // print_r( json_decode($response) );
-        // return json_decode($response);
-        return $response;
-    }
-    
-    function getProducts($pageNum = 0, $itemsPerPage=14, $categoryId = 592){
-    
-        $curl = curl_init();
-    
-        curl_setopt_array($curl, array(
-        CURLOPT_URL => "https://www.greetingsisland.com/mobile/search?&pageNum=$pageNum&itemsPerPage=$itemsPerPage&categoryId=$categoryId&samVer=dev",
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_ENCODING => "",
-        CURLOPT_MAXREDIRS => 10,
-        CURLOPT_TIMEOUT => 0,
-        CURLOPT_FOLLOWLOCATION => true,
-        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        CURLOPT_CUSTOMREQUEST => "GET",
-        CURLOPT_HTTPHEADER => array(
-            "Host: www.greetingsisland.com",
-            "accept: application/json, text/plain, */*",
-            "origin: ionic://localhost",
-            "user-agent: Mozilla/5.0 (iPhone; CPU iPhone OS 13_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148",
-            "accept-language: en-us",
-            "Pragma: no-cache",
-            "Cache-Control: no-cache",
-            "Cookie: __cfduid=dcea7e29d5a091be256d9fd4fffc21dc51600427362; lang=en"
-        ),
-        ));
-    
-        $response = curl_exec($curl);
-    
-        curl_close($curl);
-    
-        // echo "<pre>";
-        // echo "<style>body{ background-color:black;color:white;font-size:16px; }</style>";
-        return json_decode($response);
-    }
-    
-    function getTemplate($cardId){
-        $curl = curl_init();
-    
-        curl_setopt_array($curl, array(
-        CURLOPT_URL => "https://www.greetingsisland.com/mobile/getCardConfig?cardId=$cardId&samVer=dev",
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_ENCODING => "",
-        CURLOPT_MAXREDIRS => 10,
-        CURLOPT_TIMEOUT => 0,
-        CURLOPT_FOLLOWLOCATION => true,
-        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        CURLOPT_CUSTOMREQUEST => "GET",
-        CURLOPT_HTTPHEADER => array(
-            "Host: www.greetingsisland.com",
-            "accept: application/json, text/plain, */*",
-            "origin: ionic://localhost",
-            "user-agent: Mozilla/5.0 (iPhone; CPU iPhone OS 13_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148",
-            "accept-language: en-us",
-            "Pragma: no-cache",
-            "Cache-Control: no-cache",
-            "Cookie: __cfduid=dcea7e29d5a091be256d9fd4fffc21dc51600427362; lang=en"
-        ),
-        ));
-    
-        $response = curl_exec($curl);
-    
-        curl_close($curl);
-        
-        echo "<pre>";
-        echo "<style>body{ background-color:black;color:white;font-size:16px; }</style>";
-        print_r( json_decode($response) );
-    
-    }
-    
-    
-
-    function parseCategoryIds($category, Request $request){
-        
-        // if( isset($category->Children) && sizeof($category->Children) > 0 ){
-            foreach ($category->Children as $child) {
-                self::parseCategoryIds($child);
-            }
-        // }
-
-        // print_r($category);
-        // print_r("\n\nCategoryId -- ");
-        // print_r($category->CategoryId);
-        // print_r("\n\n");
-
-        // if( $category->CategoryId == 203 || $category->ParentCategoryId == 203 ){
-            $this->category_ids[] = $category->CategoryId;
-        // }
-    }
-
-    function getCategoryIds(){
-        // echo "hi";
-        return $this->category_ids;
-    }
-
-    function getProduct($product_id){
-        
-        $curl = curl_init();
-
-        curl_setopt_array($curl, array(
-        CURLOPT_URL => "https://www.greetingsisland.com/mobile/getCardConfig?cardId=$product_id&samVer=dev",
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_ENCODING => "",
-        CURLOPT_MAXREDIRS => 10,
-        CURLOPT_TIMEOUT => 0,
-        CURLOPT_FOLLOWLOCATION => true,
-        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        CURLOPT_CUSTOMREQUEST => "GET",
-        CURLOPT_HTTPHEADER => array(
-            "Host: www.greetingsisland.com",
-            "accept: application/json, text/plain, */*",
-            "origin: ionic://localhost",
-            "user-agent: Mozilla/5.0 (iPhone; CPU iPhone OS 13_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148",
-            "accept-language: en-us",
-            "Pragma: no-cache",
-            "Cache-Control: no-cache",
-            "Cookie: __cfduid=dcea7e29d5a091be256d9fd4fffc21dc51600427362"
-        ),
-        ));
-
-        $response = curl_exec($curl);
-
-        curl_close($curl);
-        return $response;
-
-    }
-
-    /// MIGRATION
-    /// MIGRATION
-    /// MIGRATION
-    /// MIGRATION
-    /// MIGRATION
-    /// MIGRATION
-    /// MIGRATION
-
-    
-
+   
 }

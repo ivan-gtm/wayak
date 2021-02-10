@@ -452,7 +452,7 @@
                                     <div class="box--no-padding">
                                         <div class="item-preview ">
                                             <img alt="{{ $template->title }}"
-                                            src="{{ asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls[0] ) }}">
+                                            src="{{ asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["product_preview"] ) }}">
                                             <div class="item-preview__actions">
                                                 <div class="item-preview__preview-buttons--social" data-view="socialButtons">
                                                     <div class="btn-group">

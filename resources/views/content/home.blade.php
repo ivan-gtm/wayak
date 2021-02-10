@@ -93,7 +93,7 @@
             .searchBtn___3JEWS{padding:0 8px!important;width:72px;}
             .searchFormWrapper___2LC5i{margin-bottom:12px;position:relative;will-change:transform;z-index:3;}
             .searchWrapper___ktY0d{width:680px;}
-            .title___3smO3{color:#121316;margin-bottom:24px;}
+            .title___3smO3{color:white; margin-bottom:24px;}
             .zomHz{background:#fff;border-radius:8px;box-shadow:rgba(0, 0, 0, 0.16) 0 0 1px, rgba(0, 0, 0, 0.08) 0 2px 4px;color:#121316;font-size:16px;height:56px;line-height:24px;padding-left:16px;padding-right:16px;}
             .zomHz::-webkit-input-placeholder,.zomHz::placeholder{color:#a9acb2;}
             .zomHz:disabled{background:#fbfcfc;box-shadow:rgba(0, 0, 0, 0.16) 0 0 1px, rgba(0, 0, 0, 0.08) 0 2px 4px;color:#a9acb2;}
@@ -406,10 +406,10 @@
                                 
 								<div class="lolomo is-fullbleed">
                                     
-									<div class="lolomoRow lolomoRow_title_card ltr-0" data-list-context="categories" style="margin-top: 7vw;">
+									<div class="lolomoRow lolomoRow_title_card ltr-0" data-list-context="categories" style="margin-top: 4vw;">
 										<div class="heroWrapper___2WxOZ">
 											<div class="bannerContainer___Y4ecx">
-												<div class="banner___3K0N2" style="background-image: url(&quot;https://static.crello.com/images/home/banners/Banner_Home_Winter_01.jpg&quot;);"></div>
+												<div class="banner___3K0N2" style="background-image: url(&quot;{{ asset('home/searchbox_home_banner.jpg') }}&quot;);"></div>
 											</div>
 											<p class="fugue-regular___3IC2i fugue-h3___3pmEB title___3smO3">Create Any Design</p>
 											<div class="searchWrapper___ktY0d">
@@ -474,7 +474,7 @@
                                                                                             <div class="boxart-size-16x9 boxart-container boxart-rounded">
                                                                                                 <img class="boxart-image boxart-image-in-padded-container" 
                                                                                                     loading=lazy
-                                                                                                    src="{{ asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls[0] ) }}"
+                                                                                                    src="{{ asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["carousel"] ) }}"
                                                                                                     alt="{{ $template->title }}">
                                                                                                 <div class="fallback-text-container" aria-hidden="true">
                                                                                                     <p class="fallback-text">{{ $template->title }}</p>

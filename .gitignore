@@ -19,7 +19,9 @@ yarn-error.log
 /public/design/*
 /public/images/*
 /public/canva/*
+/public/desygner/*
 /public/over/*
+/public/foco/*
 /public/product/preview-images/*
 **/.DS_Store
 php

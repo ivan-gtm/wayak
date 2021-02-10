@@ -28,9 +28,31 @@ class CanvaController extends Controller
 
 
     public function index(){
-        
-        $thumb_urls = self::getThumbUrls();
+        $scan = scandir( public_path('canva/instagram-post/design/template') );
+        // echo "<pre>";
+        // print_r($scan);
+        // exit;
+        $template_index = 0;
+        foreach($scan as $folder) {
+            // echo public_path('canva/instagram-post/design/template'.$folder).'<br>';
+            if(strlen($folder) > 3  && is_dir( public_path('canva/instagram-post/design/template/'.$folder) ) ){
+                $template_id = $folder;
+                if( Redis::exists('canva:originaljson:'.$template_id) == false ){
+                    preg_match_all('/JSON.parse\(\'(.*)\'\)\;/', str_replace('.js', '.nojs', self::getTemplate($template_id)), $salida);
+                    Redis::set('canva:originaljson:'.$template_id, $salida[1][0]);
+                    echo 'PARSED >>'.$template_id.'<br>';
+                    if($template_index == 10){
+                        exit;
+                    }
+                    $template_index++;
+                } else {
+                    echo 'ALREADY EXISTS >>'.$template_id.'<br>';
+                }
+            }
+        }
+        exit;
 
+        $thumb_urls = self::getThumbUrls();
         foreach ($thumb_urls as $img_url) {
             // $img_url = 'https://template.canva.com/EADajvtdmjY/1/0/400w-9vWhnLEersE.jpg';
             $template_id = str_replace( 'https://template.canva.com/', null , $img_url );
@@ -380,7 +402,84 @@ class CanvaController extends Controller
         return $thumb_urls;
     }
 
+    function parseTempalte(){
+        // TAGS: page.b.F
+        // Title: page.b.D
+        // width: 1080 // page.b.C.A
+
+
+        // MEDIA 
+        //     page.M.D[0].files[1]
+
+        // FONTS 
+        //     page.M.C[1].D[0].files[1].url
+
+
+        // TEXT
+        //     page.b.A[0].E[7].c[0].a.A[0].A
+
+        //     Call 123-456-7890
+
+
+        // $tags_arr = $request->page['b']['F'];
+
+        echo "<pre>";
+        // print_r( $template_key );
+
+        // TEMPLATE Objects positioning and text
+        print_r( $request->page['b']['A']['0']['E'] );
+        
+        // TEMPLATE FONTS 
+        // print_r( $request->page['M']['C'] );
+
+        // TEMPLATE IMAGES 
+        // print_r( $request->page['M']['D'] );
+
+        // TEMPLATE VIDEOS
+        // print_r( $request->page['M']['o'] );
+
+        // TEMPLATE GENERAL FONTS
+        // print_r( $request->page['M']['G'] );
+        echo "jojo";
+        exit;
+        
+        // position Y
+        // object►page►b►A►0►E►0►D
+        // position X
+        // object►page►b►A►0►E►0►C
+
+        // width
+        // object►page►b►A►0►E►0►A
+        // height
+        // object►page►b►A►0►E►0►B
+
+        // object id
+        // object►page►b►A►0►E►0►a►I►A
+        // obj id for image
+        // object►page►b►A►0►E►1►c►1►a►B►A►A
+
+        // object position x
+        // object►page►b►A►0►E►0►a►I►B►D
+        // object position y
+        // object►page►b►A►0►E►0►a►I►B►E
+
+
+
+        // // BG COLOR
+        // print_r( $request->page['b']['A']['0']['D']['C'] );
+        // TITLE
+        // print_r( $request->page['b']['D'] );
+        // // DIMENTIONS
+        // print_r( $request->page['b']['C'] );
+        // TAGS
+        // print_r( $request->page['b']['F'] );
+        // print_r( json_encode($request->all()) );
+        exit;
+
+    }
+
     function downloadImage(  $local_img_path, $img_url ){
+        
         
         $path_info = pathinfo($local_img_path);
         
@@ -413,7 +512,6 @@ class CanvaController extends Controller
         curl_close($ch);
         fclose($fp);
     }
-
 
     function curlImage($template_id, $img_url){
         set_time_limit(0);
@@ -474,54 +572,12 @@ class CanvaController extends Controller
         }
     }
 
-
-    function getCategories(){
-        // $auth_token = 'eyJjdHkiOiJKV1QiLCJlbmMiOiJBMTI4R0NNIiwiYWxnIjoiZGlyIn0..HsTjvBwUoWcG0CPH.ZL_UNTdO7M0UbCxNaqmjXtwss7RIznBfmbGM2lNbvBFUGx1I3Q27YNbbTa-QovyUMnIn56U4OFdX3FSusOmdcvCBc7bc_dQtUzC-RIqw8RSZ4_mV5VqqVIq-wkNd4GK3fYuAFgAi8qmb9WwX6_OMqjjKQmQscMc3Cr6665gfWN1vOeeYBp8cpkLjthC7V3qW8UfG13Ho9Omwwn2fs98MfbCcob6J2JllYKHsNjvY6VPeADS6KMKhHgcid4feXpCfFuUjQjVYe9-3srUDywwyKH9-jT6VHN0eQYtbLEDfQrQeI9E54ub0jMBcH322c1OG9ugcab4AcT973hrENlxBtaS3ToVPX3FwHJ-b77hw8hV8e9pIOqrZ0O8bEkfDnT3tlIGZt9RlOuLzmWcxpT0hQyRHqfvis7gKhiFFQeoq6VTlDp3OeCuGLIcmsNaUowY5Dxp5yuM3T79RGeFlvZjq-LGJ645ozh1IA8mjM4T6W1_IrDOAbzKm-hXdtADx-7xGUAsgvjFmkcpvLVgKGb8Wi9rpYGwP-xg9kqPxaXPV1wQoGM6nUtqFtp8yvDyMw7Hu0tkmWiKkJhqN83WUEmfNpNFmTg9gfxKAcJWWJg5FR69kuZSIWTYHvDPacj5C4buOgQ8ynrfOB2ov0G6NZ1Yj3ZUy1LI7FiDK5CSby0vObAd32DXMMJBKJhTVyjvB6S7XYIze3y-UYLyKDXpCu398sQ0E_AG8ixz8ZX6l.Bz23_GRoIVIeYy_jZbao-g';
-
-        // $curl = curl_init();
-
-        // curl_setopt_array($curl, array(
-        //     CURLOPT_URL => "https://api.overhq.com/feed/quickstart",
-        //     CURLOPT_RETURNTRANSFER => true,
-        //     CURLOPT_ENCODING => "",
-        //     CURLOPT_MAXREDIRS => 10,
-        //     CURLOPT_TIMEOUT => 0,
-        //     CURLOPT_FOLLOWLOCATION => true,
-        //     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        //     CURLOPT_CUSTOMREQUEST => "GET",
-        //     CURLOPT_HTTPHEADER => array(
-        //         "Host: api.overhq.com",
-        //         "accept: application/json",
-        //         "content-type: application/json",
-        //         "accept-language: en-MX;q=1.0, es-MX;q=0.9",
-        //         "over-lang: en",
-        //         "user-agent: Over/7.1.7 (com.gopotluck.over; build:70094; iOS 14.0.0)",
-        //         "over-auth: $auth_token"
-        //     ),
-        // ));
-
-        // $response = curl_exec($curl); 
-        // Redis::set('over:categories', $response);
-        // curl_close($curl);
-
-        $response = Redis::get('over:categories');
-        $response = json_decode($response);
-
-        
-        echo "<pre>";
-        print_r($response);
-
-        return $response;
-
-    }
-
-
-    function saveCategoryOnDB($category_id, $offset = 0){
+    function getTemplate($template_id){
 
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-        CURLOPT_URL => "https://api.overhq.com/feed/quickstart/$category_id?limit=100&offset=$offset&refresh=0",
+        CURLOPT_URL => "https://www.canva.com/design/play?template=$template_id",
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_ENCODING => "",
         CURLOPT_MAXREDIRS => 10,
@@ -530,83 +586,84 @@ class CanvaController extends Controller
         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
         CURLOPT_CUSTOMREQUEST => "GET",
         CURLOPT_HTTPHEADER => array(
-            "Host: api.overhq.com",
-            "accept: application/json",
-            "content-type: application/json",
-            "accept-language: en-MX;q=1.0, es-MX;q=0.9",
-            "over-lang: en",
-            "user-agent: Over/7.1.7 (com.gopotluck.over; build:70094; iOS 14.0.0)",
-            "over-auth: eyJjdHkiOiJKV1QiLCJlbmMiOiJBMTI4R0NNIiwiYWxnIjoiZGlyIn0..HsTjvBwUoWcG0CPH.ZL_UNTdO7M0UbCxNaqmjXtwss7RIznBfmbGM2lNbvBFUGx1I3Q27YNbbTa-QovyUMnIn56U4OFdX3FSusOmdcvCBc7bc_dQtUzC-RIqw8RSZ4_mV5VqqVIq-wkNd4GK3fYuAFgAi8qmb9WwX6_OMqjjKQmQscMc3Cr6665gfWN1vOeeYBp8cpkLjthC7V3qW8UfG13Ho9Omwwn2fs98MfbCcob6J2JllYKHsNjvY6VPeADS6KMKhHgcid4feXpCfFuUjQjVYe9-3srUDywwyKH9-jT6VHN0eQYtbLEDfQrQeI9E54ub0jMBcH322c1OG9ugcab4AcT973hrENlxBtaS3ToVPX3FwHJ-b77hw8hV8e9pIOqrZ0O8bEkfDnT3tlIGZt9RlOuLzmWcxpT0hQyRHqfvis7gKhiFFQeoq6VTlDp3OeCuGLIcmsNaUowY5Dxp5yuM3T79RGeFlvZjq-LGJ645ozh1IA8mjM4T6W1_IrDOAbzKm-hXdtADx-7xGUAsgvjFmkcpvLVgKGb8Wi9rpYGwP-xg9kqPxaXPV1wQoGM6nUtqFtp8yvDyMw7Hu0tkmWiKkJhqN83WUEmfNpNFmTg9gfxKAcJWWJg5FR69kuZSIWTYHvDPacj5C4buOgQ8ynrfOB2ov0G6NZ1Yj3ZUy1LI7FiDK5CSby0vObAd32DXMMJBKJhTVyjvB6S7XYIze3y-UYLyKDXpCu398sQ0E_AG8ixz8ZX6l.Bz23_GRoIVIeYy_jZbao-g"
+            "authority: www.canva.com",
+            "pragma: no-cache",
+            "cache-control: no-cache",
+            "sec-ch-ua: \"Chromium\";v=\"88\", \"Google Chrome\";v=\"88\", \";Not A Brand\";v=\"99\"",
+            "sec-ch-ua-mobile: ?0",
+            "upgrade-insecure-requests: 1",
+            "user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.146 Safari/537.36",
+            "accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+            "sec-fetch-site: none",
+            "sec-fetch-mode: navigate",
+            "sec-fetch-user: ?1",
+            "sec-fetch-dest: document",
+            "accept-language: es,en;q=0.9",
+            "Cookie: CDI=adb9bd4e-1247-4f08-b1c9-b5d555436f6c; __cfduid=ddd1ab6b0fb19a6665bac05daca8c20f01611733294; CPA=4C4rc6xF_mGjrCg35ZTL5PaK38nZYsHJaAiv8BFf14zCqxnRpX4Pw2WSEl6zIShIIMDKg0uvu8IREVhuuJg78gu2EpNGUndmRSG0etsrKcpfUU3ChF1FbOxpzzV4Sh7XT-r637ATbDpHo5CZRHBW6L5kuuU4IIAZnCW-4Twh7NLoboFHogQ2jbmUSBeuWqqe_iNEqa9nAgQO23Dyb6q0XzQ0Cys; CCK=SmMObYCibkyF-H-75dZjQQ; __cf_bm=e1972f9b11bd296709949f6a3d5916732109216e-1612832096-1800-AT0EDJW/n0da4ZZm+jMtLTlsweMXuQK4PG8n0ypmLOb8I0rT/1E2Tx26gBMoDAlqA0OjcCJQHFjWKM9YUwXHzak="
         ),
         ));
 
         $response = curl_exec($curl);
 
         curl_close($curl);
-        
-        // echo $response;
-        $obj_response = json_decode($response);
-        
-        if($obj_response->elementList->count > 0){
-            Redis::set('over:category:'.$category_id.':offset:'.$offset, $response);
-            return true;
-        }
-
-        return false;
-
+        return $response;
     }
 
-    function generateDownloadPage($template_id){
+    function convertToJSON($template_key, Request $request){
         
-        set_time_limit(0);
-
-        $full_file_path = public_path('over/templates/'.$template_id.'.zip');
-        $path_info = pathinfo($full_file_path);
-        $path = $path_info['dirname'];
-        
-        // echo "file_path\n\n\n\n";
-        // echo $full_file_path;
-        // echo "info\n\n\n\n";
-        // print_r($path);
-        // exit;
-        if( file_exists( $full_file_path )  == false ){
-            
-            $curl = curl_init();
-            
-            @mkdir($path, 0777, true);
-        
-            //This is the file where we save the    information
-            $fp = fopen ($full_file_path, 'w+');
-    
-            curl_setopt_array($curl, array(
-                CURLOPT_URL => "https://api.overhq.com/element/$template_id/asset",
-                // CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_ENCODING => "",
-                CURLOPT_MAXREDIRS => 10,
-                CURLOPT_TIMEOUT => 0,
-                CURLOPT_FOLLOWLOCATION => true,
-                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                // write curl response to file
-                CURLOPT_FILE => $fp,
-                CURLOPT_CUSTOMREQUEST => "GET",
-                CURLOPT_HTTPHEADER => array(
-                    "Host: api.overhq.com",
-                    "accept: */*",
-                    "over-lang: en",
-                    "user-agent: Over/7.1.7 (com.gopotluck.over; build:70094; iOS 14.0.0)",
-                    "over-auth: eyJjdHkiOiJKV1QiLCJlbmMiOiJBMTI4R0NNIiwiYWxnIjoiZGlyIn0..HsTjvBwUoWcG0CPH.ZL_UNTdO7M0UbCxNaqmjXtwss7RIznBfmbGM2lNbvBFUGx1I3Q27YNbbTa-QovyUMnIn56U4OFdX3FSusOmdcvCBc7bc_dQtUzC-RIqw8RSZ4_mV5VqqVIq-wkNd4GK3fYuAFgAi8qmb9WwX6_OMqjjKQmQscMc3Cr6665gfWN1vOeeYBp8cpkLjthC7V3qW8UfG13Ho9Omwwn2fs98MfbCcob6J2JllYKHsNjvY6VPeADS6KMKhHgcid4feXpCfFuUjQjVYe9-3srUDywwyKH9-jT6VHN0eQYtbLEDfQrQeI9E54ub0jMBcH322c1OG9ugcab4AcT973hrENlxBtaS3ToVPX3FwHJ-b77hw8hV8e9pIOqrZ0O8bEkfDnT3tlIGZt9RlOuLzmWcxpT0hQyRHqfvis7gKhiFFQeoq6VTlDp3OeCuGLIcmsNaUowY5Dxp5yuM3T79RGeFlvZjq-LGJ645ozh1IA8mjM4T6W1_IrDOAbzKm-hXdtADx-7xGUAsgvjFmkcpvLVgKGb8Wi9rpYGwP-xg9kqPxaXPV1wQoGM6nUtqFtp8yvDyMw7Hu0tkmWiKkJhqN83WUEmfNpNFmTg9gfxKAcJWWJg5FR69kuZSIWTYHvDPacj5C4buOgQ8ynrfOB2ov0G6NZ1Yj3ZUy1LI7FiDK5CSby0vObAd32DXMMJBKJhTVyjvB6S7XYIze3y-UYLyKDXpCu398sQ0E_AG8ixz8ZX6l.Bz23_GRoIVIeYy_jZbao-g",
-                    "accept-language: en-MX;q=1.0, es-MX;q=0.9"
-                ),
-            ));
-    
-            curl_exec($curl);
-    
-            curl_close($curl);
-    
-            fclose($fp);
+        if( isset($request->page) ){
+            $template_key = str_replace(':originaljson:', ':json:', $template_key);
+            Redis::set($template_key, json_encode($request->all()) );
+            // print_r( json_encode($request->all()) );
+            // exit;
+            return response()->json([
+                'name' => 'Abigail',
+                'state' => 'CA',
+            ]);
         }
-        
-    }
 
-    
+        // echo $template_key;
+        // echo "asdasd";
+        // echo '<pre>';
+        // echo str_replace('.js', '.pp', self::getTemplate());
+        print_r( '<html>
+        <head><meta name="csrf-token" content="'.csrf_token() .'" /></head>
+        <body>
+        <div id="status">NOT READY</div>
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+        <script>
+            var ejemplo = JSON.parse(\''.Redis::get($template_key).'\');
+            console.log(ejemplo);
+            var jsonTemplate = JSON.stringify(ejemplo);
+
+            $(document).ready(function(){
+                $.ajaxSetup({
+                    headers: {
+                        \'X-CSRF-TOKEN\': $(\'meta[name="csrf-token"]\').attr(\'content\')
+                    }
+                });
+                $.ajax({
+                    url: "'.route('canva.convertToJSON', $template_key).'",
+                    type: "POST",
+                    data: jsonTemplate,
+                    contentType: \'application/json; charset=utf-8\',
+                    dataType: \'json\',
+                })
+                .done(function( data, textStatus, jqXHR ) {
+                    if ( console && console.log ) {
+                        console.log( "La solicitud se ha completado correctamente." );
+                    }
+                    $("#status").text("READY!");
+                })
+                .fail(function( jqXHR, textStatus, errorThrown ) {
+                    if ( console && console.log ) {
+                        console.log( "La solicitud a fallado: " +  textStatus);
+                    }
+                    $("#status").text("FAIL REQUEST");
+                });
+            });
+
+        </script>
+        </body></html>');
+    }
 }

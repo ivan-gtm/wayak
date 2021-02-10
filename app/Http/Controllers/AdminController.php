@@ -58,6 +58,39 @@ class AdminController extends Controller
         return $modelo_id;
     }
 
+    function thumbnailGeneration(){
+        $language_code = 'en';
+        $country_code = 'mx';
+        
+        $current_page = 1;
+        if( isset($request->page) ) {
+            $current_page = $request->page;
+        }
+        $page = $current_page-1;
+        $per_page = 2;
+        $offset = $page*$per_page;
+
+        $ready_for_sale_products = DB::select( DB::raw(
+            "SELECT 
+                thumbnails.template_id, thumbnails. filename 
+            FROM 
+                thumbnails,templates
+            WHERE
+                thumbnails.template_id = templates.template_id
+                AND templates.source = 'templett'
+                AND thumbnails.language_code = 'en'
+                AND thumbnails.thumbnail_ready IS NULL
+            LIMIT 200") 
+        );
+
+        return view('admin.thumbnail_generation', [
+            'templates' => $ready_for_sale_products,
+            'language_code' => $language_code,
+            'country' => $country_code
+        ]);
+
+    }
+
     // function generateCode($template_key){
     function createCode($country, $template_key){
         // echo $country;
