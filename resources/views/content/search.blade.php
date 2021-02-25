@@ -1,19 +1,20 @@
-<html lang="es_MX" dark="" data-rh="lang,dark">
+@extends('layouts.frontend')
 
-<head>
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=PT+Sans+Caption&display=swap" rel="stylesheet">
-        
+@section('title', 'Results for: "'.$search_query.'"| Search | Wayak')
+    
+    @section('meta')
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=PT+Sans+Caption&display=swap" rel="stylesheet">
+        <meta data-rh="true" charset="UTF-8">
+        <meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+        <meta data-rh="true" name="google-site-verification" content="">
+        <meta data-rh="true" name="apple-itunes-app" content="">
+        <meta data-rh="true" name="mailru-verification" content="">
+        <meta data-rh="true" name="google" content="no-translate">
+        <meta data-rh="true" name="theme-color" content="#51a6ea">
+    @endsection
 
-    <title>Wayak - Buscar </title>
-    <meta data-rh="true" charset="UTF-8">
-    <meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-    <meta data-rh="true" name="google-site-verification" content="">
-    <meta data-rh="true" name="apple-itunes-app" content="">
-    <meta data-rh="true" name="mailru-verification" content="">
-    <meta data-rh="true" name="google" content="no-translate">
-    <meta data-rh="true" name="theme-color" content="#51a6ea">
-
+@section('css')
     <style>
         body {
             font-size: 16px;
@@ -2507,36 +2508,10 @@
         @font-face{font-family:'PT Sans Caption';font-style:normal;font-weight:400;font-display:swap;src:url(https://fonts.gstatic.com/s/ptsanscaption/v13/0FlMVP6Hrxmt7-fsUFhlFXNIlpcadA_xYS2ix0YK.woff2) format('woff2');unicode-range:U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;}
         @font-face{font-family:'PT Sans Caption';font-style:normal;font-weight:400;font-display:swap;src:url(https://fonts.gstatic.com/s/ptsanscaption/v13/0FlMVP6Hrxmt7-fsUFhlFXNIlpcaeg_xYS2ixw.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;}
     </style>
-</head>
+@endsection
 
-<body>
-    <div class="headerWrapper___3eklQ">
-            <div class="flex___2XWAk headerContentLeft___tlZaq">
-                <div class="logoWrapper___g2Okg">
-                    <a class="logoIconWrapper___2aVXl"
-                        href="{{ url('') }}">
-                        WAYAK
-                    </a>
-                </div>
-            </div>
-            <div class="flex___2XWAk navLinksWrapper___1I469">
-                <a class="link___3OiRu typography-subheading-m" 
-                    href="{{ url('') }}">
-                    <span class="linkLabel___ot3V1">Inicio</span>
-                </a>
-                <a class="link___3OiRu typography-body-m active___2JazE" 
-                    href="{{ route('user.search',[
-                        'country' => $country,
-                        'searchQuery' => 'invitation'
-                        ]) }}">
-                    <span class="linkLabel___ot3V1">Plantillas</span>
-                </a>
-            </div>
-            <div class="flex___2XWAk">
-            </div>
-            <div class="headerShadow___2L53V"></div>
-    </div>
-
+@section('content')
+    
     <div id="react-view" style="position: absolute; left: 0; right: 0; top: 0; bottom: 0; overflow: auto; height: 100vh;">
         <div class="mainView notificationVisible headerVisible" id="app-view">
             <div class="scrollableView___3-vpm notificationVisible">
@@ -2595,7 +2570,7 @@
                                             }}" style="width: calc(var(--row-height) * 0.714286); flex-grow: 7.14286;">
                                             <div class="preview imgWrapper imgWrapper_" style="padding-bottom: 140%;">
                                                 <img alt="{{ $template->title }}" crossorigin="anonymous" loading="lazy" data-categ="invitations" data-value="{{ $template->_id }}" 
-                                                    src="{{ asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls[0] ) }}"
+                                                    src="{{ asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["carousel"] ) }}"
                                                     class="itemImg">
                                             </div>
                                             <div class="caption proxima-semibold___1HNzk proxima-s___29loE noSubTitle">
@@ -3453,7 +3428,7 @@
                                     </a> -->
                                     <div class="paginationWrapper"><span class="typography-body-m paginationRange">{{ $from_document }}-{{ $to_document }} de {{ $total_documents }}</span>
                                         <div class="paginationWrapper">
-                                            <a class="bhdLno lhRPKu button___33J2d" disabled="">
+                                            <a class="bhdLno lhRPKu button___33J2d">
                                                 <div class="sc-hKgILt chrFRV"><svg viewBox="0 0 16 16" width="16" height="16" direction="left" class="sc-fubCfw ecgval"><path d="M14.463 4.11761C14.5381 4.04234 14.6403 4 14.747 4C14.8536 4 14.9558 4.04234 15.0309 4.11761L15.8788 4.96052C15.9561 5.03267 16 5.13341 16 5.23884C16 5.34427 15.9561 5.44501 15.8788 5.51716L8.52792 12.8251C8.41552 12.9369 8.26304 12.9999 8.10398 13H7.89602C7.73696 12.9999 7.58448 12.9369 7.47208 12.8251L0.121197 5.51716C0.0438665 5.44501 0 5.34427 0 5.23884C0 5.13341 0.0438665 5.03267 0.121197 4.96052L0.969068 4.11761C1.04416 4.04234 1.14639 4 1.25302 4C1.35966 4 1.46189 4.04234 1.53698 4.11761L8 10.5428L14.463 4.11761Z"></path></svg></div>
                                             </a>
                                             <div class="sc-dmlrTW guKkvw">
@@ -3480,6 +3455,4 @@
     <!-- <meta name="google-site-verification" content=""> -->
     <!-- <div style="width:0px; height:0px; display:none; visibility:hidden;" id="batBeacon183254530036"><img style="width:0px; height:0px; display:none; visibility:hidden;" id="batBeacon966510314538" width="0" height="0" alt="" src="https://bat.bing.com/action/0?ti=56305916&amp;Ver=2&amp;mid=7e47ba01-f86d-43df-bc0c-a54ea92a35bb&amp;sid=95ffe9405a8d11eb89bc47deb50efd0b&amp;vid=f245ec70512611eb90d0a310eac65bd9&amp;vids=0&amp;pi=1200101525&amp;lg=es&amp;sw=1920&amp;sh=1080&amp;sc=24&amp;tl=Crello&amp;p=https%3A%2F%2Fcrello.com%2Fmx%2Fhome%2F&amp;r=&amp;evt=pageLoad&amp;msclkid=N&amp;sv=1&amp;rn=102539"></div> -->
 
-</body>
-
-</html>
+@endsection

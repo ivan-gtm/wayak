@@ -5,14 +5,14 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Redis;
 
-class MigrateREDIStoUAT extends Command
+class MigrateToUAT extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'command:redistouat';
+    protected $signature = 'bot:migrateuat';
 
     /**
      * The console command description.
@@ -38,6 +38,17 @@ class MigrateREDIStoUAT extends Command
      */
     public function handle()
     {
+        self::migrateRedisKeys();
+
+        return 0;
+    }
+
+    function migrateRedisKeys(){
+        self::redisTemplates();
+        self::redisWayakConfig();
+    }
+    
+    function redisTemplates(){
         $redis_uat = Redis::connection('redisuat');
         // $keys = $redis_uat->keys('*');
 
@@ -63,7 +74,20 @@ class MigrateREDIStoUAT extends Command
         //     'port'     => 6379,
         //     'database' => 3,
         // ]);
-
-        return 0;
     }
+    
+    function redisWayakConfig(){
+        $redis_uat = Redis::connection('redisuat');
+        // $keys = $redis_uat->keys('*');
+
+        $wayak_config = Redis::keys('wayak:*');
+
+        foreach ($wayak_config as $config_keyname) {
+            $redis_uat->set($config_keyname, Redis::get($config_keyname));
+            print_r("Migrated key >> \n");
+            print_r($config_keyname);
+            usleep(500000);
+        }
+    }
+
 }

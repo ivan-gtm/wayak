@@ -1,5 +1,15 @@
-<html>
-    <head>
+@extends('layouts.frontend')
+    
+    @section('title', $template->title.' | Template | Designer Online | WAYAK')
+    @section('meta')
+        <meta property="og:url"           content="{{  URL::current() }}" />
+        <meta property="og:type"          content="website" />
+        <meta property="og:title"         content="{{ $template->title }} | Template | Design Online | WAYAK" />
+        <meta property="og:description"   content="Your description" />
+        <meta property="og:image"         content="{{ asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["product_preview"] ) }}" />
+    @endsection
+    
+    @section('css')
         <style>body{font-size:16px;}</style>
         <style>
             /*! CSS Used from: Embedded */
@@ -86,7 +96,7 @@
             .breadcrumbs{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;margin:0 0 8px 0;}
             .breadcrumbs a{position:relative;color:#666666;font-size:12px;line-height:1;text-decoration:none;}
             .breadcrumbs a:hover{text-decoration:none;color:#454545;}
-            .breadcrumbs a:after{font-family:marketplace-glyphs;font-style:normal;font-weight:normal;speak:none;text-align:center;width:1em;content:"";display:inline-block;font-size:9px;color:#bababa;margin:0 4px 0 8px;cursor:default;}
+            .breadcrumbs a:after{font-family:marketplace-glyphs;font-style:normal;font-weight:normal;speak:none;text-align:center;width:1em;content:">";display:inline-block;font-size:9px;color:#bababa;margin:0 4px 0 8px;cursor:default;}
             .breadcrumbs a:last-of-type:after{display:none;}
             .canvas{position:relative;}
             .canvas__header{position:relative;z-index:2;}
@@ -121,17 +131,49 @@
             @media (min-width: 1024px){
             .page__canvas{-webkit-box-shadow:none;box-shadow:none;}
             }
-            .e-icon:before{font-family:marketplace-glyphs;font-style:normal;font-weight:normal;speak:none;text-align:center;width:1em;display:inline-block;}
+            .e-icon:before {
+                /* font-family: marketplace-glyphs; */
+                font-style: normal;
+                font-weight: normal;
+                speak: none;
+                text-align: center;
+                width: 12px;
+                height: 12px;
+                display: inline-block;
+            }
             .e-icon.-icon-cancel:before{content:"";}
             .e-icon.-icon-chevron-down:before{content:"";}
-            .e-icon.-icon-facebook:before{content:"";}
-            .e-icon.-icon-pinterest:before{content:"";}
-            .e-icon.-icon-twitter:before{content:"";}
+            .e-icon.-icon-facebook:before{
+                content: url(https://static.xx.fbcdn.net/rsrc.php/v3/yr/r/zSKZHMh8mXU.png);
+            }
+            .e-icon.-icon-pinterest:before{
+                content: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMzBweCIgd2lkdGg9IjMwcHgiIHZpZXdCb3g9Ii0xIC0xIDMxIDMxIj48Zz48cGF0aCBkPSJNMjkuNDQ5LDE0LjY2MiBDMjkuNDQ5LDIyLjcyMiAyMi44NjgsMjkuMjU2IDE0Ljc1LDI5LjI1NiBDNi42MzIsMjkuMjU2IDAuMDUxLDIyLjcyMiAwLjA1MSwxNC42NjIgQzAuMDUxLDYuNjAxIDYuNjMyLDAuMDY3IDE0Ljc1LDAuMDY3IEMyMi44NjgsMC4wNjcgMjkuNDQ5LDYuNjAxIDI5LjQ0OSwxNC42NjIiIGZpbGw9IiNmZmYiPjwvcGF0aD48cGF0aCBkPSJNMTQuNzMzLDEuNjg2IEM3LjUxNiwxLjY4NiAxLjY2NSw3LjQ5NSAxLjY2NSwxNC42NjIgQzEuNjY1LDIwLjE1OSA1LjEwOSwyNC44NTQgOS45NywyNi43NDQgQzkuODU2LDI1LjcxOCA5Ljc1MywyNC4xNDMgMTAuMDE2LDIzLjAyMiBDMTAuMjUzLDIyLjAxIDExLjU0OCwxNi41NzIgMTEuNTQ4LDE2LjU3MiBDMTEuNTQ4LDE2LjU3MiAxMS4xNTcsMTUuNzk1IDExLjE1NywxNC42NDYgQzExLjE1NywxMi44NDIgMTIuMjExLDExLjQ5NSAxMy41MjIsMTEuNDk1IEMxNC42MzcsMTEuNDk1IDE1LjE3NSwxMi4zMjYgMTUuMTc1LDEzLjMyMyBDMTUuMTc1LDE0LjQzNiAxNC40NjIsMTYuMSAxNC4wOTMsMTcuNjQzIEMxMy43ODUsMTguOTM1IDE0Ljc0NSwxOS45ODggMTYuMDI4LDE5Ljk4OCBDMTguMzUxLDE5Ljk4OCAyMC4xMzYsMTcuNTU2IDIwLjEzNiwxNC4wNDYgQzIwLjEzNiwxMC45MzkgMTcuODg4LDguNzY3IDE0LjY3OCw4Ljc2NyBDMTAuOTU5LDguNzY3IDguNzc3LDExLjUzNiA4Ljc3NywxNC4zOTggQzguNzc3LDE1LjUxMyA5LjIxLDE2LjcwOSA5Ljc0OSwxNy4zNTkgQzkuODU2LDE3LjQ4OCA5Ljg3MiwxNy42IDkuODQsMTcuNzMxIEM5Ljc0MSwxOC4xNDEgOS41MiwxOS4wMjMgOS40NzcsMTkuMjAzIEM5LjQyLDE5LjQ0IDkuMjg4LDE5LjQ5MSA5LjA0LDE5LjM3NiBDNy40MDgsMTguNjIyIDYuMzg3LDE2LjI1MiA2LjM4NywxNC4zNDkgQzYuMzg3LDEwLjI1NiA5LjM4Myw2LjQ5NyAxNS4wMjIsNi40OTcgQzE5LjU1NSw2LjQ5NyAyMy4wNzgsOS43MDUgMjMuMDc4LDEzLjk5MSBDMjMuMDc4LDE4LjQ2MyAyMC4yMzksMjIuMDYyIDE2LjI5NywyMi4wNjIgQzE0Ljk3MywyMi4wNjIgMTMuNzI4LDIxLjM3OSAxMy4zMDIsMjAuNTcyIEMxMy4zMDIsMjAuNTcyIDEyLjY0NywyMy4wNSAxMi40ODgsMjMuNjU3IEMxMi4xOTMsMjQuNzg0IDExLjM5NiwyNi4xOTYgMTAuODYzLDI3LjA1OCBDMTIuMDg2LDI3LjQzNCAxMy4zODYsMjcuNjM3IDE0LjczMywyNy42MzcgQzIxLjk1LDI3LjYzNyAyNy44MDEsMjEuODI4IDI3LjgwMSwxNC42NjIgQzI3LjgwMSw3LjQ5NSAyMS45NSwxLjY4NiAxNC43MzMsMS42ODYiIGZpbGw9IiMxMTEiPjwvcGF0aD48L2c+PC9zdmc+);
+            }
+            .e-icon.-icon-twitter:before{ 
+                content: url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2072%2072%22%3E%3Cpath%20fill%3D%22none%22%20d%3D%22M0%200h72v72H0z%22%2F%3E%3Cpath%20class%3D%22icon%22%20fill%3D%22%23fff%22%20d%3D%22M68.812%2015.14c-2.348%201.04-4.87%201.744-7.52%202.06%202.704-1.62%204.78-4.186%205.757-7.243-2.53%201.5-5.33%202.592-8.314%203.176C56.35%2010.59%2052.948%209%2049.182%209c-7.23%200-13.092%205.86-13.092%2013.093%200%201.026.118%202.02.338%202.98C25.543%2024.527%2015.9%2019.318%209.44%2011.396c-1.125%201.936-1.77%204.184-1.77%206.58%200%204.543%202.312%208.552%205.824%2010.9-2.146-.07-4.165-.658-5.93-1.64-.002.056-.002.11-.002.163%200%206.345%204.513%2011.638%2010.504%2012.84-1.1.298-2.256.457-3.45.457-.845%200-1.666-.078-2.464-.23%201.667%205.2%206.5%208.985%2012.23%209.09-4.482%203.51-10.13%205.605-16.26%205.605-1.055%200-2.096-.06-3.122-.184%205.794%203.717%2012.676%205.882%2020.067%205.882%2024.083%200%2037.25-19.95%2037.25-37.25%200-.565-.013-1.133-.038-1.693%202.558-1.847%204.778-4.15%206.532-6.774z%22%2F%3E%3C%2Fsvg%3E) ;
+            }
             .e-icon.-line-height-small{line-height:0.9;}
             .e-icon.-size-medium{font-size:20px;}
             .e-icon.-rotate-180:before{-webkit-transform:rotate(180deg);transform:rotate(180deg);}
             .e-icon__alt{border:0;clip:rect(0 0 0 0);height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;width:1px;}
-            .btn,button,[type=submit]{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;-webkit-box-sizing:border-box;box-sizing:border-box;background-color:gray;border:none;border-radius:4px;color:white;cursor:pointer;display:inline-block;font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;margin:0;padding:5px 20px;text-align:center;text-decoration:none;}
+            .btn, button, [type=submit] {
+                            -webkit-font-smoothing: antialiased;
+                            -moz-osx-font-smoothing: grayscale;
+                            -webkit-box-sizing: border-box;
+                            box-sizing: border-box;
+                            background-color: #d8d8d8;
+                            border: none;
+                            border-radius: 4px;
+                            color: #5a5a5a;
+                            cursor: pointer;
+                            display: inline-block;
+                            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+                            font-size: 12px;
+                            margin: 0;
+                            padding: 5px 20px;
+                            text-align: center;
+                            text-decoration: none;
+                        }
             .btn:hover,button:hover,[type=submit]:hover,.btn:focus,button:focus,[type=submit]:focus{background-color:#0084B4;text-decoration:none;outline:none;}
             .btn:active,button:active,[type=submit]:active{background-color:#00719b;}
             .btn--label:hover{background:gray;cursor:default;}
@@ -139,6 +181,18 @@
             .btn--group-item{border-radius:0;padding:5px 10px;margin-right:1px;}
             .btn--group-item:first-child{border-radius:4px 0 0 4px;}
             .btn--group-item:last-child{border-radius:0 4px 4px 0;margin-right:0;}
+            a.btn--group-item>img{
+                width: 13px;
+            }
+            a.btn--group-item.tw{
+                background-color:#1b95e0;
+            }
+            a.btn--group-item.pi{
+                background-color:#111;
+            }
+            a.btn--group-item.fb{
+                background-color:#1877f2;
+            }
             button::-moz-focus-inner{padding:0;border:0;}
             }
             @media all{
@@ -162,7 +216,7 @@
             @media (min-width: 1024px){
             .item-preview__preview-buttons--social{padding-top:12px;}
             }
-            .item-preview__preview-buttons--social .btn{line-height:1.6;}
+            /* .item-preview__preview-buttons--social .btn{line-height:1.6;} */
             .item-description{padding:15px 0px 20px 0px;}
             .js-item-togglable-content.has-toggle{max-height:440px;overflow:hidden;position:relative;}
             .js-item-togglable-content.has-toggle:before{content:"";position:absolute;width:100%;height:100%;bottom:35px;z-index:1;background:-webkit-gradient(linear, left top, left bottom, color-stop(50%, rgba(255,255,255,0)), to(#fff));background:-webkit-linear-gradient(top, rgba(255,255,255,0) 50%, #fff 100%);background:linear-gradient(to bottom, rgba(255,255,255,0) 50%, #fff 100%);}
@@ -372,31 +426,11 @@
             a:active,a:hover{outline:0;outline:0;outline:0;outline:0;}
             a{color:#fff;cursor:pointer;text-decoration:none;}
             /*! CSS Used fontfaces */
-</style>
-    </head>
+        </style>
+    @endsection
 
-    <body id="" class="" data-view="app" data-responsive="true" data-user-signed-in="false">
-        <div class="headerWrapper___3eklQ">
-                <div class="flex___2XWAk headerContentLeft___tlZaq">
-                    <div class="logoWrapper___g2Okg">
-                        <a class="logoIconWrapper___2aVXl" href="http://localhost:8001">
-                            WAYAK
-                        </a>
-                    </div>
-                </div>
-                <div class="flex___2XWAk navLinksWrapper___1I469">
-                    <a class="link___3OiRu typography-subheading-m" href="{{ url('') }}">
-                        <span class="linkLabel___ot3V1">Inicio</span>
-                    </a>
-                    <a class="link___3OiRu typography-body-m active___2JazE" href="http://localhost:8001/us/search?searchQuery=invitation">
-                        <span class="linkLabel___ot3V1">Plantillas</span>
-                    </a>
-                </div>
-                <div class="flex___2XWAk">
-                </div>
-                <div class="headerShadow___2L53V"></div>
-        </div>
-        <div class="page">
+@section('content')
+        <div class="page" itemscope itemtype="https://schema.org/Product">
             <div class="page__canvas">
                 <div class="canvas">
                     <div class="canvas__header">
@@ -418,7 +452,8 @@
                                 <div class="item-header" data-view="itemHeader">
                                     <div class="item-header__top">
                                         <div class="item-header__title">
-                                            <h1 class="t-heading -color-inherit -size-l h-m0 is-hidden-phone">
+                                            <h1 class="t-heading -color-inherit -size-l h-m0 is-hidden-phone"
+                                                itemprop="name">
                                                 {{ $template->title }}
                                             </h1>
                                             <h1 class="t-heading -color-inherit -size-xs h-m0 is-hidden-tablet-and-above">
@@ -452,14 +487,21 @@
                                     <div class="box--no-padding">
                                         <div class="item-preview ">
                                             <img alt="{{ $template->title }}"
+                                            itemprop="image"
                                             src="{{ asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["product_preview"] ) }}">
                                             <div class="item-preview__actions">
                                                 <div class="item-preview__preview-buttons--social" data-view="socialButtons">
                                                     <div class="btn-group">
-                                                        <div class="btn btn--label btn--group-item">Share</div>
-                                                        <a class="btn btn--group-item" data-social-network="Facebook" data-social-network-link="" href="https://www.facebook.com/sharer/sharer.php?display=popup&amp;u=https%3A%2F%2Fgraphicriver.net%2Fitem%2Fdj-flyer%2F29900946%3Futm_source%3Dsharefb"><i class="e-icon -icon-facebook -size-medium -line-height-small"><span class="e-icon__alt">Facebook</span></i></a>
-                                                        <a class="btn btn--group-item" data-social-network="Twitter" data-social-network-link="" href="https://twitter.com/intent/tweet?text=Check+out+%27Dj+Flyer%27+on+%23EnvatoMarket+by+%40Hotpindesigns+%23graphicriver&amp;url=https%3A%2F%2Fgraphicriver.net%2Fitem%2Fdj-flyer%2F29900946%3Futm_source%3Dsharetw"><i class="e-icon -icon-twitter -size-medium -line-height-small"><span class="e-icon__alt">Twitter</span></i></a>
-                                                        <a class="btn btn--group-item" data-social-network="Pinterest" data-social-network-link="" href="http://pinterest.com/pin/create/button?description=Dj+Flyer&amp;media=http%3A%2F%2Fs3.envato.com%2Ffiles%2F317235397%2FDj-Flyer-Template-Preview.jpg&amp;url=https%3A%2F%2Fgraphicriver.net%2Fitem%2Fdj-flyer%2F29900946%3Futm_source%3Dsharepi"><i class="e-icon -icon-pinterest -size-medium -line-height-small"><span class="e-icon__alt">Pinterest</span></i></a>
+                                                        <!-- <div class="btn btn--label btn--group-item">Share</div> -->
+                                                        <a class="btn btn--group-item fb" data-social-network="Facebook" data-social-network-link="" href="https://www.facebook.com/sharer/sharer.php?display=popup&u={{ urlencode(URL::current().'?utm_source=sharepi') }}">
+                                                            <img src="https://static.xx.fbcdn.net/rsrc.php/v3/yr/r/zSKZHMh8mXU.png">
+                                                        </a>
+                                                        <a class="btn btn--group-item tw" data-social-network="Twitter" data-social-network-link="" href="https://twitter.com/intent/tweet?text={{ urlencode('Check Out "'.$template->title.'" on #WayakApp') }}&url={{ urlencode(URL::current().'?utm_source=sharetw') }}">
+                                                            <img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2072%2072%22%3E%3Cpath%20fill%3D%22none%22%20d%3D%22M0%200h72v72H0z%22%2F%3E%3Cpath%20class%3D%22icon%22%20fill%3D%22%23fff%22%20d%3D%22M68.812%2015.14c-2.348%201.04-4.87%201.744-7.52%202.06%202.704-1.62%204.78-4.186%205.757-7.243-2.53%201.5-5.33%202.592-8.314%203.176C56.35%2010.59%2052.948%209%2049.182%209c-7.23%200-13.092%205.86-13.092%2013.093%200%201.026.118%202.02.338%202.98C25.543%2024.527%2015.9%2019.318%209.44%2011.396c-1.125%201.936-1.77%204.184-1.77%206.58%200%204.543%202.312%208.552%205.824%2010.9-2.146-.07-4.165-.658-5.93-1.64-.002.056-.002.11-.002.163%200%206.345%204.513%2011.638%2010.504%2012.84-1.1.298-2.256.457-3.45.457-.845%200-1.666-.078-2.464-.23%201.667%205.2%206.5%208.985%2012.23%209.09-4.482%203.51-10.13%205.605-16.26%205.605-1.055%200-2.096-.06-3.122-.184%205.794%203.717%2012.676%205.882%2020.067%205.882%2024.083%200%2037.25-19.95%2037.25-37.25%200-.565-.013-1.133-.038-1.693%202.558-1.847%204.778-4.15%206.532-6.774z%22%2F%3E%3C%2Fsvg%3E">
+                                                        </a>
+                                                        <a class="btn btn--group-item pi" data-social-network="Pinterest" data-social-network-link="" href="https://www.pinterest.com/pin/create/button/?url={{ urlencode(URL::current().'?utm_source=sharepi') }}&media={{ urlencode(asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["product_preview"] )) }}&description={{ urlencode('Check Out "'.$template->title.'" on #WayakApp') }}">
+                                                            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMzBweCIgd2lkdGg9IjMwcHgiIHZpZXdCb3g9Ii0xIC0xIDMxIDMxIj48Zz48cGF0aCBkPSJNMjkuNDQ5LDE0LjY2MiBDMjkuNDQ5LDIyLjcyMiAyMi44NjgsMjkuMjU2IDE0Ljc1LDI5LjI1NiBDNi42MzIsMjkuMjU2IDAuMDUxLDIyLjcyMiAwLjA1MSwxNC42NjIgQzAuMDUxLDYuNjAxIDYuNjMyLDAuMDY3IDE0Ljc1LDAuMDY3IEMyMi44NjgsMC4wNjcgMjkuNDQ5LDYuNjAxIDI5LjQ0OSwxNC42NjIiIGZpbGw9IiNmZmYiPjwvcGF0aD48cGF0aCBkPSJNMTQuNzMzLDEuNjg2IEM3LjUxNiwxLjY4NiAxLjY2NSw3LjQ5NSAxLjY2NSwxNC42NjIgQzEuNjY1LDIwLjE1OSA1LjEwOSwyNC44NTQgOS45NywyNi43NDQgQzkuODU2LDI1LjcxOCA5Ljc1MywyNC4xNDMgMTAuMDE2LDIzLjAyMiBDMTAuMjUzLDIyLjAxIDExLjU0OCwxNi41NzIgMTEuNTQ4LDE2LjU3MiBDMTEuNTQ4LDE2LjU3MiAxMS4xNTcsMTUuNzk1IDExLjE1NywxNC42NDYgQzExLjE1NywxMi44NDIgMTIuMjExLDExLjQ5NSAxMy41MjIsMTEuNDk1IEMxNC42MzcsMTEuNDk1IDE1LjE3NSwxMi4zMjYgMTUuMTc1LDEzLjMyMyBDMTUuMTc1LDE0LjQzNiAxNC40NjIsMTYuMSAxNC4wOTMsMTcuNjQzIEMxMy43ODUsMTguOTM1IDE0Ljc0NSwxOS45ODggMTYuMDI4LDE5Ljk4OCBDMTguMzUxLDE5Ljk4OCAyMC4xMzYsMTcuNTU2IDIwLjEzNiwxNC4wNDYgQzIwLjEzNiwxMC45MzkgMTcuODg4LDguNzY3IDE0LjY3OCw4Ljc2NyBDMTAuOTU5LDguNzY3IDguNzc3LDExLjUzNiA4Ljc3NywxNC4zOTggQzguNzc3LDE1LjUxMyA5LjIxLDE2LjcwOSA5Ljc0OSwxNy4zNTkgQzkuODU2LDE3LjQ4OCA5Ljg3MiwxNy42IDkuODQsMTcuNzMxIEM5Ljc0MSwxOC4xNDEgOS41MiwxOS4wMjMgOS40NzcsMTkuMjAzIEM5LjQyLDE5LjQ0IDkuMjg4LDE5LjQ5MSA5LjA0LDE5LjM3NiBDNy40MDgsMTguNjIyIDYuMzg3LDE2LjI1MiA2LjM4NywxNC4zNDkgQzYuMzg3LDEwLjI1NiA5LjM4Myw2LjQ5NyAxNS4wMjIsNi40OTcgQzE5LjU1NSw2LjQ5NyAyMy4wNzgsOS43MDUgMjMuMDc4LDEzLjk5MSBDMjMuMDc4LDE4LjQ2MyAyMC4yMzksMjIuMDYyIDE2LjI5NywyMi4wNjIgQzE0Ljk3MywyMi4wNjIgMTMuNzI4LDIxLjM3OSAxMy4zMDIsMjAuNTcyIEMxMy4zMDIsMjAuNTcyIDEyLjY0NywyMy4wNSAxMi40ODgsMjMuNjU3IEMxMi4xOTMsMjQuNzg0IDExLjM5NiwyNi4xOTYgMTAuODYzLDI3LjA1OCBDMTIuMDg2LDI3LjQzNCAxMy4zODYsMjcuNjM3IDE0LjczMywyNy42MzcgQzIxLjk1LDI3LjYzNyAyNy44MDEsMjEuODI4IDI3LjgwMSwxNC42NjIgQzI3LjgwMSw3LjQ5NSAyMS45NSwxLjY4NiAxNC43MzMsMS42ODYiIGZpbGw9IiMxMTEiPjwvcGF0aD48L2c+PC9zdmc+">
+                                                        </a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -470,9 +512,11 @@
                                     <div class="pricebox-container js-author-driven-pricing-experiment">
                                         <div class="box -radius-all">
                                             <div id="purchase-form" class="purchase-form">
-                                                <form data-view="purchaseForm" data-google-analytics-page="itemPage" data-google-analytics-payload="{&quot;actionData&quot;:null,&quot;productsArray&quot;:[{&quot;id&quot;:29900946,&quot;name&quot;:&quot;Dj Flyer&quot;,&quot;brand&quot;:&quot;Hotpin&quot;,&quot;category&quot;:&quot;graphicriver.net/print-templates/flyers/events&quot;,&quot;quantity&quot;:&quot;1&quot;}],&quot;timestamp&quot;:1611619309}" action="/cart/add/29900946" accept-charset="UTF-8" method="post">
-                                                    <p class="t-body -size-s">
-                                                        Customize this template, and get ready to download in minutes.
+                                                <form data-view="purchaseForm" data-google-analytics-page="itemPage" data-google-analytics-payload="{&quot;actionData&quot;:null,&quot;productsArray&quot;:[{&quot;id&quot;:29900946,&quot;name&quot;:&quot;Dj Flyer&quot;,&quot;brand&quot;:&quot;Hotpin&quot;,&quot;category&quot;:&quot;Wakay.net/print-templates/flyers/events&quot;,&quot;quantity&quot;:&quot;1&quot;}],&quot;timestamp&quot;:1611619309}" action="/cart/add/29900946" accept-charset="UTF-8" method="post">
+                                                    <p class="t-body -size-s" itemprop="description">
+                                                        <!-- Customize this template, and get ready to download in minutes. -->
+                                                        <!-- Wayak provides unique "x" free design templates. This "x" template is created by the talented graphic designers at WAYAK.  -->
+                                                        The size of this template is {{ $template->width }}x{{ $template->height }}{{ $template->measureUnits }}. Click “Use This Template“, start your own design. Then you can change the text and images as you wish. After that, preview and save your work, your design will be ready to print, share or download.
                                                     </p>
                                                     <div class="purchase-form__button">
                                                         <a class="js-purchase__add-to-cart e-btn--3d -color-primary -size-m -width-full"
@@ -489,40 +533,50 @@
                                             </div>
                                             <div class="item-preview__preview-buttons--social" data-view="socialButtons">
                                                 <div class="btn-group">
-                                                    <div class="btn btn--label btn--group-item">Share</div>
-                                                    <a class="btn btn--group-item" data-social-network="Facebook" data-social-network-link="" href="https://www.facebook.com/sharer/sharer.php?display=popup&amp;u=https%3A%2F%2Fgraphicriver.net%2Fitem%2Fdj-flyer%2F29900946%3Futm_source%3Dsharefb"><i class="e-icon -icon-facebook -size-medium -line-height-small"><span class="e-icon__alt">Facebook</span></i></a>
-                                                    <a class="btn btn--group-item" data-social-network="Twitter" data-social-network-link="" href="https://twitter.com/intent/tweet?text=Check+out+%27Dj+Flyer%27+on+%23EnvatoMarket+by+%40Hotpindesigns+%23graphicriver&amp;url=https%3A%2F%2Fgraphicriver.net%2Fitem%2Fdj-flyer%2F29900946%3Futm_source%3Dsharetw"><i class="e-icon -icon-twitter -size-medium -line-height-small"><span class="e-icon__alt">Twitter</span></i></a>
-                                                    <a class="btn btn--group-item" data-social-network="Pinterest" data-social-network-link="" href="http://pinterest.com/pin/create/button?description=Dj+Flyer&amp;media=http%3A%2F%2Fs3.envato.com%2Ffiles%2F317235397%2FDj-Flyer-Template-Preview.jpg&amp;url=https%3A%2F%2Fgraphicriver.net%2Fitem%2Fdj-flyer%2F29900946%3Futm_source%3Dsharepi"><i class="e-icon -icon-pinterest -size-medium -line-height-small"><span class="e-icon__alt">Pinterest</span></i></a>
+                                                    <!-- <div class="btn btn--label btn--group-item">Share</div> -->
+                                                    <a class="btn btn--group-item fb" data-social-network="Facebook" data-social-network-link="" href="https://www.facebook.com/sharer/sharer.php?display=popup&u={{ urlencode(URL::current().'?utm_source=sharepi') }}">
+                                                        <img src="https://static.xx.fbcdn.net/rsrc.php/v3/yr/r/zSKZHMh8mXU.png">
+                                                    </a>
+                                                    <a class="btn btn--group-item tw" data-social-network="Twitter" data-social-network-link="" href="https://twitter.com/intent/tweet?text={{ urlencode('Check Out "'.$template->title.'" on #WayakApp') }}&url={{ urlencode(URL::current().'?utm_source=sharetw') }}">
+                                                        <img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2072%2072%22%3E%3Cpath%20fill%3D%22none%22%20d%3D%22M0%200h72v72H0z%22%2F%3E%3Cpath%20class%3D%22icon%22%20fill%3D%22%23fff%22%20d%3D%22M68.812%2015.14c-2.348%201.04-4.87%201.744-7.52%202.06%202.704-1.62%204.78-4.186%205.757-7.243-2.53%201.5-5.33%202.592-8.314%203.176C56.35%2010.59%2052.948%209%2049.182%209c-7.23%200-13.092%205.86-13.092%2013.093%200%201.026.118%202.02.338%202.98C25.543%2024.527%2015.9%2019.318%209.44%2011.396c-1.125%201.936-1.77%204.184-1.77%206.58%200%204.543%202.312%208.552%205.824%2010.9-2.146-.07-4.165-.658-5.93-1.64-.002.056-.002.11-.002.163%200%206.345%204.513%2011.638%2010.504%2012.84-1.1.298-2.256.457-3.45.457-.845%200-1.666-.078-2.464-.23%201.667%205.2%206.5%208.985%2012.23%209.09-4.482%203.51-10.13%205.605-16.26%205.605-1.055%200-2.096-.06-3.122-.184%205.794%203.717%2012.676%205.882%2020.067%205.882%2024.083%200%2037.25-19.95%2037.25-37.25%200-.565-.013-1.133-.038-1.693%202.558-1.847%204.778-4.15%206.532-6.774z%22%2F%3E%3C%2Fsvg%3E">
+                                                    </a>
+                                                    <a class="btn btn--group-item pi" data-social-network="Pinterest" data-social-network-link="" href="https://www.pinterest.com/pin/create/button/?url={{ urlencode(URL::current().'?utm_source=sharepi') }}&media={{ urlencode(asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["product_preview"] )) }}&description={{ urlencode('Check Out "'.$template->title.'" on #WayakApp') }}">
+                                                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMzBweCIgd2lkdGg9IjMwcHgiIHZpZXdCb3g9Ii0xIC0xIDMxIDMxIj48Zz48cGF0aCBkPSJNMjkuNDQ5LDE0LjY2MiBDMjkuNDQ5LDIyLjcyMiAyMi44NjgsMjkuMjU2IDE0Ljc1LDI5LjI1NiBDNi42MzIsMjkuMjU2IDAuMDUxLDIyLjcyMiAwLjA1MSwxNC42NjIgQzAuMDUxLDYuNjAxIDYuNjMyLDAuMDY3IDE0Ljc1LDAuMDY3IEMyMi44NjgsMC4wNjcgMjkuNDQ5LDYuNjAxIDI5LjQ0OSwxNC42NjIiIGZpbGw9IiNmZmYiPjwvcGF0aD48cGF0aCBkPSJNMTQuNzMzLDEuNjg2IEM3LjUxNiwxLjY4NiAxLjY2NSw3LjQ5NSAxLjY2NSwxNC42NjIgQzEuNjY1LDIwLjE1OSA1LjEwOSwyNC44NTQgOS45NywyNi43NDQgQzkuODU2LDI1LjcxOCA5Ljc1MywyNC4xNDMgMTAuMDE2LDIzLjAyMiBDMTAuMjUzLDIyLjAxIDExLjU0OCwxNi41NzIgMTEuNTQ4LDE2LjU3MiBDMTEuNTQ4LDE2LjU3MiAxMS4xNTcsMTUuNzk1IDExLjE1NywxNC42NDYgQzExLjE1NywxMi44NDIgMTIuMjExLDExLjQ5NSAxMy41MjIsMTEuNDk1IEMxNC42MzcsMTEuNDk1IDE1LjE3NSwxMi4zMjYgMTUuMTc1LDEzLjMyMyBDMTUuMTc1LDE0LjQzNiAxNC40NjIsMTYuMSAxNC4wOTMsMTcuNjQzIEMxMy43ODUsMTguOTM1IDE0Ljc0NSwxOS45ODggMTYuMDI4LDE5Ljk4OCBDMTguMzUxLDE5Ljk4OCAyMC4xMzYsMTcuNTU2IDIwLjEzNiwxNC4wNDYgQzIwLjEzNiwxMC45MzkgMTcuODg4LDguNzY3IDE0LjY3OCw4Ljc2NyBDMTAuOTU5LDguNzY3IDguNzc3LDExLjUzNiA4Ljc3NywxNC4zOTggQzguNzc3LDE1LjUxMyA5LjIxLDE2LjcwOSA5Ljc0OSwxNy4zNTkgQzkuODU2LDE3LjQ4OCA5Ljg3MiwxNy42IDkuODQsMTcuNzMxIEM5Ljc0MSwxOC4xNDEgOS41MiwxOS4wMjMgOS40NzcsMTkuMjAzIEM5LjQyLDE5LjQ0IDkuMjg4LDE5LjQ5MSA5LjA0LDE5LjM3NiBDNy40MDgsMTguNjIyIDYuMzg3LDE2LjI1MiA2LjM4NywxNC4zNDkgQzYuMzg3LDEwLjI1NiA5LjM4Myw2LjQ5NyAxNS4wMjIsNi40OTcgQzE5LjU1NSw2LjQ5NyAyMy4wNzgsOS43MDUgMjMuMDc4LDEzLjk5MSBDMjMuMDc4LDE4LjQ2MyAyMC4yMzksMjIuMDYyIDE2LjI5NywyMi4wNjIgQzE0Ljk3MywyMi4wNjIgMTMuNzI4LDIxLjM3OSAxMy4zMDIsMjAuNTcyIEMxMy4zMDIsMjAuNTcyIDEyLjY0NywyMy4wNSAxMi40ODgsMjMuNjU3IEMxMi4xOTMsMjQuNzg0IDExLjM5NiwyNi4xOTYgMTAuODYzLDI3LjA1OCBDMTIuMDg2LDI3LjQzNCAxMy4zODYsMjcuNjM3IDE0LjczMywyNy42MzcgQzIxLjk1LDI3LjYzNyAyNy44MDEsMjEuODI4IDI3LjgwMSwxNC42NjIgQzI3LjgwMSw3LjQ5NSAyMS45NSwxLjY4NiAxNC43MzMsMS42ODYiIGZpbGw9IiMxMTEiPjwvcGF0aD48L2c+PC9zdmc+">
+                                                    </a>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div class="box -radius-all">
-                                        <div class="rating-detailed--has-no-ratings">
+                                        <div class="rating-detailed--has-no-ratings" 
+                                            itemprop="aggregateRating"
+                                            itemscope itemtype="https://schema.org/AggregateRating">
                                             <strong>Item Rating:</strong> &nbsp;&nbsp;<span>Minimum of 3 votes required</span>
+                                            <!-- Rated <span itemprop="ratingValue">3.5</span>/5
+                                            based on <span itemprop="reviewCount">11</span> customer reviews -->
                                         </div>
                                     </div>
                                     <div class="box -radius-all">
                                         <div class="meta-attributes " data-view="CondenseItemInfoPanel">
                                             <table class="meta-attributes__table" cellspacing="0" cellpadding="0" border="0">
                                                 <tbody>
-                                                    <tr>
+                                                    <!-- <tr>
                                                         <td class="meta-attributes__attr-name">Last Update</td>
                                                         <td class="meta-attributes__attr-detail">
                                                             <time class="updated" datetime="2021-01-05T10:16:16+11:00">
                                                                 {{ $template->updatedAt }}
                                                             </time>
                                                         </td>
-                                                    </tr>
-                                                    <tr>
+                                                    </tr> -->
+                                                    <!-- <tr>
                                                         <td class="meta-attributes__attr-name">Created</td>
                                                         <td class="meta-attributes__attr-detail">
                                                             <span>
                                                                 {{ $template->createdAt }}
                                                             </span>
                                                         </td>
-                                                    </tr>
+                                                    </tr> -->
                                                     <tr>
                                                         <td class="meta-attributes__attr-name">Category</td>
                                                         <td class="meta-attributes__attr-detail">
@@ -547,18 +601,20 @@
                                                             </a>
                                                         </td>
                                                     </tr>
+                                                    @if( isset($template->tags) && sizeof($template->tags) > 0 )
                                                     <tr>
                                                         <td class="meta-attributes__attr-name">Tags</td>
-                                                        <td><span class="meta-attributes__attr-tags">
-                                                            <a title="artist flyer" rel="nofollow" href="/artist%20flyer-graphics">artist flyer</a>,
-                                                            <a title="banner" rel="nofollow" href="/banner-graphics">banner</a>,
-                                                            <a title="club flyer" rel="nofollow" href="/club%20flyer-graphics">club flyer</a>,
-                                                            <a title="cover" rel="nofollow" href="/cover-graphics">cover</a>,
-                                                            <a title="dj event" rel="nofollow" href="/dj%20event-graphics">dj event</a>,
-                                                            <a title="dj tour" rel="nofollow" href="/dj%20tour-graphics">dj tour</a>
+                                                        <td>
+                                                            <span class="meta-attributes__attr-tags">
+                                                                @foreach($template->tags as $tag)
+                                                                    <a title="artist flyer" rel="nofollow" href="/artist%20flyer-graphics">
+                                                                        {{ $tag->name }}
+                                                                    </a>,
+                                                                @endforeach
                                                             </span>
                                                         </td>
                                                     </tr>
+                                                    @endif
                                                 </tbody>
                                             </table>
                                         </div>
@@ -567,13 +623,9 @@
                                         <div class="rating-detailed--has-no-ratings">
                                             <strong>Colors:</strong> &nbsp;&nbsp;
                                             <ul class="DM08FA">
-                                                <li class="Gu5L1Q" style="background-color: rgb(254, 77, 113);"><div class="_-pFsfA">#fe4d71</div></li>
-                                                <li class="Gu5L1Q" style="background-color: rgb(243, 93, 154);"><div class="_-pFsfA">#f35d9a</div></li>
-                                                <li class="Gu5L1Q" style="background-color: rgb(140, 52, 221);"><div class="_-pFsfA">#8c34dd</div></li>
-                                                <li class="Gu5L1Q" style="background-color: rgb(189, 56, 184);"><div class="_-pFsfA">#bd38b8</div></li>
-                                                <li class="Gu5L1Q" style="background-color: rgb(249, 180, 207);"><div class="_-pFsfA">#f9b4cf</div></li>
-                                                <li class="Gu5L1Q" style="background-color: rgb(254, 77, 113);"><div class="_-pFsfA">#fe4d71</div></li>
-                                                <li class="Gu5L1Q" style="background-color: rgb(249, 180, 207);"><div class="_-pFsfA">#f9b4cf</div></li>
+                                                @foreach( $colors as $hex_color )
+                                                    <li class="Gu5L1Q" style="background-color: {{ $hex_color }};"><div class="_-pFsfA">{{ $hex_color }}</div></li>
+                                                @endforeach
                                             </ul>
                                         </div>
                                     </div>
@@ -632,8 +684,8 @@
                             </div>
                         </div>
                         <div id="square-image-magnifier" class="magnifier" style="top: 2376px; left: 619.5px; display: none;">
-                            <div class="size-limiter"><img src="https://s3.envato.com/files/319173243/Church-Flyer-Template-Preview.jpg"></div>
-                            <strong>Church Flyer</strong>
+                            <div class="size-limiter"><img src="{{ asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["product_preview"] ) }}"></div>
+                            <strong>{{ $template->title }}</strong>
                             <div class="info">
                                 <div class="author-category">
                                     by <span class="author">Hotpin</span>
@@ -690,7 +742,7 @@
                 <div class="page__overlay" data-view="offCanvasNavToggle" data-off-canvas="close"></div>
             </div>
         </div>
-        <div data-site="graphicriver" data-view="CsatSurvey" data-experiment-id="csat_survey" class="is-visually-hidden">
+        <div data-site="Wakay" data-view="CsatSurvey" data-experiment-id="csat_survey" class="is-visually-hidden">
             <div id="js-customer-satisfaction-survey">
                 <div class="e-modal">
                     <div class="e-modal__section" id="js-customer-satisfaction-survey-iframe-wrapper">
@@ -702,14 +754,12 @@
             <div class="h-text-align-right"><a href="#" id="js-popup-close-button" class="e-alert-box__dismiss-icon"><i class="e-icon -icon-cancel"></i></a></div>
             <div class="survey-popup--section">
                 <h2 class="t-heading h-text-align-center -size-m">Tell us what you think!</h2>
-                <p>We'd like to ask you a few questions to help improve GraphicRiver.</p>
+                <p>We'd like to ask you a few questions to help improve Wakay.</p>
             </div>
             <div class="survey-popup--section">
                 <a href="#" id="js-show-survey-button" class="e-btn -color-primary -size-m -width-full js-survey-popup--show-survey-button">Sure, take me to the survey</a>
             </div>
         </div>
         <div id="affiliate-tracker" class="is-hidden" data-view="affiliatesTracker" data-cookiebot-enabled="true"></div>
-        <iframe name="__uspapiLocator" tabindex="-1" role="presentation" aria-hidden="true" title="Blank" style="display: none; position: absolute; width: 1px; height: 1px; top: -9999px;"></iframe><iframe tabindex="-1" role="presentation" aria-hidden="true" title="Blank" src="https://consentcdn.cookiebot.com/sdk/bc-v2.min.html" style="position: absolute; width: 1px; height: 1px; top: -9999px;"></iframe>
-        <div style="width:0px; height:0px; display:none; visibility:hidden;" id="batBeacon826708165184"><img style="width:0px; height:0px; display:none; visibility:hidden;" id="batBeacon645440365716" width="0" height="0" alt="" src="https://bat.bing.com/action/0?ti=16005611&amp;Ver=2&amp;mid=d3d38301-08db-4347-8b6f-62217aef5ffc&amp;sid=4dae06505f6911eb842a81c0f40d561e&amp;vid=790150600a3a11eb810c651d03667c88&amp;vids=0&amp;pi=1200101525&amp;lg=es&amp;sw=1920&amp;sh=1080&amp;sc=24&amp;tl=Dj%20Flyer%20by%20Hotpin%20%7C%20GraphicRiver&amp;p=https%3A%2F%2Fgraphicriver.net%2Fitem%2Fdj-flyer%2F29900946&amp;r=https%3A%2F%2Fgraphicriver.net%2F&amp;lt=2260&amp;evt=pageLoad&amp;msclkid=N&amp;sv=1&amp;rn=576940"></div>
-    </body>
-</html>
+        
+@endsection

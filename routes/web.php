@@ -27,9 +27,11 @@ use App\Http\Controllers\TemplettScrapperController;
     Route::get('/scrapper/canva/convert-json/{template_key}', [canvaController::class, 'convertToJSON']);
     Route::post('/scrapper/canva/convert-json/{template_key}', [canvaController::class, 'convertToJSON'])->name('canva.convertToJSON');
 
-Route::get('/scrapper/corjl', [CorjlController::class, 'index']);
-Route::get('/scrapper/templett', [TemplettScrapperController::class, 'downloadOriginalTemplate']);
-Route::get('/scrapper/templett/keynames', [TemplettScrapperController::class, 'migrateTemplateKeyNames']);
+    Route::get('/scrapper/corjl', [CorjlController::class, 'index']);
+    Route::get('/scrapper/templett', [TemplettScrapperController::class, 'downloadOriginalTemplate']);
+    Route::get('/scrapper/templett/keynames', [TemplettScrapperController::class, 'migrateTemplateKeyNames']);
+    
+    Route::get('/bot/autorename', [AdminController::class, 'autoRename']);
 
 // Route::get( '/scrapper/etsy', [ EtsyScrapperController::class, 'extractMetaData' ]);
 // Route::get('/scrap-from-templett', [TemplettScrapperController::class, 'scrapURL']);
@@ -154,7 +156,10 @@ Route::get('/scrapper/templett/keynames', [TemplettScrapperController::class, 'm
 
     Route::get('/editor/download-pdf', [EditorController::class, 'downloadPDF']);
     Route::post('/editor/register-template-download', [EditorController::class, 'registerTemplateDownload']);
-    Route::get('/editor/get-remaining-downloads', [EditorController::class,'loadRemainingDownloads']);
+    Route::get('/editor/get-remaining-downloads/{template_id}', [EditorController::class,'loadRemainingDownloads']);
+    Route::get('/editor/get-uploaded-images/{limit_image}/{load_count}', [EditorController::class,'getUploadedImages']);
+    Route::get('/editor/get-related-products/{templateId_related}', [EditorController::class,'getRelatedProducts']);
+    Route::get('/editor/get-backgrounds', [EditorController::class,'getBackgrounds']);
 
     Route::get('/editor/get-woff-font-url', [EditorController::class, 'getWoffFontUrl']);
     Route::get('/editor/check-allow-revert-template', [EditorController::class, 'checkAllowRevertTemplate']);
@@ -164,41 +169,41 @@ Route::get('/scrapper/templett/keynames', [TemplettScrapperController::class, 'm
     Route::get('/{country}/editar/plantillas', [EditorController::class, 'editPurchasedTemplate']);
     
     
-    // FRONTEND
+// FRONTEND
+    // Route::get('mx/plantillas/invitaciones', [EditorController::class, 'home1']);
+    // Route::get('mx/plantillas/producto-ejemplo', [EditorController::class, 'product']);
+    // Route::get('mx/plantillas/category', [EditorController::class, 'category']);
 
-        // FRONTEND EJEMPLO
-        Route::get('mx/plantillas/invitaciones', [EditorController::class, 'home1']);
-        Route::get('mx/plantillas/producto-ejemplo', [EditorController::class, 'product']);
-        Route::get('mx/plantillas/category', [EditorController::class, 'category']);
+    Route::get('/{country}/search', [ContentController::class, 'showSearchPage'])->name('user.search');
+    // Route::post('/{country}/search', [ContentController::class, 'showSearchPage'])->name('user.search.post');
 
-        Route::get('/{country}/search', [ContentController::class, 'showSearchPage'])->name('user.search');
-        // Route::post('/{country}/search', [ContentController::class, 'showSearchPage'])->name('user.search.post');
+    Route::get('/{country}/templates/{cat_lvl_1}', [ContentController::class, 'showCategoryPage'])->name('showCategoryLevel1');
+    Route::get('/{country}/templates/{cat_lvl_1}/{cat_lvl_2}', [ContentController::class, 'showCategoryPage'])->name('showCategoryLevel2');
+    Route::get('/{country}/templates/{cat_lvl_1}/{cat_lvl_2}/{cat_lvl_3}', [ContentController::class, 'showCategoryPage'])->name('showCategoryLevel3');
+    Route::get('/{country}/templates/{cat_lvl_1}/{cat_lvl_2}/{cat_lvl_3}/{cat_lvl_4}', [ContentController::class, 'showCategoryPage'])->name('showCategoryLevel4');
+    
+    Route::get('/{country}/template/{slug}', [ContentController::class, 'showTemplatePage'])->name('template.productDetail');
 
-        Route::get('/{country}/templates/{category}', [ContentController::class, 'showCategoryPage']);
-        Route::get('/{country}/templates/{category}/{cat_lvl_2}', [ContentController::class, 'showCategoryPage']);
-        Route::get('/{country}/templates/{category}/{cat_lvl_2}/{cat_lvl_3}', [ContentController::class, 'showCategoryPage']);
-        Route::get('/{country}/templates/{category}/{cat_lvl_2}/{cat_lvl_3}/{cat_lvl_4}', [ContentController::class, 'showCategoryPage']);
-        Route::get('/{country}/template/{template_id}/{slug}', [ContentController::class, 'showTemplatePage'])->name('plantilla.detalle');
-        Route::get('/{country}/create/{category}', [ContentController::class, 'showCreatePerCategoryPage']);
-        Route::get('/{country}/create', [ContentController::class, 'showCreatePage']);
-        
-        
-        Route::get('/{country}/plantillas/{category}', [ContentController::class, 'showCategoryPage']);
-        Route::get('/{country}/plantilla/{template_id}/{slug}', [ContentController::class, 'showTemplatePage']);
-        Route::get('/{country}/crear/{category}', [ContentController::class, 'showCreatePerCategoryPage']);
-        Route::get('/{country}/crear', [ContentController::class, 'showCreatePage']);
-        
-        Route::get('/{country}/criar/{category}', [ContentController::class, 'showCategoryPage']);
-        Route::get('/{country}/modelos/{category}', [ContentController::class, 'showCreatePage']);
-        // Route::get('/{country}/modelos/{category}', [ContentController::class, 'showProductDetail']);
-        // ($country, $template_id, $slug)
+    Route::get('/{country}/create/{category}', [ContentController::class, 'showCreatePerCategoryPage']);
+    Route::get('/{country}/create', [ContentController::class, 'showCreatePage']);
+    
+    
+    Route::get('/{country}/plantillas/{category}', [ContentController::class, 'showCategoryPage']);
+    Route::get('/{country}/plantilla/{template_id}/{slug}', [ContentController::class, 'showTemplatePage']);
+    Route::get('/{country}/crear/{category}', [ContentController::class, 'showCreatePerCategoryPage']);
+    Route::get('/{country}/crear', [ContentController::class, 'showCreatePage']);
+    
+    Route::get('/{country}/criar/{category}', [ContentController::class, 'showCategoryPage']);
+    Route::get('/{country}/modelos/{category}', [ContentController::class, 'showCreatePage']);
+    // Route::get('/{country}/modelos/{category}', [ContentController::class, 'showProductDetail']);
+    // ($country, $template_id, $slug)
 
-        Route::get('/', [ContentController::class, 'showHome']);
-        Route::get('mx', [EditorController::class, 'wayak_home']);
+    Route::get('/', [ContentController::class, 'showHome']);
+    Route::get('mx', [EditorController::class, 'wayak_home']);
 
-        // Route::get('mx/plantillas', [EditorController::class, 'home']);
-        Route::get('{country}/demo/{modelo_mercado_pago}', [EditorController::class, 'demoTemplateEditor'])->name('plantilla.demo');
-        Route::get('/{country}/editar/plantilla/{template_key}', [EditorController::class, 'customerTemplate'])->name('plantilla.editar');
-        
-    // -- https://wayak.app/us/templates/instagram-stories/
-
+    // Route::get('mx/plantillas', [EditorController::class, 'home']);
+    Route::get('{country}/demo/{modelo_mercado_pago}', [EditorController::class, 'demoTemplateEditor'])->name('plantilla.demo');
+    Route::get('/{country}/editar/plantilla/{template_key}', [EditorController::class, 'customerTemplate'])->name('plantilla.editar');
+    
+// SITEMAPS
+    Route::get('/{country}/sitemap.xml', [ContentController::class, 'sitemap']);

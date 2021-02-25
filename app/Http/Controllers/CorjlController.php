@@ -536,8 +536,8 @@ class CorjlController extends Controller
                         'url' => $node->properties->{'xlink:href'},
                         'width' => $node->properties->width,
                         'height' => $node->properties->height,
-                        'x' => $node->properties->x,
-                        'y' => $node->properties->y
+                        'x' => isset($node->properties->x) ? $node->properties->x : 0,
+                        'y' => isset($node->properties->y) ? $node->properties->y : 0
                     ];
                     
                     
@@ -557,7 +557,7 @@ class CorjlController extends Controller
                         'font-family' => trim(str_replace("&quot;", null, str_replace(", 'Times'",null,$node->properties->{'font-family'}))),
                         'x' => isset($node->properties->{'x'}) ? $node->properties->{'x'} : 0,
                         'y' => isset($node->properties->{'y'}) ? $node->properties->{'y'} : 0,
-                        'fill' => $node->properties->{'fill'},
+                        'fill' => isset($node->properties->{'fill'}) ? $node->properties->{'fill'} : null,
                         'font-size' => $node->properties->{'font-size'},
                         'family' => trim( str_replace("&quot;", null, str_replace(", 'Times'",null,$node->properties->{'family'}))),
                         'size' => $node->properties->{'size'}
@@ -665,8 +665,9 @@ class CorjlController extends Controller
         if( $thumbnail_rows == 0 ){
             DB::table('templates')->insert([
                 'id' => null,
+                'source' => 'corjl',
                 'template_id' => $template_id,
-                'name' => htmlspecialchars_decode( $name ),
+                // 'name' => htmlspecialchars_decode( $name ),
                 'fk_etsy_template_id' => $fk_etsy_template_id->id,
                 'status' => 0,
                 'parent_template_id' => $parent_template_id,

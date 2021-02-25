@@ -215,6 +215,9 @@ class EditorController extends Controller
 	function getJSONTemplate($template_id, $language_code) {
 		$template_key = 'template:'.$language_code.':'.$template_id.':jsondata';
 		
+		// print_r($template_key);
+		// exit;
+		
 		if( App::environment() == 'local' ){
 			$template = str_replace('http://localhost', url('/'), Redis::get($template_key) );
 			$template = str_replace('http:\/\/localhost:8001', url('/'), $template );
@@ -412,19 +415,20 @@ class EditorController extends Controller
 			$this->updateThumbnailsOnDB( $thumbnail_info );
 			
 			// Redis::set('product:format_ready:'.$template_id, 1);
-			if( $language_code != 'en' ){
+			// if( $language_code != 'en' ){
 				// echo "aqui >> $template_id";
 				// exit;
 
-				DB::table('templates')
+				DB::table('thumbnails')
 					->where('template_id','=', $template_id)
+					->where('language_code','=', $language_code)
 					->update([
 						// 'translation_ready' => true,
 						// 'format_ready' => true,
 						'thumbnail_ready' => true
 					]);
 				// Redis::set('product:thumbnail_ready:'.$template_id, 1);
-			}
+			// }
 		}
 		
 		// exit;
@@ -981,24 +985,58 @@ class EditorController extends Controller
 
 		if( isset($template_ids) ){
 
-			$template_thumbnails = DB::table('thumbnails')
+			$thumbnail = DB::table('thumbnails')
 				->select(['template_id', 'filename', 'title', 'dimentions'])
 				->where('language_code', '=',$request->language_code)
 	    		->whereRAW('template_id IN(\''.$template_ids.'\')')
-				->get();
+				->first();
 
-	    	foreach($template_thumbnails as $thumbnail) {
+	    // 	foreach($template_thumbnails as $thumbnail) {
 		    	$img_url = url('design/template/'.$thumbnail->template_id.'/thumbnails/'.$request->language_code.'/'.$thumbnail->filename);
-		    	$thumbnails_html .= '<div class="col-xs-6 thumb" id="'.$request->demo_templates.'"><a class="thumbnail" data-target="'.$request->demo_templates.'"><span class="thumb-overlay"><h3>'.$thumbnail->title.'</h3></span><div class="expired-notice" style="display:none;">EXPIRED</div><img class="tempImage img-responsive" src="'.$img_url.'" alt="" style=""></a><div class="badge-container"><span class="badge dims">'.$thumbnail->dimentions.'</span><span class="badge tempId">ID: '.$request->demo_templates.'</span><i class="fa fa-trash-o deleteTemp" id="'.$request->demo_templates.'"></i></div></div>';
-		    }
+		//     	$thumbnails_html .= '<div class="col-xs-6 thumb" id="'.$request->demo_templates.'"><a class="thumbnail" data-target="'.$request->demo_templates.'"><span class="thumb-overlay"><h3>'.$thumbnail->title.'</h3></span><div class="expired-notice" style="display:none;">EXPIRED</div><img class="tempImage img-responsive" src="'.$img_url.'" alt="" style=""></a><div class="badge-container"><span class="badge dims">'.$thumbnail->dimentions.'</span><span class="badge tempId">ID: '.$request->demo_templates.'</span><i class="fa fa-trash-o deleteTemp" id="'.$request->demo_templates.'"></i></div></div>';
+		//     }
 		}
 
-		$response = array(
-			'err' => 0,
-		    'data' => $thumbnails_html
-		);
+		// $response = array(
+		// 	'err' => 0,
+		//     'data' => $thumbnails_html
+		// );
 
-		return json_encode($response);
+		// return json_encode($response);
+		
+		echo '{
+			"success": true,
+			"data": [{
+				"template_id": "'.$template_ids.'",
+				"order_id": "0",
+				"uid": "401481",
+				"template_name": "pampas grass bridal shower 07",
+				"canvas_thumbnail": "",
+				"canvas_json": "",
+				"original_thumbnail": "",
+				"original_json": "",
+				"tags": "pampas grass",
+				"format": "new",
+				"preview_s3key": "thumbs\/401481_1604309596_preview.jpeg",
+				"original_preview_s3key": "thumbs\/401481_1604309596_preview.jpeg",
+				"original_thumb_s3key": "thumbs\/401481_1604309596.png",
+				"thumb_s3key": "thumbs\/401481_1604309596.png",
+				"options": "{\"width\":480,\"height\":672,\"metrics\":\"in\",\"type\":\"single\",\"instructionsId\":\"\",\"scriptVersion\":4}",
+				"canvas_json_s3url": "https:\/\/templett.s3.us-west-1.amazonaws.com\/templates\/5378270.json",
+				"original_json_s3url": "https:\/\/templett.s3.us-west-1.amazonaws.com\/templates\/5378270_original.json",
+				"status": "active",
+				"creation_date": null,
+				"expiration_date": null,
+				"granted_by_uid": "0",
+				"download_number": "0",
+				"width": 5,
+				"instructionsId": 0,
+				"height": 7,
+				"metrics": "in",
+				"temp_source": '.json_encode($img_url).'
+			}]
+		}';
+
 	}
 
 	function loadAdditionalAssets(){
@@ -1075,7 +1113,7 @@ class EditorController extends Controller
 		);
 	}
 
-	function loadRemainingDownloads(){
+	function loadRemainingDownloads($template_id){
 		
 		return response()->json([
 			'success' => true,
@@ -1083,6 +1121,40 @@ class EditorController extends Controller
 			'limit' => 10,
 			'remaining' => 0
 		]);
+	}
+	
+	function getUploadedImages($limit_image, $load_count){
+		
+		// return response()->json([
+		// 	'success' => true,
+		// 	'msg' => 'No downloads remaining',
+		// 	'limit' => 10,
+		// 	'remaining' => 0
+		// ]);
+		echo '{"success":true,"images":[]}';
+	}
+	
+	
+	function getRelatedProducts( $templateId_related, Request $request){
+		
+		// return response()->json([
+		// 	'success' => true,
+		// 	'msg' => 'No downloads remaining',
+		// 	'limit' => 10,
+		// 	'remaining' => 0
+		// ]);
+		echo '{"success":true,"products":[],"page":"0","total":[]}';
+	}
+	
+	function getBackgrounds(Request $request){
+		
+		// return response()->json([
+		// 	'success' => true,
+		// 	'msg' => 'No downloads remaining',
+		// 	'limit' => 10,
+		// 	'remaining' => 0
+		// ]);
+		echo '{"success":true,"data":[]}';
 	}
 
 	function getWoffFontUrl(Request $request){
@@ -1122,16 +1194,22 @@ class EditorController extends Controller
 
 	function getCSSFonts(Request $request){
 		$templates = urldecode($request->templates);
+		
+		// print_r(json_decode($templates));
+		// exit;
+
 		$values = array();
 		$response = "";
 
-		$templates = explode(",", $templates);
-		$templates = "'".implode("','", $templates)."'";
+		// $templates = explode(",", $templates);
+		// $templates = "'".implode("','", $templates)."'";
 
-		if( isset($templates) ){
+		if( isset($request->templates) && is_array( json_decode($templates) ) ){
 			// $templates = json_decode($templates);
 			// $templates = urldecode($request['templates']);
-			// $templates = "'".implode("','", $templates)."'";
+			$templates = "'".implode("','", json_decode($templates) )."'";
+			// print_r($templates);
+			// exit;
 
 			// "SELECT * FROM fonts WHERE "
 			$font_families = DB::Table('fonts')

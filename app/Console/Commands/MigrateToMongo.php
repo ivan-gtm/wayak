@@ -13,7 +13,7 @@ class MigrateToMongo extends Command
      *
      * @var string
      */
-    protected $signature = 'command:migratetomongo';
+    protected $signature = 'mongo:migratedb';
 
     /**
      * The console command description.
@@ -39,67 +39,6 @@ class MigrateToMongo extends Command
      */
     public function handle()
     {
-        // $certain_templates = Template::whereIn('_id', [
-        //     "3952688",
-        //     "5502933",
-        //     "2302240",
-        //     "2302364"
-        // ])->get();
-
-        // echo "<pre>";
-        // print_r($certain_templates);
-        // exit;
-
-        // $search_result = Template::where('title', 'like', '%tag%')
-        //     ->skip(0)
-        //     ->take(50)
-        //     ->get([
-        //         'title',
-        //         'format',
-        //         'width',
-        //         'height',
-        //         'measureUnits',
-        //         'forSubscribers',
-        //         'category',
-        //         'categoryCaption',
-        //         'previewImageUrls',
-        //     ]);
-
-        
-        // // echo "<pre>";
-        // // print_r( Redis::get('crello:search:results:page:115') );
-        // // exit;
-
-        // // {
-        // //     id: "5db98076abc8ea6d1c716500",
-        // //     format: "Full HD video",
-        // //     group: "AN",
-        // //     itemsCount: 1,
-        // //     width: 1920,
-        // //     height: 1080,
-        // //     itemType: "templateElement",
-        // //     subType: "animated",
-        // //     premium: true,
-        // //     previewImageUrls: [
-        // //     "/common/3dff7461-1e84-4874-9de7-f4ddf63e1967.jpg"
-        // //     ],
-        // //     categories: [
-        // //     "educationScience"
-        // //     ],
-        // //     title: "Education Courses Woman Holding Book",
-        // //     previewVideoUrl: "/video-convert/b239a357-1b72-4157-82c4-f20da6b8c04c.mp4"
-        // // }
-
-        // foreach ($search_result as $template) {
-        //     echo "ID >>".$template->_id."<br>";
-        //     echo "TITLE >>".$template->title."<br>";
-        //     echo "TITLE_ >>";
-        //     print_r( $template->title_ );
-        //     echo "<hr>";
-        // }
-        // // echo "<pre>";
-        // // print_r($search_result);
-        // exit;
 
         $source_templates = DB::table('templates')
             // ->join('contacts', 'users.id', '=', 'contacts.user_id')
@@ -107,8 +46,22 @@ class MigrateToMongo extends Command
             ->join('thumbnails', 'thumbnails.template_id', '=', 'templates.template_id')
             ->where('thumbnails.language_code','=','en')
             ->where('templates.status','=',5)
+            ->where('thumbnails.thumbnail_ready','=',1)
+            ->where('templates.source','=','templett')
             ->whereNotNull('templates.fk_etsy_template_id')
-            ->select('templates.template_id', 'templates.width', 'templates.height','templates.metrics','tmp_etsy_metadata.title','tmp_etsy_metadata.username','thumbnails.filename','thumbnails.title as title_','thumbnails.dimentions')
+            ->select(
+                    'templates.template_id', 
+                    'templates.width', 
+                    'templates.height',
+                    'templates.metrics',
+                    // 'tmp_etsy_metadata.title',
+                    'tmp_etsy_metadata.username',
+                    'thumbnails.filename',
+                    'thumbnails.product_name as title',
+                    'thumbnails.product_slug as slug',
+                    // 'thumbnails.title as title_',
+                    'thumbnails.dimentions'
+            )
             ->get();
 
         echo "<pre>";
@@ -119,13 +72,14 @@ class MigrateToMongo extends Command
             $dimentions = explode('x', $dimentions);
 
             if( Template::where("_id",'=', $db_template->template_id )->count() == 0 ){
-                echo $db_template->template_id.'<br>';
+                print_r("\n".$db_template->template_id);
                 
                 $template = new Template;
                 $template->_id = $db_template->template_id;
-                $template->title = $db_template->title .'-'. $db_template->title_;
-                $template->category = "Party Invitations";
-                $template->categoryCaption = "partyInvitations";
+                $template->title = $db_template->title;
+                $template->slug = $db_template->slug;
+                $template->category = "partyInvitations";
+                // $template->categoryCaption = "Party Invitations";
                 // $template->categorySlug = "kids-invitation";
                 // $template->tags = [];
                 // $template->like = [];
@@ -154,17 +108,13 @@ class MigrateToMongo extends Command
                 $template->template = [];
                 $template->driveFileIds = [];
                 $template->previewImageUrls = [
-                    // $db_template->filename
                     'carousel' => str_replace('_thumbnail.jpg', '_carousel.jpg', $db_template->filename),
                     'large' => str_replace('_thumbnail.jpg', '_large.jpg', $db_template->filename),
                     'product_preview' => str_replace('_thumbnail.jpg', '_product_preview.jpg', $db_template->filename),
                     'thumbnail' => str_replace('_thumbnail.jpg', '_thumbnail.jpg', $db_template->filename)
-                    // ZyfN84_T2AChoNyOM_carousel.jpg
-                    // ZyfN84_T2AChoNyOM_product_preview.jpg
                 ];
-                $template->suitability = [
-                    "web"
-                ];
+                $template->mainCategory = '/invitations';
+                $template->categories = [];
                 $template->keywords = [
                     "en" => [
                         "invitation"

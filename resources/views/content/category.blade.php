@@ -1,14 +1,14 @@
-<html>
+@extends('layouts.frontend')
 
-<head>
+@section('title', $category_obj->name.' Templates | Designer Online | Wayak')
+
+@section('css')
     <style>
         body {
             font-size: 16px;
         }
     </style>
     <style>
-        /*! CSS Used from: https://crello.com/create/wp-content/cache/autoptimize/css/autoptimize_db9394de80386d4c508383a956f34a5c.css ; media=all */
-        
         @media all {
             .row {
                 margin-left: -12px;
@@ -30,7 +30,6 @@
                 overflow: hidden;
             }
             body {
-                font-family: "Proxima Nova"!important;
                 color: #272b35;
                 font-size: 16px;
                 line-height: 24px;
@@ -38,7 +37,7 @@
             #main_content h1,
             #main_content h2,
             #main_content h3 {
-                font-family: "Fugue Regular";
+                /* font-family: "Fugue Regular"; */
                 margin-top: 0;
             }
             #main_content .h-lg-64 {
@@ -449,7 +448,7 @@
                 padding: 1px 0;
             }
             #main_content .faq_widget .item h3 {
-                font-family: "Fugue Regular";
+                /* font-family: "Fugue Regular"; */
                 font-size: 24px;
                 line-height: 100%;
                 color: #121316;
@@ -562,7 +561,7 @@
                 color: #000;
             }
             .owl-carousel.testimonials_2 .item .left .name {
-                font-family: "Proxima Nova";
+                /* font-family: "Proxima Nova"; */
                 font-weight: 600;
                 font-size: 20px;
                 line-height: 28px;
@@ -574,7 +573,7 @@
                 color: #000;
             }
             .owl-carousel.testimonials_2 .item .left .position {
-                font-family: "Proxima Nova";
+                /* font-family: "Proxima Nova"; */
                 font-size: 16px;
                 line-height: 20px;
                 padding-top: 8px;
@@ -999,7 +998,7 @@
                 box-sizing: border-box;
             }
             body {
-                font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+                /* font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; */
                 font-size: 14px;
                 line-height: 1.42857143;
                 color: #333;
@@ -1240,7 +1239,7 @@
             #crello-footer {
                 background-color: #121216;
                 color: #fff;
-                font-family: Proxima Nova;
+                /* font-family: Proxima Nova; */
                 font-size: 14px;
                 line-height: 21px;
                 font-weight: 600;
@@ -1969,7 +1968,7 @@
         }
         
         .subheadingM___1k3Ce {
-            font-family: ProximaSemiBold;
+            /* font-family: ProximaSemiBold; */
         }
         
         .bodyM___1L2FP,
@@ -1979,7 +1978,7 @@
         }
         
         .bodyM___1L2FP {
-            font-family: ProximaRegular;
+            /* font-family: ProximaRegular; */
         }
         
         .desktop-only--flex___mA2WQ {
@@ -2242,110 +2241,12 @@
             margin-left: auto;
         }
         /*! CSS Used fontfaces */
-        
-        @font-face {
-            font-display: swap;
-            font-family: 'Proxima Nova';
-            src: local('Proxima Nova Light'), local('ProximaNovaExCn-Light'), url(https://crello.com/create/wp-content/themes/crello-landing-new/fonts/ProximaNova-Light.eot#iefix) format('embedded-opentype'), url(https://crello.com/create/wp-content/themes/crello-landing-new/fonts/ProximaNova-Light.woff) format('woff'), url(https://crello.com/create/wp-content/themes/crello-landing-new/fonts/ProximaNova-Light.ttf) format('truetype');
-            font-weight: 300;
-            font-style: normal;
-        }
-        
-        @font-face {
-            font-display: swap;
-            font-family: 'Proxima Nova';
-            src: local('Proxima Nova Regular'), local('ProximaNova-Regular'), url(https://crello.com/create/wp-content/themes/crello-landing-new/fonts/ProximaNova-Regular.eot#iefix) format('embedded-opentype'), url(https://crello.com/create/wp-content/themes/crello-landing-new/fonts/ProximaNova-Regular.woff) format('woff'), url(https://crello.com/create/wp-content/themes/crello-landing-new/fonts/ProximaNova-Regular.ttf) format('truetype');
-            font-weight: normal;
-            font-style: normal;
-        }
-        
-        @font-face {
-            font-display: swap;
-            font-family: 'Proxima Nova';
-            src: local('Proxima Nova Semibold'), local('ProximaNova-Semibold'), url(https://crello.com/create/wp-content/themes/crello-landing-new/fonts/ProximaNova-Semibold.eot#iefix) format('embedded-opentype'), url(https://crello.com/create/wp-content/themes/crello-landing-new/fonts/ProximaNova-Semibold.woff) format('woff'), url(https://crello.com/create/wp-content/themes/crello-landing-new/fonts/ProximaNova-Semibold.ttf) format('truetype');
-            font-weight: 600;
-            font-style: normal;
-        }
-        
-        @font-face {
-            font-display: swap;
-            font-family: 'Proxima Nova';
-            src: local('Proxima Nova Extrabold'), local('ProximaNova-Extrabld'), url(https://crello.com/create/wp-content/themes/crello-landing-new/fonts/ProximaNova-Extrabld.eot#iefix) format('embedded-opentype'), url(https://crello.com/create/wp-content/themes/crello-landing-new/fonts/ProximaNova-Extrabld.woff) format('woff'), url(https://crello.com/create/wp-content/themes/crello-landing-new/fonts/ProximaNova-Extrabld.ttf) format('truetype');
-            font-weight: 800;
-            font-style: normal;
-        }
-        
-        @font-face {
-            font-display: swap;
-            font-family: 'Fugue Regular';
-            font-style: normal;
-            font-weight: normal;
-            src: url(https://crello.com/create/wp-content/themes/crello-landing-new/fonts/fugue_regular.eot#iefix) format("embedded-opentype"), url(https://crello.com/create/wp-content/themes/crello-landing-new/fonts/fugue_regular.woff2) format("woff2"), url(https://crello.com/create/wp-content/themes/crello-landing-new/fonts/fugue_regular.woff) format("woff"), url(https://crello.com/create/wp-content/themes/crello-landing-new/fonts/fugue_regular.ttf) format("truetype"), url(https://crello.com/create/wp-content/themes/crello-landing-new/fonts/fugue_regular.svg) format("svg");
-        }
-        
-        @font-face {
-            font-display: swap;
-            font-family: ProximaSemiBold;
-            src: local("Proxima-SemiBold"), url(https://static.crello.com/fonts/ProximaSemiBold/ProximaSemiBold.woff2) format("woff2"), url(https://static.crello.com/fonts/ProximaSemiBold/ProximaSemiBold.woff) format("woff");
-        }
-        
-        @font-face {
-            font-display: swap;
-            font-family: ProximaRegular;
-            src: local("Proxima-Regular"), url(https://static.crello.com/fonts/ProximaRegular/ProximaRegular.woff2) format("woff2"), url(https://static.crello.com/fonts/ProximaRegular/ProximaRegular.woff) format("woff");
-        }
     </style>
-</head>
+@endsection
 
-<body class="page-template-default page page-id-5380 lang-en page-menus webp wpb-js-composer js-comp-ver-6.1 vc_responsive loaded">
-    <div id="173e9b">
-        <div class="header-wrapper___3J7pG" data-aurora-version="1.0.55" id="AuroraHeader">
-            <div class="menu-wrapper___2tRDB"><a data-value="toHome" data-categ="menus" data-subcateg="header" href="/" class="aurora-nav-link___28jb1 logo-item___4ytGd"><svg width="64" height="20" viewBox="0 0 64 20" fill="currentColor" class="logo___kjfPm" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M6.85459 5.49406C10.1995 5.49406 13.0986 7.72241 13.5809 11.2663L10.0322 11.2668C9.67026 9.71625 8.41397 8.79205 6.86978 8.79205C4.89348 8.79665 3.48746 10.2975 3.49397 12.4458C3.48746 14.6623 4.97209 16.1039 6.85001 16.1085C8.41831 16.1085 9.69437 15.1359 10.0322 13.6292L13.5811 13.6296C13.0989 17.1583 10.2191 19.4064 6.87412 19.4064C2.95504 19.4064 0 16.4037 0 12.4504C0 8.49681 2.93551 5.49406 6.85459 5.49406ZM23.7004 8.77278H18.8028V19.052H15.3564V5.75991H23.7004V8.77278ZM31.5079 5.49431C34.9307 5.49406 37.8815 7.80993 38.3006 11.449C38.3841 12.1479 38.3312 12.6911 38.2789 13.1149C38.2144 13.1149 38.1661 13.1149 38.1339 13.1149C35.9225 13.1149 32.6055 13.1149 28.1827 13.1149C28.3026 15.1699 29.7101 16.4595 31.6261 16.4641C33.1157 16.4641 34.389 15.7147 34.7073 14.2668H38.2623C37.7209 17.5391 34.8378 19.4064 31.6109 19.4064C27.5929 19.4064 24.6768 16.4038 24.6768 12.4572C24.6768 8.49864 27.6101 5.49673 31.5079 5.49431ZM31.6163 8.24109C30.0772 8.24527 28.8936 9.21244 28.4938 10.7223H34.7073C34.3884 9.06161 33.0005 8.24109 31.6163 8.24109ZM43.5839 19.052H40.122V0H43.5839V19.052ZM48.5548 19.052H45.0929V0H48.5548V19.052ZM57.0765 5.49406C60.8996 5.49479 63.9988 8.44229 64 12.4521C63.9988 16.4582 60.9479 19.4057 57.0772 19.4064C53.2078 19.4057 50.1526 16.4384 50.1526 12.4501C50.1526 8.43794 53.2561 5.49455 57.0765 5.49406ZM57.0321 8.77279C55.1099 8.76918 53.6137 10.2365 53.6144 12.4049C53.6137 14.5828 55.1207 16.0394 57.0326 16.0391C58.9616 16.0394 60.4489 14.5872 60.4494 12.4058C60.4489 10.2409 58.957 8.76918 57.0321 8.77279Z"></path></svg></a>
-                <div class="desktop-only--flex___mA2WQ menu__item--lang___2w9zY menu-item___3nJJb menu-item--has-triangle___issl_"><img class="flag-icon___1cAHJ" src="data:image/svg+xml,%3Csvg width='16' height='12' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M.057 10.203c.011.045.026.089.04.132.04.115.088.226.148.33l.001.002c.309.53.875.89 1.532.89h12.444a1.77 1.77 0 0 0 1.531-.89l.001-.002a1.877 1.877 0 0 0 .246-.88V1.779c0-.103-.012-.204-.03-.302a1.608 1.608 0 0 0-.068-.256 1.838 1.838 0 0 0-.149-.33 1.77 1.77 0 0 0-1.53-.89H8v6.223H0v3.556a1.687 1.687 0 0 0 .057.424z' fill='%23fff'/%3E%3Cpath d='M15.753.889A1.77 1.77 0 0 0 14.223 0H8v.889h7.753zM0 9.778h16v-.89H0v.89zM16 5.333H8v.89h8v-.89zM16 3.555H8v.89h8v-.89zM16 7.111H0V8h16v-.889zM14.222 11.556a1.77 1.77 0 0 0 1.531-.89H.247c.308.53.874.89 1.53.89h12.445zM16 1.778H8v.889h8v-.89z' fill='%23EA4D33'/%3E%3Cpath d='M8 0H1.778C.796 0 0 .796 0 1.778v4.444h8V0z' fill='%232153CC'/%3E%3C/svg%3E"
-                        alt="en"><svg class="icon___1Tkwg" width="16" height="16"><path d="M11.862 7.06007C11.9503 6.96619 12 6.83839 12 6.70507C12 6.57175 11.9503 6.44395 11.862 6.35007L11.6755 6.15007C11.5877 6.05241 11.4661 5.9981 11.3396 6.00007H4.66037C4.53389 5.9981 4.4123 6.05241 4.32454 6.15007L4.13797 6.35007C4.04967 6.44395 4 6.57175 4 6.70507C4 6.83839 4.04967 6.96619 4.13797 7.06007L7.6735 10.8501C7.75814 10.9467 7.87632 11.0016 8 11.0016C8.12368 11.0016 8.24186 10.9467 8.3265 10.8501L11.862 7.06007Z" fill="currentColor"></path></svg>
-                    <div></div>
-                </div>
-            </div>
-            <div class="menu-wrapper___2tRDB">
-                <div class="desktop-only--flex___mA2WQ menu-hover-area___1w5eu">
-                    <div class="menu-item-wrapper___2gwSM menu-item-wrapper___2gwSM"><a data-value="create" data-categ="menus" data-subcateg="header" href="/create/" class="aurora-nav-link___28jb1 bodyM___1L2FP menu-item___3nJJb"><span class="label___h_F2N"><span class="text___2Inhw">Create</span><svg class="icon___12XSx" width="16" height="16"><path d="M11.862 7.06007C11.9503 6.96619 12 6.83839 12 6.70507C12 6.57175 11.9503 6.44395 11.862 6.35007L11.6755 6.15007C11.5877 6.05241 11.4661 5.9981 11.3396 6.00007H4.66037C4.53389 5.9981 4.4123 6.05241 4.32454 6.15007L4.13797 6.35007C4.04967 6.44395 4 6.57175 4 6.70507C4 6.83839 4.04967 6.96619 4.13797 7.06007L7.6735 10.8501C7.75814 10.9467 7.87632 11.0016 8 11.0016C8.12368 11.0016 8.24186 10.9467 8.3265 10.8501L11.862 7.06007Z" fill="currentColor"></path></svg></span></a>
-                        <div></div>
-                    </div>
-                    <div class="menu-item-wrapper___2gwSM"><a data-value="templates" data-categ="menus" data-subcateg="header" href="/templates/" class="aurora-nav-link___28jb1 bodyM___1L2FP menu-item___3nJJb"><span class="label___h_F2N">Templates</span></a></div>
-                    <div class="menu-item-wrapper___2gwSM"><a data-value="tutorial" data-categ="menus" data-subcateg="header" href="/tutorials/" class="aurora-nav-link___28jb1 bodyM___1L2FP menu-item___3nJJb"><span class="label___h_F2N">Tutorials</span></a></div>
-                    <div class="menu-item-wrapper___2gwSM"><a data-value="features" data-categ="menus" data-subcateg="header" href="/features/" class="aurora-nav-link___28jb1 bodyM___1L2FP menu-item___3nJJb"><span class="label___h_F2N">Features</span></a></div>
-                    <div class="menu-item-wrapper___2gwSM"><a data-value="pricing" data-categ="menus" data-subcateg="header" href="/plans/" class="aurora-nav-link___28jb1 bodyM___1L2FP menu-item___3nJJb"><span class="label___h_F2N">Pricing</span></a></div>
-                </div>
-            </div>
-            <div class="menu-wrapper___2tRDB"><a href="/login/" data-value="signIn" data-categ="menus" data-subcateg="header" class="bodyM___1L2FP desktop-only--flex___mA2WQ menu-item___3nJJb menu-item--profile-icon___3wExy"><svg class="icon-user___2rhuW" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M24 12C24 18.6274 18.6274 24 12 24C5.37258 24 0 18.6274 0 12C0 5.37258 5.37258 0 12 0C18.6274 0 24 5.37258 24 12ZM12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22ZM11.9856 11.21C13.7005 11.21 15.0906 9.81984 15.0906 8.105C15.0906 6.39016 13.7005 5 11.9856 5C10.2708 5 8.88062 6.39016 8.88062 8.105C8.88062 9.81984 10.2708 11.21 11.9856 11.21ZM14.8509 13.265C16.0209 13.265 17.1009 13.94 17.6259 15.005L17.8659 15.485C18.0309 15.83 18.0009 16.22 17.7909 16.535C16.4259 18.38 14.2809 19.46 11.9859 19.46C9.69088 19.46 7.54588 18.38 6.18088 16.535C5.97088 16.22 5.94088 15.83 6.10588 15.5L6.31588 15.05C6.82588 13.955 7.92088 13.265 9.12088 13.265H14.8509Z"></path></svg><span>Log In</span></a>
-                <a href="/signup/" data-categ="menus" data-subcateg="header" data-value="signUp" class="subheadingM___1k3Ce desktop-only--flex___mA2WQ button-sign-up___29cb1">Sign Up</a><button class="mobile-only--flex___14FtS button-burger___2ojD9" data-categ="menus"
-                    data-subcateg="header" data-value="Btn_burgermenu"><div class="button-burger__icon___1fAcF"><span></span><span></span><span></span></div></button></div>
-        </div>
-        <div class="seo-hidden-container___2XEpr">
-            <div><a data-value="create" data-categ="menus" data-subcateg="header" href="/create/" class="aurora-nav-link___28jb1"><span>Create</span></a>
-                <div><a data-value="animatedGraphic" data-categ="menus" data-subcateg="header" href="/create/animation-maker/" class="aurora-nav-link___28jb1"><span>Animated Graphics</span></a></div>
-                <div><a data-value="instagramPosts" data-categ="menus" data-subcateg="header" href="/create/instagram-post/" class="aurora-nav-link___28jb1"><span>Instagram Posts</span></a></div>
-                <div><a data-value="posters" data-categ="menus" data-subcateg="header" href="/create/posters/" class="aurora-nav-link___28jb1"><span>Posters</span></a></div>
-                <div><a data-value="facebookPosts" data-categ="menus" data-subcateg="header" href="/create/facebook-post/" class="aurora-nav-link___28jb1"><span>Facebook Posts</span></a></div>
-                <div><a data-value="logoMaker" data-categ="menus" data-subcateg="header" href="/create/logo-maker/" class="aurora-nav-link___28jb1"><span>Logo Maker</span></a></div>
-                <div><a data-value="flyers" data-categ="menus" data-subcateg="header" href="/create/flyers/" class="aurora-nav-link___28jb1"><span>Flyers</span></a></div>
-                <div><a data-value="youTubeThumbnails" data-categ="menus" data-subcateg="header" href="/create/youtube-thumbnail/" class="aurora-nav-link___28jb1"><span>YouTube Thumbnails</span></a></div>
-                <div><a data-value="brochures" data-categ="menus" data-subcateg="header" href="/create/brochures/" class="aurora-nav-link___28jb1"><span>Brochure Maker</span></a></div>
-                <div><a data-value="invitations" data-categ="menus" data-subcateg="header" href="/create/invitations/" class="aurora-nav-link___28jb1"><span>Invitations</span></a></div>
-                <div><a data-value="youTubeIntro" data-categ="menus" data-subcateg="header" href="/create/youtube-intro/" class="aurora-nav-link___28jb1"><span>Youtube Intro Maker</span></a></div>
-                <div><a data-value="youTubeChannelArt" data-categ="menus" data-subcateg="header" href="/create/youtube-intro/" class="aurora-nav-link___28jb1"><span>YouTube Channel Art</span></a></div>
-                <div><a data-value="facebookCovers" data-categ="menus" data-subcateg="header" href="/create/facebook-covers/" class="aurora-nav-link___28jb1"><span>Facebook Covers</span></a></div>
-                <div><a data-value="businessCards" data-categ="menus" data-subcateg="header" href="/create/business-cards/" class="aurora-nav-link___28jb1"><span>Business Cards</span></a></div>
-                <div><a data-value="eBooks" data-categ="menus" data-subcateg="header" href="/create/ebooks/" class="aurora-nav-link___28jb1"><span>eBook Design</span></a></div>
-                <div><a data-value="resumeMaker" data-categ="menus" data-subcateg="header" href="/create/resume-maker/" class="aurora-nav-link___28jb1"><span>Resume Maker</span></a></div>
-                <div><a data-value="infographics" data-categ="menus" data-subcateg="header" href="/create/infographics/" class="aurora-nav-link___28jb1"><span>Infographics</span></a></div>
-            </div>
-            <div><a data-value="templates" data-categ="menus" data-subcateg="header" href="/templates/" class="aurora-nav-link___28jb1"><span>Templates</span></a></div>
-            <div><a data-value="tutorial" data-categ="menus" data-subcateg="header" href="/tutorials/" class="aurora-nav-link___28jb1"><span>Tutorials</span></a></div>
-            <div><a data-value="features" data-categ="menus" data-subcateg="header" href="/features/" class="aurora-nav-link___28jb1"><span>Features</span></a></div>
-            <div><a data-value="pricing" data-categ="menus" data-subcateg="header" href="/plans/" class="aurora-nav-link___28jb1"><span>Pricing</span></a></div>
-        </div>
-    </div>
+<!-- <body > -->
+
+@section('content')
     <section id="main_content">
         <div class="container-wrapper ">
             <div class="container">
@@ -2354,7 +2255,7 @@
                         <div class="vc_empty_space  space-md-56 space-sm-32" style="height: 64px"><span class="vc_empty_space_inner"></span></div>
                         <div class="wpb_text_column wpb_content_element ">
                             <div class="wpb_wrapper">
-                                <h1 class="h-lg-56 h-md-48-56 h-sm-40-48">Restaurant Menu Design Online</h1>
+                                <h1 class="h-lg-56 h-md-48-56 h-sm-40-48">{{ $category_obj->name }} Design Online</h1>
                             </div>
                         </div>
                         <div class="vc_empty_space  space-md-24 space-sm-16" style="height: 24px"><span class="vc_empty_space_inner"></span></div>
@@ -2383,359 +2284,6 @@
                 </div>
             </div>
         </div>
-        <div class="vc_row-full-width vc_clearfix"></div>
-        <div class="container">
-            <div id="tabs" class="row margin-top-40-40-24 vc_custom_1589808463806 vc_row-has-fill">
-                <div class="col-sm-12">
-                    <div class="vc_empty_space  space-md-48 space-sm-32" style="height: 64px"><span class="vc_empty_space_inner"></span></div>
-                    <div class="row">
-                        <div class="col-sm-10 col-lg-offset-1 col-lg-10 col-md-offset-1 col-md-10 col-sm-offset-1">
-                            <div class="vc_column-inner">
-                                <div class="wpb_text_column wpb_content_element ">
-                                    <div class="wpb_wrapper">
-                                        <h2 class="h-lg-40 h-md-40 h-sm-27-32" style="text-align: center;">Create your Own Cool Menus Easy in Minutes</h2>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-8 col-lg-offset-2 col-lg-8 col-md-offset-2 col-md-8 col-sm-offset-2">
-                            <div class="vc_column-inner">
-                                <div class="wpb_text_column wpb_content_element ">
-                                    <div class="wpb_wrapper">
-                                        <p style="text-align: center;">Online menu maker for non-designers</p>
-                                    </div>
-                                </div>
-                                <div class="wpb_text_column wpb_content_element ">
-                                    <div class="wpb_wrapper">
-                                        <p style="text-align: center;">If you Create Menu for Coffee Shop, Dinner or Drinks, Crello helps to make it with no efforts</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="vc_tta-container" data-vc-action="collapse">
-                        <div class="vc_general vc_tta vc_tta-tabs vc_tta-color-white vc_tta-style-flat vc_tta-shape-rounded vc_tta-spacing-1  tabs-design-2 vc_tta-o-no-fill vc_tta-tabs-position-top vc_tta-controls-align-center"><span class="scroll_back"></span><span class="scroll_forward"></span>
-                            <div class="vc_tta-tabs-container">
-                                <ul class="vc_tta-tabs-list">
-                                    <li class="vc_tta-tab vc_active" data-vc-tab=""><a href="#1586526842178-a8fe3abe-5b1c" data-vc-tabs="" data-vc-container=".vc_tta"><span class="vc_tta-title-text">Templates</span></a></li>
-                                    <li class="vc_tta-tab" data-vc-tab=""><a href="#1586529078676-afe4ca23-d4e2" data-vc-tabs="" data-vc-container=".vc_tta"><span class="vc_tta-title-text">Fonts</span></a></li>
-                                    <li class="vc_tta-tab" data-vc-tab=""><a href="#1586529101082-8ff2303e-fe31" data-vc-tabs="" data-vc-container=".vc_tta"><span class="vc_tta-title-text">Customize</span></a></li>
-                                    <li class="vc_tta-tab" data-vc-tab=""><a href="#1586526842204-94a0f382-3f36" data-vc-tabs="" data-vc-container=".vc_tta"><span class="vc_tta-title-text">Edit</span></a></li>
-                                    <li class="vc_tta-tab" data-vc-tab=""><a href="#1604930707101-37cc05e4-9079" data-vc-tabs="" data-vc-container=".vc_tta"><span class="vc_tta-title-text">Resize</span></a></li>
-                                    <li class="vc_tta-tab" data-vc-tab=""><a href="#1586529089360-9296ec0e-9d3a" data-vc-tabs="" data-vc-container=".vc_tta"><span class="vc_tta-title-text">Objects</span></a></li>
-                                </ul>
-                            </div>
-                            <div class="vc_tta-panels-container">
-                                <div class="vc_tta-panels">
-                                    <div class="vc_tta-panel vc_active" id="1586526842178-a8fe3abe-5b1c" data-vc-content=".vc_tta-panel-body">
-                                        <div class="vc_tta-panel-heading"><span class="vc_tta-panel-title"><a href="#1586526842178-a8fe3abe-5b1c" data-vc-accordion="" data-vc-container=".vc_tta-container"><span class="vc_tta-title-text">Templates</span></a>
-                                            </span>
-                                        </div>
-                                        <div class="vc_tta-panel-body">
-                                            <div class="row">
-                                                <div class="tablet-text-align-center col-sm-10 col-lg-offset-1 col-lg-4 col-md-offset-1 col-md-4 col-sm-offset-1">
-                                                    <div class="vc_column-inner">
-                                                        <div class="vc_empty_space  space-md-32 space-sm-32" style="height: 72px"><span class="vc_empty_space_inner"></span></div>
-                                                        <div class="wpb_text_column wpb_content_element ">
-                                                            <div class="wpb_wrapper">
-                                                                <h3 class="h-lg-32 h-md-32 h-sm-27-32">Restaurant Menu Templates for Any Taste</h3>
-                                                            </div>
-                                                        </div>
-                                                        <div class="vc_empty_space" style="height: 16px"><span class="vc_empty_space_inner"></span></div>
-                                                        <div class="wpb_text_column wpb_content_element ">
-                                                            <div class="wpb_wrapper"> Your menu is not just about presenting the food and drink; it’s about communicating your tone and values. So, do you want to make the most out of your in-house advertising? To tell your customers
-                                                                about your offering, there’s no need to reinvent the wheel - just choose any weekly menu template to update it to your needs. Crello has a wonderful variety of menu templates: bar, dinner,
-                                                                cafe, take out, etc. We bet you’ll fall in love with our pre-made templates once and for all.</div>
-                                                        </div>
-                                                        <div class="vc_empty_space  space-sm-16" style="height: 24px"><span class="vc_empty_space_inner"></span></div>
-                                                        <div class="vc_btn3-container vc_btn3-inline"><a class="vc_general vc_btn3 vc_btn3-size-md vc_btn3-shape-rounded vc_btn3-style-btn-crello vc_btn3-color-btn-blue" href="https://crello.com/templates/menu/" title="" data-categ="landingMenuMaker"
-                                                                data-value="joinButton2">Explore Templates</a></div>
-                                                        <div class="vc_empty_space" style="height: 24px"><span class="vc_empty_space_inner"></span></div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-12 col-lg-offset-0 col-lg-6 col-md-offset-0 col-md-6 col-sm-offset-0">
-                                                    <div class="vc_column-inner">
-                                                        <div class="wpb_single_image wpb_content_element vc_align_center">
-                                                            <figure class="wpb_wrapper vc_figure">
-                                                                <div class="vc_single_image-wrapper   vc_box_border_grey"><img loading="lazy" srcset="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/11/menu-templates-300x215.png.webp  300w,https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/11/menu-templates-1024x733.png.webp  1024w,https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/11/menu-templates.png.webp  1104w"
-                                                                        sizes="(max-width: 414px) 300px, (max-width: 720px) 600px, 1024px" class="vc_single_image-img " src="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/11/menu-templates.png.webp"
-                                                                        width="552" height="395" alt="menu templates" title=""></div>
-                                                            </figure>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="vc_tta-panel" id="1586529078676-afe4ca23-d4e2" data-vc-content=".vc_tta-panel-body">
-                                        <div class="vc_tta-panel-heading"><span class="vc_tta-panel-title"><a href="#1586529078676-afe4ca23-d4e2" data-vc-accordion="" data-vc-container=".vc_tta-container"><span class="vc_tta-title-text">Fonts</span></a>
-                                            </span>
-                                        </div>
-                                        <div class="vc_tta-panel-body">
-                                            <div class="row">
-                                                <div class="tablet-text-align-center col-sm-10 col-lg-offset-1 col-lg-4 col-md-offset-1 col-md-4 col-sm-offset-1">
-                                                    <div class="vc_column-inner">
-                                                        <div class="vc_empty_space  space-md-32 space-sm-32" style="height: 72px"><span class="vc_empty_space_inner"></span></div>
-                                                        <div class="wpb_text_column wpb_content_element ">
-                                                            <div class="wpb_wrapper">
-                                                                <h3 class="h-lg-32 h-md-32 h-sm-27-32">Apply Right Font to Your Design</h3>
-                                                            </div>
-                                                        </div>
-                                                        <div class="vc_empty_space" style="height: 16px"><span class="vc_empty_space_inner"></span></div>
-                                                        <div class="wpb_text_column wpb_content_element ">
-                                                            <div class="wpb_wrapper"> Working in a competitive niche, you need to be creative to hook your potential customers. Words are a cornerstone in the restaurant menu design. Use Crello font collection or upload your own
-                                                                font to make your menu perfect. Try on different styles and see which one fits the best.</div>
-                                                        </div>
-                                                        <div class="vc_empty_space  space-sm-16" style="height: 24px"><span class="vc_empty_space_inner"></span></div>
-                                                        <div class="vc_btn3-container vc_btn3-inline"><a class="vc_general vc_btn3 vc_btn3-size-md vc_btn3-shape-rounded vc_btn3-style-btn-crello vc_btn3-color-btn-blue" href="https://crello.com/artboard/?newDesign=true&amp;width=21&amp;height=29.7&amp;group=EO&amp;format=Menu&amp;measureUnits=cm"
-                                                                title="" data-categ="landingMenuMaker" data-value="joinButton3">Edit now</a></div>
-                                                        <div class="vc_empty_space" style="height: 24px"><span class="vc_empty_space_inner"></span></div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-12 col-lg-6 col-md-6">
-                                                    <div class="vc_column-inner">
-                                                        <div class="wpb_single_image wpb_content_element vc_align_center">
-                                                            <figure class="wpb_wrapper vc_figure">
-                                                                <div class="vc_single_image-wrapper   vc_box_border_grey"><img loading="lazy" srcset="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/11/fonts-300x215.png.webp  300w,https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/11/fonts-1024x733.png.webp  1024w,https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/11/fonts.png.webp  1104w"
-                                                                        sizes="(max-width: 414px) 300px, (max-width: 720px) 600px, 1024px" class="vc_single_image-img " src="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/11/fonts.png.webp"
-                                                                        width="552" height="395" alt="fonts" title=""></div>
-                                                            </figure>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="vc_tta-panel" id="1586529101082-8ff2303e-fe31" data-vc-content=".vc_tta-panel-body">
-                                        <div class="vc_tta-panel-heading"><span class="vc_tta-panel-title"><a href="#1586529101082-8ff2303e-fe31" data-vc-accordion="" data-vc-container=".vc_tta-container"><span class="vc_tta-title-text">Customize</span></a>
-                                            </span>
-                                        </div>
-                                        <div class="vc_tta-panel-body">
-                                            <div class="row">
-                                                <div class="tablet-text-align-center col-sm-10 col-lg-offset-1 col-lg-4 col-md-offset-1 col-md-4 col-sm-offset-1">
-                                                    <div class="vc_column-inner">
-                                                        <div class="vc_empty_space  space-md-32 space-sm-32" style="height: 72px"><span class="vc_empty_space_inner"></span></div>
-                                                        <div class="wpb_text_column wpb_content_element ">
-                                                            <div class="wpb_wrapper">
-                                                                <h3 class="h-lg-32 h-md-32 h-sm-27-32">Personalize Your Cafe Menu</h3>
-                                                            </div>
-                                                        </div>
-                                                        <div class="vc_empty_space" style="height: 16px"><span class="vc_empty_space_inner"></span></div>
-                                                        <div class="wpb_text_column wpb_content_element ">
-                                                            <div class="wpb_wrapper"> Have you found something that satisfies your ‘menu template free’ request? Great! Now it’s high time to add a personal touch to your menu and tell your guests about the unique overall experience
-                                                                they can expect to have at your place. For example, if you have a bakery, you can turn a simple bakery menu into a masterpiece your guests will love: just drag and drop images of your offerings,
-                                                                logos, and fonts. Crello helps to create something special that reflects your style and tone.</div>
-                                                        </div>
-                                                        <div class="vc_empty_space  space-sm-16" style="height: 24px"><span class="vc_empty_space_inner"></span></div>
-                                                        <div class="vc_btn3-container vc_btn3-inline"><a class="vc_general vc_btn3 vc_btn3-size-md vc_btn3-shape-rounded vc_btn3-style-btn-crello vc_btn3-color-btn-blue" href="https://crello.com/artboard/?newDesign=true&amp;width=21&amp;height=29.7&amp;group=EO&amp;format=Menu&amp;measureUnits=cm"
-                                                                title="" data-categ="landingMenuMaker" data-value="joinButton4">Include Custom Content</a></div>
-                                                        <div class="vc_empty_space" style="height: 24px"><span class="vc_empty_space_inner"></span></div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-12 col-lg-6 col-md-6">
-                                                    <div class="vc_column-inner">
-                                                        <div class="wpb_single_image wpb_content_element vc_align_center">
-                                                            <figure class="wpb_wrapper vc_figure">
-                                                                <div class="vc_single_image-wrapper   vc_box_border_grey"><img loading="lazy" srcset="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/11/personalize-menu-300x215.png.webp  300w,https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/11/personalize-menu-1024x733.png.webp  1024w,https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/11/personalize-menu.png.webp  1104w"
-                                                                        sizes="(max-width: 414px) 300px, (max-width: 720px) 600px, 1024px" class="vc_single_image-img " src="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/11/personalize-menu.png.webp"
-                                                                        width="552" height="395" alt="restaurant menu design" title=""></div>
-                                                            </figure>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="vc_tta-panel" id="1586526842204-94a0f382-3f36" data-vc-content=".vc_tta-panel-body">
-                                        <div class="vc_tta-panel-heading"><span class="vc_tta-panel-title"><a href="#1586526842204-94a0f382-3f36" data-vc-accordion="" data-vc-container=".vc_tta-container"><span class="vc_tta-title-text">Edit</span></a>
-                                            </span>
-                                        </div>
-                                        <div class="vc_tta-panel-body">
-                                            <div class="row">
-                                                <div class="tablet-text-align-center col-sm-10 col-lg-offset-1 col-lg-4 col-md-offset-1 col-md-4 col-sm-offset-1">
-                                                    <div class="vc_column-inner">
-                                                        <div class="vc_empty_space  space-md-32 space-sm-32" style="height: 72px"><span class="vc_empty_space_inner"></span></div>
-                                                        <div class="wpb_text_column wpb_content_element ">
-                                                            <div class="wpb_wrapper">
-                                                                <h3 class="h-lg-32 h-md-32 h-sm-27-32">Make Edits in a Few Clicks</h3>
-                                                            </div>
-                                                        </div>
-                                                        <div class="vc_empty_space" style="height: 16px"><span class="vc_empty_space_inner"></span></div>
-                                                        <div class="wpb_text_column wpb_content_element ">
-                                                            <div class="wpb_wrapper"> Do you want to make a French-accented design? You’ve come to the right place: delete a background to keep a focus on your yummy dish and make an elegant and stylish french menu without spending
-                                                                much time. Crello has an in-built editor that allows users to make any changes you may need: move layers, blur elements, add transparency, put effects and filters, write text and much more.
-                                                                It’s time for your inner designer who knows your wants firsthand.</div>
-                                                        </div>
-                                                        <div class="vc_empty_space  space-sm-16" style="height: 24px"><span class="vc_empty_space_inner"></span></div>
-                                                        <div class="vc_btn3-container vc_btn3-inline"><a class="vc_general vc_btn3 vc_btn3-size-md vc_btn3-shape-rounded vc_btn3-style-btn-crello vc_btn3-color-btn-blue" href="https://crello.com/artboard/?newDesign=true&amp;width=21&amp;height=29.7&amp;group=EO&amp;format=Menu&amp;measureUnits=cm"
-                                                                title="" data-categ="landingMenuMaker" data-value="joinButton5">Edit now</a></div>
-                                                        <div class="vc_empty_space" style="height: 24px"><span class="vc_empty_space_inner"></span></div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-12 col-lg-6 col-md-6">
-                                                    <div class="vc_column-inner">
-                                                        <div class="wpb_single_image wpb_content_element vc_align_center">
-                                                            <figure class="wpb_wrapper vc_figure">
-                                                                <div class="vc_single_image-wrapper   vc_box_border_grey"><img loading="lazy" srcset="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/11/online-menu-design-300x215.png.webp  300w,https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/11/online-menu-design-1024x733.png.webp  1024w,https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/11/online-menu-design.png.webp  1104w"
-                                                                        sizes="(max-width: 414px) 300px, (max-width: 720px) 600px, 1024px" class="vc_single_image-img " src="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/11/online-menu-design.png.webp"
-                                                                        width="552" height="395" alt="online menu design" title=""></div>
-                                                            </figure>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="vc_tta-panel" id="1604930707101-37cc05e4-9079" data-vc-content=".vc_tta-panel-body">
-                                        <div class="vc_tta-panel-heading"><span class="vc_tta-panel-title"><a href="#1604930707101-37cc05e4-9079" data-vc-accordion="" data-vc-container=".vc_tta-container"><span class="vc_tta-title-text">Resize</span></a>
-                                            </span>
-                                        </div>
-                                        <div class="vc_tta-panel-body">
-                                            <div class="row">
-                                                <div class="tablet-text-align-center col-sm-10 col-lg-offset-1 col-lg-4 col-md-offset-1 col-md-4 col-sm-offset-1">
-                                                    <div class="vc_column-inner">
-                                                        <div class="vc_empty_space  space-md-32 space-sm-32" style="height: 72px"><span class="vc_empty_space_inner"></span></div>
-                                                        <div class="wpb_text_column wpb_content_element ">
-                                                            <div class="wpb_wrapper">
-                                                                <h3 class="h-lg-32 h-md-32 h-sm-27-32">Change The Size in One Click</h3>
-                                                            </div>
-                                                        </div>
-                                                        <div class="vc_empty_space" style="height: 16px"><span class="vc_empty_space_inner"></span></div>
-                                                        <div class="wpb_text_column wpb_content_element ">
-                                                            <div class="wpb_wrapper"> Once you’ve made a perfect dessert menu, you want to spread the word about it via all advertising channels: you’re about to print up-to-date menu cards and upload PDF versions to social media
-                                                                networks. Although you need different formats for your advertising goals, there’s no need to work over and over again on your design - choose preset dimensions for the most popular formats
-                                                                or resize an image to your custom dimensions within our editor. Here at Crello, we take care of our users and value your time, so leave it for us.</div>
-                                                        </div>
-                                                        <div class="vc_empty_space  space-sm-16" style="height: 24px"><span class="vc_empty_space_inner"></span></div>
-                                                        <div class="vc_btn3-container vc_btn3-inline"><a class="vc_general vc_btn3 vc_btn3-size-md vc_btn3-shape-rounded vc_btn3-style-btn-crello vc_btn3-color-btn-blue" href="https://crello.com/artboard/?newDesign=true&amp;width=21&amp;height=29.7&amp;group=EO&amp;format=Menu&amp;measureUnits=cm"
-                                                                title="" data-categ="landingMenuMaker" data-value="joinButton6">Resize Your Menu</a></div>
-                                                        <div class="vc_empty_space" style="height: 24px"><span class="vc_empty_space_inner"></span></div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-12 col-lg-6 col-md-6">
-                                                    <div class="vc_column-inner">
-                                                        <div class="wpb_single_image wpb_content_element vc_align_center">
-                                                            <figure class="wpb_wrapper vc_figure">
-                                                                <div class="vc_single_image-wrapper   vc_box_border_grey"><img loading="lazy" srcset="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/11/resize-your-menu-300x215.png.webp  300w,https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/11/resize-your-menu-1024x733.png.webp  1024w,https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/11/resize-your-menu.png.webp  1104w"
-                                                                        sizes="(max-width: 414px) 300px, (max-width: 720px) 600px, 1024px" class="vc_single_image-img " src="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/11/resize-your-menu.png.webp"
-                                                                        width="552" height="395" alt="resize your menu" title=""></div>
-                                                            </figure>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="vc_tta-panel" id="1586529089360-9296ec0e-9d3a" data-vc-content=".vc_tta-panel-body">
-                                        <div class="vc_tta-panel-heading"><span class="vc_tta-panel-title"><a href="#1586529089360-9296ec0e-9d3a" data-vc-accordion="" data-vc-container=".vc_tta-container"><span class="vc_tta-title-text">Objects</span></a>
-                                            </span>
-                                        </div>
-                                        <div class="vc_tta-panel-body">
-                                            <div class="row">
-                                                <div class="tablet-text-align-center col-sm-10 col-lg-offset-1 col-lg-4 col-md-offset-1 col-md-4 col-sm-offset-1">
-                                                    <div class="vc_column-inner">
-                                                        <div class="vc_empty_space  space-md-32 space-sm-32" style="height: 72px"><span class="vc_empty_space_inner"></span></div>
-                                                        <div class="wpb_text_column wpb_content_element ">
-                                                            <div class="wpb_wrapper">
-                                                                <h3 class="h-lg-32 h-md-32 h-sm-27-32">Add Custom Objects</h3>
-                                                            </div>
-                                                        </div>
-                                                        <div class="vc_empty_space" style="height: 16px"><span class="vc_empty_space_inner"></span></div>
-                                                        <div class="wpb_text_column wpb_content_element ">
-                                                            <div class="wpb_wrapper"> If you’ve opened a pizzeria, you may want to create an Italian menu so that it can reflect the restaurant's theme and style. And the easiest way to do it is to find Italian-related illustrations
-                                                                and stickers. With Crello’s collection of royalty-free design objects, there’s no need to surf the internet in search of perfect shapes, frames, and icons. We’ve found over 12,000 illustrations,
-                                                                so there’s the one-size-fits-all solution for any request.</div>
-                                                        </div>
-                                                        <div class="vc_empty_space  space-sm-16" style="height: 24px"><span class="vc_empty_space_inner"></span></div>
-                                                        <div class="vc_btn3-container vc_btn3-inline"><a class="vc_general vc_btn3 vc_btn3-size-md vc_btn3-shape-rounded vc_btn3-style-btn-crello vc_btn3-color-btn-blue" href="https://crello.com/artboard/?newDesign=true&amp;width=21&amp;height=29.7&amp;group=EO&amp;format=Menu&amp;measureUnits=cm"
-                                                                title="" data-categ="landingMenuMaker" data-value="joinButton7">Discover All Objects</a></div>
-                                                        <div class="vc_empty_space" style="height: 24px"><span class="vc_empty_space_inner"></span></div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-12 col-lg-6 col-md-6">
-                                                    <div class="vc_column-inner">
-                                                        <div class="wpb_single_image wpb_content_element vc_align_center">
-                                                            <figure class="wpb_wrapper vc_figure">
-                                                                <div class="vc_single_image-wrapper   vc_box_border_grey"><img loading="lazy" srcset="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/11/objects-2-300x215.png.webp  300w,https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/11/objects-2-1024x733.png.webp  1024w,https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/11/objects-2.png.webp  1104w"
-                                                                        sizes="(max-width: 414px) 300px, (max-width: 720px) 600px, 1024px" class="vc_single_image-img " src="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/11/objects-2.png.webp"
-                                                                        width="552" height="395" alt="objects" title=""></div>
-                                                            </figure>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="vc_empty_space" style="height: 80px"><span class="vc_empty_space_inner"></span></div>
-                    <div id="crello-trial-block" class="trial-block black ">
-                        <div class="col-lg-4 col-lg-offset-1 col-md-6 col-sm-6 col-xs-6 col-xxs-12">
-                            <div class="crello-pro-label"><svg width="63" height="20" viewBox="0 0 63 20" fill="none" xmlns="http://www.w3.org/2000/svg"> <path fill-rule="evenodd" clip-rule="evenodd" d="M7.52414 5.75983C10.722 5.75983 13.4937 7.89318 13.9548 11.286L10.5621 11.2864C10.216 9.80202 9.01497 8.91722 7.53867 8.91722C5.64925 8.92162 4.30503 10.3585 4.31126 12.4152C4.30503 14.5372 5.7244 15.9173 7.51976 15.9217C9.01912 15.9217 10.2391 14.9906 10.5621 13.5481L13.955 13.5486C13.4939 16.9268 10.7407 19.0791 7.54281 19.0791C3.79602 19.0791 0.970886 16.2044 0.970886 12.4196C0.970886 8.63456 3.77735 5.75983 7.52414 5.75983ZM23.6294 8.89877H18.9471V18.7397H15.6523V6.01434H23.6294V8.89877ZM31.0937 5.76007C34.366 5.75983 37.1871 7.97697 37.5878 11.4609C37.6676 12.13 37.617 12.6501 37.567 13.0557C37.5054 13.0557 37.4592 13.0557 37.4284 13.0557C35.3143 13.0557 32.143 13.0557 27.9147 13.0557C28.0293 15.0231 29.3749 16.2577 31.2067 16.2622C32.6308 16.2622 33.8481 15.5447 34.1525 14.1586H37.5512C37.0336 17.2913 34.2772 19.0791 31.1921 19.0791C27.3508 19.0791 24.5629 16.2045 24.5629 12.4261C24.5629 8.63632 27.3672 5.76238 31.0937 5.76007ZM31.1973 8.38975C29.7259 8.39375 28.5943 9.31969 28.212 10.7652H34.1525C33.8475 9.17528 32.5207 8.38975 31.1973 8.38975ZM42.6388 18.7397H39.3291V0.5H42.6388V18.7397ZM47.3912 18.7397H44.0815V0.5H47.3912V18.7397ZM55.5383 5.75983C59.1933 5.76053 62.1562 8.58237 62.1574 12.4212C62.1562 16.2566 59.2395 19.0784 55.539 19.0791C51.8396 19.0784 48.9187 16.2376 48.9187 12.4193C48.9187 8.5782 51.8858 5.7603 55.5383 5.75983ZM55.4958 8.89877C53.6581 8.89532 52.2277 10.3001 52.2284 12.376C52.2277 14.4611 53.6685 15.8556 55.4963 15.8553C57.3405 15.8556 58.7624 14.4653 58.7629 12.3769C58.7624 10.3043 57.3361 8.89532 55.4958 8.89877Z" fill="#121216"></path> </svg>                                <span>Pro</span></div>
-                            <h2>Enjoy unlimited downloads with Crello Pro</h2>
-                            <ul class="trial-list">
-                                <li>Download as many designs as you need</li>
-                                <li>Invite team members and design together</li>
-                                <li>Get help online with priority support</li>
-                                <li>Remove backgrounds from images</li>
-                            </ul>
-                            <div class="button-wrapper">
-                                <div class="vc_btn3-container vc_btn3-inline"><a class="vc_general vc_btn3 vc_btn3-size-md vc_btn3-shape-rounded vc_btn3-style-btn-crello vc_btn3-color-btn-yellow" href="https://crello.com/plans/?popup=subscriptionModal&amp;selectedPlan=month" title="" data-categ="landingMenuMaker"
-                                        data-value="joinButton8">Upgrade Now</a></div>
-                                <a href="" class="after-button" data-categ="landingMenuMaker" data-value="joinButton9"></a>
-                            </div>
-                        </div>
-                        <div class="col-lg-7 col-md-6 col-sm-6 col-xs-6 col-xxs-12">
-                            <picture>
-                                <source srcset="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/09/pro_mobile.png.webp" media="(max-width: 720px)">
-                                <source srcset="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/09/pro_tablet.png.webp" media="(max-width: 1200px)">
-                                <source srcset="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/09/pro_desktop.png.webp"> <img src="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/09/pro_desktop.png.webp" alt=""> </picture>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="container">
-            <div class="row margin-top-80-56-32">
-                <div class="col-sm-12">
-                    <div class="wpb_text_column wpb_content_element ">
-                        <div class="wpb_wrapper">
-                            <h2 class="h-lg-40 h-md-40 h-sm-34-40" style="text-align: center;">FAQ</h2>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-12 col-lg-offset-2 col-lg-8 col-md-offset-2 col-md-8">
-                            <div class="vc_column-inner">
-                                <div class="faq_widget">
-                                    <div class="item ">
-                                        <h3>How do I adjust the transparency of my graphic designs?</h3>
-                                        <div class="wrapper" style=""> <span>Start by selecting an item. Next, click on the Transparency icon in the pop-up editing menu on your art board. Then, use the scroll bar to set a transparency level, or type in the desired transparency ratio manually. Watch the video tutorial <a href="https://support.crello.com/hc/en-us/articles/360026576634-Transparency-layering-">here </a>. </span></div>
-                                    </div>
-                                    <div class="item closed">
-                                        <h3>How can I resize my design?</h3>
-                                        <div class="wrapper" style="display: none;"> <span>Resizing is super-easy in Crello. Find the Resize button, while on the artboard, on the upper right corner. Then choose the size that suits you best. Nothing vanishes, so don't worry, all the progress you've made so far will be just transferred on a canvas with new dimensions. Everything else will stay in place. So after your design is resized, just move objects around a bit to place them neatly according to the new dimensions.</span></div>
-                                    </div>
-                                    <div class="item closed">
-                                        <h3>How to transform design objects?</h3>
-                                        <div class="wrapper" style="display: none;"> <span>Objects tab in the menu on the left contains various elements for making your designs more individual. These are shapes, lines, borders, icons, etc. To add a new object to your design, please choose a suitable element on the left and click on it or drag it on the canvas. Use the Delete button in the editor or the Backspace button on your keyboard or just drag the object beyond the artboard to remove it. Note that illustrations and icons can have more than just one color, and such a feature lets you modify colors up to your needs provided that there are no more than 4 colors used.</span></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
         <div class="container-wrapper " id="three-million-users">
             <div class="container">
                 <div class="row three-million-users margin-top-80-56-0">
@@ -2743,19 +2291,25 @@
                         <div class="vc_empty_space  space-md-48 space-sm-32" style="height: 66px"><span class="vc_empty_space_inner"></span></div>
                         <div class="wpb_text_column wpb_content_element ">
                             <div class="wpb_wrapper">
-                                <h3 class="h-lg-64 h-md-40-48 h-sm-27-32" style="text-align: center;"><span style="color: #ffffff; text-shadow: 0px 10px 25px rgba(0, 0, 0, 0.5);">5 million users worldwide</span></h3>
+                                <h3 class="h-lg-64 h-md-40-48 h-sm-27-32" style="text-align: center;">
+                                    <span style="color: #ffffff; text-shadow: 0px 10px 25px rgba(0, 0, 0, 0.5);">
+                                        5 million users worldwide
+                                    </span>
+                                </h3>
                             </div>
                         </div>
                         <div class="vc_empty_space  space-md-24 space-sm-24" style="height: 32px"><span class="vc_empty_space_inner"></span></div>
                         <div class="vc_btn3-container  padding-44 vc_btn3-center"><a class="vc_general vc_btn3 vc_btn3-size-md vc_btn3-shape-rounded vc_btn3-style-btn-crello vc_btn3-color-btn-yellow" href="https://crello.com/artboard/?newDesign=true&amp;width=21&amp;height=29.7&amp;group=EO&amp;format=Menu&amp;measureUnits=cm"
                                 title="" data-categ="landingMenuMaker" data-value="joinButton10">Get started</a></div>
-                        <div class="vc_empty_space  space-md-48 space-sm-32" style="height: 66px"><span class="vc_empty_space_inner"></span></div>
+                            <div class="vc_empty_space  space-md-48 space-sm-32" style="height: 66px">
+                            <span class="vc_empty_space_inner"></span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="vc_row-full-width vc_clearfix"></div>
-        <div class="container-wrapper " id="testimonials_2">
+        <!-- <div class="container-wrapper " id="testimonials_2">
             <div class="container">
                 <div class="row margin-top-80-56-32">
                     <div class="col-sm-12">
@@ -2999,7 +2553,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
         <div class="vc_row-full-width vc_clearfix"></div>
         <div class="container">
             <div class="row margin-top-80-56-32">
@@ -3009,8 +2563,8 @@
                             <div class="vc_column-inner">
                                 <div class="wpb_text_column wpb_content_element ">
                                     <div class="wpb_wrapper">
-                                        <h2 class="h-lg-40 h-md-40 h-sm-34-40" style="text-align: center;">30,000+ Ready-to-use Menu Templates</h2>
-                                        <p style="text-align: center;">Making restaurant menus has never been easier</p>
+                                        <h2 class="h-lg-40 h-md-40 h-sm-34-40" style="text-align: center;">30,000+ Ready-to-use {{ $category_obj->name }} Templates</h2>
+                                        <p style="text-align: center;">Making {{ $category_obj->name }} designs never been easier</p>
                                     </div>
                                 </div>
                                 <div class="vc_empty_space" style="height: 32px"><span class="vc_empty_space_inner"></span></div>
@@ -3018,42 +2572,18 @@
                         </div>
                     </div>
                     <div class="crello-templates-grid-wrapper">
+                        @foreach ($templates as $template)
                         <div class="template">
-                            <a href="https://crello.com/templates/coffee-drinks-variety/id-5f3b7a68a637ee11e31aafd3/" target="_blank"><img loading="lazy" src="https://cdn.crello.com/common/3ba0a524-7b81-4b49-83a3-5abd91d525c8.jpg?width=512" alt="Coffee Drinks Variety "></a>
+                            <a href="{{ route( 'template.productDetail',[
+                                'country' => $country,
+                                'slug' => $template->slug
+                            ] ) }}" target="_blank">
+                                <img loading="lazy" 
+                                    src="{{ asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["carousel"] ) }}" 
+                                    alt="{{ $template->title }}">
+                            </a>
                         </div>
-                        <div class="template">
-                            <a href="https://crello.com/templates/coffee-house-offer/id-5f3b79fba637ee11e319f267/" target="_blank"><img loading="lazy" src="https://cdn.crello.com/common/63d20f6a-f2ea-4955-93bc-25c3b219e110.jpg?width=512" alt="Coffee House Offer "></a>
-                        </div>
-                        <div class="template">
-                            <a href="https://crello.com/templates/asian-noodles-dish/id-5f3b782ea637ee11e316cf5c/" target="_blank"><img loading="lazy" src="https://cdn.crello.com/common/d2f9cd85-93b8-4898-a25f-31fea2a623f7.jpg?width=512" alt="Asian Noodles Dish "></a>
-                        </div>
-                        <div class="template">
-                            <a href="https://crello.com/templates/beer-bottles-variety/id-5f3b78a7a637ee11e317afed/" target="_blank"><img loading="lazy" src="https://cdn.crello.com/downloads/a659b984-e593-48e9-9cf0-94cb3ce9ccd6.jpeg?width=512" alt="Beer Bottles Variety "></a>
-                        </div>
-                        <div class="template">
-                            <a href="https://crello.com/templates/fruit-smoothie-bowls/id-5f3b7c43a637ee11e31dd1cb/" target="_blank"><img loading="lazy" src="https://cdn.crello.com/common/aec9c965-adc5-4639-953f-2b2839872214.jpg?width=512" alt="Fruit Smoothie Bowls "></a>
-                        </div>
-                        <div class="template">
-                            <a href="https://crello.com/templates/delicious-black-burger/id-5f3a63f1a637ee11e3d600f8/" target="_blank"><img loading="lazy" src="https://cdn.crello.com/common/a56dadea-4c1c-4aed-b8fc-931a20767283.jpg?width=512" alt="Delicious Black Burger "></a>
-                        </div>
-                        <div class="template">
-                            <a href="https://crello.com/templates/asian-cuisine-rolls/id-5f3b782ea637ee11e316cfac/" target="_blank"><img loading="lazy" src="https://cdn.crello.com/common/79e34b99-7795-4573-b705-faae4ae47af5.jpg?width=512" alt="Asian Cuisine Rolls "></a>
-                        </div>
-                        <div class="template">
-                            <a href="https://crello.com/templates/asian-noodles-with-seafood/id-5f3bba64a637ee11e3a7fc64/" target="_blank"><img loading="lazy" src="https://cdn.crello.com/common/b88f8e18-7250-423d-a393-b34369acbe84.jpg?width=512" alt="Asian Noodles With Seafood "></a>
-                        </div>
-                        <div class="template">
-                            <a href="https://crello.com/templates/bakery-promotion-with-delicious-desserts/id-5f3bbac8a637ee11e3a8e3aa/" target="_blank"><img loading="lazy" src="https://cdn.crello.com/common/18e226e8-70a3-4cc0-a259-a9b9a07930c4.jpg?width=512" alt="Bakery Promotion With Delicious Desserts "></a>
-                        </div>
-                        <div class="template">
-                            <a href="https://crello.com/templates/italian-pizza-on-chalkboard/id-5f3a63f1a637ee11e3d60111/" target="_blank"><img loading="lazy" src="https://cdn.crello.com/common/32aae9fd-527f-45e0-bdd2-334b87f68b21.jpg?width=512" alt="Italian Pizza On Chalkboard "></a>
-                        </div>
-                        <div class="template">
-                            <a href="https://crello.com/templates/lunch-delicious-meal/id-5f3bb9d5a637ee11e3a69f00/" target="_blank"><img loading="lazy" src="https://cdn.crello.com/common/6162cbad-b0ae-4961-b031-978e3e394ec3.jpg?width=512" alt="Lunch Delicious Meal "></a>
-                        </div>
-                        <div class="template">
-                            <a href="https://crello.com/templates/seasonal-summer-meal/id-5f3b7d85a637ee11e3202984/" target="_blank"><img loading="lazy" src="https://cdn.crello.com/common/1944605d-0ad8-4a65-a9a5-e972740391c0.jpg?width=512" alt="Seasonal Summer Meal "></a>
-                        </div>
+                        @endforeach
                     </div>
                     <div class="vc_empty_space  space-md-56 space-sm-32" style="height: 64px"><span class="vc_empty_space_inner"></span></div>
                     <div class="vc_btn3-container  padding-44 vc_btn3-center"><a class="vc_general vc_btn3 vc_btn3-size-md vc_btn3-shape-rounded vc_btn3-style-btn-crello vc_btn3-color-btn-blue" href="https://crello.com/inspiration/" title="" data-categ="landingMenuMaker" data-value="joinButton11">Browse all templates</a></div>
@@ -3062,81 +2592,4 @@
             </div>
         </div>
     </section>
-
-    <div id="crello-footer">
-        <div class="main">
-            <div class="wrapper">
-                <div class="menu menu-default menu-crello"> <span class="menu-title">Crello</span>
-                    <ul class="menu">
-                        <li><a href="https://crello.com/plans/" data-categ="menus" data-subcateg="footer" data-value="plans&amp;Prices">Plans &amp; Prices</a></li>
-                        <li><a href="https://crello.com/pro/" data-categ="menus" data-subcateg="footer" data-value="crelloPro">Crello Pro</a></li>
-                        <li><a href="https://crello.com/about-crello/" data-categ="menus" data-subcateg="footer" data-value="aboutUs">About Us</a></li>
-                        <li><a href="https://www.dropbox.com/sh/5s474h7wfd7v4x9/AACY4zpWL4Ni9nGzUTXV0UQKa?dl=0">Media Kit</a></li>
-                        <li><a href="https://crello.com/blog/" data-categ="menus" data-subcateg="footer" data-value="blog">Blog</a></li>
-                        <li><a href="https://crello.com/nonprofits/" data-categ="menus" data-subcateg="footer" data-value="forNonprofits">For Nonprofits</a></li>
-                        <li><a href="https://crello.com/education/" data-categ="menus" data-subcateg="footer" data-value="forEducation">For Education</a></li>
-                    </ul>
-                </div>
-                <div class="menu menu-default menu-tools"> <span class="menu-title">Tools</span>
-                    <ul class="menu">
-                        <li><a href="https://crello.com/product-hunt/" data-categ="menus" data-subcateg="footer" data-value="productHuntLaunchKit">Product Hunt Launch Kit</a></li>
-                        <li><a href="https://crello.com/tools/gif-converter" data-categ="menus" data-subcateg="footer" data-value="videoToGifConverter">Video to Gif Converter</a></li>
-                        <li><a href="https://crello.com/tools/image-converter" data-categ="menus" data-subcateg="footer" data-value="imageConverter">Image Converter</a></li>
-                    </ul>
-                </div>
-                <div class="menu menu-default menu-discover"> <span class="menu-title">Discover</span>
-                    <ul class="menu">
-                        <li><a href="https://empowerwomen.crello.com/" data-categ="menus" data-subcateg="footer" data-value="empowerWomen">Empower Women</a></li>
-                        <li><a href="https://crello.com/blog/worldwide-holidays-for-foodies-infographic-calendar-templates/" data-categ="menus" data-subcateg="footer" data-value="foodCalendar">Food Calendar</a></li>
-                        <li><a href="https://crello.com/marketing-calendar/" data-categ="menus" data-subcateg="footer" data-value="marketingCalendar">Marketing Calendar</a></li>
-                    </ul>
-                </div>
-                <div class="menu menu-default menu-partner"> <span class="menu-title">Partner</span>
-                    <ul class="menu">
-                        <li><a href="#" data-categ="menus" data-subcateg="footer" data-value="partnerProgram">Partner Program</a></li>
-                    </ul>
-                </div>
-                <div class="menu menu-default menu-legal"> <span class="menu-title">Legal</span>
-                    <ul class="menu">
-                        <li><a href="https://crello.com/faq/legal/privacy_policy/privacy_policy/" data-categ="menus" data-subcateg="footer" data-value="privacyPolicy">Privacy Policy</a></li>
-                        <li><a href="https://crello.com/faq/legal/terms_of_use/terms_of_use/" data-categ="menus" data-subcateg="footer" data-value="termsOfService">Terms of Service</a></li>
-                    </ul>
-                </div>
-                <div class="menu menu-default menu-help"> <span class="menu-title">Help</span>
-                    <ul class="menu">
-                        <li><a href="https://support.crello.com/hc/en-us/" data-categ="menus" data-subcateg="footer" data-value="helpCenter">Help Center</a></li>
-                        <li><a href="https://crello.com/tutorials/" data-categ="menus" data-subcateg="footer" data-value="tutorials">Tutorials</a></li>
-                        <li><a href="https://support.crello.com/hc/en-us/requests/new/" data-categ="menus" data-subcateg="footer" data-value="contactUs">Contact Us</a></li>
-                    </ul>
-                </div>
-                <div class="menu menu-lang">
-                    <div class="lang-switcher"> <span class="current">English</span>
-                        <div class="lang-options" style="bottom: 336px;">
-                            <div class="scroll"></div> <span class="lang-en cur"><a href="/create/menus/">English (EN)</a></span> <span class="lang-de "><a href="/de/create/menus/">Deutsch (DE)</a></span> <span class="lang-es "><a href="/es/create/menus/">Español (ES)</a></span>                            <span class="lang-fr "><a href="/fr/create/menus/">Français (FR)</a></span> <span class="lang-it "><a href="/it/create/menus/">Italiano (IT)</a></span> <span class="lang-nl "><a href="/nl/create/menus/">Nederlands (NL)</a></span>                            <span class="lang-pl "><a href="/pl/create/menus/">Polski (PL)</a></span> <span class="lang-pt "><a href="/pt/create/menus/">Português (PT)</a></span> <span class="lang-ru "><a href="/ru/create/menus/">Русский (RU)</a></span>                            <span class="lang-tr "><a href="/tr/create/menus/">Türkçe (TR)</a></span> <span class="lang-uk "><a href="/uk/create/menus/">Українська (UK)</a></span> <span class="lang-ja "><a href="/ja/create/menus/">日本語 (JA)</a></span>                            <span class="lang-cs "><a href="/cs/create/menus/">Český (CS)</a></span> <span class="lang-hu "><a href="/hu/create/menus/">Magyar (HU)</a></span> <span class="lang-mx "><a href="/mx/create/menus/">México (MX)</a></span>
-                            <span class="lang-el "><a href="/el/create/menus/">Ελληνική (EL)</a></span>
-                        </div>
-                    </div>
-                    <div class="app">
-                        <a href="https://apps.apple.com/us/app/crello-video-graphic-creator/id1402471998"><img src="https://crello.com/create/wp-content/themes/crello-landing-new/images/footer/appstore.png" alt="App Store"></a>
-                        <a href="https://play.google.com/store/apps/details?id=com.dephotos.crello"><img src="https://crello.com/create/wp-content/themes/crello-landing-new/images/footer/googleplay.png" alt="Google Play"></a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="bottom">
-            <div class="wrapper">
-                <div class="column copyright"> <span>© Crello Ltd, 2021</span></div>
-                <div class="column social">
-                    <a href="https://www.linkedin.com/company/crello/"> <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M2 0H16C17.1046 0 18 0.89543 18 2V16C18 17.1046 17.1046 18 16 18H2C0.89543 18 0 17.1046 0 16V2C0 0.89543 0.89543 0 2 0ZM4.99927 14.9999C5.27541 14.9999 5.49927 14.7761 5.49927 14.4999V7.49994C5.49927 7.2238 5.27541 6.99994 4.99927 6.99994H3.49927C3.22313 6.99994 2.99927 7.2238 2.99927 7.49994V14.4999C2.99927 14.7761 3.22313 14.9999 3.49927 14.9999H4.99927ZM4.24951 6.00037C3.42108 6.00037 2.74951 5.32879 2.74951 4.50037C2.74951 3.67194 3.42108 3.00037 4.24951 3.00037C5.07794 3.00037 5.74951 3.67194 5.74951 4.50037C5.74951 5.32879 5.07794 6.00037 4.24951 6.00037ZM14.499 14.9997C14.7752 14.9997 14.999 14.7759 14.999 14.4997V9.89973C15.0315 8.3105 13.8566 6.95425 12.279 6.75973C11.176 6.65898 10.1073 7.17413 9.49902 8.09973V7.49973C9.49902 7.22359 9.27517 6.99973 8.99902 6.99973H7.49902C7.22288 6.99973 6.99902 7.22359 6.99902 7.49973V14.4997C6.99902 14.7759 7.22288 14.9997 7.49902 14.9997H8.99902C9.27517 14.9997 9.49902 14.7759 9.49902 14.4997V10.7497C9.49902 9.9213 10.1706 9.24973 10.999 9.24973C11.8275 9.24973 12.499 9.9213 12.499 10.7497V14.4997C12.499 14.7759 12.7229 14.9997 12.999 14.9997H14.499Z" fill="#91949C"></path></svg>                        </a>
-                    <a href="https://www.instagram.com/crellogram/"> <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M13 0H5C2.23858 0 0 2.23858 0 5V13C0 15.7614 2.23858 18 5 18H13C15.7614 18 18 15.7614 18 13V5C18 2.23858 15.7614 0 13 0ZM16.2505 13.0001C16.245 14.7928 14.7931 16.2446 13.0005 16.2501H5.00049C3.20784 16.2446 1.75598 14.7928 1.75049 13.0001V5.00012C1.75598 3.20748 3.20784 1.75561 5.00049 1.75012H13.0005C14.7931 1.75561 16.245 3.20748 16.2505 5.00012V13.0001ZM13.75 5.24976C14.3023 5.24976 14.75 4.80204 14.75 4.24976C14.75 3.69747 14.3023 3.24976 13.75 3.24976C13.1977 3.24976 12.75 3.69747 12.75 4.24976C12.75 4.80204 13.1977 5.24976 13.75 5.24976ZM9 4.50001C6.51472 4.50001 4.5 6.51473 4.5 9.00001C4.5 11.4853 6.51472 13.5 9 13.5C11.4853 13.5 13.5 11.4853 13.5 9.00001C13.5027 7.80572 13.0294 6.65958 12.1849 5.81509C11.3404 4.9706 10.1943 4.49735 9 4.50001ZM6.25049 9.00012C6.25049 10.5189 7.48171 11.7501 9.00049 11.7501C10.5193 11.7501 11.7505 10.5189 11.7505 9.00012C11.7505 7.48134 10.5193 6.25012 9.00049 6.25012C7.48171 6.25012 6.25049 7.48134 6.25049 9.00012Z" fill="#91949C"></path></svg>                        </a>
-                    <a href="https://twitter.com/crelloapp"> <svg width="18" height="16" viewBox="0 0 18 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17.9737 2.40762C17.5092 3.04536 16.9478 3.60166 16.3112 4.05504C16.3112 4.22164 16.3112 4.38823 16.3112 4.56408C16.3163 7.58939 15.1424 10.4903 13.0526 12.6164C10.9629 14.7425 8.1321 15.9161 5.1949 15.8739C3.49684 15.8797 1.82053 15.4806 0.297271 14.7077C0.215137 14.6708 0.162162 14.5872 0.162474 14.4949V14.3931C0.162474 14.2602 0.267082 14.1524 0.396122 14.1524C2.06527 14.0958 3.67488 13.5001 4.9972 12.4495C3.48639 12.4182 2.12704 11.4968 1.50146 10.0802C1.46986 10.0028 1.4797 9.91403 1.52742 9.84598C1.57514 9.77793 1.65385 9.74041 1.73511 9.74697C2.19428 9.79449 2.65803 9.7505 3.10105 9.6174C1.43324 9.26101 0.180066 7.83569 0.000717434 6.09118C-0.00565688 6.00749 0.0307748 5.92643 0.0968513 5.87729C0.162928 5.82814 0.249097 5.818 0.324231 5.85055C0.771799 6.05384 1.25495 6.16092 1.74409 6.16522C0.282696 5.17782 -0.348532 3.29975 0.207406 1.59317C0.264792 1.42734 0.402662 1.30483 0.57035 1.27067C0.738039 1.23651 0.910811 1.29573 1.02518 1.42657C2.99724 3.58717 5.70689 4.87466 8.5828 5.01758C8.50914 4.71499 8.47291 4.40402 8.47497 4.09206C8.50186 2.45633 9.48504 0.999187 10.9642 0.402812C12.4434 -0.193563 14.1258 0.188859 15.2238 1.37104C15.9723 1.22426 16.6959 0.96546 17.3716 0.602863C17.4211 0.571053 17.4838 0.571053 17.5333 0.602863C17.5642 0.653839 17.5642 0.718481 17.5333 0.769456C17.206 1.54097 16.6531 2.18806 15.9517 2.62049C16.5659 2.54717 17.1694 2.39801 17.749 2.17624C17.7978 2.14205 17.862 2.14205 17.9108 2.17624C17.9517 2.1955 17.9822 2.23232 17.9943 2.2769C18.0065 2.32149 17.9989 2.3693 17.9737 2.40762Z" fill="#91949C"></path></svg>                        </a>
-                    <a href="https://www.facebook.com/crelloapp"> <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M17.9989 9.05389C17.9989 4.05275 13.9692 -0.00146484 8.99833 -0.00146484C4.02747 -0.00146484 -0.00219727 4.05275 -0.00219727 9.05389C-0.00219727 13.5737 3.28917 17.3199 7.592 17.9992V11.6715H5.30671V9.05389H7.592V7.05888C7.592 4.78939 8.93571 3.53578 10.9916 3.53578C11.9764 3.53578 13.0064 3.71265 13.0064 3.71265V5.94111H11.8714C10.7533 5.94111 10.4047 6.63914 10.4047 7.35525V9.05389H12.9009L12.5019 11.6715H10.4047V17.9992C14.7075 17.3199 17.9989 13.5737 17.9989 9.05389Z" fill="#91949C"></path></svg>                        </a>
-                    <a href="https://www.youtube.com/channel/UCEqlVgQWGG1C244zpvy94ZQ"> <svg width="18" height="14" viewBox="0 0 18 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M14.3507 0.534841L15.5452 0.661443C16.9594 0.826332 18.0213 2.07155 17.9997 3.53954V10.4605C18.0213 11.9284 16.9594 13.1737 15.5452 13.3386L14.3998 13.4652C10.8258 13.8449 7.22334 13.8449 3.64928 13.4652L2.45478 13.3386C1.04062 13.1737 -0.021311 11.9284 0.000324736 10.4605V3.53954C-0.021311 2.07155 1.04062 0.826332 2.45478 0.661443L3.60019 0.534841C7.17425 0.155053 10.7767 0.155053 14.3507 0.534841ZM8.27119 9.7178L11.4538 7.52336H11.5029C11.6744 7.40808 11.7778 7.21122 11.7778 7.00007C11.7778 6.78891 11.6744 6.59205 11.5029 6.47678L8.32028 4.28234C8.13237 4.15131 7.88974 4.1379 7.68933 4.24745C7.48893 4.357 7.36345 4.57166 7.36304 4.80562V9.19451C7.37359 9.41233 7.49209 9.6092 7.67666 9.71555C7.86123 9.82191 8.08587 9.82275 8.27119 9.7178Z" fill="#91949C"></path></svg>                        </a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-</body>
-
-</html>
+@endsection

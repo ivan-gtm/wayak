@@ -14,7 +14,7 @@ class ScrapFonts extends Command
      *
      * @var string
      */
-    protected $signature = 'command:scrapfonts';
+    protected $signature = 'templett:scrapfonts';
 
     /**
      * The console command description.

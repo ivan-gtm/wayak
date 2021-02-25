@@ -582,7 +582,6 @@ class CategoryController extends Controller
     function createURLs($base_text, $category_array) {
         foreach ($category_array as $category) {
             $url_str = $base_text;
-            // }
             
             if( isset( $category['slug'] ) ){
                 //     print_r("MISSING >>");
@@ -591,6 +590,7 @@ class CategoryController extends Controller
                 $url_str .= '/'.$category['slug'];
                 echo $url_str.'<br>';
             }
+
             if( isset( $category['children'] ) ){
                 // print_r($category['children']);
                 self::createURLs($url_str, $category['children']);

@@ -13,7 +13,7 @@ class ScrapThumbnails extends Command
      *
      * @var string
      */
-    protected $signature = 'command:scrapthumbnails';
+    protected $signature = 'templett:scrapthumbnails';
 
     /**
      * The console command description.

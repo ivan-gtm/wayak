@@ -44,13 +44,16 @@
         <!-- 
         <link rel="stylesheet" href="{{ asset('assets/css/spectrum.css') }}css/style.css">
         -->
-        <script src="{{ asset('assets/js/jquery/jquery-1.9.1.js') }}"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
         <script src="{{ asset('assets/js/jquery-ui-1.12.1/jquery-ui.min.js') }}"></script>
         <script src="{{ asset('assets/js/touchSwipe/jquery.touchSwipe.min.js') }}"></script>
+        <script src="https://unpkg.com/infinite-scroll@4/dist/infinite-scroll.pkgd.min.js"></script>
+
 
         <script src="{{ asset('assets/js/imagesLoaded/imagesloaded.pkgd.min.js') }}"></script>
 
         <!-- <script src="{{ asset('assets/js/jquery-mobile/jquery.mobile-1.4.5.min.js?rev=ed515e27701f638073403bd54317e') }}"></script> -->
+        <script src="{{ asset('assets/js/parsley/parsley.min.js') }}"></script>
         <script src="{{ asset('assets/js/bootstrap-slider/bootstrap-slider.min.js') }}"></script>
         <script src="{{ asset('assets/js/spectrum/spectrum.js') }}"></script>
         <script src="{{ asset('assets/js/tagsfield/tagsfield.js') }}"></script>
@@ -64,7 +67,7 @@
         <script src="{{ asset('assets/js/vendor.js?rev=ed515e27701f638073403bd54317e') }}"></script>
         <script src="{{ asset('assets/js/nanoscroller/jquery.nanoscroller.min.js?rev=ed515e27701f638073403bd54317e') }}"></script>
         <script src="{{ asset('assets/js/fastclick/fastclick.js?rev=ed515e27701f638073403bd54317e') }}"></script>
-
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/simplebar/5.3.0/simplebar.min.js" integrity="sha512-AS9rZZDdb+y4W2lcmkNGwf4swm6607XJYpNST1mkNBUfBBka8btA6mgRmhoFQ9Umy8Nj/fg5444+SglLHbowuA==" crossorigin="anonymous"></script>
         <script src="{{ asset('assets/js/filesaver/FileSaver.min.js') }}"></script>
 
         <script src="{{ asset('assets/js/jszip/jszip.min.js') }}"></script>
@@ -575,31 +578,26 @@
                                     Imagenes
                                 </span>
                             </a> -->
-                            <ul class="sub-menu">
-                                <li>
-                                    <div class="col-lg-12 scroll-container">
-                                        <div class="dropzone" id="myAwesomeDropzone">
-                                            <div class="dz-message">
-                                                <div class="icon">
-                                                    <span class="s7-cloud-upload">
-                                                    </span>
-                                                </div>
-                                                <h4>
-                                                    Arrastra y suelta archivos aquí
-                                                </h4>
-                                            </div>
-                                            <div class="uploaded_images_list dropzone-previews">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li>
-                                    <form action="uploadimage.php" enctype="multipart/form-data" id="upload" method="POST">
-                                        <input id="MAX_FILE_SIZE" name="MAX_FILE_SIZE" type="hidden" value="1000000"/>
-                                        <input id="fileselect" name="fileselect[]" type="file"/>
-                                    </form>
-                                </li>
-                            </ul>
+                <ul class="sub-menu">
+                    <li>
+                        <div class="col-lg-12 scroll-container" id="f">
+                                                        <div id="myAwesomeDropzone" class="dropzone">
+                                <div class="dz-message">
+                                    <div class="icon"><span class="s7-cloud-upload"></span></div>
+                                    <h4>Drag and Drop files here</h4>
+                                </div>
+                                <div class="uploaded_images dropzone-previews"></div>
+                            </div>
+                                                        <div id="uploaded_images_list" class="uploaded_images_list dropzone-previews"></div>
+                        </div>
+                    </li>
+                    <li>
+                                                <form id="upload" action="uploadimage.php" method="POST" enctype="multipart/form-data">
+                            <input type="hidden" id="MAX_FILE_SIZE" name="MAX_FILE_SIZE" value="1000000" />
+                            <input id="fileselect" type="file" name="fileselect[]" />
+                        </form>
+                                            </li>
+                </ul>
                         </li>
                         <li class="parent" id="relatedProductsPane">
                             <a class="invisible" href="#">
@@ -4085,7 +4083,7 @@
                                 Add Background
                             </h4>
                         </div>
-                        <form id="addbackgroundform" name="addbackgroundform" role="form">
+                <form name="add-background-form" id="add-background-form" data-parsley-validate="" novalidate="" role="form">
                             <div class="modal-body" style="margin-top:-30px; ">
                                 <div class="row">
                                     <div class="col-lg-12">
@@ -4577,8 +4575,8 @@
                         </div>
                         <div class="modal-body">
                             <div class="embed-responsive embed-responsive-16by9">
-                                <iframe allowfullscreen="" class="embed-responsive-item" mozallowfullscreen="" src="https://www.youtube.com/embed/lzWLckQN-2c?rel=0&enablejsapi=1" webkitallowfullscreen="">
-                                </iframe>
+                                <!-- <iframe allowfullscreen="" class="embed-responsive-item" mozallowfullscreen="" src="https://www.youtube.com/embed/lzWLckQN-2c?rel=0&enablejsapi=1" webkitallowfullscreen="">
+                                </iframe> -->
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -4787,112 +4785,107 @@
         </div>
         <!-- build:vendor -->
         
-        <!-- endbuild -->
-        <div class="modal fade" id="myAccountModal" role="dialog" tabindex="-1">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button aria-hidden="true" class="close md-close" data-dismiss="modal" type="button">
-                            <i class="icon s7-close">
-                            </i>
-                        </button>
-                        <h3 class="modal-title">
-                            My Profile
-                        </h3>
-                    </div>
-                    <form action="../admin/actions/updateMyAvatar.php" autocomplete="off" class="form-horizontal" enctype="multipart/form-data" id="my-avatar" method="post" name="my-avatar" role="form">
-                        <div class="col-md-4">
-                            <div style="margin:30px 0; text-align:center;">
-                                <img class="img-circle" id="avatar" src="" style="max-width: 150px;">
-                                    <label class="btn btn-primary btn-file" style="margin:10px;">
-                                        Upload Image
-                                        <input accept="image/*" name="pic" onchange="$('#my-avatar').submit();" style="display: none;" type="file">
-                                        </input>
-                                    </label>
-                                </img>
-                            </div>
-                        </div>
-                    </form>
-                    <form accept-charset="UTF-8" action="../admin/actions/updateMyAccount.php" autocomplete="off" class="form-horizontal" data-parsley-validate="" method="POST" name="my-account" novalidate="" role="form">
-                        <div class="col-md-8">
-                            <div class="modal-body form">
-                                <div class="form-group">
-                                    <label class="col-sm-4 control-label">
-                                        Username
-                                    </label>
-                                    <div class="col-sm-8">
-                                        <input class="form-control" readonly="" value="">
-                                        </input>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-4 control-label">
-                                        First name
-                                    </label>
-                                    <div class="col-sm-8">
-                                        <input class="form-control" data-parsley-type="alphanum" name="firstname" parsley-trigger="change" placeholder="" required="" type="name" value="">
-                                        </input>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-4 control-label">
-                                        Last name
-                                    </label>
-                                    <div class="col-sm-8">
-                                        <input class="form-control" data-parsley-type="alphanum" name="lastname" parsley-trigger="change" placeholder="" required="" type="name" value="">
-                                        </input>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-4 control-label">
-                                        Email address
-                                    </label>
-                                    <div class="col-sm-8">
-                                        <input autocomplete="off" class="form-control" name="email" parsley-trigger="change" parsley-type="email" placeholder="username@example.com" required="" type="email" value="">
-                                        </input>
-                                    </div>
-                                </div>
-                                <div class="form-group text-center">
-                                    <a data-toggle="collapse" href="#change-pass">
-                                        Change Password
-                                        <i class="icon s7-angle-down">
-                                        </i>
-                                    </a>
-                                </div>
-                                <div class="collapse" id="change-pass">
-                                    <div class="form-group">
-                                        <label class="col-sm-4 control-label">
-                                            Password
-                                        </label>
-                                        <div class="col-sm-8">
-                                            <input autocomplete="off" class="form-control" id="inputPassword" name="password" parsley-trigger="change" type="password">
-                                            </input>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="col-sm-4 control-label">
-                                            Confirm password
-                                        </label>
-                                        <div class="col-sm-8">
-                                            <input autocomplete="off" class="form-control" data-parsley-equalto="#inputPassword" id="inputConfirmPassword" parsley-trigger="change" type="password">
-                                            </input>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button class="btn btn-default md-close" data-dismiss="modal" type="button">
-                                Cancel
-                            </button>
-                            <button class="btn btn-primary md-close" type="submit">
-                                Update
-                            </button>
-                        </div>
-                    </form>
-                </div>
+    <!-- endbuild -->
+
+    <div class="modal fade" id="myAccountModal" role="dialog" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button aria-hidden="true" class="close md-close" data-dismiss="modal" type="button">
+                    <i class="icon s7-close">
+                    </i>
+                </button>
+                <h3 class="modal-title">
+                    My Profile
+                </h3>
             </div>
+            <form action="../admin/actions/updateMyAvatar.php" class="form-horizontal" method="post" enctype="multipart/form-data" name="my-avatar" id="my-avatar" role="form" autocomplete="off">
+                <div class="col-md-4">
+                    <div style="margin:30px 0; text-align:center;">
+                        <img id="avatar" style="max-width: 150px;" class="img-circle" src="">
+                            <label class="btn btn-primary btn-file" style="margin:10px;">
+                                Upload Image <input type="file" name="pic" accept="image/*" style="display: none;" onchange="$('#my-avatar').submit();">
+                            </label>
+                        </img>
+                    </div>
+                </div>
+            </form>
+            <form action="../admin/actions/updateMyAccount.php" class="form-horizontal" method="POST" name="my-account" role="form" data-parsley-validate="" novalidate="" accept-charset="UTF-8" autocomplete="off">
+                <div class="col-md-8">
+                    <div class="modal-body form">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">
+                                Username
+                            </label>
+                            <div class="col-sm-8">
+                                <input class="form-control" value="" readonly>
+                                </input>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">
+                                First name
+                            </label>
+                            <div class="col-sm-8">
+                                <input class="form-control" name="firstname" placeholder="" data-parsley-type="alphanum" parsley-trigger="change" required="" type="name" value="">
+                                </input>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">
+                                Last name
+                            </label>
+                            <div class="col-sm-8">
+                                <input class="form-control" name="lastname" placeholder="" data-parsley-type="alphanum" parsley-trigger="change" required="" type="name" value="">
+                                </input>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">
+                                Email address
+                            </label>
+                            <div class="col-sm-8">
+                                <input class="form-control" name="email" placeholder="username@example.com" parsley-trigger="change" parsley-type="email" required="" type="email" value="" autocomplete="off">
+                                </input>
+                            </div>
+                        </div>
+                        <div class="form-group text-center">
+                            <a data-toggle="collapse" href="#change-pass">Change Password <i class="icon s7-angle-down"></i></a>
+                        </div>
+                        <div id="change-pass" class="collapse">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">
+                                    Password
+                                </label>
+                                <div class="col-sm-8">
+                                    <input class="form-control" name="password" type="password" parsley-trigger="change" id="inputPassword" autocomplete="off">
+                                    </input>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">
+                                    Confirm password
+                                </label>
+                                <div class="col-sm-8">
+                                    <input class="form-control" type="password" parsley-trigger="change" id="inputConfirmPassword" data-parsley-equalto="#inputPassword" autocomplete="off">
+                                    </input>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-default md-close" data-dismiss="modal" type="button">
+                        Cancel
+                    </button>
+                    <button class="btn btn-primary md-close" type="submit">
+                        Update
+                    </button>
+                </div>
+            </form>
         </div>
+    </div>
+</div>
         <script type="text/javascript">
             $(document).ready(function() {
                 $("form[name='my-account']").ajaxForm({
@@ -4963,10 +4956,19 @@
             
             var demo_templates = '{{ (isset($templates)) ? $templates : '' }}';
             var geofilterBackgrounds = [{"id":0,"filename":"none"},{"id":"1","filename":"geo-wedding.jpg"},{"id":"2","filename":"geo-party.jpg"},{"id":"3","filename":"geo-cheers.jpg"},{"id":"4","filename":"geo-babygirl.jpg"}];
+        var currentUserRole = '';
             var hideVideoModal = false;
         </script>
         <script type="text/javascript">
-            var appUrl = '{{ url("") }}/';
+    	var appUrl = '{{ url("") }}/';
+        if(demo_as_id) {
+            var demoJwt = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6InRlbXBsZXR0In0.IntcImlkXCI6XCIxNDM0N2YxODQ2MTA0ZDgzNWIwZDNkZjUxYzBiMjdmNVwiLFwidWlkXCI6XCIxNDM0N2YxODQ2MTA0ZDgzNWIwZDNkZjUxYzBiMjdmNVwiLFwiZGVtb0FzXCI6dHJ1ZSxcInRlbXBsYXRlSWRzXCI6W1wiNTM3ODI3MFwiXSxcImF2YXRhclwiOlwiaHR0cHM6XFxcL1xcXC90ZW1wbGV0dC5jb21cXFwvYWRtaW5cXFwvYXNzZXRzXFxcL2ltZ1xcXC9sb2dvLXJldGluYS5wbmdcIixcInJvbGVcIjpcImRlbW9cIixcImVtYWlsXCI6XCJkZW1vQHRlbXBsZXR0LmNvbVwiLFwidXNlcm5hbWVcIjpcImRlbW9cIixcImxhbmd1YWdlXCI6XCJlbmdsaXNoXCIsXCJ1bmlxdWVfaWRcIjpcInNpZF82MDI1ZWVjMThmNWI1XCIsXCJsb2NhdGlvblwiOntcImNvdW50cnlfY29kZVwiOlwiTVhcIixcImNvdW50cnlfbmFtZVwiOlwiTWV4aWNvXCIsXCJjaXR5X25hbWVcIjpcIkNpdWRhZCBOZXphaHVhbGNveW90bFwiLFwidGltZV96b25lXCI6XCItMDU6MDBcIn0sXCJjcmVhdGVkXCI6MTYxMzA5ODY4OSxcImV4cFwiOjE2MTMxODUwODl9Ig.FhI0bXyk_vYX9564t92umZPq7YXTGc4VO9971uFrsxvFXmdK51cYLdLC-Q61YO0-X1nHlcCAqiCGQx27W5FbvToSyOB29DJ16sCK-v0mrP3XhW0rz1MN6bATrfAMK-STiPRuR3ipQ721Zts_efM2vqtFWK-c3b6ITC4vkO01WooxgySm92vIXimD0p521cQD146_PJVdLZcKewaeLVP_sCXXe_EpugKBXePnbsnU4KdMKOfxq6T0bHYmQO5Weu4o8O8NulvoS0YDRliU12D5KOP4bQewrxSZjZbIBCIJATqVPlse6HvkJ74C19P56WpyjJx6CEYv0t7lGu_I0QrJtA";
+            $.ajaxSetup({
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader('x-demo-templett-jwt', demoJwt);
+                }
+            });
+        }
         </script>
         <!-- build:app -->
         <script src="{{ asset('assets/js/app.js?rev='.time()) }}"></script>
@@ -4974,11 +4976,32 @@
         <script type="text/javascript">
             // Wait for window load
     
-    $(window).on('load', function () {  
+    $(window).load(function () {  
         // Animate loader off screen
         $("#loadingpage").fadeOut("slow");
         $('.deletecanvas').css('display', 'none');
     });
+    
+    var configSimpleScroll = function(containerId, itemsContainerId) {
+        var templatesSimpleBar = new SimpleBar(document.getElementById(containerId));
+        templatesSimpleBar.getScrollElement().addEventListener('scroll', function(e) {
+            // console.log(e.srcElement.scrollHeight);
+            // console.log(e.srcElement.scrollTop);
+            // console.log(e.srcElement.offsetHeight);
+
+            if((e.srcElement.scrollHeight - (e.srcElement.offsetHeight + e.srcElement.scrollTop)) < 30) {
+                var selector = '#' + itemsContainerId;
+                $(selector).scroll();
+            }
+        });
+    };
+    configSimpleScroll('a', 'template_container');
+    configSimpleScroll('b', 'text_container');
+    configSimpleScroll('c', 'catimage_container');
+    configSimpleScroll('d', 'bgscalecontainer');
+    //configSimpleScroll('e', 'related_products_container');
+    configSimpleScroll('f', 'uploaded_images_list');
+
     
     $(document).ready(function() {
         // Set demo cookie after 30 seconds on page
@@ -5004,6 +5027,9 @@
                 getCatimages2(0,''); 
             }, 750);
             $(".sidebar-elements li a").removeClass("invisible");
+            if(design_as_id > 0){
+                $('#relatedProductsPane a:visible').addClass('invisible');
+            }
         }
         setTimeout(function() {
             getBgimages2(0,'');

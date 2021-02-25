@@ -13,7 +13,7 @@ class ScrapAssets extends Command
      *
      * @var string
      */
-    protected $signature = 'command:scrapassets';
+    protected $signature = 'templett:scrapassets';
 
     /**
      * The console command description.

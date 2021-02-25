@@ -67,9 +67,10 @@ class VerifyTemplates extends Command
 
         $templates = DB::table('templates')
                             ->select('id', 'template_id')
-                            ->whereIn('status', [1,3,4,8])
-                            // ->whereIn('status', [4])
-                            // ->where('template_id','=', '2004072')
+                            // ->whereIn('status', [1,3,4,8])
+                            // ->whereIn('status', [1])
+                            ->where('source','=', 'templett')
+                            ->where('template_id','=', '682087')
 							->orderBy('id','DESC')
 							// ->limit(1000)
 							->get();
@@ -84,6 +85,10 @@ class VerifyTemplates extends Command
                 // print_r( $template_key."- EXISTE\n" );
                 $pages = Redis::get($template_key);
                 $pages = json_decode($pages);
+                
+                // echo "HIHI";
+                // print_r($pages);
+                // exit;
 
                 unset( $pages[0] ); // Remove dimentions object
 
@@ -94,6 +99,9 @@ class VerifyTemplates extends Command
 
                     $downloaded_asset = self::parseTemplateObjects($objects, $template->template_id, $template->id);
 
+                    if( isset( $page->patternSourceCanvas ) && isset($page->patternSourceCanvas->objects) ){
+                        self::parseTemplateObjects( $page->patternSourceCanvas->objects, $template->template_id, $template->id);
+                    }
                     // print_r( "\n\n".$template_key."->".$downloaded_asset."->".sizeof($objects) );
 
                     if( $downloaded_asset >= sizeof($objects) ){
@@ -144,6 +152,16 @@ class VerifyTemplates extends Command
                 }
             } elseif($object->type == 'textbox' 
                         OR $object->type == 'i-text'){
+                
+                if( isset($object->fill->src) && $this->registerImagesOnDB($object->fill->src, $template_key) == false){
+
+                    print_r( "\n".$template_key."- MISSING IMG STATUS 7" );
+
+                    DB::table('templates')
+                        ->where('id', $template_id)
+                        ->update(['status' => 7]);
+                }
+
                 if( $this->registerFontsOnDB($object->fontFamily, $template_key) ){
                     $downloaded_asset++;
                     // print_r($downloaded_asset);
@@ -174,6 +192,7 @@ class VerifyTemplates extends Command
                     DB::table('templates')
                     ->where('id', $template_id)
                     ->update(['status' => 7]);
+
                 } elseif( $this->registerFontsOnDB($object->fontFamily, $template_key) == false ){
                     
                     print_r( "\n".$template_key."- MISSING FONT" );
