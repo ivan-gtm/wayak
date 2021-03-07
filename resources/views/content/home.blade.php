@@ -1,6 +1,6 @@
 @extends('layouts.frontend')
 
-@section('title', 'Panel de Administración')
+@section('title', 'Free Templates & Online Graphic Editor | WAYAK')
 
 @section('content')
 		<div id="appMountPoint">
@@ -16,15 +16,15 @@
                                 
 								<div class="lolomo is-fullbleed">
                                     
-									<div class="lolomoRow lolomoRow_title_card ltr-0" data-list-context="categories" style="margin-top: 4vw;">
-										<div class="heroWrapper___2WxOZ">
-											<div class="bannerContainer___Y4ecx">
-												<div class="banner___3K0N2" style="background-image: url(&quot;{{ asset('home/searchbox_home_banner.jpg') }}&quot;);"></div>
-											</div>
-											<p class="fugue-regular___3IC2i fugue-h3___3pmEB title___3smO3">Create Any Design</p>
-											<div class="searchWrapper___ktY0d">
-												<div class="searchFormWrapper___2LC5i">
-													<form class="form___1I3Xs" novalidate="" method="GET" action="{{ route('user.search',['country' => $country]) }}">
+                                    <div class="lolomoRow lolomoRow_title_card ltr-0" data-list-context="categories" style="margin-top: 4vw;">
+                                        <div class="heroWrapper___2WxOZ">
+                                            <div class="bannerContainer___Y4ecx">
+                                                <div class="banner___3K0N2"></div>
+                                            </div>
+                                            <p class="fugue-regular___3IC2i fugue-h3___3pmEB title___3smO3">Design whatever you want</p>
+                                            <div class="searchWrapper___ktY0d">
+                                                <div class="searchFormWrapper___2LC5i">
+                                                    <form class="form___1I3Xs" novalidate="" method="GET" action="{{ route('user.search',['country' => $country]) }}">
 														@csrf
 														<div class="sc-dmlrTW guKkvw">
 															<input type="text" autocomplete="off" name="searchQuery" class="sc-kfzAmx sc-fKFyDc fTLfYv zomHz proxima-regular___3FDdY" placeholder="Search from thousands of formats and designs" value="" style="padding-left: 20px;">
@@ -32,11 +32,9 @@
 														<div class="inputControls___BVQJr left___1UDlV"></div>
 														<div class="inputControls___BVQJr right___3zI72">
 															<button type="submit" class="sc-gsTCUz bhdLno sc-dlfnbm llxIqU searchBtn___3JEWS" data-categ="homeSearchForm" data-value="submit">
-																<div class="sc-hKgILt chrFRV">
-																	<svg viewBox="0 0 24 24" width="24" height="24" class="sc-fubCfw hxbxfY">
-																		<path fill-rule="evenodd" clip-rule="evenodd" d="M17.4138 15.8368L21.8574 20.2857C22.0558 20.5064 22.046 20.8443 21.8352 21.0532L21.0575 21.8317C20.9532 21.937 20.8113 21.9962 20.6632 21.9962C20.5151 21.9962 20.3731 21.937 20.2688 21.8317L15.8252 17.3828C15.7023 17.2596 15.5907 17.1256 15.4919 16.9824L14.6587 15.8701C13.2802 16.9723 11.5682 17.5724 9.80409 17.5719C6.16878 17.5845 3.00983 15.0738 2.19744 11.5261C1.38504 7.97844 3.13601 4.34066 6.41372 2.76643C9.69143 1.1922 13.6211 2.10166 15.8763 4.95639C18.1314 7.81111 18.1102 11.8492 15.8252 14.68L16.9361 15.4475C17.1096 15.5586 17.2698 15.6892 17.4138 15.8368ZM4.24951 9.78627C4.24951 12.8576 6.73635 15.3475 9.80402 15.3475C11.2772 15.3475 12.69 14.7616 13.7317 13.7186C14.7733 12.6757 15.3585 11.2612 15.3585 9.78627C15.3585 6.7149 12.8717 4.22507 9.80402 4.22507C6.73635 4.22507 4.24951 6.7149 4.24951 9.78627Z"></path>
-																	</svg>
-																</div>
+																<svg viewBox="0 0 24 24" width="24" height="24" class="sc-fubCfw hxbxfY">
+																	<path fill-rule="evenodd" clip-rule="evenodd" d="M17.4138 15.8368L21.8574 20.2857C22.0558 20.5064 22.046 20.8443 21.8352 21.0532L21.0575 21.8317C20.9532 21.937 20.8113 21.9962 20.6632 21.9962C20.5151 21.9962 20.3731 21.937 20.2688 21.8317L15.8252 17.3828C15.7023 17.2596 15.5907 17.1256 15.4919 16.9824L14.6587 15.8701C13.2802 16.9723 11.5682 17.5724 9.80409 17.5719C6.16878 17.5845 3.00983 15.0738 2.19744 11.5261C1.38504 7.97844 3.13601 4.34066 6.41372 2.76643C9.69143 1.1922 13.6211 2.10166 15.8763 4.95639C18.1314 7.81111 18.1102 11.8492 15.8252 14.68L16.9361 15.4475C17.1096 15.5586 17.2698 15.6892 17.4138 15.8368ZM4.24951 9.78627C4.24951 12.8576 6.73635 15.3475 9.80402 15.3475C11.2772 15.3475 12.69 14.7616 13.7317 13.7186C14.7733 12.6757 15.3585 11.2612 15.3585 9.78627C15.3585 6.7149 12.8717 4.22507 9.80402 4.22507C6.73635 4.22507 4.24951 6.7149 4.24951 9.78627Z"></path>
+																</svg>	
 															</button>
 														</div>
 													</form>
@@ -50,13 +48,13 @@
                                             <h2 class="rowHeader ltr-0">
                                                 <a aria-label="because you watched taco chronicles" class="rowTitle ltr-0" 
                                                     href="/browse/similars/81040704">
-                                                    <div class="row-header-title">
+                                                    <span class="row-header-title">
                                                         {{ $carousel['title'] }}
-                                                    </div>
-                                                    <div class="aro-row-header">
-                                                        <div class="see-all-link">Explore All</div>
-                                                        <div class="aro-row-chevron icon-akiraCaretRight"></div>
-                                                    </div>
+                                                    </span>
+                                                    <span class="aro-row-header">
+                                                        <span class="see-all-link">Explore All</span>
+                                                        <span class="aro-row-chevron icon-akiraCaretRight"></span>
+                                                    </span>
                                                 </a>
                                             </h2>
                                             <div class="rowContainer rowContainer_title_card" id="{{ $carousel['slider_id'] }}">
@@ -72,7 +70,7 @@
                                                                     @foreach ($carousel['items'] as $template)
                                                                         <div class="slider-item slider-item-">
                                                                             <div class="title-card-container ltr-0">
-                                                                                <div id="title-card-17-19" class="slider-refocus title-card">
+                                                                                <div class="slider-refocus title-card">
                                                                                     <div class="ptrack-content">
                                                                                         <a class="slider-refocus" href="{{ 
                                                                                             route( 'template.productDetail',[
@@ -113,15 +111,10 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    @endforeach
-									
+                                    @endforeach	
 								</div>
                             </div>
-                            
                         </div>
-                        
-						
-                        
 					</div>
 				</div>
 			</div>

@@ -1342,13 +1342,20 @@ class EditorController extends Controller
 
 	}
 
-	function validateCode(Request $request){
+	function validateCode($country, Request $request){
 		if( isset( $request->templates ) ){
 			$templates = $request->templates;
 		} else {
 			$templates = 0;
 		}
-		return view('validate_code', ['templates' => $templates]);
+		// $country = 'us';
+		$menu = json_decode(Redis::get('wayak:'.$country.':menu'));
+
+		return view('validate_code', [
+			'country' => $country,
+			'menu' => $menu,
+			'templates' => $templates
+		]);
 	}
 	
 	function validatePurchaseCode(Request $request){

@@ -8,8 +8,6 @@
     <meta name="robots" content="noindex">
     <meta name="googlebot" content="noindex">
 
-
-
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/css/bootstrap.min.css" integrity="sha384-DhY6onE6f3zzKbjUPRc2hOzGAdEf4/Dz+WJwBvEYL/lkkIsI3ihufq9hk9K4lVoK" crossorigin="anonymous">
     
@@ -17,7 +15,7 @@
     
     <link rel="stylesheet" href="{{ asset('assets/admin/css/theme.css') }}">
 
-    <title>WAYAK - @yield('title')</title>
+    <title>@yield('title') | WAYAK</title>
     
     @yield('css')
 
@@ -67,28 +65,38 @@
                                  </a>
                                  <ul class="side-nav-second-level mm-collapse mm-show" aria-expanded="false">
                                     <li class="mm-active">
+                                       <a href="index.html" class="active">Packt</a>
+                                    </li>
+                                    <li>
+                                       <a href="index.html" class="active">Over</a>
+                                    </li>
+                                    <li>
+                                       <a href="index.html" class="active">Foco</a>
+                                    </li>
+                                    <li>
+                                       <a href="index.html" class="active">Canva</a>
+                                    </li>
+                                    <li>
+                                       <a href="index.html" class="active">Corjl</a>
+                                    </li>
+                                    <li>
+                                       <a href="index.html" class="active">Templett</a>
+                                    </li>
+                                    <li>
+                                       <a href="index.html" class="active">Desygner</a>
+                                    </li>
+                                    <li>
+                                       <a href="index.html" class="active">Crello</a>
+                                    </li>
+                                    <li>
                                        <a href="index.html" class="active">Green</a>
                                     </li>
-                                    <!-- 
-                                       <li>
-                                          <a href="dashboard-projects.html">Templett</a>
-                                       </li>
-                                       <li>
-                                          <a href="dashboard-projects.html">Over</a>
-                                       </li>
-                                       <li>
-                                          <a href="dashboard-projects.html">Crello</a>
-                                       </li>
-                                       <li>
-                                          <a href="dashboard-projects.html">Canva</a>
-                                       </li>
-                                       <li>
-                                          <a href="dashboard-projects.html">Desygner</a>
-                                       </li>
-                                       <li>
-                                          <a href="dashboard-projects.html">Corjl</a>
-                                       </li> 
-                                    -->
+                                    <li>
+                                       <a href="index.html" class="active">Placeit</a>
+                                    </li>
+                                    <li>
+                                       <a href="index.html" class="active">Etsy</a>
+                                    </li>
                                  </ul>
                               </li>
                               <li class="side-nav-item mm-active">

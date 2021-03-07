@@ -2244,8 +2244,6 @@
     </style>
 @endsection
 
-<!-- <body > -->
-
 @section('content')
     <section id="main_content">
         <div class="container-wrapper ">
@@ -2274,9 +2272,18 @@
                     <div class="col-xxs-12 col-xxs-offset-0 col-sm-12 col-lg-offset-0 col-lg-7 col-md-offset-0 col-md-7 col-sm-offset-0">
                         <div class="wpb_single_image wpb_content_element vc_align_left   top-112">
                             <figure class="wpb_wrapper vc_figure">
-                                <div class="vc_single_image-wrapper   vc_box_border_grey"><img loading="lazy" srcset="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/11/cool-menu-examples-300x297.png.webp  300w,https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/11/cool-menu-examples-1024x1013.png.webp  1024w,https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/11/cool-menu-examples.png.webp  1536w"
-                                        sizes="(max-width: 414px) 300px, (max-width: 720px) 600px, 1024px" class="vc_single_image-img " src="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/11/cool-menu-examples.png.webp"
-                                        width="697" height="614" alt="cool menu design" title=""></div>
+                                <div class="vc_single_image-wrapper   vc_box_border_grey">
+                                    <!-- <img loading="lazy" 
+                                            srcset="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/11/cool-menu-examples-300x297.png.webp  300w,https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/11/cool-menu-examples-1024x1013.png.webp  1024w,https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/11/cool-menu-examples.png.webp  1536w"
+                                            sizes="(max-width: 414px) 300px, (max-width: 720px) 600px, 1024px" 
+                                            class="vc_single_image-img " 
+                                            src="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/11/cool-menu-examples.png.webp"
+                                            width="697" height="614" alt="cool menu design" title=""> -->
+                                    <img loading="lazy" 
+                                            class="vc_single_image-img " 
+                                            src="{{ url('') }}"
+                                            width="697" height="614" alt="cool menu design" title="">
+                                </div>
                             </figure>
                         </div>
                         <div class="vc_empty_space  space-md-0 space-sm-0" style="height: 17px"><span class="vc_empty_space_inner"></span></div>
@@ -2309,252 +2316,6 @@
             </div>
         </div>
         <div class="vc_row-full-width vc_clearfix"></div>
-        <!-- <div class="container-wrapper " id="testimonials_2">
-            <div class="container">
-                <div class="row margin-top-80-56-32">
-                    <div class="col-sm-12">
-                        <div class="owl-carousel testimonials_2 owl-loaded owl-drag">
-                            <div class="owl-stage-outer owl-height" style="height: 424px;">
-                                <div class="owl-stage" style="transform: translate3d(-3510px, 0px, 0px); transition: all 0s ease 0s; width: 14040px;">
-                                    <div class="owl-item cloned" style="width: 1170px;">
-                                        <div class="item dark" style="background-color: #2153cc;background-image: url('')">
-                                            <div class="nav"> <span class="prev"> <svg width="15" height="26" viewBox="0 0 15 26" fill="none" xmlns="http://www.w3.org/2000/svg"><path opacity="0.5" d="M14.5662 23.0982C14.6838 23.2156 14.75 23.3753 14.75 23.5419C14.75 23.7085 14.6838 23.8683 14.5662 23.9856L13.2492 25.3104C13.1364 25.4312 12.979 25.4998 12.8143 25.4998C12.6496 25.4998 12.4922 25.4312 12.3794 25.3104L0.96085 13.8246C0.78604 13.649 0.687718 13.4108 0.6875 13.1622V12.8373C0.687718 12.5888 0.78604 12.3505 0.96085 12.1749L12.3794 0.689125C12.4922 0.568297 12.6496 0.499756 12.8143 0.499756C12.979 0.499756 13.1364 0.568297 13.2492 0.689125L14.5662 2.01392C14.6838 2.13126 14.75 2.29098 14.75 2.45761C14.75 2.62423 14.6838 2.78395 14.5662 2.90129L4.52683 12.9998L14.5662 23.0982Z" fill="white"></path> </svg> </span>                                                <span class="next"> <svg width="15" height="26" viewBox="0 0 15 26" fill="none" xmlns="http://www.w3.org/2000/svg"><path opacity="0.5" d="M0.433764 23.0982C0.316154 23.2156 0.250001 23.3753 0.250001 23.5419C0.250001 23.7085 0.316154 23.8683 0.433764 23.9856L1.75082 25.3104C1.86355 25.4312 2.02095 25.4998 2.18569 25.4998C2.35043 25.4998 2.50783 25.4312 2.62057 25.3104L14.0391 13.8246C14.214 13.649 14.3123 13.4108 14.3125 13.1622V12.8373C14.3123 12.5888 14.214 12.3505 14.0391 12.1749L2.62057 0.689125C2.50783 0.568297 2.35043 0.499756 2.18569 0.499756C2.02095 0.499756 1.86355 0.568297 1.75082 0.689125L0.433764 2.01392C0.316154 2.13126 0.250001 2.29098 0.250001 2.45761C0.250001 2.62423 0.316154 2.78395 0.433764 2.90129L10.4732 12.9998L0.433764 23.0982Z" fill="white"></path> </svg> </span></div>
-                                            <div class="portrait-mobile"> <img loading="lazy" width="194" height="194" src="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/03/edwin-hakof-mobile.png.webp" class="attachment-full size-full" alt="Edwin Hakof"
-                                                    srcset="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/03/edwin-hakof-mobile.png.webp  194w,https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/03/edwin-hakof-mobile-150x150.png.webp  150w"
-                                                    sizes="(max-width: 194px) 100vw, 194px"></div>
-                                            <div class="left">
-                                                <div class="wrapper">
-                                                    <div class="text">"We use Crello on a daily basis. No hustle, just add what you want to see to the artboard, combine text and colors and you’re ready to go. I can easily find up to date templates and design ideas which
-                                                        is very helpful."</div>
-                                                    <div class="name">Edwin Hakof,</div>
-                                                    <div class="position">CEO at Hakof Media</div>
-                                                </div>
-                                            </div>
-                                            <div class="right">
-                                                <div class="portrait"><img loading="lazy" src="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/03/edwin-hakof.png.webp" width="457" height="386" alt="Edwin Hakof"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="owl-item cloned" style="width: 1170px;">
-                                        <div class="item light" style="background-color: #e8595b;background-image: url('')">
-                                            <div class="nav"> <span class="prev"> <svg width="15" height="26" viewBox="0 0 15 26" fill="none" xmlns="http://www.w3.org/2000/svg"><path opacity="0.5" d="M14.5662 23.0982C14.6838 23.2156 14.75 23.3753 14.75 23.5419C14.75 23.7085 14.6838 23.8683 14.5662 23.9856L13.2492 25.3104C13.1364 25.4312 12.979 25.4998 12.8143 25.4998C12.6496 25.4998 12.4922 25.4312 12.3794 25.3104L0.96085 13.8246C0.78604 13.649 0.687718 13.4108 0.6875 13.1622V12.8373C0.687718 12.5888 0.78604 12.3505 0.96085 12.1749L12.3794 0.689125C12.4922 0.568297 12.6496 0.499756 12.8143 0.499756C12.979 0.499756 13.1364 0.568297 13.2492 0.689125L14.5662 2.01392C14.6838 2.13126 14.75 2.29098 14.75 2.45761C14.75 2.62423 14.6838 2.78395 14.5662 2.90129L4.52683 12.9998L14.5662 23.0982Z" fill="white"></path> </svg> </span>                                                <span class="next"> <svg width="15" height="26" viewBox="0 0 15 26" fill="none" xmlns="http://www.w3.org/2000/svg"><path opacity="0.5" d="M0.433764 23.0982C0.316154 23.2156 0.250001 23.3753 0.250001 23.5419C0.250001 23.7085 0.316154 23.8683 0.433764 23.9856L1.75082 25.3104C1.86355 25.4312 2.02095 25.4998 2.18569 25.4998C2.35043 25.4998 2.50783 25.4312 2.62057 25.3104L14.0391 13.8246C14.214 13.649 14.3123 13.4108 14.3125 13.1622V12.8373C14.3123 12.5888 14.214 12.3505 14.0391 12.1749L2.62057 0.689125C2.50783 0.568297 2.35043 0.499756 2.18569 0.499756C2.02095 0.499756 1.86355 0.568297 1.75082 0.689125L0.433764 2.01392C0.316154 2.13126 0.250001 2.29098 0.250001 2.45761C0.250001 2.62423 0.316154 2.78395 0.433764 2.90129L10.4732 12.9998L0.433764 23.0982Z" fill="white"></path> </svg> </span></div>
-                                            <div class="portrait-mobile"> <img loading="lazy" width="194" height="194" src="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/03/vladyslava-fediy-mobile.png.webp" class="attachment-full size-full" alt="Vladyslava Fediy"
-                                                    srcset="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/03/vladyslava-fediy-mobile.png.webp  194w,https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/03/vladyslava-fediy-mobile-150x150.png.webp  150w"
-                                                    sizes="(max-width: 194px) 100vw, 194px"></div>
-                                            <div class="left">
-                                                <div class="wrapper">
-                                                    <div class="text">"I discovered Crello two years ago. Since then, I’ve been making all commercial presentations only in Crello. Fast, convenient, intuitive interface, a lot of cool templates. Crello is an indispensable
-                                                        assistant for a marketer!"</div>
-                                                    <div class="name">Vladyslava Fediy,</div>
-                                                    <div class="position">Head of Marketing at WebPromoExperts</div>
-                                                </div>
-                                            </div>
-                                            <div class="right">
-                                                <div class="portrait"><img loading="lazy" src="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/03/vladyslava-fediy.png.webp" width="358" height="415" alt="Vladyslava Fediy"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="owl-item cloned" style="width: 1170px;">
-                                        <div class="item light" style="background-color: #ffde4e;background-image: url('')">
-                                            <div class="nav"> <span class="prev"> <svg width="15" height="26" viewBox="0 0 15 26" fill="none" xmlns="http://www.w3.org/2000/svg"><path opacity="0.5" d="M14.5662 23.0982C14.6838 23.2156 14.75 23.3753 14.75 23.5419C14.75 23.7085 14.6838 23.8683 14.5662 23.9856L13.2492 25.3104C13.1364 25.4312 12.979 25.4998 12.8143 25.4998C12.6496 25.4998 12.4922 25.4312 12.3794 25.3104L0.96085 13.8246C0.78604 13.649 0.687718 13.4108 0.6875 13.1622V12.8373C0.687718 12.5888 0.78604 12.3505 0.96085 12.1749L12.3794 0.689125C12.4922 0.568297 12.6496 0.499756 12.8143 0.499756C12.979 0.499756 13.1364 0.568297 13.2492 0.689125L14.5662 2.01392C14.6838 2.13126 14.75 2.29098 14.75 2.45761C14.75 2.62423 14.6838 2.78395 14.5662 2.90129L4.52683 12.9998L14.5662 23.0982Z" fill="white"></path> </svg> </span>                                                <span class="next"> <svg width="15" height="26" viewBox="0 0 15 26" fill="none" xmlns="http://www.w3.org/2000/svg"><path opacity="0.5" d="M0.433764 23.0982C0.316154 23.2156 0.250001 23.3753 0.250001 23.5419C0.250001 23.7085 0.316154 23.8683 0.433764 23.9856L1.75082 25.3104C1.86355 25.4312 2.02095 25.4998 2.18569 25.4998C2.35043 25.4998 2.50783 25.4312 2.62057 25.3104L14.0391 13.8246C14.214 13.649 14.3123 13.4108 14.3125 13.1622V12.8373C14.3123 12.5888 14.214 12.3505 14.0391 12.1749L2.62057 0.689125C2.50783 0.568297 2.35043 0.499756 2.18569 0.499756C2.02095 0.499756 1.86355 0.568297 1.75082 0.689125L0.433764 2.01392C0.316154 2.13126 0.250001 2.29098 0.250001 2.45761C0.250001 2.62423 0.316154 2.78395 0.433764 2.90129L10.4732 12.9998L0.433764 23.0982Z" fill="white"></path> </svg> </span></div>
-                                            <div class="portrait-mobile"> <img loading="lazy" width="194" height="194" src="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/03/pavel-tkachuk-mobile.png.webp" class="attachment-full size-full" alt="Pavel Tkachuk"
-                                                    srcset="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/03/pavel-tkachuk-mobile.png.webp  194w,https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/03/pavel-tkachuk-mobile-150x150.png.webp  150w"
-                                                    sizes="(max-width: 194px) 100vw, 194px"></div>
-                                            <div class="left">
-                                                <div class="wrapper">
-                                                    <div class="text">"Crello is a very intuitive service that significantly speeds up my work with social media. Access to ready templates, creative stickers, and a library of hundreds of thousands of professional photos
-                                                        is exactly what I was looking for. I recommend it to anyone who wants to improve the quality of their graphics on social media."</div>
-                                                    <div class="name">Pavel Tkachuk,</div>
-                                                    <div class="position">Blogger</div>
-                                                </div>
-                                            </div>
-                                            <div class="right">
-                                                <div class="portrait"><img loading="lazy" src="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/03/pavel-tkachuk.png.webp" width="404" height="409" alt="Pavel Tkachuk"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="owl-item active" style="width: 1170px;">
-                                        <div class="item dark" style="background-color: #be7509;background-image: url('')">
-                                            <div class="nav"> <span class="prev"> <svg width="15" height="26" viewBox="0 0 15 26" fill="none" xmlns="http://www.w3.org/2000/svg"><path opacity="0.5" d="M14.5662 23.0982C14.6838 23.2156 14.75 23.3753 14.75 23.5419C14.75 23.7085 14.6838 23.8683 14.5662 23.9856L13.2492 25.3104C13.1364 25.4312 12.979 25.4998 12.8143 25.4998C12.6496 25.4998 12.4922 25.4312 12.3794 25.3104L0.96085 13.8246C0.78604 13.649 0.687718 13.4108 0.6875 13.1622V12.8373C0.687718 12.5888 0.78604 12.3505 0.96085 12.1749L12.3794 0.689125C12.4922 0.568297 12.6496 0.499756 12.8143 0.499756C12.979 0.499756 13.1364 0.568297 13.2492 0.689125L14.5662 2.01392C14.6838 2.13126 14.75 2.29098 14.75 2.45761C14.75 2.62423 14.6838 2.78395 14.5662 2.90129L4.52683 12.9998L14.5662 23.0982Z" fill="white"></path> </svg> </span>                                                <span class="next"> <svg width="15" height="26" viewBox="0 0 15 26" fill="none" xmlns="http://www.w3.org/2000/svg"><path opacity="0.5" d="M0.433764 23.0982C0.316154 23.2156 0.250001 23.3753 0.250001 23.5419C0.250001 23.7085 0.316154 23.8683 0.433764 23.9856L1.75082 25.3104C1.86355 25.4312 2.02095 25.4998 2.18569 25.4998C2.35043 25.4998 2.50783 25.4312 2.62057 25.3104L14.0391 13.8246C14.214 13.649 14.3123 13.4108 14.3125 13.1622V12.8373C14.3123 12.5888 14.214 12.3505 14.0391 12.1749L2.62057 0.689125C2.50783 0.568297 2.35043 0.499756 2.18569 0.499756C2.02095 0.499756 1.86355 0.568297 1.75082 0.689125L0.433764 2.01392C0.316154 2.13126 0.250001 2.29098 0.250001 2.45761C0.250001 2.62423 0.316154 2.78395 0.433764 2.90129L10.4732 12.9998L0.433764 23.0982Z" fill="white"></path> </svg> </span></div>
-                                            <div class="portrait-mobile"> <img loading="lazy" width="194" height="194" src="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/03/kate-subotina-mobile.png.webp" class="attachment-full size-full" alt="Kate Subotina"
-                                                    srcset="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/03/kate-subotina-mobile.png.webp  194w,https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/03/kate-subotina-mobile-150x150.png.webp  150w"
-                                                    sizes="(max-width: 194px) 100vw, 194px"></div>
-                                            <div class="left">
-                                                <div class="wrapper">
-                                                    <div class="text">"Сrello helps me to create cool illustrations for advertising. The application has a wide selection of high-quality videos and photo images. I have been working with the Crello for over a year and it
-                                                        helps me a lot."</div>
-                                                    <div class="name">Kate Subotina,</div>
-                                                    <div class="position">SMM Manager at Skillup</div>
-                                                </div>
-                                            </div>
-                                            <div class="right">
-                                                <div class="portrait"><img loading="lazy" src="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/03/kate-subotina.png.webp" width="379" height="413" alt="Kate Subotina"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="owl-item" style="width: 1170px;">
-                                        <div class="item light" style="background-color: #cacbc8;background-image: url('')">
-                                            <div class="nav"> <span class="prev"> <svg width="15" height="26" viewBox="0 0 15 26" fill="none" xmlns="http://www.w3.org/2000/svg"><path opacity="0.5" d="M14.5662 23.0982C14.6838 23.2156 14.75 23.3753 14.75 23.5419C14.75 23.7085 14.6838 23.8683 14.5662 23.9856L13.2492 25.3104C13.1364 25.4312 12.979 25.4998 12.8143 25.4998C12.6496 25.4998 12.4922 25.4312 12.3794 25.3104L0.96085 13.8246C0.78604 13.649 0.687718 13.4108 0.6875 13.1622V12.8373C0.687718 12.5888 0.78604 12.3505 0.96085 12.1749L12.3794 0.689125C12.4922 0.568297 12.6496 0.499756 12.8143 0.499756C12.979 0.499756 13.1364 0.568297 13.2492 0.689125L14.5662 2.01392C14.6838 2.13126 14.75 2.29098 14.75 2.45761C14.75 2.62423 14.6838 2.78395 14.5662 2.90129L4.52683 12.9998L14.5662 23.0982Z" fill="white"></path> </svg> </span>                                                <span class="next"> <svg width="15" height="26" viewBox="0 0 15 26" fill="none" xmlns="http://www.w3.org/2000/svg"><path opacity="0.5" d="M0.433764 23.0982C0.316154 23.2156 0.250001 23.3753 0.250001 23.5419C0.250001 23.7085 0.316154 23.8683 0.433764 23.9856L1.75082 25.3104C1.86355 25.4312 2.02095 25.4998 2.18569 25.4998C2.35043 25.4998 2.50783 25.4312 2.62057 25.3104L14.0391 13.8246C14.214 13.649 14.3123 13.4108 14.3125 13.1622V12.8373C14.3123 12.5888 14.214 12.3505 14.0391 12.1749L2.62057 0.689125C2.50783 0.568297 2.35043 0.499756 2.18569 0.499756C2.02095 0.499756 1.86355 0.568297 1.75082 0.689125L0.433764 2.01392C0.316154 2.13126 0.250001 2.29098 0.250001 2.45761C0.250001 2.62423 0.316154 2.78395 0.433764 2.90129L10.4732 12.9998L0.433764 23.0982Z" fill="white"></path> </svg> </span></div>
-                                            <div class="portrait-mobile"> <img loading="lazy" width="194" height="194" src="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/03/khaya-ngwenya-mobile.png.webp" class="attachment-full size-full" alt="Khaya Ngwenya"
-                                                    srcset="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/03/khaya-ngwenya-mobile.png.webp  194w,https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/03/khaya-ngwenya-mobile-150x150.png.webp  150w"
-                                                    sizes="(max-width: 194px) 100vw, 194px"></div>
-                                            <div class="left">
-                                                <div class="wrapper">
-                                                    <div class="text">"Crello is the digital design platform of the future. As a co-founder of an NPO Youth With Open Minds NPC, I used to struggle with making creative online content. Thanks to Crello’s sponsorship we are
-                                                        now able to make outstanding digital campaigns and advertisements. Kudos to the Crello team!"</div>
-                                                    <div class="name">Khaya Ngwenya,</div>
-                                                    <div class="position">Co-founder of YWOM NPC</div>
-                                                </div>
-                                            </div>
-                                            <div class="right">
-                                                <div class="portrait"><img loading="lazy" src="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/03/khaya-ngwenya.png.webp" width="390" height="423" alt="Khaya Ngwenya"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="owl-item" style="width: 1170px;">
-                                        <div class="item light" style="background-color: #ffde4e;background-image: url('')">
-                                            <div class="nav"> <span class="prev"> <svg width="15" height="26" viewBox="0 0 15 26" fill="none" xmlns="http://www.w3.org/2000/svg"><path opacity="0.5" d="M14.5662 23.0982C14.6838 23.2156 14.75 23.3753 14.75 23.5419C14.75 23.7085 14.6838 23.8683 14.5662 23.9856L13.2492 25.3104C13.1364 25.4312 12.979 25.4998 12.8143 25.4998C12.6496 25.4998 12.4922 25.4312 12.3794 25.3104L0.96085 13.8246C0.78604 13.649 0.687718 13.4108 0.6875 13.1622V12.8373C0.687718 12.5888 0.78604 12.3505 0.96085 12.1749L12.3794 0.689125C12.4922 0.568297 12.6496 0.499756 12.8143 0.499756C12.979 0.499756 13.1364 0.568297 13.2492 0.689125L14.5662 2.01392C14.6838 2.13126 14.75 2.29098 14.75 2.45761C14.75 2.62423 14.6838 2.78395 14.5662 2.90129L4.52683 12.9998L14.5662 23.0982Z" fill="white"></path> </svg> </span>                                                <span class="next"> <svg width="15" height="26" viewBox="0 0 15 26" fill="none" xmlns="http://www.w3.org/2000/svg"><path opacity="0.5" d="M0.433764 23.0982C0.316154 23.2156 0.250001 23.3753 0.250001 23.5419C0.250001 23.7085 0.316154 23.8683 0.433764 23.9856L1.75082 25.3104C1.86355 25.4312 2.02095 25.4998 2.18569 25.4998C2.35043 25.4998 2.50783 25.4312 2.62057 25.3104L14.0391 13.8246C14.214 13.649 14.3123 13.4108 14.3125 13.1622V12.8373C14.3123 12.5888 14.214 12.3505 14.0391 12.1749L2.62057 0.689125C2.50783 0.568297 2.35043 0.499756 2.18569 0.499756C2.02095 0.499756 1.86355 0.568297 1.75082 0.689125L0.433764 2.01392C0.316154 2.13126 0.250001 2.29098 0.250001 2.45761C0.250001 2.62423 0.316154 2.78395 0.433764 2.90129L10.4732 12.9998L0.433764 23.0982Z" fill="white"></path> </svg> </span></div>
-                                            <div class="portrait-mobile"> <img loading="lazy" width="194" height="194" src="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/03/oxana-dudnyk-mobile.png.webp" class="attachment-full size-full" alt="Oxana Dudnyk"
-                                                    srcset="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/03/oxana-dudnyk-mobile.png.webp  194w,https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/03/oxana-dudnyk-mobile-150x150.png.webp  150w"
-                                                    sizes="(max-width: 194px) 100vw, 194px"></div>
-                                            <div class="left">
-                                                <div class="wrapper">
-                                                    <div class="text">"Crello is incredibly convenient and easy to use. It's my number one service for making mockups for social media posts and ads. What I like the most about Crello is that there's a big choice of animated
-                                                        templates in their library. Special thanks for the ability to edit videos in templates, as well as for the choice of Cyrillic fonts. Wish you luck and prosperity!"</div>
-                                                    <div class="name">Oxana Dudnyk,</div>
-                                                    <div class="position">CEO at Tag Production</div>
-                                                </div>
-                                            </div>
-                                            <div class="right">
-                                                <div class="portrait"><img loading="lazy" src="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/03/oxana-dudnyk.png.webp" width="450" height="397" alt="Oxana Dudnyk"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="owl-item" style="width: 1170px;">
-                                        <div class="item dark" style="background-color: #2153cc;background-image: url('')">
-                                            <div class="nav"> <span class="prev"> <svg width="15" height="26" viewBox="0 0 15 26" fill="none" xmlns="http://www.w3.org/2000/svg"><path opacity="0.5" d="M14.5662 23.0982C14.6838 23.2156 14.75 23.3753 14.75 23.5419C14.75 23.7085 14.6838 23.8683 14.5662 23.9856L13.2492 25.3104C13.1364 25.4312 12.979 25.4998 12.8143 25.4998C12.6496 25.4998 12.4922 25.4312 12.3794 25.3104L0.96085 13.8246C0.78604 13.649 0.687718 13.4108 0.6875 13.1622V12.8373C0.687718 12.5888 0.78604 12.3505 0.96085 12.1749L12.3794 0.689125C12.4922 0.568297 12.6496 0.499756 12.8143 0.499756C12.979 0.499756 13.1364 0.568297 13.2492 0.689125L14.5662 2.01392C14.6838 2.13126 14.75 2.29098 14.75 2.45761C14.75 2.62423 14.6838 2.78395 14.5662 2.90129L4.52683 12.9998L14.5662 23.0982Z" fill="white"></path> </svg> </span>                                                <span class="next"> <svg width="15" height="26" viewBox="0 0 15 26" fill="none" xmlns="http://www.w3.org/2000/svg"><path opacity="0.5" d="M0.433764 23.0982C0.316154 23.2156 0.250001 23.3753 0.250001 23.5419C0.250001 23.7085 0.316154 23.8683 0.433764 23.9856L1.75082 25.3104C1.86355 25.4312 2.02095 25.4998 2.18569 25.4998C2.35043 25.4998 2.50783 25.4312 2.62057 25.3104L14.0391 13.8246C14.214 13.649 14.3123 13.4108 14.3125 13.1622V12.8373C14.3123 12.5888 14.214 12.3505 14.0391 12.1749L2.62057 0.689125C2.50783 0.568297 2.35043 0.499756 2.18569 0.499756C2.02095 0.499756 1.86355 0.568297 1.75082 0.689125L0.433764 2.01392C0.316154 2.13126 0.250001 2.29098 0.250001 2.45761C0.250001 2.62423 0.316154 2.78395 0.433764 2.90129L10.4732 12.9998L0.433764 23.0982Z" fill="white"></path> </svg> </span></div>
-                                            <div class="portrait-mobile"> <img loading="lazy" width="194" height="194" src="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/03/edwin-hakof-mobile.png.webp" class="attachment-full size-full" alt="Edwin Hakof"
-                                                    srcset="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/03/edwin-hakof-mobile.png.webp  194w,https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/03/edwin-hakof-mobile-150x150.png.webp  150w"
-                                                    sizes="(max-width: 194px) 100vw, 194px"></div>
-                                            <div class="left">
-                                                <div class="wrapper">
-                                                    <div class="text">"We use Crello on a daily basis. No hustle, just add what you want to see to the artboard, combine text and colors and you’re ready to go. I can easily find up to date templates and design ideas which
-                                                        is very helpful."</div>
-                                                    <div class="name">Edwin Hakof,</div>
-                                                    <div class="position">CEO at Hakof Media</div>
-                                                </div>
-                                            </div>
-                                            <div class="right">
-                                                <div class="portrait"><img loading="lazy" src="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/03/edwin-hakof.png.webp" width="457" height="386" alt="Edwin Hakof"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="owl-item" style="width: 1170px;">
-                                        <div class="item light" style="background-color: #e8595b;background-image: url('')">
-                                            <div class="nav"> <span class="prev"> <svg width="15" height="26" viewBox="0 0 15 26" fill="none" xmlns="http://www.w3.org/2000/svg"><path opacity="0.5" d="M14.5662 23.0982C14.6838 23.2156 14.75 23.3753 14.75 23.5419C14.75 23.7085 14.6838 23.8683 14.5662 23.9856L13.2492 25.3104C13.1364 25.4312 12.979 25.4998 12.8143 25.4998C12.6496 25.4998 12.4922 25.4312 12.3794 25.3104L0.96085 13.8246C0.78604 13.649 0.687718 13.4108 0.6875 13.1622V12.8373C0.687718 12.5888 0.78604 12.3505 0.96085 12.1749L12.3794 0.689125C12.4922 0.568297 12.6496 0.499756 12.8143 0.499756C12.979 0.499756 13.1364 0.568297 13.2492 0.689125L14.5662 2.01392C14.6838 2.13126 14.75 2.29098 14.75 2.45761C14.75 2.62423 14.6838 2.78395 14.5662 2.90129L4.52683 12.9998L14.5662 23.0982Z" fill="white"></path> </svg> </span>                                                <span class="next"> <svg width="15" height="26" viewBox="0 0 15 26" fill="none" xmlns="http://www.w3.org/2000/svg"><path opacity="0.5" d="M0.433764 23.0982C0.316154 23.2156 0.250001 23.3753 0.250001 23.5419C0.250001 23.7085 0.316154 23.8683 0.433764 23.9856L1.75082 25.3104C1.86355 25.4312 2.02095 25.4998 2.18569 25.4998C2.35043 25.4998 2.50783 25.4312 2.62057 25.3104L14.0391 13.8246C14.214 13.649 14.3123 13.4108 14.3125 13.1622V12.8373C14.3123 12.5888 14.214 12.3505 14.0391 12.1749L2.62057 0.689125C2.50783 0.568297 2.35043 0.499756 2.18569 0.499756C2.02095 0.499756 1.86355 0.568297 1.75082 0.689125L0.433764 2.01392C0.316154 2.13126 0.250001 2.29098 0.250001 2.45761C0.250001 2.62423 0.316154 2.78395 0.433764 2.90129L10.4732 12.9998L0.433764 23.0982Z" fill="white"></path> </svg> </span></div>
-                                            <div class="portrait-mobile"> <img loading="lazy" width="194" height="194" src="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/03/vladyslava-fediy-mobile.png.webp" class="attachment-full size-full" alt="Vladyslava Fediy"
-                                                    srcset="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/03/vladyslava-fediy-mobile.png.webp  194w,https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/03/vladyslava-fediy-mobile-150x150.png.webp  150w"
-                                                    sizes="(max-width: 194px) 100vw, 194px"></div>
-                                            <div class="left">
-                                                <div class="wrapper">
-                                                    <div class="text">"I discovered Crello two years ago. Since then, I’ve been making all commercial presentations only in Crello. Fast, convenient, intuitive interface, a lot of cool templates. Crello is an indispensable
-                                                        assistant for a marketer!"</div>
-                                                    <div class="name">Vladyslava Fediy,</div>
-                                                    <div class="position">Head of Marketing at WebPromoExperts</div>
-                                                </div>
-                                            </div>
-                                            <div class="right">
-                                                <div class="portrait"><img loading="lazy" src="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/03/vladyslava-fediy.png.webp" width="358" height="415" alt="Vladyslava Fediy"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="owl-item" style="width: 1170px;">
-                                        <div class="item light" style="background-color: #ffde4e;background-image: url('')">
-                                            <div class="nav"> <span class="prev"> <svg width="15" height="26" viewBox="0 0 15 26" fill="none" xmlns="http://www.w3.org/2000/svg"><path opacity="0.5" d="M14.5662 23.0982C14.6838 23.2156 14.75 23.3753 14.75 23.5419C14.75 23.7085 14.6838 23.8683 14.5662 23.9856L13.2492 25.3104C13.1364 25.4312 12.979 25.4998 12.8143 25.4998C12.6496 25.4998 12.4922 25.4312 12.3794 25.3104L0.96085 13.8246C0.78604 13.649 0.687718 13.4108 0.6875 13.1622V12.8373C0.687718 12.5888 0.78604 12.3505 0.96085 12.1749L12.3794 0.689125C12.4922 0.568297 12.6496 0.499756 12.8143 0.499756C12.979 0.499756 13.1364 0.568297 13.2492 0.689125L14.5662 2.01392C14.6838 2.13126 14.75 2.29098 14.75 2.45761C14.75 2.62423 14.6838 2.78395 14.5662 2.90129L4.52683 12.9998L14.5662 23.0982Z" fill="white"></path> </svg> </span>                                                <span class="next"> <svg width="15" height="26" viewBox="0 0 15 26" fill="none" xmlns="http://www.w3.org/2000/svg"><path opacity="0.5" d="M0.433764 23.0982C0.316154 23.2156 0.250001 23.3753 0.250001 23.5419C0.250001 23.7085 0.316154 23.8683 0.433764 23.9856L1.75082 25.3104C1.86355 25.4312 2.02095 25.4998 2.18569 25.4998C2.35043 25.4998 2.50783 25.4312 2.62057 25.3104L14.0391 13.8246C14.214 13.649 14.3123 13.4108 14.3125 13.1622V12.8373C14.3123 12.5888 14.214 12.3505 14.0391 12.1749L2.62057 0.689125C2.50783 0.568297 2.35043 0.499756 2.18569 0.499756C2.02095 0.499756 1.86355 0.568297 1.75082 0.689125L0.433764 2.01392C0.316154 2.13126 0.250001 2.29098 0.250001 2.45761C0.250001 2.62423 0.316154 2.78395 0.433764 2.90129L10.4732 12.9998L0.433764 23.0982Z" fill="white"></path> </svg> </span></div>
-                                            <div class="portrait-mobile"> <img loading="lazy" width="194" height="194" src="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/03/pavel-tkachuk-mobile.png.webp" class="attachment-full size-full" alt="Pavel Tkachuk"
-                                                    srcset="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/03/pavel-tkachuk-mobile.png.webp  194w,https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/03/pavel-tkachuk-mobile-150x150.png.webp  150w"
-                                                    sizes="(max-width: 194px) 100vw, 194px"></div>
-                                            <div class="left">
-                                                <div class="wrapper">
-                                                    <div class="text">"Crello is a very intuitive service that significantly speeds up my work with social media. Access to ready templates, creative stickers, and a library of hundreds of thousands of professional photos
-                                                        is exactly what I was looking for. I recommend it to anyone who wants to improve the quality of their graphics on social media."</div>
-                                                    <div class="name">Pavel Tkachuk,</div>
-                                                    <div class="position">Blogger</div>
-                                                </div>
-                                            </div>
-                                            <div class="right">
-                                                <div class="portrait"><img loading="lazy" src="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/03/pavel-tkachuk.png.webp" width="404" height="409" alt="Pavel Tkachuk"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="owl-item cloned" style="width: 1170px;">
-                                        <div class="item dark" style="background-color: #be7509;background-image: url('')">
-                                            <div class="nav"> <span class="prev"> <svg width="15" height="26" viewBox="0 0 15 26" fill="none" xmlns="http://www.w3.org/2000/svg"><path opacity="0.5" d="M14.5662 23.0982C14.6838 23.2156 14.75 23.3753 14.75 23.5419C14.75 23.7085 14.6838 23.8683 14.5662 23.9856L13.2492 25.3104C13.1364 25.4312 12.979 25.4998 12.8143 25.4998C12.6496 25.4998 12.4922 25.4312 12.3794 25.3104L0.96085 13.8246C0.78604 13.649 0.687718 13.4108 0.6875 13.1622V12.8373C0.687718 12.5888 0.78604 12.3505 0.96085 12.1749L12.3794 0.689125C12.4922 0.568297 12.6496 0.499756 12.8143 0.499756C12.979 0.499756 13.1364 0.568297 13.2492 0.689125L14.5662 2.01392C14.6838 2.13126 14.75 2.29098 14.75 2.45761C14.75 2.62423 14.6838 2.78395 14.5662 2.90129L4.52683 12.9998L14.5662 23.0982Z" fill="white"></path> </svg> </span>                                                <span class="next"> <svg width="15" height="26" viewBox="0 0 15 26" fill="none" xmlns="http://www.w3.org/2000/svg"><path opacity="0.5" d="M0.433764 23.0982C0.316154 23.2156 0.250001 23.3753 0.250001 23.5419C0.250001 23.7085 0.316154 23.8683 0.433764 23.9856L1.75082 25.3104C1.86355 25.4312 2.02095 25.4998 2.18569 25.4998C2.35043 25.4998 2.50783 25.4312 2.62057 25.3104L14.0391 13.8246C14.214 13.649 14.3123 13.4108 14.3125 13.1622V12.8373C14.3123 12.5888 14.214 12.3505 14.0391 12.1749L2.62057 0.689125C2.50783 0.568297 2.35043 0.499756 2.18569 0.499756C2.02095 0.499756 1.86355 0.568297 1.75082 0.689125L0.433764 2.01392C0.316154 2.13126 0.250001 2.29098 0.250001 2.45761C0.250001 2.62423 0.316154 2.78395 0.433764 2.90129L10.4732 12.9998L0.433764 23.0982Z" fill="white"></path> </svg> </span></div>
-                                            <div class="portrait-mobile"> <img loading="lazy" width="194" height="194" src="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/03/kate-subotina-mobile.png.webp" class="attachment-full size-full" alt="Kate Subotina"
-                                                    srcset="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/03/kate-subotina-mobile.png.webp  194w,https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/03/kate-subotina-mobile-150x150.png.webp  150w"
-                                                    sizes="(max-width: 194px) 100vw, 194px"></div>
-                                            <div class="left">
-                                                <div class="wrapper">
-                                                    <div class="text">"Сrello helps me to create cool illustrations for advertising. The application has a wide selection of high-quality videos and photo images. I have been working with the Crello for over a year and it
-                                                        helps me a lot."</div>
-                                                    <div class="name">Kate Subotina,</div>
-                                                    <div class="position">SMM Manager at Skillup</div>
-                                                </div>
-                                            </div>
-                                            <div class="right">
-                                                <div class="portrait"><img loading="lazy" src="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/03/kate-subotina.png.webp" width="379" height="413" alt="Kate Subotina"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="owl-item cloned" style="width: 1170px;">
-                                        <div class="item light" style="background-color: #cacbc8;background-image: url('')">
-                                            <div class="nav"> <span class="prev"> <svg width="15" height="26" viewBox="0 0 15 26" fill="none" xmlns="http://www.w3.org/2000/svg"><path opacity="0.5" d="M14.5662 23.0982C14.6838 23.2156 14.75 23.3753 14.75 23.5419C14.75 23.7085 14.6838 23.8683 14.5662 23.9856L13.2492 25.3104C13.1364 25.4312 12.979 25.4998 12.8143 25.4998C12.6496 25.4998 12.4922 25.4312 12.3794 25.3104L0.96085 13.8246C0.78604 13.649 0.687718 13.4108 0.6875 13.1622V12.8373C0.687718 12.5888 0.78604 12.3505 0.96085 12.1749L12.3794 0.689125C12.4922 0.568297 12.6496 0.499756 12.8143 0.499756C12.979 0.499756 13.1364 0.568297 13.2492 0.689125L14.5662 2.01392C14.6838 2.13126 14.75 2.29098 14.75 2.45761C14.75 2.62423 14.6838 2.78395 14.5662 2.90129L4.52683 12.9998L14.5662 23.0982Z" fill="white"></path> </svg> </span>                                                <span class="next"> <svg width="15" height="26" viewBox="0 0 15 26" fill="none" xmlns="http://www.w3.org/2000/svg"><path opacity="0.5" d="M0.433764 23.0982C0.316154 23.2156 0.250001 23.3753 0.250001 23.5419C0.250001 23.7085 0.316154 23.8683 0.433764 23.9856L1.75082 25.3104C1.86355 25.4312 2.02095 25.4998 2.18569 25.4998C2.35043 25.4998 2.50783 25.4312 2.62057 25.3104L14.0391 13.8246C14.214 13.649 14.3123 13.4108 14.3125 13.1622V12.8373C14.3123 12.5888 14.214 12.3505 14.0391 12.1749L2.62057 0.689125C2.50783 0.568297 2.35043 0.499756 2.18569 0.499756C2.02095 0.499756 1.86355 0.568297 1.75082 0.689125L0.433764 2.01392C0.316154 2.13126 0.250001 2.29098 0.250001 2.45761C0.250001 2.62423 0.316154 2.78395 0.433764 2.90129L10.4732 12.9998L0.433764 23.0982Z" fill="white"></path> </svg> </span></div>
-                                            <div class="portrait-mobile"> <img loading="lazy" width="194" height="194" src="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/03/khaya-ngwenya-mobile.png.webp" class="attachment-full size-full" alt="Khaya Ngwenya"
-                                                    srcset="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/03/khaya-ngwenya-mobile.png.webp  194w,https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/03/khaya-ngwenya-mobile-150x150.png.webp  150w"
-                                                    sizes="(max-width: 194px) 100vw, 194px"></div>
-                                            <div class="left">
-                                                <div class="wrapper">
-                                                    <div class="text">"Crello is the digital design platform of the future. As a co-founder of an NPO Youth With Open Minds NPC, I used to struggle with making creative online content. Thanks to Crello’s sponsorship we are
-                                                        now able to make outstanding digital campaigns and advertisements. Kudos to the Crello team!"</div>
-                                                    <div class="name">Khaya Ngwenya,</div>
-                                                    <div class="position">Co-founder of YWOM NPC</div>
-                                                </div>
-                                            </div>
-                                            <div class="right">
-                                                <div class="portrait"><img loading="lazy" src="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/03/khaya-ngwenya.png.webp" width="390" height="423" alt="Khaya Ngwenya"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="owl-item cloned" style="width: 1170px;">
-                                        <div class="item light" style="background-color: #ffde4e;background-image: url('')">
-                                            <div class="nav"> <span class="prev"> <svg width="15" height="26" viewBox="0 0 15 26" fill="none" xmlns="http://www.w3.org/2000/svg"><path opacity="0.5" d="M14.5662 23.0982C14.6838 23.2156 14.75 23.3753 14.75 23.5419C14.75 23.7085 14.6838 23.8683 14.5662 23.9856L13.2492 25.3104C13.1364 25.4312 12.979 25.4998 12.8143 25.4998C12.6496 25.4998 12.4922 25.4312 12.3794 25.3104L0.96085 13.8246C0.78604 13.649 0.687718 13.4108 0.6875 13.1622V12.8373C0.687718 12.5888 0.78604 12.3505 0.96085 12.1749L12.3794 0.689125C12.4922 0.568297 12.6496 0.499756 12.8143 0.499756C12.979 0.499756 13.1364 0.568297 13.2492 0.689125L14.5662 2.01392C14.6838 2.13126 14.75 2.29098 14.75 2.45761C14.75 2.62423 14.6838 2.78395 14.5662 2.90129L4.52683 12.9998L14.5662 23.0982Z" fill="white"></path> </svg> </span>                                                <span class="next"> <svg width="15" height="26" viewBox="0 0 15 26" fill="none" xmlns="http://www.w3.org/2000/svg"><path opacity="0.5" d="M0.433764 23.0982C0.316154 23.2156 0.250001 23.3753 0.250001 23.5419C0.250001 23.7085 0.316154 23.8683 0.433764 23.9856L1.75082 25.3104C1.86355 25.4312 2.02095 25.4998 2.18569 25.4998C2.35043 25.4998 2.50783 25.4312 2.62057 25.3104L14.0391 13.8246C14.214 13.649 14.3123 13.4108 14.3125 13.1622V12.8373C14.3123 12.5888 14.214 12.3505 14.0391 12.1749L2.62057 0.689125C2.50783 0.568297 2.35043 0.499756 2.18569 0.499756C2.02095 0.499756 1.86355 0.568297 1.75082 0.689125L0.433764 2.01392C0.316154 2.13126 0.250001 2.29098 0.250001 2.45761C0.250001 2.62423 0.316154 2.78395 0.433764 2.90129L10.4732 12.9998L0.433764 23.0982Z" fill="white"></path> </svg> </span></div>
-                                            <div class="portrait-mobile"> <img loading="lazy" width="194" height="194" src="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/03/oxana-dudnyk-mobile.png.webp" class="attachment-full size-full" alt="Oxana Dudnyk"
-                                                    srcset="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/03/oxana-dudnyk-mobile.png.webp  194w,https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/03/oxana-dudnyk-mobile-150x150.png.webp  150w"
-                                                    sizes="(max-width: 194px) 100vw, 194px"></div>
-                                            <div class="left">
-                                                <div class="wrapper">
-                                                    <div class="text">"Crello is incredibly convenient and easy to use. It's my number one service for making mockups for social media posts and ads. What I like the most about Crello is that there's a big choice of animated
-                                                        templates in their library. Special thanks for the ability to edit videos in templates, as well as for the choice of Cyrillic fonts. Wish you luck and prosperity!"</div>
-                                                    <div class="name">Oxana Dudnyk,</div>
-                                                    <div class="position">CEO at Tag Production</div>
-                                                </div>
-                                            </div>
-                                            <div class="right">
-                                                <div class="portrait"><img loading="lazy" src="https://crello-wordpress.s3.eu-west-1.amazonaws.com/create/wp-content/uploads/2020/03/oxana-dudnyk.png.webp" width="450" height="397" alt="Oxana Dudnyk"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="owl-nav disabled"><button type="button" role="presentation" class="owl-prev"><span aria-label="Previous">‹</span></button><button type="button" role="presentation" class="owl-next"><span aria-label="Next">›</span></button></div>
-                            <div class="owl-dots"><button role="button" class="owl-dot active"><span></span></button><button role="button" class="owl-dot"><span></span></button><button role="button" class="owl-dot"><span></span></button><button role="button" class="owl-dot"><span></span></button>
-                                <button role="button" class="owl-dot"><span></span></button><button role="button" class="owl-dot"><span></span></button></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div> -->
-        <div class="vc_row-full-width vc_clearfix"></div>
         <div class="container">
             <div class="row margin-top-80-56-32">
                 <div class="col-sm-12">
@@ -2574,10 +2335,10 @@
                     <div class="crello-templates-grid-wrapper">
                         @foreach ($templates as $template)
                         <div class="template">
-                            <a href="{{ route( 'template.productDetail',[
-                                'country' => $country,
-                                'slug' => $template->slug
-                            ] ) }}" target="_blank">
+                            <a href="{{ route( 'template.productDetail', [
+                                    'country' => $country,
+                                    'slug' => $template->slug
+                                ] ) }}">
                                 <img loading="lazy" 
                                     src="{{ asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["carousel"] ) }}" 
                                     alt="{{ $template->title }}">

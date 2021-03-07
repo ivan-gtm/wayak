@@ -14,24 +14,50 @@ use App\Http\Controllers\canvaController;
 use App\Http\Controllers\PlaceitController;
 use App\Http\Controllers\CorjlController;
 use App\Http\Controllers\FocoController;
+use App\Http\Controllers\PacktController;
 
 use App\Http\Controllers\EtsyScrapperController;
 use App\Http\Controllers\TemplettScrapperController;
 
-// OVER
-    Route::get('/scrapper/over', [OverController::class, 'index']);
-// FOCO
-    Route::get('/scrapper/foco', [FocoController::class, 'index']);
-// CANVA
-    Route::get('/scrapper/canva', [canvaController::class, 'index']);
-    Route::get('/scrapper/canva/convert-json/{template_key}', [canvaController::class, 'convertToJSON']);
-    Route::post('/scrapper/canva/convert-json/{template_key}', [canvaController::class, 'convertToJSON'])->name('canva.convertToJSON');
+// SCRAPPER
+    // PACKT
+        Route::get('/packt', [PacktController::class, 'index']);
+    // OVER
+        Route::get('/admin/scrapper/over', [OverController::class, 'index']);
+    // FOCO
+        Route::get('/admin/scrapper/foco', [FocoController::class, 'index']);
+    // CANVA
+        Route::get('/admin/scrapper/canva', [canvaController::class, 'index']);
+        Route::get('/admin/scrapper/canva/convert-json/{template_key}', [canvaController::class, 'convertToJSON']);
+        Route::post('/admin/scrapper/canva/convert-json/{template_key}', [canvaController::class, 'convertToJSON'])->name('canva.convertToJSON');
+    // CORJL
+        Route::get('/admin/scrapper/corjl', [CorjlController::class, 'index']);
+    // TEMPLETT
+        Route::get('/admin/scrapper/templett', [TemplettScrapperController::class, 'downloadOriginalTemplate']);
+        Route::get('/admin/scrapper/templett/keynames', [TemplettScrapperController::class, 'migrateTemplateKeyNames']);
+        Route::get('/admin/scrapper/templett/missing-translation', [TemplettScrapperController::class, 'missinTranslation']);
+    // DESYGNER
+        Route::get('/admin/desygner/download-templates', [DesygnerController::class, 'index']);
+    // CRELLO
+        Route::get('/admin/crello/explore', [CrelloController::class,'explore'])->name('crello.explore');
+        Route::get('/admin/crello/download-templates', [CrelloController::class, 'index']);
+        Route::get('/admin/crello/translate-templates', [CrelloController::class, 'translateTemplate']);
+        // Route::get('/crello', [EditorController::class, 'home']);
+    // GREEN
+        Route::get('/admin/green/explore', [greenController::class, 'getFrontCategories']);
+        Route::get('/admin/green/all-products', [greenController::class, 'getAllProducts'])->name('green.products');
+        Route::get('/admin/green/all-categories', [greenController::class, 'getAllCategories'])->name('green.categories');
+        Route::get('/admin/green/category/{category_id}/products', [greenController::class, 'getFrontCategoryProducts']);
+        Route::get('/admin/green/translate-templates', [greenController::class, 'translateTemplate']);
+        Route::get('/admin/green/download-templates', [greenController::class, 'index']);
 
-    Route::get('/scrapper/corjl', [CorjlController::class, 'index']);
-    Route::get('/scrapper/templett', [TemplettScrapperController::class, 'downloadOriginalTemplate']);
-    Route::get('/scrapper/templett/keynames', [TemplettScrapperController::class, 'migrateTemplateKeyNames']);
-    
-    Route::get('/bot/autorename', [AdminController::class, 'autoRename']);
+    // PLACEIT
+        Route::get('/admin/placeit', [PlaceitController::class, 'index']);
+
+    // ETSY
+        Route::get('/admin/etsy/templates/description', [AdminController::class, 'etsyDescriptionTemplate'])->name('etsy.editMetadata');
+        Route::post('/admin/etsy/templates/description', [AdminController::class, 'editEtsyDescriptionTemplate']);
+
 
 // Route::get( '/scrapper/etsy', [ EtsyScrapperController::class, 'extractMetaData' ]);
 // Route::get('/scrap-from-templett', [TemplettScrapperController::class, 'scrapURL']);
@@ -100,48 +126,24 @@ use App\Http\Controllers\TemplettScrapperController;
         
         Route::get('/admin/ml/update-url', [AdminController::class, 'updateURL']);
 
-    // ETSY
-        Route::get('/admin/etsy/templates/description', [AdminController::class, 'etsyDescriptionTemplate'])->name('etsy.editMetadata');
-        Route::post('/admin/etsy/templates/description', [AdminController::class, 'editEtsyDescriptionTemplate']);
-
-    // DESYGNER
-        Route::get('/admin/desygner/download-templates', [DesygnerController::class, 'index']);
-
-    // CRELLO
-        Route::get('/admin/crello/explore', [CrelloController::class,'explore'])->name('crello.explore');
-        Route::get('/admin/crello/download-templates', [CrelloController::class, 'index']);
-        Route::get('/admin/crello/translate-templates', [CrelloController::class, 'translateTemplate']);
-        // Route::get('/crello', [EditorController::class, 'home']);
-
-    // GREEN
-        Route::get('/admin/green/explore', [greenController::class, 'getFrontCategories']);
-        Route::get('/admin/green/all-products', [greenController::class, 'getAllProducts'])->name('green.products');
-        Route::get('/admin/green/all-categories', [greenController::class, 'getAllCategories'])->name('green.categories');
-        Route::get('/admin/green/category/{category_id}/products', [greenController::class, 'getFrontCategoryProducts']);
-        Route::get('/admin/green/translate-templates', [greenController::class, 'translateTemplate']);
-        Route::get('/admin/green/download-templates', [greenController::class, 'index']);
-
-    // PLACEIT
-        Route::get('/admin/placeit', [PlaceitController::class, 'index']);
-
-    // TEMPLETT
-        Route::get('/admin/templett/missing-translation', [TemplettScrapperController::class, 'missinTranslation']);
-        Route::get('/admin/templett/bulk-translation/{from}/{to}', [TemplettScrapperController::class, 'bulkTranslation']);
-        Route::post('/admin/templett/bulk-translation/{from}/{to}', [TemplettScrapperController::class, 'bulkTranslation'])->name('templett.bulkTranslate');
-        
-        Route::get('/admin/generate-thumbs', [AdminController::class, 'generateProductThumbnails'])->name('admin.generateProductThumbnails');
+    // BOT
+        Route::get('/admin/bot/templett/bulk-translation/{from}/{to}', [TemplettScrapperController::class, 'bulkTranslation']);
+        Route::post('/admin/bot/templett/bulk-translation/{from}/{to}', [TemplettScrapperController::class, 'bulkTranslation'])->name('templett.bulkTranslate');
+        Route::get('/admin/bot/generate-thumbs', [AdminController::class, 'generateProductThumbnails'])->name('admin.generateProductThumbnails');
+        Route::get('/admin/bot/autorename', [AdminController::class, 'autoRename']);
+        Route::get('/admin/bot/db-missing-thumbs', [AdminController::class, 'registerMissingTemplatesOnDB']);
 
 // DESIGNER
     // Route::get('/open',  [EditorController::class,'open']);
     // Route::get('/explore',  [EditorController::class,'explore']);
     
     // SCRAPPER
-        Route::get('/admin/db-missing-thumbs', [AdminController::class, 'registerMissingTemplatesOnDB']);
     
 
 //EDITOR
-    Route::get('/editor/validate-code', [EditorController::class, 'validateCode']);
-    Route::post('/editor/validate-code', [EditorController::class,'validatePurchaseCode'])->name('code.validate');
+    Route::get('/{country}/validate-code', [EditorController::class, 'validateCode'])->name('code.validate.form');
+    Route::post('/{country}/validate-code', [EditorController::class,'validatePurchaseCode'])->name('code.validate');
+    
     Route::get('/editor/get-thumbnails', [EditorController::class,'getTemplateThumbnails']);
     Route::get('/editor/load-template', [EditorController::class,'loadTemplate']);
 

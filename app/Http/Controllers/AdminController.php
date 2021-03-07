@@ -118,8 +118,6 @@ class AdminController extends Controller
             ') 
         );
         
-        
-        
         echo "<pre>";
         foreach($ready_for_sale_products as $row){
             // print_r($row);

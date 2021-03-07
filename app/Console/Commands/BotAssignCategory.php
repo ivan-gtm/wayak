@@ -52,7 +52,7 @@ class BotAssignCategory extends Command
                 'categories' => ['/invitations']
             ]);
         
-        // print_r(Template::where('title', 'like', '%birthday%')->count());
+        // print_r( Template::where('title', 'like', '%invitation%')->count());
         // print_r("\n");
         // exit;
         
@@ -418,5 +418,6 @@ class BotAssignCategory extends Command
                     '/cards/party/sleepover'
                 ]
             ]);
+        echo "TERMINE !!";
     }
 }

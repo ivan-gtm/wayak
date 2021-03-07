@@ -56,6 +56,7 @@ class ContentController extends Controller
         //     ->take(40)
         //     ->get([
         //         'title',
+        //         'slug',
         //         'previewImageUrls',
         //         'width',
         //         'height',
@@ -69,12 +70,13 @@ class ContentController extends Controller
         //     'items' => $search_result
         // ];
 
-        // $search_result = Template::where('title', 'like', '%save the date%')
+        // $search_result = Template::where('title', 'like', '%save%date%')
         //     ->where('width','=','5')
         //     ->where('height','=','7')
         //     ->take(40)
         //     ->get([
         //         'title',
+        //         'slug',
         //         'previewImageUrls',
         //         'width',
         //         'height',
@@ -84,16 +86,17 @@ class ContentController extends Controller
 
         // $carousels[] = [
         //     'slider_id' => Str::random(5),
-        //     'title' => 'Templates for "Wedding Invitations"',
+        //     'title' => 'Templates for "Save The Date"',
         //     'items' => $search_result
         // ];
 
-        // $search_result = Template::where('title', 'like', '%floral%wedding%invitation%')
+        // $search_result = Template::where('title', 'like', '%wedding%')
         //     ->where('width','=','5')
         //     ->where('height','=','7')
         //     ->take(40)
         //     ->get([
         //         'title',
+        //         'slug',
         //         'previewImageUrls',
         //         'width',
         //         'height',
@@ -113,6 +116,7 @@ class ContentController extends Controller
         //     ->take(40)
         //     ->get([
         //         'title',
+        //         'slug',
         //         'previewImageUrls',
         //         'width',
         //         'height',
@@ -132,6 +136,7 @@ class ContentController extends Controller
         //     ->take(40)
         //     ->get([
         //         'title',
+        //         'slug',
         //         'previewImageUrls',
         //         'width',
         //         'height',
@@ -151,6 +156,7 @@ class ContentController extends Controller
         //     ->take(40)
         //     ->get([
         //         'title',
+        //         'slug',
         //         'previewImageUrls',
         //         'width',
         //         'height',
