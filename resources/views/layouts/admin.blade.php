@@ -58,6 +58,26 @@
                            <ul class="metismenu side-nav mm-show">
                               <li class="side-nav-title side-nav-item">Navigation</li>
                               <li class="side-nav-item mm-active">
+                                 <a href="{{ route('home.carousels') }}" class="side-nav-link active">
+                                    <i class="uil-home-alt"></i>
+                                    <!-- <span class="badge badge-success float-right">4</span> -->
+                                    <span> Carousels </span>
+                                 </a>
+                              </li>
+                              <li class="side-nav-item mm-active">
+                                 <a href="{{ route('admin.manageCodes', ['country'=>'us']) }}" class="side-nav-link active">
+                                    <i class="uil-home-alt"></i>
+                                    <span> Promocode </span>
+                                 </a>
+                              </li>
+                              <li class="side-nav-item mm-active">
+                                 <a href="{{ route('admin.category.manage') }}" class="side-nav-link active">
+                                    <i class="uil-home-alt"></i>
+                                    <span> Categories </span>
+                                 </a>
+                              </li>
+                              <li class="side-nav-title side-nav-item">Navigation</li>
+                              <li class="side-nav-item mm-active">
                                  <a href="javascript: void(0);" class="side-nav-link active">
                                     <i class="uil-home-alt"></i>
                                     <span class="badge badge-success float-right">4</span>

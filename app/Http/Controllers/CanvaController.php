@@ -31,63 +31,92 @@ class CanvaController extends Controller
         // echo "<pre>";
         // print_r($scan);
         // exit;
+        // $scan = scandir( public_path('canva/instagram-story/design/template') );
+        // $template_index = 0;
+        // foreach($scan as $folder) {
+        //     // echo public_path('canva/instagram-story/design/template'.$folder).'<br>';
+        //     if(strlen($folder) > 3  && is_dir( public_path('canva/instagram-story/design/template/'.$folder) ) ){
+        //         $template_id = $folder;
+        //         if( Redis::exists('canva:originaljson:'.$template_id) == false ){
+        //             $template = self::getTemplate($template_id);
+
+        //             if($template != null) {
+        //                 preg_match_all('/JSON.parse\(\'(.*)\'\)\;/', str_replace('.js', '.nojs', $template), $salida);
+        //                 Redis::set('canva:originaljson:'.$template_id, $salida[1][0]);
+        //                 echo 'PARSED >>'.$template_id.'<br>';
+                        
+        //                 if($template_index == 200){
+        //                     exit;
+        //                 }
+        //                 $template_index++;
+        //             } else {
+        //                 self::rcopy( public_path('canva/instagram-story/design/template/'.$folder), public_path('canva/instagram-story/design/'.$folder) );
+        //                 self::rrmdir( public_path('canva/instagram-story/design/template/'.$folder) );
+        //             }
+
+        //             sleep( rand(10,20) );
+        //         } else {
+        //             echo 'ALREADY EXISTS >>'.$template_id.'<br>';
+        //         }
+        //     }
+        // }
+        // exit;
+        
         $scan = scandir( public_path('canva/instagram-story/design/template') );
         $template_index = 0;
         foreach($scan as $folder) {
             // echo public_path('canva/instagram-story/design/template'.$folder).'<br>';
             if(strlen($folder) > 3  && is_dir( public_path('canva/instagram-story/design/template/'.$folder) ) ){
                 $template_id = $folder;
-                if( Redis::exists('canva:originaljson:'.$template_id) == false ){
-                    $template = self::getTemplate($template_id);
-
-                    if($template != null) {
-                        preg_match_all('/JSON.parse\(\'(.*)\'\)\;/', str_replace('.js', '.nojs', $template), $salida);
-                        Redis::set('canva:originaljson:'.$template_id, $salida[1][0]);
-                        echo 'PARSED >>'.$template_id.'<br>';
-                        
-                        if($template_index == 200){
-                            exit;
-                        }
-                        $template_index++;
-                    } else {
-                        self::rcopy( public_path('canva/instagram-story/design/template/'.$folder), public_path('canva/instagram-story/design/'.$folder) );
-                        self::rrmdir( public_path('canva/instagram-story/design/template/'.$folder) );
+                
+                print_r("TEMPLATE >> ID >> ");
+                print_r($template_id);
+                print_r("<br>");
+                
+                if( Redis::exists('canva:json:'.$template_id) ){
+                    $template_content = Redis::get('canva:json:'.$template_id);
+                    $template_content = json_decode($template_content);
+                    // echo "<pre>";
+                    // print_r( json_decode($template_content) );
+                    self::parseTempalte($template_content);
+                    // exit;
+                    // self::parseTempalte()
+                    if( $template_index == 10 ){
+                        exit;
                     }
 
-                    sleep( rand(10,20) );
-                } else {
-                    echo 'ALREADY EXISTS >>'.$template_id.'<br>';
+                    $template_index++;
+
                 }
+
             }
         }
-        exit;
-
-
-        $thumb_urls = self::getThumbUrls();
-        foreach ($thumb_urls as $img_url) {
-            // $img_url = 'https://template.canva.com/EADajvtdmjY/1/0/400w-9vWhnLEersE.jpg';
-            $template_id = str_replace( 'https://template.canva.com/', null , $img_url );
-            $template_id = substr( $template_id, 0, strpos( $template_id,  '/' ) );
+        
+        // $thumb_urls = self::getThumbUrls();
+        // foreach ($thumb_urls as $img_url) {
+        //     // $img_url = 'https://template.canva.com/EADajvtdmjY/1/0/400w-9vWhnLEersE.jpg';
+        //     $template_id = str_replace( 'https://template.canva.com/', null , $img_url );
+        //     $template_id = substr( $template_id, 0, strpos( $template_id,  '/' ) );
             
-            // echo $img_url;
-            // echo "<br>";
-            // echo $template_id;
-            // exit;
+        //     // echo $img_url;
+        //     // echo "<br>";
+        //     // echo $template_id;
+        //     // exit;
 
-            $img_url_info = pathinfo($img_url);
-            $full_file_path = public_path( 'canva/design/template/'.$template_id.'/assets/'.$img_url_info['basename'] );
-            $path_info = pathinfo($full_file_path);
-            $local_img_path = $path_info['dirname'];
+        //     $img_url_info = pathinfo($img_url);
+        //     $full_file_path = public_path( 'canva/design/template/'.$template_id.'/assets/'.$img_url_info['basename'] );
+        //     $path_info = pathinfo($full_file_path);
+        //     $local_img_path = $path_info['dirname'];
 
-            if( file_exists( $full_file_path )  == false ){
-                // echo $full_file_path;
-                // exit;
+        //     if( file_exists( $full_file_path )  == false ){
+        //         // echo $full_file_path;
+        //         // exit;
     
-                self::downloadImage($full_file_path, $img_url);
-                // exit;
-            }
+        //         self::downloadImage($full_file_path, $img_url);
+        //         // exit;
+        //     }
             
-        }
+        // }
     }
 
     function getThumbUrls(){
@@ -3188,7 +3217,7 @@ class CanvaController extends Controller
         return $thumb_urls;
     }
 
-    function parseTempalte(){
+    function parseTempalte($template){
         // TAGS: page.b.F
         // Title: page.b.D
         // width: 1080 // page.b.C.A
@@ -3207,27 +3236,28 @@ class CanvaController extends Controller
         //     Call 123-456-7890
 
 
-        // $tags_arr = $request->page['b']['F'];
+        // $tags_arr = $template->page['b']['F'];
 
-        echo "<pre>";
-        // print_r( $template_key );
-
-        // TEMPLATE Objects positioning and text
-        print_r( $request->page['b']['A']['0']['E'] );
+        // print_r( $template );
+        // exit;
         
+        // TEMPLATE Objects positioning and text
+        echo "<pre>";
+        // print_r( $template->page->b->A[0]->E );
+        // exit;
+
         // TEMPLATE FONTS 
-        // print_r( $request->page['M']['C'] );
+        // print_r( $template->page->M->C );
 
         // TEMPLATE IMAGES 
-        // print_r( $request->page['M']['D'] );
+        print_r( $template->page->M->D );
 
         // TEMPLATE VIDEOS
-        // print_r( $request->page['M']['o'] );
+        // print_r( $template->page->M->o );
 
         // TEMPLATE GENERAL FONTS
-        // print_r( $request->page['M']['G'] );
-        echo "jojo";
-        exit;
+        // print_r( $template->page->M->G );
+        // exit;
         
         // position Y
         // object►page►b►A►0►E►0►D
@@ -3249,18 +3279,16 @@ class CanvaController extends Controller
         // object position y
         // object►page►b►A►0►E►0►a►I►B►E
 
-
-
         // // BG COLOR
-        // print_r( $request->page['b']['A']['0']['D']['C'] );
+        // print_r( $template->page['b->A->0->D->C'] );
         // TITLE
-        // print_r( $request->page['b']['D'] );
+        // print_r( $template->page['b->D'] );
         // // DIMENTIONS
-        // print_r( $request->page['b']['C'] );
+        // print_r( $template->page['b->C'] );
         // TAGS
-        // print_r( $request->page['b']['F'] );
-        // print_r( json_encode($request->all()) );
-        exit;
+        // print_r( $template->page['b->F'] );
+        // print_r( json_encode($template->all()) );
+        // exit;
 
     }
 

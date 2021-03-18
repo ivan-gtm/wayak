@@ -49,7 +49,7 @@
                                                 <a aria-label="because you watched taco chronicles" class="rowTitle ltr-0" 
                                                     href="/browse/similars/81040704">
                                                     <span class="row-header-title">
-                                                        {{ $carousel['title'] }}
+                                                        {{ $carousel->title }}
                                                     </span>
                                                     <span class="aro-row-header">
                                                         <span class="see-all-link">Explore All</span>
@@ -57,7 +57,7 @@
                                                     </span>
                                                 </a>
                                             </h2>
-                                            <div class="rowContainer rowContainer_title_card" id="{{ $carousel['slider_id'] }}">
+                                            <div class="rowContainer rowContainer_title_card" id="{{ $carousel->slider_id }}">
                                                 <div class="ptrack-container">
                                                     <div class="rowContent slider-hover-trigger-layer">
                                                         <div class="slider">
@@ -66,8 +66,8 @@
                                                             </span>
                                                             <div class="dotClass"></div>
                                                             <div class="sliderMask showPeek">
-                                                                <div class="sliderContent row-with-x-columns" data-slider-id="{{ $carousel['slider_id'] }}">
-                                                                    @foreach ($carousel['items'] as $template)
+                                                                <div class="sliderContent row-with-x-columns" data-slider-id="{{ $carousel->slider_id }}">
+                                                                    @foreach ($carousel->items as $template)
                                                                         <div class="slider-item slider-item-">
                                                                             <div class="title-card-container ltr-0">
                                                                                 <div class="slider-refocus title-card">
@@ -77,11 +77,11 @@
                                                                                                 'country' => $country,
                                                                                                 'slug' => $template->slug
                                                                                             ] )
-                                                                                        }}" target="_blank">
+                                                                                        }}">
                                                                                             <div class="boxart-size-16x9 boxart-container boxart-rounded">
                                                                                                 <img class="boxart-image boxart-image-in-padded-container" 
                                                                                                     loading=lazy
-                                                                                                    src="{{ asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["carousel"] ) }}"
+                                                                                                    src="{{ asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls->carousel ) }}"
                                                                                                     alt="{{ $template->title }}">
                                                                                                 <div class="fallback-text-container" aria-hidden="true">
                                                                                                     <p class="fallback-text">{{ $template->title }}</p>
@@ -131,8 +131,9 @@
 
                     $.each(sliders_content, function(i,slider) {
                         var id = $(slider).attr('data-slider-id');
-                        // console.log("NEW SLIDER");
-                        // console.log( '#'+ id +' > div > div > div > span.handle.handlePrev' );
+                        
+                        console.log("NEW SLIDER");
+                        console.log( '#'+ id +' > div > div > div > span.handle.handlePrev' );
                         
                         $(slider).slick({
                             lazyLoad: 'ondemand',

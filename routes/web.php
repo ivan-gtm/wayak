@@ -126,6 +126,8 @@ use App\Http\Controllers\TemplettScrapperController;
         
         Route::get('/admin/ml/update-url', [AdminController::class, 'updateURL']);
 
+    // HOME CAROUSELS
+        Route::get('/admin/carousels', [AdminController::class, 'homeCarousels'])->name('home.carousels');
     // BOT
         Route::get('/admin/bot/templett/bulk-translation/{from}/{to}', [TemplettScrapperController::class, 'bulkTranslation']);
         Route::post('/admin/bot/templett/bulk-translation/{from}/{to}', [TemplettScrapperController::class, 'bulkTranslation'])->name('templett.bulkTranslate');

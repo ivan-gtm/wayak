@@ -109,7 +109,7 @@
                                                             'language_code' => $language_code,
                                                             'template_key' => $template->_id
                                                             ] )
-                                                        }}">
+                                                        }}" target="_blank">
                                                             <strong>Customize this template</strong>
                                                         </a>
                                                     </div>

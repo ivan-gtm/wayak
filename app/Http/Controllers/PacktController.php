@@ -39,21 +39,73 @@ class PacktController extends Controller
         $redis_packt = Redis::connection('redisuat');
         $token = $redis_packt->get('packt:token');
         $token = json_decode($token);
+
+        $playlists = self::getPlaylist( $token->data->access );
         
-        $product_id = 9781789610253;
-        $response = self::getBookIndex( $token->data->access, $product_id );
-        $response = json_decode($response);
+        // echo "<pre>";
+        // print_r($playlists);
+        // exit;
 
-        if( isset($response->errorCode) && $response->errorCode == 1000100){ // jwt expired
-            // echo "jojjo";
-
+        if( isset($playlists->errorCode) && $playlists->errorCode == 1000100){ // jwt expired
+            
             $refresh_token_response = self::refreshToken( $token->data->refresh, $token->data->access );
             $token = json_decode($refresh_token_response);
 
-            // echo "<pre>asdasd";
-            // print_r($token);
-            // exit;
+            if( $token->httpStatus == 200 ){
+                // echo "BBB";
+                $playlists = self::getPlaylist( $token->data->access );
+                
+                if( isset($playlists->data) ){
+                    foreach($playlists->data as $playlist){
+                        foreach($playlist->products as $product){
+                            // $product->productId;
+                            self::downloadCourseContent( $product->productId, $token );
+                        }
+                    }
+                }
+            }
+        
+        // User 63529605-6c13-4822-a1d3-084d468ebe42 is not entitled to access the content 9781789610253
+        } elseif( isset($playlists->errorCode) && $playlists->errorCode == 1001061){
             
+            echo "ERROR >>> Abrir https://subscription.packtpub.com/book/web_development/9781801071055";
+            exit;
+
+        } elseif( isset($playlists->data) ) {
+            $playlists = self::getPlaylist( $token->data->access );
+            if( isset($playlists->data) ){
+                foreach($playlists->data as $playlist){
+                    foreach($playlist->products as $product){
+                        self::downloadCourseContent( $product->productId, $token );
+                    }
+                }
+            }
+        }
+    
+        exit;
+    }
+
+    // $local_img_path, $img_url
+    function downloadCourseContent( $product_id, $token ){
+
+        // echo "<pre>";
+        // print_r($response);
+        // exit;
+
+        // $product_id = 9781800206847; // Video
+        // $product_id = 9781789610253; // BOOK
+        // $product_id = "9781801071055";
+    
+        $content_type = json_decode(self::getContentType($product_id));
+        $redis_packt = Redis::connection('redisuat');
+        $response = self::getBookIndex( $token->data->access, $product_id );
+        $response = json_decode($response);
+        
+        if( isset($response->errorCode) && $response->errorCode == 1000100){ // jwt expired
+            
+            $refresh_token_response = self::refreshToken( $token->data->refresh, $token->data->access );
+            $token = json_decode($refresh_token_response);
+
             if( $token->httpStatus == 200 ){
                 // echo "BBB";
                 $response = self::getBookIndex( $token->data->access, $product_id );
@@ -73,184 +125,125 @@ class PacktController extends Controller
         } elseif( isset($response->data) ) {
             $redis_packt->set('packt:product:'.$product_id, json_encode($response) );
         }
-        
-        // exit;
 
-        $graphics = $response->data->graphics;
-        foreach($graphics as $resource){
-            // print_r( $resource );
+        // Video content
+        if( array_search('video', $content_type->data[0]->fileTypes ) ){
+            
+            $chapters = $response->data->chapters;
+
+            foreach($chapters as $index => $chapter){
+                foreach($chapter->sections as $section){
+                    self::getSectionContent( $product_id, $section->location );
+                    
+                    $donwload_urls = self::getDownloadURLs($token->data->access, $product_id, $index+1, $section->id );
+                    if( isset($donwload_urls->captions) ){
+                        foreach($donwload_urls->captions as $caption){
+                            self::getSectionContent( $product_id, $caption->location );
+                        }
+                    }
+                }
+            }
+        } elseif( array_search('epub', $content_type->data[0]->fileTypes )
+            || array_search('mobi', $content_type->data[0]->fileTypes )
+            || array_search('pdf', $content_type->data[0]->fileTypes ) ) {
+
+            $graphics = $response->data->graphics;
+            foreach($graphics as $resource){
+                // print_r( $resource );
+                // exit;
+                // https://static.packt-cdn.com/products/9781789610253/graphics/a128786a-95e3-41a7-9a68-3be37a271221.png
+
+                $img_url_info = pathinfo( $resource );
+                $full_file_path = public_path( "packtpub/products/$product_id/graphics/$product_id/graphics/".$img_url_info['basename'] );
+                $path_info = pathinfo( $full_file_path );
+                $local_img_path = $path_info['dirname'];
+
+                if( file_exists( $full_file_path )  == false ){
+                    // echo $full_file_path;
+                    // exit;
+                    $img_url = 'https://static.packt-cdn.com/products/$product_id/graphics/'.$img_url_info['basename'];
+                    self::downloadImage($full_file_path, $img_url);
+                    // exit;
+                }
+            }
+
+            $chapters = $response->data->chapters;
+
+            foreach($chapters as $chapter){
+                
+                foreach($chapter->sections as $section){
+                    if( $section->contentType == 'text' ){
+                        self::getSectionContent($product_id, $section->location );
+                    }
+                }
+            }
+
+            $appendices = $response->data->appendices;
+            foreach($appendices as $appendix){
+                foreach($appendix->sections as $section){
+                    if( $section->contentType == 'text' ){
+                        self::getSectionContent($product_id, $section->location );
+                    }
+                }
+            }
+
+            $prefaces = $response->data->prefaces;
+            foreach($prefaces as $preface){
+                foreach($preface->sections as $section){
+                    if( $section->contentType == 'text' ){
+                        self::getSectionContent($product_id, $section->location );
+                    }
+                }
+            }
+        }
+    }
+
+    function getSectionContent( $product_id, $url ){
+        
+        $chapter_url = pathinfo( $url );
+        $filename = strpos($chapter_url['basename'], '?') > 0 ? substr($chapter_url['basename'], 0, strpos($chapter_url['basename'], '?') ) : $chapter_url['basename'];
+        $full_file_path = public_path( "packtpub/products/$product_id/".$filename );
+        
+        if( file_exists( $full_file_path )  == false ){
+            
+            $path_info = pathinfo($full_file_path);
+            $path = $path_info['dirname'];
+        
+            // echo "<pre>";
+            // print_r($full_file_path);
             // exit;
-            // https://static.packt-cdn.com/products/9781789610253/graphics/a128786a-95e3-41a7-9a68-3be37a271221.png
-
-            $img_url_info = pathinfo( $resource );
-            $full_file_path = public_path( "packtpub/products/$product_id/graphics/$product_id/graphics/".$img_url_info['basename'] );
-            $path_info = pathinfo( $full_file_path );
-            $local_img_path = $path_info['dirname'];
-
-            if( file_exists( $full_file_path )  == false ){
-                // echo $full_file_path;
-                // exit;
-                $img_url = 'https://static.packt-cdn.com/products/$product_id/graphics/'.$img_url_info['basename'];
-                self::downloadImage($full_file_path, $img_url);
-                // exit;
-            }
-        }
-
-        $chapters = $response->data->chapters;
-
-        foreach($chapters as $chapter){
-            
-            // $img_url_info = pathinfo( $resource );
-            // $full_file_path = public_path( "packtpub/products/$product_id/graphics/$product_id/graphics/".$img_url_info['basename'] );
-            // $path_info = pathinfo( $full_file_path );
-            // $local_img_path = $path_info['dirname'];
-
-            // if( file_exists( $full_file_path )  == false ){
-            //     // echo $full_file_path;
-            //     // exit;
-            //     $img_url = 'https://static.packt-cdn.com/products/$product_id/graphics/'.$img_url_info['basename'];
-            //     self::downloadImage($full_file_path, $img_url);
-            //     // exit;
-            // }
-            
-            foreach($chapter->sections as $section){
-                if( $section->contentType == 'text' ){
-                    self::getSectionContent($product_id, $section->id, $section->location );
-                }
-            }
-        }
-
-        $appendices = $response->data->appendices;
-        foreach($appendices as $appendix){
-            foreach($appendix->sections as $section){
-                if( $section->contentType == 'text' ){
-                    self::getAppendixContent($product_id, $section->id, $section->location );
-                }
-            }
-        }
-
-        $prefaces = $response->data->prefaces;
-        foreach($prefaces as $preface){
-            foreach($preface->sections as $section){
-                if( $section->contentType == 'text' ){
-                    self::getPrefacesContent($product_id, $section->id, $section->location );
-                }
-            }
-        }
-
-        echo "<pre>";
-        print_r( $response );
-        exit;
+    
+            @mkdir($path, 0777, true);
         
-        $product_id = 9781789610253;
-        self::getContentType($product_id);
-        exit;
-
-        $redis_packt = Redis::connection('redisuat');
-        $token = $redis_packt->get('packt:token');
-        $token = json_decode($token);
+            set_time_limit(0);
         
-        $response = self::getPlaylist( $token );
-
-        if( isset($response->errorCode) && $response->errorCode == 1000100){ // jwt expired
-            $refresh_token_response = self::refreshToken( $token->data->refresh, $token->data->access );
-            $refresh_token_response = json_decode($refresh_token_response);
+            //This is the file where we save the    information
+            $fp = fopen ($full_file_path, 'w+');
+        
+            //Here is the file we are downloading, replace spaces with %20
+            $ch = curl_init(str_replace(" ","%20",$url));
+            curl_setopt($ch, CURLOPT_TIMEOUT, 50);
             
-            if( $refresh_token_response->httpStatus == 200 ){
-                $response = self::getPlaylist( $token );
-            } else {
-                self::login();
-                $token = $redis_packt->get('packt:token');
-                // $token = json_decode($token);
-                // $response = self::getPlaylist( $token );
-            }
+            // write curl response to file
+            curl_setopt($ch, CURLOPT_FILE, $fp); 
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            
+            // get curl response
+            curl_exec($ch); 
+            curl_close($ch);
+            fclose($fp);
+
+            // $redis_packt->set( 'packt:product:'.$product_id.':section:'.$section_id , $response);
+            
+            print_r("   CHAPTER DOWNLOADED >> ".$url."<br>\n");
+
         }
 
-        echo "<pre>";
-        print_r($token);
-        exit;
-
-
-    }
-
-    function getSectionContent($product_id, $section_id, $url ){
-        // 'packt:product:'.$product_id.':section:'.$section_id 
-        $redis_packt = Redis::connection('redisuat');
-        if( $redis_packt->exists('packt:product:'.$product_id.':section:'.$section_id) == false ){
-            $curl = curl_init();
-
-            curl_setopt_array($curl, array(
-            CURLOPT_URL => $url,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => "",
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => "GET",
-            ));
-
-            $response = curl_exec($curl);
-
-            curl_close($curl);
-            // echo $response;
-            $redis_packt = Redis::connection('redisuat');
-            $redis_packt->set( 'packt:product:'.$product_id.':section:'.$section_id , $response);
-        }
+        // echo "<pre>";
+        // print_r($full_file_path);
+        // exit;
     }
     
-    function getAppendixContent($product_id, $appendix_id, $url ){
-        // 'packt:product:'.$product_id.':section:'.$section_id 
-        $redis_packt = Redis::connection('redisuat');
-        if( $redis_packt->exists('packt:product:'.$product_id.':appendix:'.$appendix_id) == false ){
-            $curl = curl_init();
-
-            curl_setopt_array($curl, array(
-            CURLOPT_URL => $url,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => "",
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => "GET",
-            ));
-
-            $response = curl_exec($curl);
-
-            curl_close($curl);
-            // echo $response;
-            $redis_packt = Redis::connection('redisuat');
-            $redis_packt->set( 'packt:product:'.$product_id.':appendix:'.$appendix_id , $response);
-        }
-    }
-    
-    function getPrefacesContent($product_id, $appendix_id, $url ){
-        // 'packt:product:'.$product_id.':section:'.$section_id 
-        $redis_packt = Redis::connection('redisuat');
-        if( $redis_packt->exists('packt:product:'.$product_id.':appendix:'.$appendix_id) == false ){
-            $curl = curl_init();
-
-            curl_setopt_array($curl, array(
-                CURLOPT_URL => $url,
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_ENCODING => "",
-                CURLOPT_MAXREDIRS => 10,
-                CURLOPT_TIMEOUT => 0,
-                CURLOPT_FOLLOWLOCATION => true,
-                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                CURLOPT_CUSTOMREQUEST => "GET",
-            ));
-
-            $response = curl_exec($curl);
-
-            curl_close($curl);
-            // echo $response;
-            $redis_packt = Redis::connection('redisuat');
-            $redis_packt->set( 'packt:product:'.$product_id.':preface:'.$appendix_id , $response);
-        }
-    }
-
     function downloadImage(  $local_img_path, $img_url ){
         
         $path_info = pathinfo($local_img_path);
@@ -419,6 +412,47 @@ class PacktController extends Controller
 
     }
 
+    function getDownloadURLs($access_token, $product_id,$chapter, $id ){
+        print_r( "https://services.packtpub.com/products-v1/products/$product_id/p$chapter/$id <br>" );
+        
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+        CURLOPT_URL => "https://services.packtpub.com/products-v1/products/$product_id/p$chapter/$id",
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => "",
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => "GET",
+        CURLOPT_HTTPHEADER => array(
+            "authority: services.packtpub.com",
+            "pragma: no-cache",
+            "cache-control: no-cache",
+            "sec-ch-ua: \"Chromium\";v=\"88\", \"Google Chrome\";v=\"88\", \";Not A Brand\";v=\"99\"",
+            "accept: application/json, text/plain, */*",
+            "authorization: Bearer ".$access_token,
+            "sec-ch-ua-mobile: ?0",
+            "user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.192 Safari/537.36",
+            "origin: https://subscription.packtpub.com",
+            "sec-fetch-site: same-site",
+            "sec-fetch-mode: cors",
+            "sec-fetch-dest: empty",
+            "referer: https://subscription.packtpub.com/",
+            "accept-language: es,en;q=0.9"
+        ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+        
+        // echo "<pre>";
+        // print_r(  );
+        // exit;
+        return json_decode($response);
+    }
     function getContentType( $product_id ){
         
         $curl = curl_init();
@@ -448,14 +482,15 @@ class PacktController extends Controller
 
         curl_close($curl);
         
-        echo "<pre>";
-        print_r($response);
+        // echo "<pre>";
+        // print_r($response);
+        return $response;
 
     }
 
-    function getPlaylist( $token ){
+    function getPlaylist( $access_token ){
         
-        $refresh_token = $token->data->access;
+        // $refresh_token = $token->data->access;
         
         $curl = curl_init();
 
@@ -475,7 +510,7 @@ class PacktController extends Controller
             "referer: http://localhost:8080/private/var/containers/Bundle/Application/4529EA96-6FD7-427B-A9C3-ECF6D4BAE317/Packt.app/www/index.html",
             "accept-language: en-us",
             "user-agent: Mozilla/5.0 (iPhone; CPU iPhone OS 13_3_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148",
-            "authorization: Bearer $refresh_token",
+            "authorization: Bearer $access_token",
             "Pragma: no-cache",
             "Cache-Control: no-cache"
         ),

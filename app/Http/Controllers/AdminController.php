@@ -28,6 +28,7 @@ use PhpOffice\PhpSpreadsheet\Helper\Sample;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
+use App\Models\Template;
 
 // use App\Exports\MercadoLibreExport;
 // use Maatwebsite\Excel\Facades\Excel;
@@ -46,6 +47,20 @@ class AdminController extends Controller
         // echo "<pre>";
         // print_r($template_key);
         // exit;
+
+        // {
+        //     "name": "Name",
+        //     "btn_url": "http",
+        //     "btn_text": "http", // default View All
+        //     "language_code": "en",
+        //     "items": [
+        //         {
+        //             img_src:
+        //             alt_text:
+        //             href:
+        //         },
+        //     ]
+        // }
 
         $modelo_id = rand(1111, 9999);
         if( Redis::exists('wayak:mercadopago:template:modelo:'.$template_key) ){
@@ -361,14 +376,14 @@ class AdminController extends Controller
 
         $translation_ready_templates = DB::table('templates')
                     ->join('thumbnails', 'templates.template_id', '=', 'thumbnails.template_id')
-                    ->select('templates.template_id','format_ready','translation_ready','thumbnail_ready', 'filename','thumbnails.title', 'thumbnails.dimentions')
+                    ->select('templates.template_id','thumbnails.format_ready','thumbnails.translation_ready','thumbnails.thumbnail_ready', 'filename','thumbnails.title', 'thumbnails.dimentions')
                     // ->where('template_id','=', $template_key )
                     ->where('thumbnails.language_code','=', $language_code )
                     // ->where('thumbnails.dimentions','=', '5 x 7 in' )
                     ->where('templates.status','=', 5 )
-                    ->where('templates.format_ready','1')
-                    ->where('templates.translation_ready','1')
-                    ->where('templates.thumbnail_ready','1')
+                    // ->where('thumbnails.format_ready','1')
+                    // ->where('thumbnails.translation_ready','1')
+                    ->where('thumbnails.thumbnail_ready','1')
                     ->offset($offset)
                     ->limit($per_page)
                     ->get();
@@ -1090,6 +1105,160 @@ class AdminController extends Controller
         }
     }
     
+    function homeCarousels(Request $request){
+        // echo "HIhi";
+        // exit;
+        $total_items_per_carousel = 30;
+
+        $search_result = Template::where('title', 'like', '%baby shower%')
+            ->where('width','=','5')
+            ->where('height','=','7')
+            ->take($total_items_per_carousel)
+            ->get([
+                'title',
+                'slug',
+                'previewImageUrls',
+                'width',
+                'height',
+                'forSubscribers',
+                'previewImageUrls'
+            ]);
+
+        $carousels[] = [
+            'slider_id' => Str::random(5),
+            'title' => 'Templates for "Baby shower"',
+            'items' => $search_result
+        ];
+
+        $search_result = Template::where('title', 'like', '%unicorn%')
+            ->where('width','=','5')
+            ->where('height','=','7')
+            ->take($total_items_per_carousel)
+            ->get([
+                'title',
+                'slug',
+                'previewImageUrls',
+                'width',
+                'height',
+                'forSubscribers',
+                'previewImageUrls'
+            ]);
+
+        $carousels[] = [
+            'slider_id' => Str::random(5),
+            'title' => 'Unicorn',
+            'items' => $search_result
+        ];
+
+        $search_result = Template::where('title', 'like', '%save%date%')
+            ->where('width','=','5')
+            ->where('height','=','7')
+            ->take($total_items_per_carousel)
+            ->get([
+                'title',
+                'slug',
+                'previewImageUrls',
+                'width',
+                'height',
+                'forSubscribers',
+                'previewImageUrls'
+            ]);
+
+        $carousels[] = [
+            'slider_id' => Str::random(5),
+            'title' => 'Templates for "Save The Date"',
+            'items' => $search_result
+        ];
+
+        $search_result = Template::where('title', 'like', '%wedding%')
+            ->where('width','=','5')
+            ->where('height','=','7')
+            ->take($total_items_per_carousel)
+            ->get([
+                'title',
+                'slug',
+                'previewImageUrls',
+                'width',
+                'height',
+                'forSubscribers',
+                'previewImageUrls'
+            ]);
+
+        $carousels[] = [
+            'slider_id' => Str::random(5),
+            'title' => 'Templates for "Wedding Invitations"',
+            'items' => $search_result
+        ];
+
+        $search_result = Template::where('title', 'like', '%birthday%')
+            ->where('width','=','5')
+            ->where('height','=','7')
+            ->take($total_items_per_carousel)
+            ->get([
+                'title',
+                'slug',
+                'previewImageUrls',
+                'width',
+                'height',
+                'forSubscribers',
+                'previewImageUrls'
+            ]);
+
+        $carousels[] = [
+            'slider_id' => Str::random(5),
+            'title' => 'Birthday Invitation Templates',
+            'items' => $search_result
+        ];
+
+        $search_result = Template::where('title', 'like', '%glitter%')
+            ->where('width','=','5')
+            ->where('height','=','7')
+            ->take($total_items_per_carousel)
+            ->get([
+                'title',
+                'slug',
+                'previewImageUrls',
+                'width',
+                'height',
+                'forSubscribers',
+                'previewImageUrls'
+            ]);
+
+        $carousels[] = [
+            'slider_id' => Str::random(5),
+            'title' => 'Glitter',
+            'items' => $search_result
+        ];
+        
+        $search_result = Template::where('title', 'like', '%tropical%')
+            ->where('width','=','5')
+            ->where('height','=','7')
+            ->take($total_items_per_carousel)
+            ->get([
+                'title',
+                'slug',
+                'previewImageUrls',
+                'width',
+                'height',
+                'forSubscribers',
+                'previewImageUrls'
+            ]);
+
+        $carousels[] = [
+            'slider_id' => Str::random(5),
+            'title' => 'Tropical',
+            'items' => $search_result
+        ];
+
+        $carousels = json_encode($carousels);
+        // $carousels = json_decode($carousels);
+
+        // echo "<pre>";p
+        // print_r($carousels);
+        $country = 'us';
+        Redis::set('wayak:'.$country.':home:carousels', $carousels);
+        
+    }
     function templatesReadyForSale(Request $request){
         $language_code = 'es';
         
