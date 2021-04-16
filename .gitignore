@@ -26,5 +26,9 @@ yarn-error.log
 **/.DS_Store
 php
 public/corjl/*
+public/adobe/*
+public/artory/*
+public/linkedin/*
+public/magisto/*
 public/packtpub/*
 composer.lock

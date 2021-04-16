@@ -105,9 +105,9 @@
                                                     <div class="purchase-form__button">
                                                         <a class="js-purchase__add-to-cart e-btn--3d -color-primary -size-m -width-full"
                                                             href="{{ 
-                                                            route( 'admin.edit.template',[
-                                                            'language_code' => $language_code,
-                                                            'template_key' => $template->_id
+                                                            route('editor.openTemplate',[
+                                                                'country' => $country,
+                                                                'template_key' => $template->_id
                                                             ] )
                                                         }}" target="_blank">
                                                             <strong>Customize this template</strong>

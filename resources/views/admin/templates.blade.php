@@ -79,6 +79,16 @@
                         ]) }}">EDITAR PLANTILLA</a>
                       </div>
                       <div class="col-12">
+                        <a href="{{ 
+                          route('code.create',[
+                            'country' => $country,
+                            'code' => $product_info['key']
+                          ])
+                        }}">
+                          GENERATE CODE
+                        </a>
+                      </div>
+                      <div class="col-12">
                         <br>
                         <a href="{{ route('plantilla.demo', [
                           'modelo_mercado_pago' => $product_info['mercadopago'],
@@ -101,8 +111,8 @@
                         'country' => $country,
                         'page' => $current_page
                         -1]) }}" tabindex="0" class="page-link">
-                        <i class="mdi mdi-chevron-left"></i>
-                        </a>
+                          <i class="mdi mdi-chevron-left"></i>
+                      </a>
                     </li>
                     @for ($page = 1; $page < $total_pages; $page++)
                       @if($current_page == $page)

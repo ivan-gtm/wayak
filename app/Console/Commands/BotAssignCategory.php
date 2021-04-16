@@ -13,14 +13,14 @@ class BotAssignCategory extends Command
      *
      * @var string
      */
-    protected $signature = 'bot:assigncategory';
+    protected $signature = 'wayak:3-assigncategory';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Assign category based on product name, title and MongoDB database';
 
     /**
      * Create a new command instance.
@@ -61,8 +61,8 @@ class BotAssignCategory extends Command
                 'categories' => [
                     '/invitations',
                     '/invitations/birthday',
-                    '/cards',
-                    '/cards/birthday',
+                    // '/cards',
+                    // '/cards/birthday',
                 ],
                 'mainCategory' => '/invitations/birthday'
             ]);
@@ -75,8 +75,8 @@ class BotAssignCategory extends Command
                 'categories' => [
                     '/invitations',
                     '/invitations/wedding',
-                    '/cards',
-                    '/cards/wedding',
+                    // '/cards',
+                    // '/cards/wedding',
                 ],
                 'mainCategory' => '/invitations/wedding'
             ]);
@@ -87,9 +87,9 @@ class BotAssignCategory extends Command
                     '/invitations',
                     '/invitations/wedding',
                     '/invitations/wedding/bachelor-party',
-                    '/cards',
-                    '/cards/wedding',
-                    '/cards/wedding/bachelor-party'
+                    // '/cards',
+                    // '/cards/wedding',
+                    // '/cards/wedding/bachelor-party'
                 ],
                 'mainCategory' => '/invitations/wedding/bachelor-party'
             ]);
@@ -100,9 +100,9 @@ class BotAssignCategory extends Command
                     '/invitations',
                     '/invitations/wedding',
                     '/invitations/wedding/rehearsal-dinner',
-                    '/cards',
-                    '/cards/wedding',
-                    '/cards/wedding/rehearsal-dinner'
+                    // '/cards',
+                    // '/cards/wedding',
+                    // '/cards/wedding/rehearsal-dinner'
                 ]
             ]);
             
@@ -112,19 +112,19 @@ class BotAssignCategory extends Command
                     '/invitations',
                     '/invitations/wedding',
                     '/invitations/wedding/engagement-party',
-                    '/cards',
-                    '/cards/wedding',
-                    '/cards/wedding/engagement-party'
+                    // '/cards',
+                    // '/cards/wedding',
+                    // '/cards/wedding/engagement-party'
                 ]
             ]);
         
         Template::where('title', 'like', '%bridal%')
             ->update([
                 'categories' => [
-                    '/cards',
-                    '/cards/wedding',
-                    '/cards/wedding/bridal-shower',
-                    '/cards/bridal-shower',
+                    // '/cards',
+                    // '/cards/wedding',
+                    // '/cards/wedding/bridal-shower',
+                    // '/cards/bridal-shower',
                     '/invitations',
                     '/invitations/wedding',
                     '/invitations/wedding/bridal-shower',
@@ -145,18 +145,20 @@ class BotAssignCategory extends Command
             Template::where('title', 'like', '%rsvp%')
             ->update([
                 'categories' => [
-                    '/cards',
-                    '/cards/wedding',
-                    '/cards/wedding/responseand-rsvp-cards',
+                    // '/cards',
+                    // '/cards/wedding',
+                    // '/cards/wedding/responseand-rsvp-cards',
                     ]
                     ]);
                     
         Template::where('title', 'like', '%cocktail%')
                         ->update([
                             'categories' => [
-                                '/cards',
-                                '/cards/party',
-                                '/cards/party/cocktail-party',
+                                '/invitations',
+                                '/invitations/cocktail-party',
+                                // '/cards',
+                                // '/cards/party',
+                                // '/cards/party/cocktail-party',
                             ]
                         ]);
 
@@ -171,6 +173,8 @@ class BotAssignCategory extends Command
         Template::where('title', 'like', '%menu%')
             ->update([
                 'categories' => [
+                    '/invitations',
+                    '/invitations/wedding/menus',
                     '/menus'
                 ]
             ]);
@@ -246,8 +250,10 @@ class BotAssignCategory extends Command
         Template::where('title', 'like', '%communion%')
             ->update([
                 'categories' => [
-                    '/cards',
-                    '/cards/communion',
+                    // '/cards',
+                    // '/cards/communion',
+                    '/invitations',
+                    '/invitations/communion',
                 ]
             ]);
         
@@ -255,8 +261,10 @@ class BotAssignCategory extends Command
             ->orWhere('title', 'like', '%barbecue%')
             ->update([
                 'categories' => [
-                    '/cards',
-                    '/cards/bbq',
+                    // '/cards',
+                    // '/cards/bbq',
+                    '/invitations',
+                    '/invitations/bbq',
                 ]
             ]);
         
@@ -264,8 +272,10 @@ class BotAssignCategory extends Command
             ->orWhere('title', 'like', '%farewell%')
             ->update([
                 'categories' => [
-                    '/cards',
-                    '/cards/retirement-and-farewell',
+                    // '/cards',
+                    // '/cards/retirement-and-farewell',
+                    '/invitations',
+                    '/invitations/retirement-and-farewell',
                 ]
             ]);
         
@@ -273,26 +283,31 @@ class BotAssignCategory extends Command
             ->orWhere('title', 'not like', '%wedding%')
             ->update([
                 'categories' => [
-                    '/cards',
-                    '/cards/dinner-party',
+                    // '/cards',
+                    // '/cards/dinner-party',
+                    '/invitations',
+                    '/invitations/dinner-party',
                 ]
             ]);
         
         Template::where('title', 'like', '%potluck%')
             ->update([
                 'categories' => [
-                    '/cards',
-                    '/cards/dinner-party',
-                    '/cards/dinner-party/potluck',
+                    // '/cards',
+                    // '/cards/dinner-party',
+                    // '/cards/dinner-party/potluck',
+                    '/invitations',
+                    '/invitations/dinner-party',
+                    '/invitations/dinner-party/potluck',
                 ]
             ]);
         
         Template::where('title', 'like', '%christmas%')
             ->update([
                 'categories' => [
-                    '/cards',
-                    '/cards/holidays',
-                    '/cards/holidays/christmas',
+                    // '/cards',
+                    // '/cards/holidays',
+                    // '/cards/holidays/christmas',
                     '/invitations',
                     '/invitations/holidays',
                     '/invitations/holidays/christmas',
@@ -302,122 +317,154 @@ class BotAssignCategory extends Command
         Template::where('title', 'like', '%anniversary%')
             ->update([
                 'categories' => [
-                    '/cards',
-                    '/cards/anniversary'
+                    // '/cards',
+                    // '/cards/anniversary'
+                    '/invitations',
+                    '/invitations/anniversary',
                 ]
             ]);
         
         Template::where('title', 'like', '%pool%')
             ->update([
                 'categories' => [
-                    '/cards',
-                    '/cards/summer-and-pool-party'
+                    // '/cards',
+                    // '/cards/summer-and-pool-party'
+                    '/invitations',
+                    '/invitations/summer-and-pool-party',
                 ]
             ]);
         
         Template::where('title', 'like', '%housewarming%')
             ->update([
                 'categories' => [
-                    '/cards',
-                    '/cards/housewarming',
-                    '/cards/party/housewarming'
+                    // '/cards',
+                    // '/cards/housewarming',
+                    // '/cards/party/housewarming'
+                    '/invitations',
+                    '/invitations/housewarming',
+                    '/invitations/party/housewarming'
                 ]
             ]);
         
         Template::where('title', 'like', '%graduation%')
             ->update([
                 'categories' => [
-                    '/cards',
-                    '/cards/graduation',
-                    '/cards/party/graduation-party'
+                    // '/cards',
+                    // '/cards/graduation',
+                    // '/cards/party/graduation-party'
+                    '/invitations',
+                    '/invitations/graduation',
+                    '/invitations/party/graduation'
                 ]
             ]);
         
         Template::where('title', 'like', '%easter%')
             ->update([
                 'categories' => [
-                    '/cards',
-                    '/cards/holidays',
-                    '/cards/holidays/easter'
+                    // '/cards',
+                    // '/cards/holidays',
+                    // '/cards/holidays/easter'
+                    '/invitations',
+                    '/invitations/easter',
+                    '/invitations/holidays/easter'
                 ]
             ]);
         
         Template::where('title', 'like', '%patrick%')
             ->update([
                 'categories' => [
-                    '/cards',
-                    '/cards/holidays',
-                    '/cards/holidays/st-patricks-day'
+                    // '/cards',
+                    // '/cards/holidays',
+                    // '/cards/holidays/st-patricks-day'
+                    '/invitations',
+                    '/invitations/st-patricks-day',
+                    '/invitations/holidays/st-patricks-day'
                 ]
             ]);
         
         Template::where('title', 'like', '%thanksgiving%')
             ->update([
                 'categories' => [
-                    '/cards',
-                    '/cards/holidays',
-                    '/cards/holidays/thanksgiving'
+                    // '/cards',
+                    // '/cards/holidays',
+                    // '/cards/holidays/thanksgiving'
+                    '/invitations',
+                    '/invitations/thanksgiving',
+                    '/invitations/holidays/thanksgiving'
                 ]
             ]);
         
         Template::where('title', 'like', '%new%year%')
             ->update([
                 'categories' => [
-                    '/cards',
-                    '/cards/holidays',
-                    '/cards/holidays/new-year'
+                    // '/cards',
+                    // '/cards/holidays',
+                    // '/cards/holidays/new-year'
+                    '/invitations',
+                    '/invitations/new-year',
+                    '/invitations/holidays/new-year'
                 ]
             ]);
         
         Template::where('title', 'like', '%valentine%')
             ->update([
                 'categories' => [
-                    '/cards',
-                    '/cards/holidays',
-                    '/cards/holidays/valentines-day'
+                    // '/cards',
+                    // '/cards/holidays',
+                    // '/cards/holidays/valentines-day'
+                    '/invitations',
+                    '/invitations/valentines-day',
+                    '/invitations/holidays/valentines-day'
                 ]
             ]);
 
         Template::where('title', 'like', '%halloween%')
             ->update([
                 'categories' => [
-                    '/cards',
-                    '/cards/holidays',
-                    '/cards/holidays/halloween'
+                    // '/cards',
+                    // '/cards/holidays',
+                    // '/cards/holidays/halloween'
+                    '/invitations',
+                    '/invitations/halloween',
+                    '/invitations/holidays/halloween'
                 ]
             ]);
         
         Template::where('title', 'like', '%baptism%')
             ->update([
                 'categories' => [
-                    '/cards',
-                    '/cards/baptism-and-christening'
+                    // '/cards',
+                    // '/cards/baptism-and-christening'
+                    '/invitations',
+                    '/invitations/baptism',
+                    '/invitations/holidays/baptism'
                 ]
             ]);
         
         Template::where('title', 'like', '%baby%shower%')
             ->update([
                 'categories' => [
-                    '/cards',
-                    '/cards/baby-shower'
+                    // '/cards',
+                    // '/cards/baby-shower'
                 ]
             ]);
         
         Template::where('title', 'like', '%brunch%')
             ->update([
                 'categories' => [
-                    '/cards',
-                    '/cards/party/brunch'
+                    // '/cards',
+                    // '/cards/party/brunch'
                 ]
             ]);
         
         Template::where('title', 'like', '%sleepover%')
             ->update([
                 'categories' => [
-                    '/cards',
-                    '/cards/party/sleepover'
+                    // '/cards',
+                    // '/cards/party/sleepover'
                 ]
             ]);
+            
         echo "TERMINE !!";
     }
 }

@@ -341,6 +341,10 @@ class EditorController extends Controller
 
 		if( strpos($template_id, 'temp') === false ){ // Its a user template
 			
+			// echo "<pre>";
+			// print_r( $template_id );
+			// exit;
+
 			$this->deleteCurrentThumbnails($template_id, $language_code);
 			$thumbnail_imgs = $this->createThumbnailFiles( $request->pngimageData, $template_id, $language_code );
 			// exit;
@@ -910,18 +914,15 @@ class EditorController extends Controller
     function getTemplateThumbnails(Request $request){
 		// echo "<pre>";
 		// print_r( $request->all() );
+		// // print_r( $request->demo_templates );
 		// exit;
 
 		// get mercado pago relationship
-		if( Redis::exists('temp:template:relation:temp:'.$request->design_as_id) ){
-			$template_ids = Redis::get('temp:template:relation:temp:'.$request->design_as_id);
+		if( Redis::exists('temp:template:relation:'.$request->demo_templates) ){
+			$template_ids = Redis::get('temp:template:relation:'.$request->demo_templates);
 		} else {
 			$template_ids = $request['demo_templates'];
 		}
-
-		// echo "<pre>";
-		// print_r( $template_ids );
-		// exit;
 
     	$thumbnails_html = '';
 
@@ -949,10 +950,10 @@ class EditorController extends Controller
 		echo '{
 			"success": true,
 			"data": [{
-				"template_id": "'.$template_ids.'",
+				"template_id": "'.$request->demo_templates.'",
 				"order_id": "0",
 				"uid": "401481",
-				"template_name": "pampas grass bridal shower 07",
+				"template_name": "'.$thumbnail->title.'",
 				"canvas_thumbnail": "",
 				"canvas_json": "",
 				"original_thumbnail": "",
@@ -1290,12 +1291,18 @@ class EditorController extends Controller
 		} else {
 			$templates = 0;
 		}
-		// $country = 'us';
+
+		$search_query = '';
+        if( isset($request->searchQuery) ) {
+            $search_query = $request->searchQuery;
+        }
+
 		$menu = json_decode(Redis::get('wayak:'.$country.':menu'));
 
 		return view('validate_code', [
 			'country' => $country,
 			'menu' => $menu,
+			'search_query' => $search_query,
 			'templates' => $templates
 		]);
 	}
@@ -1335,5 +1342,54 @@ class EditorController extends Controller
 			[EditorController::class,'validateCode'], ['code_validation' => 0, 'templates' => $templates]
 		);
 
+	}
+
+	function openTemplate($country, $template_key){
+		if( $country == 'mx' ){
+            $language_code = 'es';
+        } else {
+            $language_code = 'en';
+        }
+
+		$purchase_code = rand(1111, 9999);
+
+        $original_template_key = $template_key;
+        $temporal_customer_key = 'temp:'.$purchase_code;
+        
+        Redis::set('temp:template:relation:temp:'.$purchase_code, $original_template_key);
+        Redis::expire('temp:template:relation:temp:'.$purchase_code, 60*60*24*1); // Codigo valido por 30 dias - 60*60*24*30 = 2592000
+        
+        Redis::set('template:'.$language_code.':'.$temporal_customer_key.':jsondata' ,Redis::get('template:'.$language_code.':'.$original_template_key.':jsondata'));
+        Redis::expire('template:'.$temporal_customer_key.':jsondata', 60*60*24*1); // Codigo valido por 30 dias - 60*60*24*30 = 2592000
+		
+        // Redis::set('code:'.$purchase_code, $temporal_customer_key);
+        // Redis::expire('code:'.$purchase_code, 2592000); // Codigo valido por 30 dias - 60*60*24*30 = 2592000
+
+		return redirect()->route('editor.editTemplate',[
+			'country' => $country,
+			'template_key' => $temporal_customer_key
+		]);
+	}
+
+	function editTemplate($country, $template_key){
+		
+		if( $country == 'mx' ){
+            $language_code = 'es';
+        } else {
+            $language_code = 'en';
+        }
+
+		$templates = $template_key;
+		$demo_as_id = 0;
+		$user_role = 'designer';
+		$purchase_code = 9999;
+
+		return view('editor',[ 
+			'templates' => $templates, 
+			'purchase_code' => $purchase_code,
+			'demo_as_id' => $demo_as_id,
+			'user_role' => $user_role,
+			'language_code' => $language_code
+		]);
 	}
 }

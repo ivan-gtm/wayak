@@ -47,7 +47,7 @@ services:
     expose:
         - "6380"
     volumes:
-      - .cloud/redis/data:/data
+      - .cloud/redis/data/uat:/data
   redis_pro:
     image: redis:alpine
     ports:
@@ -56,7 +56,7 @@ services:
     expose:
         - "6381"
     volumes:
-      - .cloud/redis/data:/data
+      - .cloud/redis/data/pro:/data
   mongo:
     image: mongo
     volumes:

@@ -18,51 +18,57 @@
             <nav class="navbar -nomargin" id="nav">
                 <div class="logo-container">
                     <a id="logo" href="{{ url('') }}" title="Go to the home page" class="embedded-remove-url">
-                        <div class="logo-wrapper"> <img class="logo-img" src="{{ url('assets/img/logo.png') }}" alt="PosterMyWall" /> </div>
+                        <div class="logo-wrapper">
+                            <img class="logo-img" src="{{ url('assets/img/logo.png') }}" alt="Wayak Logo" /> 
+                        </div>
                     </a>
                 </div>
                 <div class="primary-nav visible-small-laptop visible-desktop" id="nav-primary-items">
+                    <div class="nav-item-container hide-for-student">
+                        <a class="nav-item" href="{{ url('') }}">Home</a>
+                    </div>
                     <div class="nav-item-container hide-for-student"> 
                         <a class="nav-item" href="javascript:void(0);">Templates <i class="nav-item-icon icon-caret-down"></i></a>
                         <div class="dropdown-list">
                             <div class="list-container">
                                 <ul class="list" id="nav-sizes-list">
-                                    @for($i = 0; $i < sizeof($menu->templates) / 4; $i++)
+                                    @for($i = 0; $i < sizeof($menu->templates) / 3; $i++)
                                         <li class="list-item ">
                                             <a class="item" href="{{ str_replace('localhost','localhost:8001',$menu->templates[$i]->url) }}">
                                                 {{ $menu->templates[$i]->name }}
                                             </a>
                                         </li>
                                     @endfor
-                                    <li class="list-item">
+                                    <!-- <li class="list-item">
                                         <a class="item cta animate-icon" href="https://wayak.app/index.php/posters/sizes?utm_source=nav&utm_content=viewallsizes&utm_medium=link&utm_campaign=templategallerynav">
                                             View All <i class="icon-to-animate icon-caret-right"></i>
                                         </a>
-                                    </li>
+                                    </li> -->
                                 </ul>
                                 <ul class="list">
-                                    @for($i = (sizeof($menu->templates) / 4)+1; $i < ((sizeof($menu->templates) / 4) * 2)+1; $i++)
+                                    @for($i = (sizeof($menu->templates) / 3)+1; $i < ((sizeof($menu->templates) / 3) * 2)+1; $i++)
                                         <li class="list-item ">
                                             <a class="item" href="{{ str_replace('localhost','localhost:8001',$menu->templates[$i]->url) }}">
                                                 {{ $menu->templates[$i]->name }}
                                             </a>
                                         </li>
                                     @endfor
-                                    <li class="list-item"><a class="item cta animate-icon" href="https://wayak.app/index.php/posters/gallery?utm_source=nav&utm_content=viewalltheme&utm_medium=link&utm_campaign=templategallerynav">View All <i class="icon-caret-right icon-to-animate"></i></a></li>
+                                    <!-- <li class="list-item"><a class="item cta animate-icon" href="https://wayak.app/index.php/posters/gallery?utm_source=nav&utm_content=viewalltheme&utm_medium=link&utm_campaign=templategallerynav">View All <i class="icon-caret-right icon-to-animate"></i></a></li> -->
                                 </ul>
                                 <ul class="list">
-                                    @for($i = ((sizeof($menu->templates) / 4)*3)+1; $i < sizeof($menu->templates); $i++)
+                                    @for($i = ((sizeof($menu->templates) / 3)*2)+1; $i < sizeof($menu->templates); $i++)
                                         <li class="list-item ">
                                             <a class="item" href="{{ str_replace('localhost','localhost:8001',$menu->templates[$i]->url) }}">
                                                 {{ $menu->templates[$i]->name }}
                                             </a>
                                         </li>
                                     @endfor
-                                    <li class="list-item"><a class="item cta animate-icon" href="https://wayak.app/index.php/posters/gallery?utm_source=nav&utm_content=viewalltheme&utm_medium=link&utm_campaign=templategallerynav">View All <i class="icon-caret-right icon-to-animate"></i></a></li>
+                                    <!-- <li class="list-item"><a class="item cta animate-icon" href="https://wayak.app/index.php/posters/gallery?utm_source=nav&utm_content=viewalltheme&utm_medium=link&utm_campaign=templategallerynav">View All <i class="icon-caret-right icon-to-animate"></i></a></li> -->
                                 </ul>
                             </div>
                         </div>
                     </div>
+                    {{--
                     <div class="nav-item-container" id="marketing-nav-item"> <a class="nav-item" href="javascript:void(0);" title="Promote">By Industry <i class="nav-item-icon icon-caret-down"></i></a>
                         <div class="dropdown-list">
                             <div class="list-container">
@@ -78,10 +84,15 @@
                             </div>
                         </div>
                     </div>
+                    --}}
                 </div>
                 <div class="user-options">
-                    <form action="https://wayak.app/index.php/posters/search" class="inline-search-form" name="nav-search-form" id="nav-search-form" method="GET" onclick="document.getElementById('nav-search-input').focus();" accept-charset="utf-8">
-                        <label for="nav-search-input" class="_hidden">Search for inspiration</label><input class="search-input" name="s" type="text" id="nav-search-input" aria-label="Search for inspiration" placeholder="Try &lsquo;sale flyer&rsquo;" />
+                    <form action="{{ route('user.search',['country' => $country]) }}" class="inline-search-form" 
+                        name="nav-search-form" id="nav-search-form" method="GET" 
+                        onclick="document.getElementById('nav-search-input').focus();" accept-charset="utf-8">
+                        @csrf
+                        <label for="nav-search-input" class="_hidden">Search for inspiration</label>
+                        <input class="search-input" name="searchQuery" type="text" id="nav-search-input" aria-label="Search for inspiration" placeholder="Try &lsquo;Wedding Invitation&rsquo;" value="{{ $search_query }}" />
                         <i class="search-submit icon-search" onclick="document.forms['nav-search-form'].submit();">
                             <svg viewBox="0 0 24 24" width="24" height="24" class="sc-fubCfw hxbxfY">
                                 <path fill-rule="evenodd" clip-rule="evenodd" d="M17.4138 15.8368L21.8574 20.2857C22.0558 20.5064 22.046 20.8443 21.8352 21.0532L21.0575 21.8317C20.9532 21.937 20.8113 21.9962 20.6632 21.9962C20.5151 21.9962 20.3731 21.937 20.2688 21.8317L15.8252 17.3828C15.7023 17.2596 15.5907 17.1256 15.4919 16.9824L14.6587 15.8701C13.2802 16.9723 11.5682 17.5724 9.80409 17.5719C6.16878 17.5845 3.00983 15.0738 2.19744 11.5261C1.38504 7.97844 3.13601 4.34066 6.41372 2.76643C9.69143 1.1922 13.6211 2.10166 15.8763 4.95639C18.1314 7.81111 18.1102 11.8492 15.8252 14.68L16.9361 15.4475C17.1096 15.5586 17.2698 15.6892 17.4138 15.8368ZM4.24951 9.78627C4.24951 12.8576 6.73635 15.3475 9.80402 15.3475C11.2772 15.3475 12.69 14.7616 13.7317 13.7186C14.7733 12.6757 15.3585 11.2612 15.3585 9.78627C15.3585 6.7149 12.8717 4.22507 9.80402 4.22507C6.73635 4.22507 4.24951 6.7149 4.24951 9.78627Z"></path>

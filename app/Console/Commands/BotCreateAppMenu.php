@@ -14,14 +14,14 @@ class BotCreateAppMenu extends Command
      *
      * @var string
      */
-    protected $signature = 'bot:createmenu';
+    protected $signature = 'wayak:4-createmenu';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Create REDIS menu cache, based only on categories that had temmplates';
 
     /**
      * Create a new command instance.

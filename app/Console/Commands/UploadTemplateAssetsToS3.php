@@ -17,7 +17,7 @@ class UploadTemplateAssetsToS3 extends Command
      *
      * @var string
      */
-    protected $signature = 'command:upload_assets_s3';
+    protected $signature = 'wayak:upload_assets_s3';
 
     /**
      * The console command description.

@@ -8833,7 +8833,7 @@ button:focus {
 }
 .am-left-sidebar .sidebar-elements > li > a {
   display: block;
-  padding: 15px;
+  padding: 7px 0px;
   color: #636363;
   text-align: center;
   font-size: 11px;

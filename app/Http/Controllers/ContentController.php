@@ -30,22 +30,28 @@ class ContentController extends Controller
         $country = 'us';
         $language_code = 'en';
 
-        $carousels = json_decode(Redis::get('wayak:'.$country.':home:carousels'));
-        // echo "<pre>";
-        // print_r($carousels);
-        // exit;
+        $search_query = '';
+        if( isset($request->searchQuery) ) {
+            $search_query = $request->searchQuery;
+        }
 
+        $carousels = json_decode(Redis::get('wayak:'.$country.':home:carousels'));
         $menu = json_decode(Redis::get('wayak:'.$country.':menu'));
+        
+        // echo "<pre>";
+        // print_r($menu);
+        // exit;
 
         return view('content.home',[
             'language_code' => $language_code,
             'country' => $country,
             'menu' => $menu,
+            'search_query' => $search_query,
             'carousels' => $carousels
         ]);
     }
 
-    public function showCategoryPage($country, $cat_lvl_1_slug, $cat_lvl_2_slug = null, $cat_lvl_3_slug = null, Request $request){
+    public function showCategoryPage($country, $cat_lvl_1_slug = null, $cat_lvl_2_slug = null, $cat_lvl_3_slug = null, Request $request){
         
         // $template_key = 'template:en:'.'682087'.':jsondata';
         // $pages = Redis::get($template_key);
@@ -53,6 +59,11 @@ class ContentController extends Controller
         // echo "<pre>";
         // print_r($pages);
         // exit;
+
+        $search_query = '';
+        if( isset($request->searchQuery) ) {
+            $search_query = $request->searchQuery;
+        }
 
         
         $slug = '/'.$cat_lvl_1_slug;
@@ -74,7 +85,7 @@ class ContentController extends Controller
         $category_obj = json_decode( Redis::get($category_redis_key) );
         
         // echo "<pre>";
-        // print_r($slug);
+        // print_r($category_obj);
         // exit;
 
         $language_code = 'en';
@@ -126,11 +137,11 @@ class ContentController extends Controller
                 'slug',
                 'forSubscribers',
                 'categoryCaption',
-                // 'category',
                 'previewImageUrls'
             ]);
         
         $total_documents = Template::whereIn('categories', [$slug])->count();
+
         $from_document = $skip + 1;
         $to_document = $skip + $per_page;
 
@@ -140,20 +151,39 @@ class ContentController extends Controller
         // echo "<pre>";
         // print_r($menu);
         // exit;
+        $url_params = [];
+        $url_params['slugs']['country'] = $country;
 
+        if( strlen($cat_lvl_1_slug) > 0 ){
+            $url_params['slugs']['cat_lvl_1'] = $cat_lvl_1_slug;
+        }
+
+        if( strlen($cat_lvl_2_slug) > 0 ){
+            $url_params['slugs']['cat_lvl_2'] = $cat_lvl_2_slug;
+        }
+
+        if( strlen($cat_lvl_3_slug) > 0 ){
+            $url_params['slugs']['cat_lvl_3'] = $cat_lvl_3_slug;
+        }
+        
+        $url_params['cat_lvl'] = sizeof($url_params['slugs']) - 1;
+        
+        // echo "<pre>";
+        // print_r($url_params);
+        // exit;
+        
         return view('content.category',[
             'country' => $country,
             'language_code' => $language_code,
             'menu' => $menu,
+            'search_query' => $search_query,
             'category_obj' => $category_obj,
             'page' => $page,
             'from_document' => $from_document,
             'to_document' => $to_document,
             'total_documents' => $total_documents,
             'templates' => $category_products,
-            'cat_lvl_1_slug' => $cat_lvl_1_slug,
-            'cat_lvl_2_slug' => $cat_lvl_2_slug,
-            'cat_lvl_3_slug' => $cat_lvl_3_slug
+            'url_params' => $url_params
         ]);
     }
 
@@ -164,6 +194,10 @@ class ContentController extends Controller
     public function showTemplatePage($country, $slug){
         $language_code = 'en';
         $template_id = substr($slug, strrpos($slug, '-')+1, strlen($slug)  );
+        $search_query = '';
+        if( isset($request->searchQuery) ) {
+            $search_query = $request->searchQuery;
+        }
         
         $template = Template::where('_id','=',$template_id)
             ->first([
@@ -229,6 +263,7 @@ class ContentController extends Controller
         return view('content.product-detail',[
             'country' => $country,
             'language_code' => $language_code,
+            'search_query' => $search_query,
             'menu' => $menu,
             'breadcrumbs' => $this->bread_array,
             'breadcrumb' => $breadcrumbs_obj,
@@ -290,7 +325,7 @@ class ContentController extends Controller
         // echo $total_documents;
         // exit;
         $menu = json_decode(Redis::get('wayak:'.$country.':menu'));
-
+        
         return view('content.search',[
             'country' => $country,
             'language_code' => $language_code,

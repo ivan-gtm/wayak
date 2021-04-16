@@ -136,6 +136,7 @@ class AdminController extends Controller
         echo "<pre>";
         foreach($ready_for_sale_products as $row){
             // print_r($row);
+            // exit;
             
             $parsed_slug = str_replace('-',' ',substr($row->product_link_href, strripos($row->product_link_href, '/')+1, strlen($row->product_link_href)));
             $original_title = $row->thumb_title.' '.$row->title.' '.$row->product_title.' '.$parsed_slug;
@@ -146,7 +147,10 @@ class AdminController extends Controller
             if( isset($final_title[0]) ){
                 $words = $final_title[0];
                 
-                // print_r($final_title[0]);
+                // print_r($original_title);
+                // print_r("<br>");
+                // print_r($words);
+                // print_r("<br");
                 // exit;
                 
                 $ready_for_title = DB::select( DB::raw(
@@ -167,12 +171,12 @@ class AdminController extends Controller
                     $tmp_title[] = ucwords($word->word);
                 }
                 
-                // print_r($tmp_title[0]);
-                // exit;
-
+                
                 $unique_keywords_title = array_unique($tmp_title);
                 $final_title = implode(' ',$unique_keywords_title);
-
+                
+                // print_r($tmp_title);
+                // exit;
                 
                 $ready_for_slug = DB::select( DB::raw(
                     'SELECT * FROM `wayak`.`keywords` 
@@ -181,7 +185,6 @@ class AdminController extends Controller
                     AND language_code = \'en\'
                     AND (
                         ( is_reviewed = 1 AND is_tag = 1 ) OR is_reviewed = 0)
-                        ORDER BY counter DESC
                         LIMIT 20') 
                     );
                     
@@ -206,10 +209,10 @@ class AdminController extends Controller
                 // print_r( "<br>" );
                 // print_r( $row->id.'-'.substr($row->product_link_href, strripos($row->product_link_href, '/')+1, strlen($row->product_link_href)));
                 // print_r( "<br>" );
-                print_r( strlen($final_title).'>> ' );
+                print_r( strlen($final_title).'>> TITLE >> ' );
                 print_r( $final_title );
                 print_r( "<br>" );
-                print_r( strlen($final_slug).'>> ' );
+                print_r( strlen($final_slug).'>> SLUG >> ' );
                 print_r( $final_slug );
 
                 DB::table('thumbnails')

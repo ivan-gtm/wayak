@@ -33,8 +33,7 @@ use Illuminate\Support\Facades\App;
 class PacktController extends Controller
 {
 	function index(){
-        // self::login();
-        // exit;
+        // keys
 
         $redis_packt = Redis::connection('redisuat');
         $token = $redis_packt->get('packt:token');
@@ -57,9 +56,19 @@ class PacktController extends Controller
                 
                 if( isset($playlists->data) ){
                     foreach($playlists->data as $playlist){
+                        
+                        // echo "<pre>";
+                        // print_r($playlist);
+                        // exit;
+                        
+
                         foreach($playlist->products as $product){
-                            // $product->productId;
+                            // // // // // // // // // // // // // // ////
+                            // $product->productId = "9781783554317";
+                            // print_r($product->productId);
+                            // exit;
                             self::downloadCourseContent( $product->productId, $token );
+                            self::deleteFromPlaylist( $playlists->productId, $product->productId, $token );
                         }
                     }
                 }
@@ -81,11 +90,48 @@ class PacktController extends Controller
                 }
             }
         }
-    
-        exit;
+
     }
 
     // $local_img_path, $img_url
+    function deleteFromPlaylist( $playlist_id, $product_id, $token ){
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+        CURLOPT_URL => "https://services.packtpub.com/lists-v1/users/me/playlists/$playlist_id/products/$product_id",
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => "",
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => "DELETE",
+        CURLOPT_POSTFIELDS =>"{}",
+        CURLOPT_HTTPHEADER => array(
+            "authority: services.packtpub.com",
+            "pragma: no-cache",
+            "cache-control: no-cache",
+            "sec-ch-ua: \"Chromium\";v=\"88\", \"Google Chrome\";v=\"88\", \";Not A Brand\";v=\"99\"",
+            "accept: application/json, text/plain, */*",
+            "authorization: Bearer $token",
+            "sec-ch-ua-mobile: ?0",
+            "user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.192 Safari/537.36",
+            "content-type: application/json",
+            "origin: https://subscription.packtpub.com",
+            "sec-fetch-site: same-site",
+            "sec-fetch-mode: cors",
+            "sec-fetch-dest: empty",
+            "referer: https://subscription.packtpub.com/",
+            "accept-language: es,en;q=0.9"
+        ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+        // echo $response;
+    }
+
     function downloadCourseContent( $product_id, $token ){
 
         // echo "<pre>";
@@ -100,6 +146,10 @@ class PacktController extends Controller
         $redis_packt = Redis::connection('redisuat');
         $response = self::getBookIndex( $token->data->access, $product_id );
         $response = json_decode($response);
+
+        // echo "<pre>";
+        // print_r($content_type);
+        // exit;
         
         if( isset($response->errorCode) && $response->errorCode == 1000100){ // jwt expired
             
@@ -130,6 +180,9 @@ class PacktController extends Controller
         if( array_search('video', $content_type->data[0]->fileTypes ) ){
             
             $chapters = $response->data->chapters;
+            // echo "<pre>";
+            // print_r($chapters);
+            // exit;
 
             foreach($chapters as $index => $chapter){
                 foreach($chapter->sections as $section){
@@ -349,6 +402,8 @@ class PacktController extends Controller
     function getBookIndex( $access_token, $product_id ){
 
         $redis_packt = Redis::connection('redisuat');
+        
+        // echo 'packt:product_content:'.$product_id;
 
         if( $redis_packt->exists('packt:product_content:'.$product_id) == false ){
 

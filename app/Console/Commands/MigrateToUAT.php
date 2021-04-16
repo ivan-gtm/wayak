@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Facades\DB;
 
 class MigrateToUAT extends Command
 {
@@ -12,7 +13,7 @@ class MigrateToUAT extends Command
      *
      * @var string
      */
-    protected $signature = 'bot:migrateuat';
+    protected $signature = 'wayak:migrateuat';
 
     /**
      * The console command description.
@@ -44,39 +45,46 @@ class MigrateToUAT extends Command
     }
 
     function migrateRedisKeys(){
-        self::redisTemplates();
-        self::redisWayakConfig();
+        self::migrateTemplates();
+        self::migrateCarousels();
+        self::migrateMenu();
+        self::migrateCategories();
+        // self::migrateWayakConfig();
     }
     
-    function redisTemplates(){
-        $redis_uat = Redis::connection('redisuat');
-        // $keys = $redis_uat->keys('*');
+    function migrateTemplates(){
+        
+        $redis_src = Redis::connection('redispro');
+        $redis_dest = Redis::connection('default');
 
-        $templates = Redis::keys('template:en:*:jsondata');
+        $templates = DB::select( DB::raw(
+            'SELECT
+                thumbnails.template_id
+            FROM
+                templates,
+                thumbnails 
+            WHERE
+                templates.template_id = thumbnails.template_id 
+                AND templates.`status` = 5 
+                AND thumbnails.language_code = \'en\' 
+                AND thumbnails.thumbnail_ready IS TRUE') 
+            );
 
-        foreach ($templates as $template_keyname) {
-            $redis_uat->set($template_keyname, Redis::get($template_keyname));
-            print_r("Migrated key >> \n");
-            print_r($template_keyname);
-            usleep(500000);
+        foreach ($templates as $template) {
+            $template_keyname = 'template:en:'.$template->template_id.':jsondata';
+            
+            if( $redis_dest->exists($template_keyname) == false ){
+                $redis_dest->set($template_keyname, $redis_src->get($template_keyname));
+                print_r("Migrated key >> \n");
+                print_r($template_keyname);
+                usleep(500000);
+                // exit;
+            }
         }
 
-        // print_r("JIJI\n");
-        // print_r( $keys );
-        // print_r("DEV\n");
-        // print_r( Redis::keys('wayak*') );
-
-        // print_r( Redis::keys('template:*:jsondata') );
-        
-        
-        // $redis2 = new Predis\Client([
-        //     'host'     => 'localhost',
-        //     'port'     => 6379,
-        //     'database' => 3,
-        // ]);
     }
     
-    function redisWayakConfig(){
+    function migrateWayakConfig(){
         $redis_uat = Redis::connection('redisuat');
         // $keys = $redis_uat->keys('*');
 
@@ -88,6 +96,57 @@ class MigrateToUAT extends Command
             print_r($config_keyname);
             usleep(500000);
         }
+    }
+    
+    function migrateCarousels(){
+        $redis_src = Redis::connection('redispro');
+        $redis_dest = Redis::connection('default');
+        // $keys = $redis_uat->keys('*');
+
+        $carousels = $redis_src->keys('wayak:*:home:carousels');
+
+        foreach ($carousels as $carousel_key) {
+            $redis_dest->set($carousel_key, $redis_src->get($carousel_key));
+            print_r("Migrated key >> ");
+            print_r($carousel_key);
+            print_r("\n");
+            usleep(500000);
+        }
+
+    }
+    
+    function migrateMenu(){
+        $redis_src = Redis::connection('redispro');
+        $redis_dest = Redis::connection('default');
+        // $keys = $redis_uat->keys('*');
+
+        $carousels = $redis_src->keys('wayak:*:menu');
+
+        foreach ($carousels as $carousel_key) {
+            $redis_dest->set($carousel_key, $redis_src->get($carousel_key));
+            print_r("Migrated key >> ");
+            print_r($carousel_key);
+            print_r("\n");
+            usleep(500000);
+        }
+
+    }
+    
+    function migrateCategories(){
+        $redis_src = Redis::connection('redispro');
+        $redis_dest = Redis::connection('default');
+        // $keys = $redis_uat->keys('*');
+
+        $carousels = $redis_src->keys('wayak:categories:*');
+
+        foreach ($carousels as $carousel_key) {
+            $redis_dest->set($carousel_key, $redis_src->get($carousel_key));
+            print_r("Migrated key >> ");
+            print_r($carousel_key);
+            print_r("\n");
+            usleep(500000);
+        }
+
     }
 
 }

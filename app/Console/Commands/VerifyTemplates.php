@@ -21,7 +21,7 @@ class VerifyTemplates extends Command
      *
      * @var string
      */
-    protected $signature = 'command:verifytemplates';
+    protected $signature = 'wayak:verifytemplates';
 
     /**
      * The console command description.

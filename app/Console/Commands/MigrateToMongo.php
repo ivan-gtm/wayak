@@ -13,14 +13,14 @@ class MigrateToMongo extends Command
      *
      * @var string
      */
-    protected $signature = 'mongo:migratedb';
+    protected $signature = 'wayak:2-migratedb';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Create MongoDB cache from MySQL "templates" table.';
 
     /**
      * Create a new command instance.

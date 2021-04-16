@@ -12,7 +12,7 @@ class CreateKeywords extends Command
      *
      * @var string
      */
-    protected $signature = 'command:createkeywords';
+    protected $signature = 'wayak:createkeywords';
 
     /**
      * The console command description.

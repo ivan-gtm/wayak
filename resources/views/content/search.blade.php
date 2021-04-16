@@ -24,6 +24,7 @@
                         <div class="wrapper___2hP9G hasPagination">
                             <div>
                                 <div class="search-header">
+                                    {{--
                                     <div class="search-form-wrapper">
                                         <form class="form___1I3Xs" novalidate="" method="GET" action="{{ route('user.search',['country' => $country, 'page' => $page]) }}">
                                             @csrf
@@ -42,6 +43,7 @@
                                         </form>
                                         <div></div>
                                     </div>
+                                    --}}
                                     <div class="pagination top">
                                         <div class="typography-marketing-display-s title___3sRwO">Plantillas de "{{ $search_query }}"</div>
                                         <div class="paginationWrapper"><span class="typography-body-m paginationRange">{{ $from_document }}-{{ $to_document }} de {{ $total_documents }}</span>

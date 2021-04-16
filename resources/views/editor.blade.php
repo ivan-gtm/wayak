@@ -136,19 +136,19 @@
                         <ul class="nav navbar-nav am-nav-right">
                             <li>
                                 <a href="#" id="undo" title="Undo">
-                                    Deshacer
+                                    Back
                                 </a>
                             </li>
                             <li>
                                 <a href="#" id="redo" title="Redo">
-                                    Adelante
+                                    Forward
                                 </a>
                             </li>
                             <!-- if( $user_role  == 'administrator' OR $user_role  == 'designer' )  "administrator", "designer","customer" -->
                             @if( $demo_as_id == 0 )
                                 <li>
                                     <a href="#" id="savetemplate" title="savetemplate">
-                                        Guardar
+                                        Save
                                     </a>
                                 </li>
                                 @if( $user_role == 'administrator' )
@@ -159,14 +159,14 @@
                                     </li>
                                     <li>
                                         <a href="#" id="saveastemplate" title="saveastemplate">
-                                            Guardar Como
+                                            Save As
                                         </a>
                                     </li>
                                 @endif
                             @endif
                             <li>
                                 <a href="#" id="canvasSize" title="saveimage">
-                                    Tama&ntilde;o del lienzo
+                                    Canvas Size
                                 </a>
                             </li>
                         </ul>
@@ -191,13 +191,13 @@
                                 </ul>
                             </li>
                         </ul> -->
-                        <ul class="nav navbar-nav navbar-right am-admin-nav">
+                        <!-- <ul class="nav navbar-nav navbar-right am-admin-nav">
                             <li>
                                 <a href="https://help.localhost.com" target="_blank">
                                     Ayuda
                                 </a>
                             </li>
-                        </ul>
+                        </ul> -->
                         <ul class="nav navbar-nav navbar-right am-icons-nav">
                             <li class="dropdown hide">
                                 <a aria-expanded="false" class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" title="Settings">
@@ -245,12 +245,12 @@
                                     <input type="hidden" id="template-status" value="empty">
 
                                     <button aria-expanded="false" class="dropdown-toggle btn btn-info" data-toggle="dropdown" href="#" role="button" style="margin:12px 0;">
-                                        Descargar
+                                        Download
                                     </button>
                                     <ul class="dropdown-menu am-connections">
                                         <li>
                                             <div class="title">
-                                                Opciones de descarga
+                                                Download Options
                                             </div>
                                             <div class="list">
                                                 <div class="content">
@@ -266,7 +266,7 @@
                                                             <a href="#" id="downloadJPEG">
                                                                 <span class="icon s7-print" style="font-size:24px; vertical-align:middle;">
                                                                 </span>
-                                                                JPEG (Para imprimir)
+                                                                JPEG ( For printing )
                                                             </a>
                                                         </li>
                                                         <li style="text-align:center;">
@@ -308,7 +308,7 @@
                                 <i class="icon s7-albums">
                                 </i>
                                 <span>
-                                    Plantillas
+                                    Templates
                                 </span>
                             </a>
                             <ul class="sub-menu visible">
@@ -388,7 +388,7 @@
                                     T
                                 </span>
                                 <span>
-                                    Texto
+                                    Text
                                 </span>
                             </a>
                             <ul class="sub-menu">
@@ -423,12 +423,13 @@
                                     <div class="col-lg-12" id="addtextoptions" style="text-align:center; margin-top:10px;">
                                         <div id="addheading" style="font-size:36px;">
                                             <a href="#" onclick="javascript:addheadingText();">
-                                                Agregar Titulo
+                                                Add Heading Text
                                             </a>
                                         </div>
                                         <div id="addsometext" style="font-size:18px; margin:5px 0 10px 0;">
+                                         
                                             <a href="#" onclick="javascript:addText();">
-                                                Agregar cuadro de texto
+                                                Add Textbox
                                             </a>
                                         </div>
                                     </div>
@@ -504,7 +505,7 @@
                                 <i class="icon s7-photo">
                                 </i>
                                 <span>
-                                    Fondo
+                                    Background
                                 </span>
                             </a>
                             <ul class="sub-menu">

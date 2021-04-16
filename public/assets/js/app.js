@@ -1,19 +1,57 @@
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
+    try {
+        var info = gen[key](arg)
+          , value = info.value
+    } catch (error) {
+        return void reject(error)
+    }
+    info.done ? resolve(value) : Promise.resolve(value).then(_next, _throw)
+}
+function _asyncToGenerator(fn) {
+    return function() {
+        var self = this
+          , args = arguments;
+        return new Promise(function(resolve, reject) {
+            var gen = fn.apply(self, args);
+            function _next(value) {
+                asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value)
+            }
+            function _throw(err) {
+                asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err)
+            }
+            _next(void 0)
+        }
+        )
+    }
+}
 function _toConsumableArray(arr) {
-    return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread()
+    return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread()
 }
 function _nonIterableSpread() {
-    throw new TypeError("Invalid attempt to spread non-iterable instance")
+    throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")
+}
+function _unsupportedIterableToArray(o, minLen) {
+    if (o) {
+        if ("string" == typeof o)
+            return _arrayLikeToArray(o, minLen);
+        var n = Object.prototype.toString.call(o).slice(8, -1);
+        return "Object" === n && o.constructor && (n = o.constructor.name),
+        "Map" === n || "Set" === n ? Array.from(o) : "Arguments" === n || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? _arrayLikeToArray(o, minLen) : void 0
+    }
 }
 function _iterableToArray(iter) {
-    if (Symbol.iterator in Object(iter) || "[object Arguments]" === Object.prototype.toString.call(iter))
+    if ("undefined" != typeof Symbol && Symbol.iterator in Object(iter))
         return Array.from(iter)
 }
 function _arrayWithoutHoles(arr) {
-    if (Array.isArray(arr)) {
-        for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++)
-            arr2[i] = arr[i];
-        return arr2
-    }
+    if (Array.isArray(arr))
+        return _arrayLikeToArray(arr)
+}
+function _arrayLikeToArray(arr, len) {
+    (null == len || len > arr.length) && (len = arr.length);
+    for (var i = 0, arr2 = new Array(len); i < len; i++)
+        arr2[i] = arr[i];
+    return arr2
 }
 function _typeof(obj) {
     return (_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(obj) {
@@ -121,9 +159,53 @@ fabric.Dpattern.fromObject = function(object, callback) {
     new fabric.Dpattern(object,callback)
 }
 ;
-var canvasScale = 1, currentcanvasid = 0, canvasindex = 0, pageindex = 0, canvasarray = [], isdownloadpdf = !1, isupdatetemplate = !1, issaveastemplate = !1, totalsvgs = 0, convertedsvgs = 0, loadedtemplateid = 0, activeObjectCopy, keystring = "", remstring = "", savestatecount = 0, stopProcess = !1, templatesloading = !1, backgroundsLoading = !1, elementsLoading = !1, textsLoading = !1, rotationStep = 1, properties_to_save = Array("format", "patternSourceCanvas", "bgImg", "src", "svg_custom_paths", "hidden", "cwidth", "cheight", "locked", "selectable", "editable", "bg", "logoid", "evented", "id", "bgsrc", "bgScale", "lockMovementX", "lockMovementY"), isMac = navigator.platform.toUpperCase().indexOf("MAC") >= 0, isSafari = /Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor), isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor), s_history = !1, previewSvg, offsetTemplates = 0, offsetRelatedProducts = 0, offsetTexts = 0, offsetElements = 0, offsetBackgrounds = 0, template_type, geofilterBackground, instructionsId, svg_custom_data = [], localStorageKey = "templett.design", templateOptions, backgroundPromise, duplicatedTemplateId, $fontUTF8Symbols = {}, $useKeepSvgGroups = !1, dontLoadFonts = [], 
-DEBUG = 1, $copyOnePageAcrossSheet = !1;
+var canvasScale = 1, currentcanvasid = 0, canvasindex = 0, pageindex = 0, canvasarray = [], isdownloadpdf = !1, isupdatetemplate = !1, issaveastemplate = !1, totalsvgs = 0, convertedsvgs = 0, loadedtemplateid = 0, activeObjectCopy, keystring = "", remstring = "", savestatecount = 0, stopProcess = !1, templatesloading = !1, backgroundsLoading = !1, elementsLoading = !1, textsLoading = !1, rotationStep = 1, properties_to_save = Array("format", "patternSourceCanvas", "bgImg", "src", "svg_custom_paths", "hidden", "cwidth", "cheight", "locked", "selectable", "editable", "bg", "logoid", "evented", "id", "bgsrc", "bgScale", "lockMovementX", "lockMovementY"), isMac = navigator.platform.toUpperCase().indexOf("MAC") >= 0, isSafari = /Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor), isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor), s_history = !1, previewSvg, offsetTemplates = 0, offsetRelatedProducts = 0, offsetTexts = 0, offsetElements = 0, offsetBackgrounds = 0, template_type, geofilterBackground, instructionsId, svg_custom_data = [], localStorageKey = "templett.design", templateOptions, backgroundPromise, duplicatedTemplateId, lastShadowBlur, lastShadowHorizontalOffset, lastShadowVerticalOffset, lastShadowColor, historyTable, $fontUTF8Symbols = {}, $useKeepSvgGroups = !1, dontLoadFonts = [], DEBUG = !1, $copyOnePageAcrossSheet = !1;
 fabric.Object.NUM_FRACTION_DIGITS = 10,
+InfiniteScroll.prototype.loadNextPage = function() {
+    if (!this.isLoading && this.canLoad) {
+        var path = this.getAbsolutePath();
+        this.isLoading = !0;
+        var onLoad = function(response) {
+            this.onPageLoad(response, path)
+        }
+        .bind(this)
+          , onError = function(error) {
+            this.onPageError(error, path)
+        }
+        .bind(this)
+          , onLast = function(response) {
+            this.lastPageReached(response, path)
+        }
+        .bind(this);
+        request(path, this.options.responseType, onLoad, onError, onLast),
+        this.dispatchEvent("request", null, [path])
+    }
+}
+;
+var request = function(url, responseType, onLoad, onError, onLast) {
+    var req = new XMLHttpRequest;
+    req.open("GET", url, !0),
+    req.responseType = responseType || "",
+    req.setRequestHeader("X-Requested-With", "XMLHttpRequest"),
+    demo_as_id && "" != demoJwt && req.setRequestHeader("x-demo-templett-jwt", demoJwt),
+    req.onload = function() {
+        if (200 == req.status)
+            onLoad(req.response);
+        else if (204 == req.status)
+            onLast(req.response);
+        else {
+            var error = new Error(req.statusText);
+            onError(error)
+        }
+    }
+    ,
+    req.onerror = function() {
+        var error = new Error("Network error requesting " + url);
+        onError(error)
+    }
+    ,
+    req.send()
+};
 fabric.textureSize = 4096,
 fabric.util.object.extend(fabric.Group.prototype, {
     clone: function(callback, properties) {
@@ -168,8 +250,8 @@ var $spectrum_options = {
     allowEmpty: !0,
     showButtons: !1,
     maxSelectionSize: 24,
-    togglePaletteMoreText: "Mostrar Avanzado",
-    togglePaletteLessText: "Ocultar Avanzando",
+    togglePaletteMoreText: "Show advanced",
+    togglePaletteLessText: "Hide advanced",
     beforeShow: function(color) {
         $(this).spectrum("set", $(this).css("backgroundColor"))
     },
@@ -271,6 +353,46 @@ function applyGradient($color1, $color2, $direction, $object) {
     DEBUG && console.log("applyGradient() ", $direction, $color1, $color2),
     !0
 }
+function applyGradient2(element, object) {
+    if ("object" === _typeof(element.fill) && "linear" == element.fill.type) {
+        var gradientParams = getGlobalGradient(element.fill.colorStops, element.fill.coords, "linear");
+        object.setGradient("fill", gradientParams),
+        object.set("dirty", !0),
+        canvas.renderAll()
+    }
+    if ("object" === _typeof(element.fill) && "radial" == element.fill.type) {
+        var _gradientParams = getGlobalGradient(element.fill.colorStops, element.fill.coords, "radial");
+        object.setGradient("fill", _gradientParams),
+        object.set("dirty", !0),
+        canvas.renderAll()
+    }
+}
+function getGlobalGradient(colorStops, coords, direction) {
+    if (!colorStops)
+        return !1;
+    var type = "linear";
+    "radial-gradient-fill" != direction && "radial" != direction || (type = "radial");
+    var colorValues = {};
+    return colorStops.forEach(function(color, index) {
+        var key = null != color.offset ? color.offset : getOffsetKey(index, colorStops.length)
+          , value = color;
+        if (color.color && (value = color.color),
+        null != color.opacity)
+            if (-1 != value.indexOf("#")) {
+                var hex = value.replace("#", "");
+                value = "rgba(" + parseInt(hex.substring(0, 2), 16) + "," + parseInt(hex.substring(2, 4), 16) + "," + parseInt(hex.substring(4, 6), 16) + "," + color.opacity + ")"
+            } else
+                value = (value = value.replace("rgb", "rgba")).replace(")", "," + color.opacity + ")");
+        colorValues[key] = value
+    }),
+    Object.assign({
+        type: type,
+        colorStops: colorValues
+    }, coords)
+}
+function getOffsetKey(index, length) {
+    return 0 == index ? 0 : index == length - 1 ? 1 : 1 / (length - 1) * index
+}
 function switchFillType($filltype, $color1, $color2, $target) {
     var $colorSelectorBox;
     DEBUG && console.log("switchFillType() $target: ", $target),
@@ -324,7 +446,7 @@ function switchFillType($filltype, $color1, $color2, $target) {
         "background-image": "linear-gradient(to right, " + $color1 + ", " + $color2 + ")"
     }),
     $($colorSelectorBox).css({
-        height: "34px"
+        height: "36px"
     })))
 }
 function isSvg($object) {
@@ -479,7 +601,7 @@ function getFontFilename(fontid) {
     return new Promise(function(resolve, reject) {
         var url = appUrl + "editor/get-woff-font-url?font_id=" + fontid;
         $.getJSON(url).done(function(data) {
-            data.success ? resolve(data.url) : console.log("An error occurred while receiving the font filename: " + url)
+            data.success ? resolve(data.url) : console.log("An error occurred while receiving the font filename: " + answer.msg)
         })
     }
     )
@@ -794,7 +916,7 @@ function addText() {
             scaleX: canvasScale,
             scaleY: canvasScale,
             lineHeight: 1.2,
-            width: canvas.get("width") / canvas.getZoom() - 48,
+            width: 200,
             fontWeight: "normal",
             originX: "center",
             originY: "top"
@@ -1182,7 +1304,13 @@ function setStyle(object, styleName, value) {
         var style = {};
         style[styleName] = value,
         object.selectionStart === object.selectionEnd || 0 === object.selectionStart && object.selectionEnd === object.text.length ? (object.removeStyle(styleName),
-        object[styleName] = value) : ($.isEmptyObject(object.getSelectionStyles()) ? ($.isEmptyObject(object.getStyleAtPosition()) || object.getStyleAtPosition()[styleName] !== value || "fill" === styleName || (style[styleName] = ""),
+        object[styleName] = value,
+        "fontFamily" == styleName && $("#font-dropdown").on("shown.bs.dropdown", function() {
+            $("#fontSearch").focus(),
+            $("#fonts-dropdown").scrollTop($('#fonts-dropdown li a[data-ff="' + value + '"]').position().top - $("#fonts-dropdown li:first").position().top),
+            $("#fonts-dropdown li a").removeClass("font-selected"),
+            $('#fonts-dropdown li a[data-ff="' + value + '"]').addClass("font-selected")
+        })) : ($.isEmptyObject(object.getSelectionStyles()) ? ($.isEmptyObject(object.getStyleAtPosition()) || object.getStyleAtPosition()[styleName] !== value || "fill" === styleName || (style[styleName] = ""),
         object.setSelectionStyles(style, object.selectionStart, object.selectionEnd)) : $.each(object.getSelectionStyles(), function($i, $s) {
             void 0 !== $s[styleName] && $s[styleName] === value && "fill" !== styleName ? $s[styleName] = "" : $s[styleName] = value,
             object.setSelectionStyles($s, object.selectionStart + $i, object.selectionStart + 1 + $i)
@@ -1190,7 +1318,13 @@ function setStyle(object, styleName, value) {
         "fontFamily" === styleName && object.setSelectionStyles(style, object.selectionStart, object.selectionEnd))
     } else
         object && (object.setSelectionStyles && object.removeStyle(styleName),
-        object[styleName] = value);
+        object[styleName] = value,
+        "fontFamily" == styleName && $("#font-dropdown").on("shown.bs.dropdown", function() {
+            $("#fontSearch").focus(),
+            $("#fonts-dropdown").scrollTop($('#fonts-dropdown li a[data-ff="' + value + '"]').position().top - $("#fonts-dropdown li:first").position().top),
+            $("#fonts-dropdown li a").removeClass("font-selected"),
+            $('#fonts-dropdown li a[data-ff="' + value + '"]').addClass("font-selected")
+        }));
     object.dirty = !0,
     canvas.renderAll(),
     save_history()
@@ -1236,7 +1370,15 @@ $("body").on("click", ".fill-type", function(e) {
 fabric.Object.prototype.rotatingPointOffset = 20,
 fabric.Group.prototype.toSVG = function(t) {
     for (var transform, cwidth = canvasarray[0].get("width") / canvasarray[0].getZoom(), cheight = canvasarray[0].get("height") / canvasarray[0].getZoom(), e = [], i = 0, len = this._objects.length; i < len; i++)
-        e.push("\t", this._objects[i].toSVG(t));
+        if ("group" == this._objects[i].type) {
+            var opacityValue = this._objects[i].opacity
+              , groupSvg = this._objects[i].toSVG(t)
+              , groupElement = $(groupSvg);
+            $(groupElement).css("opacity", opacityValue),
+            groupSvg = groupSvg.replace('style="', 'style="opacity: ' + opacityValue + ";"),
+            e.push("\t", groupSvg)
+        } else
+            e.push("\t", this._objects[i].toSVG(t));
     var center, options = {
         translateX: 0,
         translateY: 0,
@@ -1341,23 +1483,33 @@ $("#addrow,#addcolumn").click(function(e) {
 }),
 $("#templatesearch").on("keypress", function(e) {
     if (13 === e.which) {
-        var $tags = $(this).val().match(/\w+/g).toString();
+        $(this).val().match(/\w+/g).toString();
         $("#a").scrollTop(0),
-        $templates = getTemplates2(0, $tags)
+        initMasonry_template(),
+        loadTemplates_template()
     }
 }),
 $("#textsearch").on("keypress", function(e) {
     if (13 === e.which) {
-        var $tags = $(this).val().match(/\w+/g).toString();
+        $(this).val().match(/\w+/g).toString();
         $("#b").scrollTop(0),
-        getTexts2(0, $tags)
+        initMasonry_text(),
+        loadTemplates_text()
     }
 }),
 $("#elementssearch").on("keypress", function(e) {
-    13 === e.which && getCatimages2(0, $(this).val().match(/\w+/g).toString())
+    if (13 === e.which) {
+        $(this).val().match(/\w+/g).toString();
+        initMasonry_element(),
+        loadTemplates_element()
+    }
 }),
 $("#bgsearch").on("keypress", function(e) {
-    13 === e.which && getBgimages2(0, $(this).val().match(/\w+/g).toString())
+    if (13 === e.which) {
+        $(this).val().match(/\w+/g).toString();
+        initMasonry_bg(),
+        loadTemplates_bg()
+    }
 }),
 $("#template_container").on("click", ".thumbnail", function() {
     jQuery(this).data("target") && loadTemplate(jQuery(this).data("target"))
@@ -1448,15 +1600,19 @@ $("#new_canvas_height_mm").change(function() {
 }),
 $(".textPane").click(function(e) {
     e.preventDefault(),
-    !$("#text_container .thumb").last().attr("id") && $("body").hasClass("admin") && getTexts2(0, "")
+    !$("#text_container .thumb").last().attr("id") && $("body").hasClass("admin") && (initMasonry_text(),
+    loadTemplates_text())
 }),
 $(".elementsPane").click(function(e) {
     e.preventDefault(),
-    $("#catimage_container .thumb").last().attr("id") || getCatimages2(0, "")
+    $("#catimage_container .thumb").last().attr("id") || (initMasonry_element(!0),
+    loadTemplates_element())
 }),
 $(".bgPane").click(function(e) {
-    e.preventDefault(),
-    $("#background_container .thumb").last().attr("id") || getBgimages2(0, "")
+    e.preventDefault();
+    $("#background_container .thumb").last().attr("id");
+    initMasonry_bg(),
+    loadTemplates_bg()
 }),
 $("#gridbtn").on("click", function() {
     addGrid()
@@ -1561,8 +1717,10 @@ $("#changelineheight").slider().on("slideStop", function(e) {
     save_history()
 });
 var ChangeCharSpacing = function() {
-    s_history = !1,
-    setStyle(canvas.getActiveObject(), "charSpacing", 100 * ccs.getValue()),
+    s_history = !1;
+    var activeObject = canvas.getActiveObject();
+    setStyle(activeObject, "charSpacing", 100 * ccs.getValue()),
+    activeObject.setCoords(),
     canvas.renderAll()
 }
   , ccs = $("#changecharspacing").slider().on("slide", ChangeCharSpacing).data("slider");
@@ -1840,49 +1998,33 @@ function setZoom(newZoomLevel) {
 function updateDpatternsScale() {
     arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : canvas
 }
-
 function setDemoOverlay() {
-	scale = $("#zoomperc").data("scaleValue");
+    scale = $("#zoomperc").data("scaleValue");
 	var uri = appUrl + "assets/img/demo_overlay.svg";
-    
     fabric.Image.fromURL(uri, function(img) {
-        img.scaleToWidth(80 * scale);
-        img.angle = 315;
-        img.top = 50 * scale;
-        img.left = 20 * scale;
-
-        patternSourceCanvas = new fabric.StaticCanvas();
+        img.scaleToWidth(50 * scale),
+        img.angle = 315,
+        img.top = 50 * scale,
+        img.left = 20 * scale,
+        patternSourceCanvas = new fabric.StaticCanvas,
         patternSourceCanvas.add(img);
-    
-        var pattern = new fabric.Pattern({
+        for (var pattern = new fabric.Pattern({
             source: function() {
-                patternSourceCanvas.setDimensions({
-                    width: 90 * scale,
+                return patternSourceCanvas.setDimensions({
+                    width: 80 * scale,
                     height: 80 * scale
-                });
-                patternSourceCanvas.renderAll();
-                return patternSourceCanvas.getElement();
+                }),
+                patternSourceCanvas.renderAll(),
+                patternSourceCanvas.getElement()
             },
             repeat: "repeat"
-        });
-
-        for(n = 0; n < canvasarray.length; n++) {
-            if( $("#divcanvas" + n).is(":visible") == true ){
-                canvasarray[n].setOverlayColor(pattern, function() {
-                // canvasarray[n].setOverlayColor({source: uri }, function() {
-                    if( typeof canvasarray[n] != 'undefined' 
-                        && typeof canvasarray[n].renderAll() != 'undefined' ){
-                        canvasarray[n].renderAll();
-                        // canvas.discardActiveObject().renderAll();
-                        // canvasarray[n].renderAll.bind(canvasarray[n]);
-                    }
-                });
-            } 
-        }
-
-	});
+        }), n = 0; canvasarray[n]; )
+            $("#divcanvas" + n).is(":visible") && canvasarray[n].setOverlayColor(pattern, function() {
+                canvasarray[n].renderAll()
+            }),
+            n++
+    })
 }
-
 function setGeofilterOverlay() {
     canvas.setOverlayImage("/design/assets/img/geofilter_overlay.svg", canvas.renderAll.bind(canvas))
 }
@@ -1958,72 +2100,6 @@ function zoomTo($scale_value) {
     $(".am-content").css("height", $("#canvaspages").outerHeight() * $scale_value + $("#addnewpagebutton").outerHeight() + 150);
     var $w = $("#canvaspages").outerWidth() * $scale_value + $(".duplicatecanvas").outerWidth();
     $w > $(window).width() ? $(".am-content").css("width", $w + 105) : $(".am-content").css("width", "auto")
-}
-function resetNewTemplateForm() {
-    $("input[name=metric_units1]").val(["in"]),
-    $("#canvaswh_modal").find(".canvas_size_inches").attr("class", "canvas_size_inches active"),
-    $("#canvaswh_modal").find(".canvas_size_pixels").attr("class", "canvas_size_pixels"),
-    $("#canvaswh_modal").find(".canvas_size_mm").attr("class", "canvas_size_mm"),
-    $("#loadCanvasWid").val(5),
-    $("#loadCanvasHei").val(7),
-    $("#numOfcanvasrows").val("1"),
-    $("#numOfcanvascols").val("1")
-}
-function setWorkspace() {
-    $("#addnewpagebutton").show(),
-    $("#downloadPDF").parent().show(),
-    $("#downloadJPEG").parent().show(),
-    $(".bgPane").parent().show(),
-    $(".duplicatecanvas").css("visibility", "visible"),
-    $("#options").show(),
-    $("#background").hide(),
-    $("#phone").hide(),
-    $(".background-arrow").hide(),
-    $("#addnewpagebutton").text("+ Pagina en blanco"),
-    $("#convertToDoublesided").hide(),
-    $("#convertToSingle").hide(),
-    $("#convertGeofilterToNewSize").hide(),
-    $("#addrow").hide(),
-    $("#deleterow").hide(),
-    $("#addcolumn").hide(),
-    $("#deletecolumn").hide(),
-    "custom" == template_type ? ($("#addrow").show(),
-    $("#deleterow").show(),
-    $("#addcolumn").show(),
-    $("#deletecolumn").show()) : "doublesided" == template_type ? ($("#addnewpagebutton").text(" + Add a Back Side"),
-    2 == $(".divcanvas:visible").length && ($("#addnewpagebutton").hide(),
-    $(".duplicatecanvas").css("visibility", "hidden"))) : "geofilter" == template_type ? ($("#addnewpagebutton").hide(),
-    $("#downloadPDF").parent().hide(),
-    $("#downloadJPEG").parent().hide(),
-    $(".bgPane").parent().hide(),
-    $(".duplicatecanvas").css("visibility", "hidden"),
-    $("#canvasSize").hide(),
-    $("#gridbtn").hide(),
-    $("#convertGeofilterToNewSize").show(),
-    $("#background").show(),
-    $("#phone").show(),
-    $("#canvas0").addClass("canvas-background"),
-    $(".background-arrow").show(),
-    setGeofilterBackground(geofilterBackground)) : "geofilter2" == template_type && ($("#addnewpagebutton").hide(),
-    $("#downloadPDF").parent().hide(),
-    $("#downloadJPEG").parent().hide(),
-    $(".bgPane").parent().hide(),
-    $(".duplicatecanvas").css("visibility", "hidden"),
-    $("#options").hide(),
-    $("#background").show(),
-    $("#phone").show(),
-    $("#canvas0").addClass("canvas-background"),
-    $(".background-arrow").show(),
-    setGeofilterBackground(geofilterBackground)),
-    "single" == template_type && $(".divcanvas:visible").length <= 2 || "custom" == template_type && $(".divcanvas:visible").length <= 2 && 1 == $("#numOfcanvasrows").val() && 1 == $("#numOfcanvascols").val() ? $("#convertToDoublesided").show() : "doublesided" == template_type && $("#convertToSingle").show(),
-    ["doublesided", "geofilter", "geofilter2"].includes(template_type) || ($(".pagenumber:visible").length >= 36 ? ($(".duplicatecanvas").addClass("disabled"),
-    $("#addnewpagebutton").hide(),
-    $("#pageLimitMessage").show()) : ($(".duplicatecanvas").removeClass("disabled"),
-    $("#addnewpagebutton").show(),
-    $("#pageLimitMessage").hide())),
-    canvasarray[0].cwidth / 96 * (canvasarray[0].cheight / 96) > 100 && ($("#addnewpagebutton").hide(),
-    $(".duplicatecanvas").css("visibility", "hidden")),
-    setTimeout(checkDpatterns, 100)
 }
 rightIndentSwitch && (rightIndentSwitch.onclick = function() {
     var activeObject = canvas.getActiveObject()
@@ -2110,7 +2186,85 @@ $("#zoomperc").click(function() {
 $("#btnFitToScreen").click(function() {
     setZoom(1),
     autoZoom()
-}),
+});
+var newTemplateTagsEdit = $("#newTemplateTags").tagsField({
+    label: "Tags",
+    id: "template_tags",
+    labelColumnClass: "control-label",
+    divColumnClass: ""
+});
+function resetNewTemplateForm() {
+    $(".metric_block").show(),
+    $("input[name=metric_units1]").val(["in"]),
+    $("#canvaswh_modal").find(".canvas_size_inches").attr("class", "canvas_size_inches active"),
+    $("#canvaswh_modal").find(".canvas_size_pixels").attr("class", "canvas_size_pixels"),
+    $("#canvaswh_modal").find(".canvas_size_mm").attr("class", "canvas_size_mm"),
+    $("#loadCanvasWid").val(5),
+    $("#loadCanvasHei").val(7),
+    $("#numOfcanvasrows").val("1"),
+    $("#numOfcanvascols").val("1")
+}
+function setWorkspace() {
+    $("#addnewpagebutton").show(),
+    $("#productImageDownload").hide(),
+    $("#downloadPDF").parent().show(),
+    $("#downloadJPEG").parent().show(),
+    $("#downloadAsPNG").parent().show(),
+    $(".bgPane").parent().show(),
+    $(".duplicatecanvas").css("visibility", "visible"),
+    $("#options").show(),
+    $("#background").hide(),
+    $("#phone").hide(),
+    $(".background-arrow").hide(),
+    $("#addnewpagebutton").text(" + Add a Blank Page"),
+    $("#convertToDoublesided").hide(),
+    $("#convertToSingle").hide(),
+    $("#convertGeofilterToNewSize").hide(),
+    $("#addrow").hide(),
+    $("#deleterow").hide(),
+    $("#addcolumn").hide(),
+    $("#deletecolumn").hide(),
+    "custom" == template_type ? ($("#addrow").show(),
+    $("#deleterow").show(),
+    $("#addcolumn").show(),
+    $("#deletecolumn").show()) : "doublesided" == template_type ? ($("#addnewpagebutton").text(" + Add a Back Side"),
+    2 == $(".divcanvas:visible").length && ($("#addnewpagebutton").hide(),
+    $(".duplicatecanvas").css("visibility", "hidden"))) : "geofilter" == template_type ? ($("#addnewpagebutton").hide(),
+    $("#downloadPDF").parent().hide(),
+    $("#downloadJPEG").parent().hide(),
+    $(".bgPane").parent().hide(),
+    $(".duplicatecanvas").css("visibility", "hidden"),
+    $("#canvasSize").hide(),
+    $("#gridbtn").hide(),
+    $("#convertGeofilterToNewSize").show(),
+    $("#background").show(),
+    $("#phone").show(),
+    $("#canvas0").addClass("canvas-background"),
+    $(".background-arrow").show(),
+    setGeofilterBackground(geofilterBackground)) : "geofilter2" == template_type ? ($("#addnewpagebutton").hide(),
+    $("#downloadPDF").parent().hide(),
+    $("#downloadJPEG").parent().hide(),
+    $(".bgPane").parent().hide(),
+    $(".duplicatecanvas").css("visibility", "hidden"),
+    $("#options").hide(),
+    $("#background").show(),
+    $("#phone").show(),
+    $("#canvas0").addClass("canvas-background"),
+    $(".background-arrow").show(),
+    setGeofilterBackground(geofilterBackground)) : "product_image" == template_type && ($("#addnewpagebutton").hide(),
+    $(".download-menu").hide(),
+    $("#productImageDownload").show(),
+    $(".duplicatecanvas").css("visibility", "hidden")),
+    "single" == template_type && $(".divcanvas:visible").length <= 2 || "custom" == template_type && $(".divcanvas:visible").length <= 2 && 1 == $("#numOfcanvasrows").val() && 1 == $("#numOfcanvascols").val() ? $("#convertToDoublesided").show() : "doublesided" == template_type && $("#convertToSingle").show(),
+    ["doublesided", "geofilter", "geofilter2", "product_image"].includes(template_type) || ($(".pagenumber:visible").length >= 36 ? ($(".duplicatecanvas").addClass("disabled"),
+    $("#addnewpagebutton").hide(),
+    $("#pageLimitMessage").show()) : ($(".duplicatecanvas").removeClass("disabled"),
+    $("#addnewpagebutton").show(),
+    $("#pageLimitMessage").hide())),
+    canvasarray[0].cwidth / 96 * (canvasarray[0].cheight / 96) > 100 && ($("#addnewpagebutton").hide(),
+    $(".duplicatecanvas").css("visibility", "hidden")),
+    setTimeout(checkDpatterns, 100)
+}
 $("#savetemplate").click(function() {
     loadedtemplateid <= 0 ? (issaveastemplate = !0,
     isupdatetemplate = !1,
@@ -2120,6 +2274,7 @@ $("#savetemplate").click(function() {
     isupdatetemplate = !0,
     proceed_savetemplate())
 }),
+$("#savetemplate_modal").on("hidden.bs.modal", function(e) {}),
 $("#newtemplate").click(function(e) {
     if (e.preventDefault(),
     "yes" !== $("#autosave").data("saved"))
@@ -2183,6 +2338,26 @@ $("#btn_type_custom").click(function(e) {
     $("#template_type_modal").modal("hide"),
     $("#canvaswh_modal").modal("show")
 }),
+$("#btn_type_product_image").click(function(e) {
+    template_type = "product_image",
+    resetNewTemplateForm(),
+    $("input[name=metric_units1]").val(["px"]),
+    $("#canvaswh_modal").find(".canvas_size_pixels").attr("class", "canvas_size_pixels active"),
+    $("#canvaswh_modal").find(".canvas_size_inches").attr("class", "canvas_size_inches"),
+    $("#canvaswh_modal").find(".canvas_size_mm").attr("class", "canvas_size_mm"),
+    $(".metric_block").hide(),
+    $("#loadCanvasWidthPx").val(2e3),
+    $("#loadCanvasHeightPx").val(1600),
+    $("#loadCanvasWid").val(2e3 / 96 / 3.125),
+    $("#loadCanvasHei").val(1600 / 96 / 3.125),
+    $("#numOfcanvasrows").val("1"),
+    $("#numOfcanvascols").val("1"),
+    $("#numOfcanvasrows").closest("span").hide(),
+    $("#numOfcanvascols").closest("span").hide(),
+    $("#multiCanvText").hide(),
+    $("#template_type_modal").modal("hide"),
+    $("#canvaswh_modal").modal("show")
+}),
 $("#btn_type_geofilter").click(function(e) {
     template_type = "geofilter2",
     resetNewTemplateForm(),
@@ -2219,10 +2394,12 @@ $("#saveastemplate").click(function() {
     $("#savetemplate_modal").modal("show")
 }),
 $("#downloadPDF").click(function() {
-    canvasarray[0].cwidth - 20 > 1122 || canvasarray[0].cheight - 20 > 1122 ? ($("#savePaper").prop("checked", !1),
+    checkSavePaper().length > 0 ? $(".savePaperRow").show() : ($("#savePaper").prop("checked", !1),
     $("#selectSize").attr("aria-expanded", !1),
-    $(".savePaperRow").hide()) : $(".savePaperRow").show(),
-    $("#downloadpdfmodal").modal("show")
+    $("#selectSize").removeClass("in"),
+    $(".savePaperRow").hide()),
+    $("#downloadpdfmodal").modal("show"),
+    getPreview()
 }),
 $("#downloadJPEG").click(function() {
     $("#downloadjpegmodal").modal("show")
@@ -2230,6 +2407,84 @@ $("#downloadJPEG").click(function() {
 $("#downloadtemplate").click(function() {
     $("#downloadtemplate_modal").modal("show")
 }),
+$("#downloadPNG").click(function() {
+    "geofilter2" == template_type ? downloadAsPng() : $("#downloadPngModal").modal("show")
+}),
+$("#showHistory").click(function() {
+    historyTable.ajax.reload(),
+    $("#showHistoryModal").modal("show")
+}),
+// $("#downloadAsPNG").click(function() {
+//     downloadAsPng()
+// });
+// var downloadAsPng = function() {
+//     if (ajaxRequestRef && ajaxRequestRef.abort(),
+//     demo_as_id > 0)
+//         $.toast({
+//             text: "Not allowed in demo mode",
+//             icon: "error",
+//             loader: !1,
+//             position: "top-right"
+//         });
+//     else {
+//         downloadPdfTimer(120),
+//         canvas.discardActiveObject().renderAll();
+//         var canvases = canvasarray;
+//         globalRow = parseInt($("#numOfcanvasrows").val()),
+//         globalCol = parseInt($("#numOfcanvascols").val());
+//         var pages = $(".divcanvas:visible").length / document.getElementById("numOfcanvasrows").value / document.getElementById("numOfcanvascols").value
+//           , canvasWidth = canvases[0].get("width") / canvases[0].getZoom()
+//           , canvasHeight = canvases[0].get("height") / canvases[0].getZoom()
+//           , density = $('[name="pngRadioDensity"]:checked').val();
+//         "geofilter2" == template_type && (density = 96);
+//         var templateJson = getTemplateJson()
+//           , urlDocument = appUrl + "admin/Documents/download-png-file";
+//         $.toast({
+//             heading: "Creating PNG...",
+//             text: "Please wait",
+//             icon: "info",
+//             loader: !1,
+//             allowToastClose: !1,
+//             position: "top-right",
+//             hideAfter: !1,
+//             stack: 1,
+//             beforeShow: function() {
+//                 var tag = $(".jq-toast-single.jq-has-icon.jq-icon-info").first();
+//                 $(tag).removeClass("jq-icon-info"),
+//                 $(tag).addClass("toast-loader-icon")
+//             }
+//         }),
+//         $.ajax({
+//             url: urlDocument,
+//             method: "POST",
+//             data: {
+//                 webSocketConn: webSocketConn,
+//                 demoAsId: demo_as_id,
+//                 docUserId: docUserId,
+//                 templateId: loadedtemplateid,
+//                 templateJson: templateJson,
+//                 pages: pages,
+//                 canvasWidth: canvasWidth,
+//                 canvasHeight: canvasHeight,
+//                 rows: globalRow,
+//                 cols: globalCol,
+//                 bleed: !1,
+//                 trimsMarks: !1,
+//                 savePaper: !1,
+//                 pageSize: "us-letter",
+//                 pageType: template_type,
+//                 density: density,
+//                 metrics: $("input[name=metric_units1]:checked").val()
+//             },
+//             dataType: "json"
+//         }).done(function(data) {
+//             pdfRequestId = data.requestId,
+//             pullingType = "png",
+//             webSocketConn || (clearTimeout(referenceUpdates),
+//             checkDocsUpdates(pdfRequestId))
+//         })
+//     }
+// };
 $("#downloadAsPNG").click(function() {
     registerDownload("PNG", void 0, function(func) {
         demo_as_id > 0 ? $.toast({
@@ -2267,7 +2522,77 @@ $("#downloadAsPNG").click(function() {
             })
         }))
     })
-}),
+});
+// $("#downloadAsJPEG, #downloadProductImage").click(function() {
+//     if (ajaxRequestRef && ajaxRequestRef.abort(),
+//     demo_as_id > 0)
+//         $.toast({
+//             text: "Not allowed in demo mode",
+//             icon: "error",
+//             loader: !1,
+//             position: "top-right"
+//         });
+//     else {
+//         downloadPdfTimer(120),
+//         canvas.discardActiveObject().renderAll();
+//         var canvases = canvasarray;
+//         globalRow = parseInt($("#numOfcanvasrows").val()),
+//         globalCol = parseInt($("#numOfcanvascols").val());
+//         var pages = $(".divcanvas:visible").length / document.getElementById("numOfcanvasrows").value / document.getElementById("numOfcanvascols").value
+//           , canvasWidth = canvases[0].get("width") / canvases[0].getZoom()
+//           , canvasHeight = canvases[0].get("height") / canvases[0].getZoom()
+//           , bleed = $("#savebleed").is(":checked")
+//           , density = $('[name="jpegRadioDensity"]:checked').val();
+//         300 != density && (bleed = !1);
+//         var templateJson = getTemplateJson()
+//           , urlDocument = appUrl + "admin/Documents/download-jpeg-file";
+//         $.toast({
+//             heading: "Creating JPEG...",
+//             text: "Please wait",
+//             icon: "info",
+//             loader: !1,
+//             allowToastClose: !1,
+//             position: "top-right",
+//             hideAfter: !1,
+//             stack: 1,
+//             beforeShow: function() {
+//                 var tag = $(".jq-toast-single.jq-has-icon.jq-icon-info").first();
+//                 $(tag).removeClass("jq-icon-info"),
+//                 $(tag).addClass("toast-loader-icon")
+//             }
+//         }),
+//         $.ajax({
+//             url: urlDocument,
+//             method: "POST",
+//             data: {
+//                 // webSocketConn: webSocketConn,
+//                 demoAsId: demo_as_id,
+//                 // docUserId: docUserId,
+//                 templateId: loadedtemplateid,
+//                 templateJson: templateJson,
+//                 pages: pages,
+//                 canvasWidth: canvasWidth,
+//                 canvasHeight: canvasHeight,
+//                 rows: globalRow,
+//                 cols: globalCol,
+//                 bleed: bleed,
+//                 trimsMarks: !1,
+//                 savePaper: !1,
+//                 pageSize: "us-letter",
+//                 pageType: template_type,
+//                 density: density,
+//                 metrics: $("input[name=metric_units1]:checked").val()
+//             },
+//             dataType: "json"
+//         }).done(function(data) {
+//             pdfRequestId = data.requestId,
+//             pullingType = "jpeg",
+//             webSocketConn || (clearTimeout(referenceUpdates),
+//             checkDocsUpdates(pdfRequestId))
+//         })
+//     }
+// });
+
 $("#downloadAsJPEG").click(function() {
     registerDownload("JPEG", {
         saveBleed: $("input#savebleed").is(":checked")
@@ -2311,39 +2636,40 @@ $("#downloadAsJPEG").click(function() {
         }))
     })
 });
+
+$('[name="jpegRadioDensity"]').click(function() {
+    300 == $('[name="jpegRadioDensity"]:checked').val() ? $("#div-jpeg-bleed").show() : $("#div-jpeg-bleed").hide()
+});
+
 var registerDownload = function(type) {
     var obj = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : void 0;
     (arguments.length > 2 ? arguments[2] : void 0)(function() {
-        var url = appUrl + "editor/register-template-download";
-        $.ajax({
-            url: url,
-            type: "POST",
-            data: {
-                "_token": $('meta[name="csrf-token"]').attr('content'),
-                templateId: loadedtemplateid,
-                filetype: type,
-                purchase_code: design_as_id,
-                option: void 0 !== obj ? JSON.stringify(obj) : ""
-            },
-            dataType: "json"
-        }).done(function(data) {
-            data.success ? 0 != data.limit && showDownloadsRemaining(data.remaining) : $.toast({
-                text: data.msg,
-                icon: "error",
-                loader: !1,
-                position: "top-right",
-                hideAfter: 3e3
-            })
-        }).fail(function() {
-            $.toast({
-                text: "Request Error",
-                icon: "error",
-                loader: !1,
-                position: "top-right",
-                hideAfter: 3e3
-            })
-        })
+        registerCallBack(type, obj)
     })
+}
+  , registerCallBack = function(type) {
+    var obj = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : void 0
+      , url = appUrl + "editor/register-template-download";
+    $.ajax({
+        url: url,
+        type: "POST",
+        data: {
+                "_token": $('meta[name="csrf-token"]').attr('content'),
+            templateId: loadedtemplateid,
+            fileType: type,
+                purchase_code: design_as_id,
+            option: void 0 !== obj ? JSON.stringify(obj) : ""
+        },
+        dataType: "json"
+    }).done(function(data) {
+        data.success ? 0 != data.limit && showDownloadsRemaining(data.remaining) : $.toast({
+            text: data.msg,
+            icon: "error",
+            loader: !1,
+            position: "top-right",
+            hideAfter: 3e3
+        })
+    }).fail(function() {})
 };
 function downloadImageProxy($options) {
     $options || ($options = {});
@@ -2385,52 +2711,289 @@ function toggleHiddenStatusOfObjects() {
         canvasarray[$i].renderAll(),
         $i++
 }
-var globalRow = 0, globalCol = 0;
-
-function getTemplateThumbnail() {
-    var firstcanvas = canvasarray[currentcanvasid];
-    var initialZoom = firstcanvas.getZoom();
-    var isEmptyBackground = false;
-    
-    DEBUG && console.log("Set template thumbnail size");
-
-    setZoom(800 / (96 * document.getElementById("loadCanvasWid").value));
-    
-    if(firstcanvas.backgroundColor == null || isEmptyBackground == false){
-        firstcanvas.set({
-            backgroundColor: "#ffffff"
+var globalRow = 0
+  , globalCol = 0
+  , toastMsg = null
+  , pdfRequestId = "";
+$("#downloadAsPDF").click(function() {
+    if (ajaxRequestRef && ajaxRequestRef.abort(),
+    demo_as_id > 0)
+        $.toast({
+            text: "Not allowed in demo mode",
+            icon: "error",
+            loader: !1,
+            position: "top-right"
         });
+    else {
+        downloadPdfTimer(120),
+        canvas.discardActiveObject().renderAll();
+        var canvases = canvasarray;
+        globalRow = parseInt($("#numOfcanvasrows").val()),
+        globalCol = parseInt($("#numOfcanvascols").val());
+        var pages = $(".divcanvas:visible").length / document.getElementById("numOfcanvasrows").value / document.getElementById("numOfcanvascols").value
+          , canvasWidth = canvases[0].get("width") / canvases[0].getZoom()
+          , canvasHeight = canvases[0].get("height") / canvases[0].getZoom()
+          , bleed = $("#savebleedPdf").is(":checked")
+          , trimsMarks = $("#savecrop").is(":checked")
+          , savePaper = $("#savePaper").is(":checked")
+          , pageSize = "us-letter"
+          , metrics = $("input[name=metric_units1]:checked").val();
+        "a4" === $(".paper-size.active").find('input[name="paperSize"]').val() && (pageSize = "a4");
+        var templateJson = getTemplateJson()
+          , urlDocument = appUrl + "admin/Documents/download-pdf-file";
+        $.toast({
+            heading: "Creating PDF...",
+            text: "Please wait",
+            icon: "info",
+            loader: !1,
+            allowToastClose: !1,
+            position: "top-right",
+            hideAfter: !1,
+            stack: 1,
+            beforeShow: function() {
+                var tag = $(".jq-toast-single.jq-has-icon.jq-icon-info").first();
+                $(tag).removeClass("jq-icon-info"),
+                $(tag).addClass("toast-loader-icon")
+            }
+        }),
+        $.ajax({
+            url: urlDocument,
+            method: "POST",
+            data: {
+                webSocketConn: webSocketConn,
+                demoAsId: demo_as_id,
+                docUserId: docUserId,
+                templateId: loadedtemplateid,
+                templateJson: templateJson,
+                pages: pages,
+                canvasWidth: canvasWidth,
+                canvasHeight: canvasHeight,
+                rows: globalRow,
+                cols: globalCol,
+                bleed: bleed,
+                trimsMarks: trimsMarks,
+                savePaper: savePaper,
+                pageSize: pageSize,
+                pageType: template_type,
+                metrics: metrics
+            },
+            dataType: "json"
+        }).done(function(data) {
+            pdfRequestId = data.requestId,
+            pullingType = "pdf",
+            webSocketConn || (clearTimeout(referenceUpdates),
+            checkDocsUpdates(pdfRequestId))
+        })
     }
-
-    if(template_type != "geofilter2"){
-        removeGeofilterOverlay();
+});
+var processDownloadButton = function(data, type) {
+    if (clearTimeout(timerPdfRef),
+    data.requestId == pdfRequestId) {
+        var msg = "Your PDF is Ready";
+        if ("jpeg" == type ? msg = "Your JPEG is Ready" : "png" == type && (msg = "Your PNG is Ready"),
+        1 == data.success) {
+            var linkText = '<a class="file-button-download" data-linktype="' + type + '" target="_blank" href="' + data.file + '">Download Now</a>';
+            toastMsg = $.toast({
+                heading: msg,
+                text: linkText,
+                icon: "success",
+                loader: !0,
+                position: "top-right",
+                hideAfter: !1,
+                stack: 1
+            })
+        } else
+            $.toast({
+                heading: "Error",
+                text: data.msg,
+                icon: "error",
+                loader: !1,
+                position: "top-right",
+                hideAfter: 4e3,
+                stack: 1
+            })
     }
-
+};
+$(document).on("click", ".file-button-download", function() {
+    setTimeout(function() {
+        toastMsg && toastMsg.reset()
+    }, 3e3);
+    var type = $(this).data("linktype");
+    if ("jpeg" == type) {
+        var density = $('[name="jpegRadioDensity"]:checked').val();
+        registerCallBack("JPEG", {
+            dpi: density,
+            saveBleed: $("input#savebleed").is(":checked")
+        })
+    } else if ("png" == type) {
+        density = $('[name="pngRadioDensity"]:checked').val();
+        registerCallBack("PNG", {
+            dpi: density
+        })
+    } else
+        registerCallBack("PDF", {
+            saveCrop: $("input#savecrop").is(":checked"),
+            savePaper: $("input#savePaper").is(":checked")
+        })
+});
+var pageSizes = [{
+    size: "us-legal",
+    width: 8.5,
+    height: 14,
+    active: !1,
+    id: "#btn_type_legal"
+}, {
+    size: "us-letter",
+    width: 8.5,
+    height: 11,
+    active: !0,
+    id: "#btn_type_us"
+}, {
+    size: "a4",
+    width: 8.3,
+    height: 11.7,
+    active: !0,
+    id: "#btn_type_a4"
+}, {
+    size: "a3",
+    width: 11.7,
+    height: 16.5,
+    active: !1,
+    id: "#btn_type_a3"
+}, {
+    size: "a2",
+    width: 16.5,
+    height: 23.4,
+    active: !1,
+    id: "#btn_type_a2"
+}];
+$("#savecrop, #savebleedPdf, #savePaper").on("change", function() {
+    checkSavePaper().length > 0 ? $(".savePaperRow").show() : ($("#selectSize").attr("aria-expanded", !1),
+    $("#selectSize").removeClass("in"),
+    $("#savePaper").prop("checked", !1),
+    $(".savePaperRow").hide()),
+    getPreview()
+}),
+$("#btn_type_a4, #btn_type_us").on("click", function() {
+    checkSavePaper(),
+    getPreview()
+});
+var checkSavePaper = function(fn) {
+    globalRow = parseInt($("#numOfcanvasrows").val()),
+    globalCol = parseInt($("#numOfcanvascols").val());
+    var canvases = canvasarray
+      , canvasWidth = canvases[0].get("width") / canvases[0].getZoom()
+      , canvasHeight = canvases[0].get("height") / canvases[0].getZoom()
+      , multi = 0
+      , bleed = $("#savebleedPdf").is(":checked")
+      , trimsMarks = $("#savecrop").is(":checked");
+    (bleed || trimsMarks) && (multi = 2),
+    bleed && trimsMarks && (multi = 4),
+    canvasWidth = canvasWidth * globalCol + 12 * multi,
+    canvasHeight = canvasHeight * globalRow + 12 * multi;
+    for (var validPageSizes = [], activeFormats = pageSizes.filter(function(pageSize) {
+        return pageSize.active
+    }), i = 0; i < activeFormats.length; i++)
+        isValidForPage(activeFormats[i], canvasWidth, canvasHeight) && validPageSizes.push(activeFormats[i]);
+    $(".paper-size").parent().addClass("editor-disabled"),
+    $(".paper-size").removeClass("active");
+    for (i = 0; i < validPageSizes.length; i++)
+        0 == i && $(validPageSizes[i].id).addClass("active"),
+        $(validPageSizes[i].id).parent().removeClass("editor-disabled");
+    return null != fn && fn(),
+    validPageSizes
+}
+  , isValidForPage = function(pageSize, canvasWidth, canvasHeight) {
+    var pageWidthPx = 96 * pageSize.width
+      , pageHeightPx = 96 * pageSize.height;
+    return pageWidthPx * pageHeightPx >= 2 * canvasWidth * canvasHeight && (2 * canvasWidth <= pageWidthPx && canvasHeight <= pageHeightPx || 2 * canvasHeight <= pageHeightPx && canvasWidth <= pageWidthPx || 2 * canvasWidth <= pageHeightPx && canvasHeight <= pageWidthPx || 2 * canvasHeight <= pageWidthPx && canvasWidth <= pageHeightPx)
+}
+  , ajaxRequestRef = null
+  , previewRequestId = ""
+  , getPreview = function() {}
+  , showPreviewPdf = function(data) {
+    if (data.requestId == previewRequestId)
+        if (hideLoadingSpin(),
+        1 == data.success) {
+            var newImg = $("<img/>");
+            $(newImg).attr("src", data.svg),
+            $("#preview-div").append(newImg),
+            $("img").one("load", function() {
+                var imgWidth = $(newImg).get(0).naturalWidth
+                  , originalWidth = imgWidth
+                  , imgHeight = $(newImg).get(0).naturalHeight
+                  , ratioY = 300 / imgHeight;
+                ratioY < 1 && (imgWidth *= ratioY,
+                imgHeight *= ratioY),
+                $("#preview-div img").css("width", imgWidth),
+                $("#preview-div img").css("height", imgHeight),
+                $("#preview-div img").css("margin-top", (360 - imgHeight) / 2),
+                $("#preview-div img").css("background", "#FFF"),
+                $("#preview-div img").css("box-shadow", "1px 1px 6px 2px rgba(0,0,0,0.2)"),
+                $("#preview-div img").css("transform-origin", "top left"),
+                $("#preview-div img").css("transform", "scale(1)"),
+                $("#preview-div img").css("transition", "transform 1s ease");
+                var bleed = $("#savebleedPdf").is(":checked");
+                ($("#savecrop").is(":checked") || bleed) && (stopLoop = !1,
+                toggleLoop = !1,
+                clearTimeout(timeOutRef),
+                previewLoopZoom(5 * originalWidth, imgWidth))
+            })
+        } else {
+            var divTitle = $("<div/>");
+            $(divTitle).html(data.msgTitle),
+            $(divTitle).css("margin-top", 150);
+            var divText = $("<div/>");
+            $(divText).html(data.msgText),
+            $("#preview-div").html(""),
+            $("#preview-div").append(divTitle),
+            $("#preview-div").append(divText)
+        }
+}
+  , stopLoop = !1
+  , toggleLoop = !1
+  , timeOutRef = 0
+  , previewLoopZoom = function previewLoopZoom(originalWidth, svgWidth) {
+    var scaleValue = 1;
+    (toggleLoop = !toggleLoop) && (scaleValue = originalWidth / svgWidth * 2),
+    timeOutRef = setTimeout(function() {
+        $("#preview-div svg").css("transform", "scale(" + scaleValue + ")"),
+        stopLoop || previewLoopZoom(originalWidth, svgWidth)
+    }, 5e3)
+}
+  , showLoadingSpin = function() {
+    $("#pdf-preview-div .loading-spin").show()
+}
+  , hideLoadingSpin = function() {
+    $("#pdf-preview-div .loading-spin").hide()
+};
+function getTemplateThumbnail() {
+    var firstcanvas = canvasarray[currentcanvasid]
+      , initialZoom = firstcanvas.getZoom()
+      , isEmptyBackground = !1;
+    setZoom(350 / (96 * document.getElementById("loadCanvasWid").value)),
+    firstcanvas.backgroundColor || (isEmptyBackground = !0,
+    firstcanvas.set({
+        backgroundColor: "#ffffff"
+    })),
+    "geofilter2" == template_type && removeGeofilterOverlay();
     var dataURL = firstcanvas.toDataURL({
         format: "jpeg",
         quality: .7
     });
-
-    if("geofilter2" == template_type){
-        setGeofilterOverlay();
-        firstcanvas.set({
-            backgroundColor: ""
-        });
-    }
-
-    setZoom(initialZoom);
-    // setZoom(firstcanvas.getZoom());
-    // setZoom(350 / (96 * document.getElementById("loadCanvasWid").value));
-
-    return dataURL;
+    return "geofilter2" == template_type && setGeofilterOverlay(),
+    isEmptyBackground && firstcanvas.set({
+        backgroundColor: ""
+    }),
+    setZoom(initialZoom),
+    dataURL
 }
-
 function saveAsTemplateFile() {
     issaveastemplate = !1,
     s_history = !1;
     var $metrics = $("input[name=metric_units1]:checked").val()
       , filename = $("#templatename").val()
-      , $tags = $("#template_tags").val() ? $("#template_tags").val().toString() : ""
+      , $tags = JSON.parse(newTemplateTagsEdit.getTags()).join(",")
       , jsonData = getTemplateJson()
       , pngdataURL = getTemplateThumbnail()
       , saveToAdminAccount = $("input[name=saveToAdminAccount]:checked").val()
@@ -2452,6 +3015,7 @@ function saveAsTemplateFile() {
             void 0 !== $msg && 0 === $msg.err ? (loadedtemplateid = $msg.id,
             $("#savetemplate").show(),
             $(".download-menu").show(),
+            newTemplateTagsEdit.clean(),
             $.toast({
                 text: "Saved as new template",
                 icon: "success",
@@ -2535,6 +3099,7 @@ function getTemplateJson() {
                 object.path = [],
                 object.objects = []),
                 void 0 !== object._objects && (object._objects = []),
+                "path" == object.type && object.fill && object.svg_custom_paths && 1 == object.svg_custom_paths.length && delete object.svg_custom_paths,
                 function removeDpatternSource($o) {
                     "object" === _typeof($o.fill) && "Dpattern" == $o.fill.type && delete $o.fill.source,
                     $o.objects && $.each($o.objects, function($i, $child) {
@@ -2590,72 +3155,100 @@ function updateTemplate(updateOriginal) {
                         instructionsId: instructionsId,
                         updateOriginal: updateOriginal
                     },
-                    success: function(answer) {
-                        answer = JSON.parse(answer),
-                        appSpinner.hide();
-                        var icon = answer.err ? "error" : "success"
-                          , text = answer.err ? answer.msg : "Template saved";
-                        $.toast({
-                            text: text,
-                            icon: icon,
-                            loader: !1,
-                            position: "top-right"
-                        }),
-                        answer.err || ("customer" == currentUserRole && getTemplates2(0, ""),
-                        $("#autosave").data("saved", "yes")),
-                        s_history = !0,
-                        resolve()
-                    }
+                    dataType: "json"
+                }).done(function(answer) {
+                    appSpinner.hide();
+                    var icon = answer.err ? "error" : "success"
+                      , text = answer.err ? answer.msg : "Template saved";
+                    $.toast({
+                        text: text,
+                        icon: icon,
+                        loader: !1,
+                        position: "top-right"
+                    }),
+                    answer.err || ("customer" == currentUserRole && getTemplates2(0, ""),
+                    $("#autosave").data("saved", "yes")),
+                    s_history = !0,
+                    resolve()
+                }).fail(function() {
+                    appSpinner.hide(),
+                    $.toast({
+                        heading: "Error saving template",
+                        text: "Please try again",
+                        icon: "error",
+                        loader: !1,
+                        position: "top-right",
+                        hideAfter: 5e3
+                    })
                 })
             }
         }
     }
     )
 }
+$("#progressModal").on("shown.bs.modal", function(e) {
+    $("#savePaper").is(":checked") ? $("input#savecrop").is(":checked") && 1 === globalCol && 1 === globalRow ? createBleedForPDF({
+        callback: removeDeletedCanvasesProxy
+    }) : removeDeletedCanvasesProxy() : $("input#savecrop").is(":checked") && 1 === globalCol && 1 === globalRow ? createBleedForPDF({
+        callback: rasterizeObjectsProxy
+    }) : removeDeletedCanvases(canvasarray, rasterizeObjectsProxy)
+});
+var newTextTagsEdit = $("#newTextTags").tagsField({
+    label: "Tags",
+    id: "text_tags",
+    labelColumnClass: "control-label",
+    divColumnClass: ""
+});
 function saveFromSelection(callback) {
-    var actobj = canvas.getActiveObject()
-      , actgroupobjs = canvas.getActiveObject();
-    if (tempcanvas.clear(),
-    actobj)
-        actobj.clone(function(clone) {
-            tempcanvas.setWidth(clone.width * clone.scaleX),
-            tempcanvas.setHeight(clone.height * clone.scaleY),
-            clone.originX = "center",
-            clone.originY = "center",
-            tempcanvas.add(clone),
-            clone.viewportCenter();
-            var jsonData = JSON.stringify({
-                objects: [clone.toJSON(properties_to_save)]
-            })
-              , pngdataURL = clone.toDataURL("image/png");
-            callback(pngdataURL, jsonData)
-        });
-    else if (actgroupobjs._objects) {
-        tempcanvas.setWidth(actgroupobjs.width * actgroupobjs.scaleX),
-        tempcanvas.setHeight(actgroupobjs.height * actgroupobjs.scaleY);
-        var totalobjs = actgroupobjs.getObjects().length
-          , loadedobjs = 0
-          , jsonData = "";
-        actgroupobjs.forEachObject(function(object) {
-            object.clone(function(clone) {
-                if (tempcanvas.add(clone),
-                clone.set("left", clone.left + tempcanvas.width / 2),
-                clone.set("top", clone.top + tempcanvas.height / 2),
-                ++loadedobjs >= totalobjs) {
-                    jsonData += JSON.stringify({
-                        objects: [actgroupobjs.toJSON(properties_to_save)]
-                    });
-                    var pngdataURL = tempcanvas.toDataURL("image/png");
+    if (newTextTagsEdit.validate())
+        if ("undefined" != typeof canvas) {
+            var actobj = canvas.getActiveObject()
+              , actgroupobjs = canvas.getActiveObject();
+            if (tempcanvas.clear(),
+            actobj)
+                actobj.clone(function(clone) {
+                    tempcanvas.setWidth(clone.width * clone.scaleX),
+                    tempcanvas.setHeight(clone.height * clone.scaleY),
+                    clone.originX = "center",
+                    clone.originY = "center",
+                    tempcanvas.add(clone),
+                    clone.viewportCenter();
+                    var jsonData = JSON.stringify({
+                        objects: [clone.toJSON(properties_to_save)]
+                    })
+                      , pngdataURL = clone.toDataURL("image/png");
                     callback(pngdataURL, jsonData)
-                }
-            })
-        })
-    } else
-        $("#alertModal").modal("show"),
-        $("#responceMessage").html("Please select the object you wish to save.")
+                });
+            else if (actgroupobjs) {
+                console.log(actgroupobjs + "--" + _typeof(actgroupobjs)),
+                tempcanvas.setWidth(actgroupobjs.width * actgroupobjs.scaleX),
+                tempcanvas.setHeight(actgroupobjs.height * actgroupobjs.scaleY);
+                var totalobjs = actgroupobjs.getObjects().length
+                  , loadedobjs = 0
+                  , jsonData = "";
+                actgroupobjs.forEachObject(function(object) {
+                    object.clone(function(clone) {
+                        if (tempcanvas.add(clone),
+                        clone.set("left", clone.left + tempcanvas.width / 2),
+                        clone.set("top", clone.top + tempcanvas.height / 2),
+                        ++loadedobjs >= totalobjs) {
+                            jsonData += JSON.stringify({
+                                objects: [actgroupobjs.toJSON(properties_to_save)]
+                            });
+                            var pngdataURL = tempcanvas.toDataURL("image/png");
+                            callback(pngdataURL, jsonData)
+                        }
+                    })
+                })
+            } else
+                $("#alertModal").modal("show"),
+                $("#responceMessage").html("Please select the object you wish to save.")
+        } else
+            $("#alertModal").modal("show"),
+            $("#responceMessage").html("Please select the object you wish to save.")
 }
 function saveAsText(pngdataURL, jsonData) {
-    var $tags = $("#text_tags").val() ? $("#text_tags").val().toString() : ""
+    var $tags = JSON.parse(newTextTagsEdit.getTags()).join(",")
       , filename = $("#textname").val()
       , url = appUrl + "design/savetext.php";
     $.ajax({
@@ -2687,7 +3280,7 @@ function saveAsText(pngdataURL, jsonData) {
 }
 function saveAsElement(pngdataURL, jsonData) {
     var filename = $("#elmtname").val()
-      , $tags = $("#element_tags").val() ? $("#element_tags").val().toString() : "";
+      , $tags = JSON.parse(newElementTagsEdit.getTags()).join(",");
     appSpinner.show();
     var url = appUrl + "design/saveasjson.php";
     $.ajax({
@@ -2718,11 +3311,11 @@ function saveAsElement(pngdataURL, jsonData) {
     })
 }
 function proceed_savetemplate() {
-    $("#savetemplate_modal").modal("hide"),
+    $("#savetemplate_modal").is(":visible") && !newTemplateTagsEdit.validate() || ($("#savetemplate_modal").modal("hide"),
     appSpinner.show(),
     $("#saveastemplate").show(),
     canvas.discardActiveObject().renderAll(),
-    processSVGs()
+    processSVGs())
 }
 function downloadImage() {
     $("#publishModal").modal("hide"),
@@ -2848,31 +3441,6 @@ function savesvg(svgobj) {
     isdownloadpdf && downloadDocument(),
     isupdatetemplate && updateTemplate()
 }
-$("#downloadAsPDF").click(function() {
-    canvas.discardActiveObject().renderAll(),
-    $copyOnePageAcrossSheet = !1,
-    globalRow = parseInt($("#numOfcanvasrows").val()),
-    globalCol = parseInt($("#numOfcanvascols").val()),
-    toggleHiddenStatusOfObjects(),
-    demo_as_id > 0 ? $.toast({
-        text: "Not allowed in demo mode",
-        icon: "error",
-        loader: !1,
-        position: "top-right"
-    }) : (isdownloadpdf = !0,
-    $("#zoomperc").data("oldScaleValue", $("#zoomperc").data("scaleValue")),
-    setZoom(1),
-    template_type && "doublesided" === template_type && ($copyOnePageAcrossSheet = !0),
-    $(".bar").width("0%"),
-    $("#progressModal").modal("show"))
-}),
-$("#progressModal").on("shown.bs.modal", function(e) {
-    $("#savePaper").is(":checked") ? $("input#savecrop").is(":checked") && 1 === globalCol && 1 === globalRow ? createBleedForPDF({
-        callback: removeDeletedCanvasesProxy
-    }) : removeDeletedCanvasesProxy() : $("input#savecrop").is(":checked") && 1 === globalCol && 1 === globalRow ? createBleedForPDF({
-        callback: rasterizeObjectsProxy
-    }) : removeDeletedCanvases(canvasarray, rasterizeObjectsProxy)
-});
 var savecrop = !1
   , $svgs = 0
   , $additionalHeight = 0;
@@ -3931,6 +4499,7 @@ function fixSVGText(str) {
     var result = (new XMLSerializer).serializeToString(svg);
     return result = (result = (result = result.replace(new RegExp("FONT-FAMILY","g"), "font-family")).replace(new RegExp("FONT-SIZE","g"), "font-size")).replace(new RegExp("FONT-WEIGHT","g"), "font-weight")
 }
+var pdfProccess = !1;
 function proceedPDF2(svg, $width, $height) {
     var cropWidth = arguments.length > 3 && void 0 !== arguments[3] ? arguments[3] : 0
       , cropBottom = arguments.length > 4 && void 0 !== arguments[4] ? arguments[4] : 0;
@@ -3952,6 +4521,13 @@ function proceedPDF2(svg, $width, $height) {
         var pages = $(".divcanvas:visible").length / document.getElementById("numOfcanvasrows").value / document.getElementById("numOfcanvascols").value
           , url = appUrl;
         url = appUrl + "editor/pdf",
+        pdfProccess ? $.toast({
+            text: "Please wait for the current PDF process to finish",
+            icon: "error",
+            hideAfter: 4e3,
+            loader: !1,
+            position: "top-right"
+        }) : (pdfProccess = !0,
         $.ajax({
             type: "POST",
             url: url,
@@ -3965,7 +4541,8 @@ function proceedPDF2(svg, $width, $height) {
                 pages: pages
             },
             success: function($answer) {
-                if ($answer) {
+                if (pdfProccess = !1,
+                $answer) {
                     if (!IsJsonString($answer))
                         return $("#progressModal").modal("hide"),
                         $.toast({
@@ -3977,10 +4554,12 @@ function proceedPDF2(svg, $width, $height) {
                         }),
                         !1;
                     if (($answer = JSON.parse($answer)).success) {
+                        func();
                         var $pdf = $answer.data;
                         $("#autosave").data("saved", "yes"),
-                        window.location.href = appUrl + "editor/download-pdf?file=" + $pdf + "&filename=" + filename,
-                        func()
+                        setTimeout(function() {
+                            window.location.href = processServerUrl + "design/downloadfile.php?file=" + $pdf + "&filename=" + filename
+                        }, 200)
                     } else
                         $.toast({
                             text: $answer.msg,
@@ -3994,7 +4573,7 @@ function proceedPDF2(svg, $width, $height) {
                 } else
                     $("#progressModal").modal("hide")
             }
-        })
+        }))
     })
 }
 function downloadPdf() {
@@ -4084,8 +4663,28 @@ $("#saveElement").click(function() {
         position: "top-right"
     }) : $("#saveelement_modal").modal("show")
 }),
-$("#cancel-design-as").click(function() {
-    window.location.href = appUrl + "design"
+$("#cancel-design-as").on("click", function() {
+    var url = appUrl + "admin/Users/close-design-as-user-scope";
+    $.ajax({
+        method: "post",
+        url: url,
+        dataType: "json"
+    }).done(function(data) {
+        data.success && (window.location.href = appUrl + "design")
+    })
+}),
+$("#redirect-admin-design-as").on("click", function(e) {
+    e.preventDefault(),
+    e.stopPropagation();
+    var redirectUrl = $(this).prop("href")
+      , url = appUrl + "admin/Users/close-design-as-user-scope";
+    $.ajax({
+        method: "post",
+        url: url,
+        dataType: "json"
+    }).done(function(data) {
+        data.success && (window.location.href = redirectUrl)
+    })
 }),
 Dropzone.autoDiscover = !1;
 var wrapperDz = null, files, bgfiles;
@@ -4440,7 +5039,7 @@ function openTemplate(jsons) {
         WebFontConfig = {
             custom: {
                 families: families,
-                urls: [appUrl + "editor/get-css-fonts?templates=" + families]
+                urls: [appUrl + "editor/get-css-fonts?templates=" + JSON.stringify(families)]
             },
             active: function() {
                 DEBUG && console.log("all fonts are loaded"),
@@ -4529,7 +5128,7 @@ function proceedOpenTemplate(jsonCanvasArray) {
     setWorkspace(),
     updatePageNumbers(),
     getBgimages2(0, ""),
-    demo_as_id && getRelatedProducts(0),
+    demo_as_id,
     !0
 }
 function loadObjectOnCanvasFromJSON(lcanvas, json, svg_custom_data12, i) {
@@ -4579,7 +5178,7 @@ function loadObjectOnCanvasFromJSON(lcanvas, json, svg_custom_data12, i) {
                                 loadedObject.fill = svg_data.fill
                             }
                         var $gradientType = getGradientTypeofObject(svg_data);
-                        if (!1 !== $gradientType && applyGradient(svg_data.fill.colorStops[0].color, svg_data.fill.colorStops[1].color, $gradientType, loadedObject),
+                        if (!1 !== $gradientType ? applyGradient(svg_data.fill.colorStops[0].color, svg_data.fill.colorStops[1].color, $gradientType, loadedObject) : applyGradient2(svg_data, loadedObject),
                         lcanvas.add(loadedObject),
                         loadedObject.setCoords(),
                         loadedObject.scale(1),
@@ -4785,7 +5384,7 @@ function afterLoadJSON(lcanvas, i) {
     }
     lcanvas.setDimensions(),
     lcanvas.renderAll(),
-    canvasarray.length == i + 1 && afterLoadTemplate(),
+    canvasarray.length == i + 1 && afterLoadTemplate()
     $('#template-status').val('Template Loaded');
 }
 function saveHistoryForAllCanvases() {
@@ -4907,141 +5506,18 @@ function initKeyboardEvents() {
         !0
     })
 }
-function sortUnorderedList(ul, sortDescending) {
-    if ("string" == typeof ul && (ul = document.getElementById(ul)),
-    ul) {
-        for (var lis = ul.getElementsByTagName("LI"), vals = [], i = 0, l = lis.length; i < l; i++)
-            vals.push(lis[i].innerHTML);
-        vals.sort(function(a, b) {
-            return a.toLowerCase().localeCompare(b.toLowerCase())
-        }),
-        sortDescending && vals.reverse();
-        for (i = 0,
-        l = lis.length; i < l; i++)
-            lis[i].innerHTML = vals[i]
-    } else
-        alert("The UL object is null!")
-}
-function loadTemplate(templateid) {
-    var checkUnsaved = !(arguments.length > 1 && void 0 !== arguments[1]) || arguments[1];
-    if (stopProcess = !0,
-    s_history = !1,
-    "yes" !== $("#autosave").data("saved") && 0 === demo_as_id && checkUnsaved)
-        return $("#unsavedChanges").data("newtemplate", 0),
-        $("#unsavedChanges").data("templateid", templateid),
-        void $("#unsavedChanges").modal("show");
-    setZoom(1),
-    appSpinner.show(),
-    loadedtemplateid = templateid;
-    var url = appUrl + "editor/load-template";
-    $.ajax({
-        url: url,
-        type: "get",
-        data: {
-            id: templateid,
-            design_as_id: design_as_id,
-            demo_as_id: demo_as_id,
-            demo_templates: demo_templates,
-            language_code: language_code
-        },
-        dataType: "json",
-        success: function(data) {
-            if (0 == data.err) {
-                if (geofilterBackground = 0,
-                template_type = "custom",
-                data.options.length) {
-                    var options = JSON.parse(data.options);
-                    template_type = options.type,
-                    instructionsId = options.instructionsId,
-                    "geofilter" != template_type && "geofilter2" != template_type || !options.geofilterBackground || (geofilterBackground = options.geofilterBackground),
-                    templateOptions = options
-                }
-                if (savestatecount = 0,
-                !openTemplate(data.data))
-                    return;
-                $("input[name=metric_units]").val([data.metrics]),
-                $("input[name=metric_units1]").val([data.metrics]),
-                "px" == data.metrics ? ($(".canvas_size_pixels").addClass("active"),
-                $(".canvas_size_inches").removeClass("active"),
-                $(".canvas_size_mm").removeClass("active")) : "in" == data.metrics ? ($(".canvas_size_inches").addClass("active"),
-                $(".canvas_size_pixels").removeClass("active"),
-                $(".canvas_size_mm").removeClass("active")) : "mm" == data.metrics && ($(".canvas_size_pixels").removeClass("active"),
-                $(".canvas_size_inches").removeClass("active"),
-                $(".canvas_size_mm").addClass("active")),
-                canvas.calcOffset(),
-                canvas.renderAll(),
-                $("#autosave").data("saved", "yes"),
-                stopProcess = !1,
-                data.instructions ? ($("#instructions").html(data.instructions),
-                $("#instructions-button").show()) : $("#instructions-button").hide(),
-                0 == demo_as_id ? checkAllowRevertTemplate(templateid) : setDemoOverlay()
-            } else
-                appSpinner.hide(),
-                $.toast({
-                    text: data.msg,
-                    icon: "error",
-                    loader: !1,
-                    position: "top-right"
-                })
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-            switch (appSpinner.hide(),
-            jqXHR.status) {
-            case 400:
-                var excp = $.parseJSON(jqXHR.responseText).error;
-                DEBUG && console.log("UnableToComplyException:" + excp.message, "warning");
-                break;
-            case 500:
-                excp = $.parseJSON(jqXHR.responseText).error;
-                DEBUG && console.log("PanicException:" + excp.message, "panic");
-                break;
-            default:
-                DEBUG && console.log("HTTP status=" + jqXHR.status + "," + textStatus + "," + errorThrown + "," + jqXHR.responseText)
-            }
-            $.toast({
-                text: "Something went wrong",
-                icon: "error",
-                hideAfter: 2e3,
-                loader: !1,
-                position: "top-right"
-            })
-        }
-    }),
-    $("#downloads-remaining-text").hide();
-    var urlDownloadsRemaining = appUrl + "editor/get-remaining-downloads?template_id=" + templateid+"&purchase_code="+design_as_id;
-    $.ajax({
-        url: urlDownloadsRemaining,
-        type: "GET",
-        dataType: "json"
-    }).done(function(data) {
-        console.warn("PUTO+"+data.remaining);
-        
-        // data.success && data.remaining > 0 && showDownloadsRemaining(data.remaining)
-        if(data.success && showDownloadsRemaining(data.remaining) ){
-            $.toast({
-                text: data.msg,
-                icon: "error",
-                loader: !1,
-                position: "top-right",
-                hideAfter: 3e3
-            });
-        }
-    }).fail(function() {
-        showDownloadsRemaining(0)
-    })
-}
 $(function() {
     $("#addElement").click(function() {
         newElementTagsEdit.clean(),
         null !== wrapperDz && wrapperDz.removeAllFiles(),
         $("#AddelementModal").modal("show")
     });
-    // var newElementTagsEdit = $("#newElementTags").tagsField({
-    //     label: "Tags (Will apply to all elements)",
-    //     id: "new-element-tags-id",
-    //     labelColumnClass: "control-label col-sm-12",
-    //     divColumnClass: "col-sm-12"
-    // });
+    var newElementTagsEdit = $("#newElementTags").tagsField({
+        label: "Tags (Will apply to all elements)",
+        id: "new-element-tags-id",
+        labelColumnClass: "control-label",
+        divColumnClass: ""
+    });
     $("#AddelementModal").on("shown.bs.modal", function(e) {
         var parent = $("#addElement").parent()[0];
         if ($(parent).removeClass("active"),
@@ -5064,8 +5540,8 @@ $(function() {
                     if (this.files.length)
                         for (i = 0,
                         len = this.files.length; i < len - 1; i++)
-                            if ($iFile = this.files[i].name.replace(/\.[^\/.]+$/, ""),
-                            $newFile = file.name.replace(/\.[^\/.]+$/, ""),
+                            if ($iFile = this.files[i].name.replace(/\.[^/.]+$/, ""),
+                            $newFile = file.name.replace(/\.[^/.]+$/, ""),
                             $iFile === $newFile)
                                 return void this.removeFile(file);
                     var removeButton = Dropzone.createElement("<button class='btn btn-lg dark'>Remove File</button>");
@@ -5080,81 +5556,117 @@ $(function() {
         })
     }),
     $(document).on("click", "#uploadButton", function() {
-        $("#uploadButton").prop("disabled", !0);
-        var tags = JSON.parse(newElementTagsEdit.getTags()).join(",")
-          , formData = new FormData;
-        formData.append("tags", tags),
-        wrapperDz.getQueuedFiles().forEach(function(fileElement) {
-            formData.append("file[]", fileElement)
-        }),
-        $("#AddelementModal").modal("hide"),
-        $("#progressElementModal").modal({
-            backdrop: "static",
-            keyboard: !1,
-            show: !0
-        }),
-        $.ajax({
-            xhr: function() {
-                var xhr = new window.XMLHttpRequest;
-                return xhr.upload.addEventListener("progress", function(evt) {
-                    if (evt.lengthComputable) {
-                        var progress = evt.loaded / evt.total * 100;
-                        $(".progress-bar").width(progress + "%"),
-                        100 == progress && $("#progressElementModal .text-center").text("Please wait, optimizing for Templett...")
-                    }
-                }, !1),
-                xhr
-            },
-            method: "post",
-            cache: !1,
-            contentType: !1,
-            processData: !1,
-            url: appUrl + "admin/Elements/add-elements",
-            data: formData,
-            dataType: "json",
-            timeout: 6e5
-        }).done(function(data) {
-            appSpinner.hide(),
-            setTimeout(function() {
-                $("#progressElementModal").modal("hide")
-            }, 400),
-            $("#uploadButton").prop("disabled", !1),
-            data.success ? ($.toast({
-                text: data.msg,
-                icon: "success",
-                loader: !1,
-                position: "top-right",
-                hideAfter: 3e3
+        if (newElementTagsEdit.validate()) {
+            var tags = JSON.parse(newElementTagsEdit.getTags()).join(",")
+              , formData = new FormData;
+            formData.append("tags", tags),
+            wrapperDz.getQueuedFiles().forEach(function(fileElement) {
+                formData.append("file[]", fileElement)
             }),
-            $("#uploadCancelButton").click(),
-            getCatimages2(0, "")) : (setTimeout(function() {
-                $("#AddelementModal").modal("show")
-            }, 400),
-            $.toast({
-                text: data.msg,
-                icon: "error",
-                loader: !1,
-                position: "top-right",
-                hideAfter: 3e3
-            }))
-        }).fail(function() {
-            appSpinner.hide(),
-            $("#progressElementModal").modal("hide"),
-            setTimeout(function() {
-                $("#AddelementModal").modal("show")
-            }, 400),
-            $("#uploadButton").prop("disabled", !1),
-            $.toast({
-                text: "Request Error",
-                icon: "error",
-                loader: !1,
-                position: "top-right",
-                hideAfter: 3e3
+            formData.append("wsRefId", docUserId),
+            $("#AddelementModal").modal("hide"),
+            $.ajax({
+                xhr: function() {
+                    var xhr = new window.XMLHttpRequest;
+                    return xhr.upload.addEventListener("progress", function(evt) {
+                        if (evt.lengthComputable) {
+                            var progress = Math.floor(100 * evt.loaded / evt.total);
+                            updateToastMsg({
+                                text: "Uploading elements: " + progress + "%",
+                                icon: "info",
+                                loader: !1,
+                                position: "top-right",
+                                hideAfter: !1
+                            })
+                        }
+                    }, !1),
+                    xhr
+                },
+                method: "post",
+                cache: !1,
+                contentType: !1,
+                processData: !1,
+                url: appUrl + "admin/Elements/add-elements",
+                data: formData,
+                dataType: "json",
+                timeout: 6e5
+            }).done(function(data) {
+                data.success ? 0 == webSocketConn && checkUploadedImages(data.ids) : (setTimeout(function() {
+                    $("#AddelementModal").modal("show")
+                }, 400),
+                $.toast({
+                    text: data.msg,
+                    icon: "error",
+                    loader: !1,
+                    position: "top-right",
+                    hideAfter: 3e3
+                }))
+            }).fail(function() {
+                setTimeout(function() {
+                    $("#AddelementModal").modal("show")
+                }, 400),
+                $("#uploadButton").prop("disabled", !1),
+                $.toast({
+                    text: "Request Error",
+                    icon: "error",
+                    loader: !1,
+                    position: "top-right",
+                    hideAfter: 3e3
+                })
             })
-        })
-    })
+        }
+    });
+    var checkUploadedImages = function checkUploadedImages(ids) {
+        var ref = setTimeout(function() {
+            $.ajax({
+                method: "post",
+                url: appUrl + "admin/Elements/check-if-elements-are-processed",
+                data: {
+                    ids: ids
+                },
+                dataType: "json"
+            }).done(function(data) {
+                data.success && data.finish ? (toastInstance && (toastInstance.reset(),
+                toastInstance = null),
+                $.toast({
+                    text: "Elements added",
+                    icon: "success",
+                    loader: !1,
+                    position: "top-right",
+                    hideAfter: 3e3
+                }),
+                $("#uploadButton").prop("disabled", !1),
+                $("#uploadCancelButton").click(),
+                initMasonry_element(),
+                loadTemplates_element(),
+                clearTimeout(ref)) : (updateToastMsg({
+                    text: data.msg,
+                    icon: "info",
+                    loader: !1,
+                    position: "top-right",
+                    hideAfter: !1
+                }),
+                checkUploadedImages(ids))
+            }).fail(function() {
+                toastInstance && (toastInstance.reset(),
+                toastInstance = null),
+                setTimeout(function() {
+                    $("#AddelementModal").modal("show")
+                }, 400),
+                $("#uploadButton").prop("disabled", !1),
+                $.toast({
+                    text: "Request Error",
+                    icon: "error",
+                    loader: !1,
+                    position: "top-right",
+                    hideAfter: 3e3
+                })
+            })
+        }, 3e3)
+    }
 }),
 $("#addBackground").click(function() {
+    newBgTagsEdit.clean(),
     $("#AddbackgroundModal").modal("show")
 }),
 $("#deletetempcat").click(function() {
@@ -5286,62 +5798,240 @@ $(document).ready(function() {
         }),
         save_history()
     })
-}),
-$("#addbackgroundform").validate({
-    rules: {
-        bg_tags: {
-            required: !0
-        },
-        bgName: {
-            required: !0
-        }
-    },
-    highlight: function(element) {
-        $(element).closest(".form-group").removeClass("has-success").addClass("has-error")
-    },
-    success: function(element) {
-        element.text("").addClass("valid").closest(".form-group").removeClass("has-error").addClass("has-success")
-    },
-    submitHandler: function(form) {
-        var bgpath = "uploads/" + $("#bg_img").val()
-          , tags = $("#bg_tags").val() ? $("#bg_tags").val().toString() : ""
-          , icon = "success";
-        $("#AddbackgroundModal").modal("hide"),
-        appSpinner.show();
-        var formData = new FormData(form);
-        formData.append("tags", tags),
-        formData.append("background", bgpath);
-        var url = appUrl + "design/actions/addbackground.php";
+});
+var newBgTagsEdit = $("#newBgTags").tagsField({
+    label: "Tags",
+    id: "new-bg-tags-id",
+    labelColumnClass: "control-label col-sm-12",
+    divColumnClass: "form-group col-sm-12"
+});
+// $("#add-background-form").parsley().on("form:submit", function(event) {
+//     if (!newBgTagsEdit.validate())
+//         return !1;
+//     $("#uploadBgButton").html("Uploading..."),
+//     $("#uploadBgButton").prop("disabled", !0);
+//     var formData = new FormData
+//       , tags = JSON.parse(newBgTagsEdit.getTags()).join(",");
+//     return formData.append("tags", tags),
+//     formData.append("file", $("#bg-img-file")[0].files[0]),
+//     formData.append("bgName", $("#bg-name").val()),
+//     formData.append("wsRefId", docUserId),
+//     $("#AddbackgroundModal").modal("hide"),
+//     $("#bg-name").val(""),
+//     $("#previewBGImage").hide(),
+//     $.ajax({
+//         xhr: function() {
+//             var xhr = new window.XMLHttpRequest;
+//             return xhr.upload.addEventListener("progress", function(evt) {
+//                 if (evt.lengthComputable) {
+//                     var progress = Math.floor(100 * evt.loaded / evt.total);
+//                     updateToastMsg({
+//                         text: "Uploading background: " + progress + "%",
+//                         icon: "info",
+//                         loader: !1,
+//                         position: "top-right",
+//                         hideAfter: !1
+//                     })
+//                 }
+//             }, !1),
+//             xhr
+//         },
+//         method: "post",
+//         cache: !1,
+//         contentType: !1,
+//         processData: !1,
+//         url: appUrl + "admin/Backgrounds/add-background",
+//         data: formData,
+//         dataType: "json",
+//         timeout: 6e5
+//     }).done(function(data) {
+//         $("#uploadBgButton").prop("disabled", !1),
+//         $("#uploadBgButton").html("Add"),
+//         data.success ? 0 == webSocketConn && checkUploadedBg(data.ids) : (setTimeout(function() {
+//             $("#AddbackgroundModal").modal("show")
+//         }, 400),
+//         $.toast({
+//             text: data.msg,
+//             icon: "error",
+//             loader: !1,
+//             position: "top-right",
+//             hideAfter: 3e3
+//         }))
+//     }).fail(function() {
+//         setTimeout(function() {
+//             $("#AddbackgroundModal").modal("show")
+//         }, 400),
+//         $("#uploadBgButton").prop("disabled", !1),
+//         $("#uploadBgButton").html("Add"),
+//         $.toast({
+//             text: "Request Error",
+//             icon: "error",
+//             loader: !1,
+//             position: "top-right",
+//             hideAfter: 3e3
+//         }),
+//         toastInstance.reset(),
+//         toastInstance = null
+//     }),
+//     !1
+// });
+var checkUploadedBg = function checkUploadedBg(ids) {
+    var ref = setTimeout(function() {
         $.ajax({
-            type: "POST",
-            url: url,
-            data: formData,
-            contentType: !1,
-            processData: !1
+            method: "post",
+            url: appUrl + "admin/Backgrounds/check-if-background-are-processed",
+            data: {
+                ids: ids
+            },
+            dataType: "json"
         }).done(function(data) {
-            answer = JSON.parse(data),
-            answer.err ? (icon = "error",
-            $autohide = !1) : ($("#previewBGImage").hide(),
-            $("#addbackgroundform")[0].reset(),
-            $("#bg_tags").select2("val", ""),
-            setTimeout(function() {
-                getBgimages2(0, "")
-            }, 2e3)),
+            data.success && data.finish ? (toastInstance.reset(),
+            toastInstance = null,
             $.toast({
-                text: answer.msg,
-                icon: icon,
+                text: "Backgrounds added",
+                icon: "success",
+                loader: !1,
+                position: "top-right",
+                hideAfter: 3e3
+            }),
+            $("#AddbackgroundModal").modal("hide"),
+            clearTimeout(ref)) : (updateToastMsg({
+                text: data.msg,
+                icon: "info",
+                loader: !1,
+                position: "top-right",
+                hideAfter: !1
+            }),
+            checkUploadedBg(ids))
+        }).fail(function() {
+            toastInstance.reset(),
+            toastInstance = null,
+            setTimeout(function() {
+                $("#AddbackgroundModal").modal("show")
+            }, 400),
+            $("#uploadBgButton").prop("disabled", !1),
+            $.toast({
+                text: "Request Error",
+                icon: "error",
+                loader: !1,
+                position: "top-right",
+                hideAfter: 3e3
+            })
+        })
+    }, 3e3)
+};
+function sortUnorderedList(ul, sortDescending) {
+    if ("string" == typeof ul && (ul = document.getElementById(ul)),
+    ul) {
+        for (var lis = ul.getElementsByTagName("LI"), vals = [], i = 0, l = lis.length; i < l; i++)
+            vals.push(lis[i].innerHTML);
+        vals.sort(function(a, b) {
+            return a.toLowerCase().localeCompare(b.toLowerCase())
+        }),
+        sortDescending && vals.reverse();
+        for (i = 0,
+        l = lis.length; i < l; i++)
+            lis[i].innerHTML = vals[i]
+    } else
+        alert("The UL object is null!")
+}
+function loadTemplate(templateid) {
+    var checkUnsaved = !(arguments.length > 1 && void 0 !== arguments[1]) || arguments[1];
+    if (stopProcess = !0,
+    s_history = !1,
+    "yes" !== $("#autosave").data("saved") && 0 === demo_as_id && checkUnsaved)
+        return $("#unsavedChanges").data("newtemplate", 0),
+        $("#unsavedChanges").data("templateid", templateid),
+        void $("#unsavedChanges").modal("show");
+    setZoom(1),
+    appSpinner.show(),
+    loadedtemplateid = templateid;
+    var url = appUrl + "editor/load-template";
+    $.ajax({
+        url: url,
+        type: "get",
+        data: {
+            id: templateid,
+            design_as_id: design_as_id,
+            demo_as_id: demo_as_id,
+            demo_templates: demo_templates
+        },
+        dataType: "json",
+        success: function(data) {
+            if (0 == data.err) {
+                if (geofilterBackground = 0,
+                template_type = "custom",
+                data.options.length) {
+                    var options = JSON.parse(data.options);
+                    template_type = options.type,
+                    instructionsId = options.instructionsId,
+                    "geofilter" != template_type && "geofilter2" != template_type || !options.geofilterBackground || (geofilterBackground = options.geofilterBackground),
+                    templateOptions = options
+                }
+                if (savestatecount = 0,
+                !openTemplate(data.data))
+                    return;
+                $("input[name=metric_units]").val([data.metrics]),
+                $("input[name=metric_units1]").val([data.metrics]),
+                "px" == data.metrics ? ($(".canvas_size_pixels").addClass("active"),
+                $(".canvas_size_inches").removeClass("active"),
+                $(".canvas_size_mm").removeClass("active")) : "in" == data.metrics ? ($(".canvas_size_inches").addClass("active"),
+                $(".canvas_size_pixels").removeClass("active"),
+                $(".canvas_size_mm").removeClass("active")) : "mm" == data.metrics && ($(".canvas_size_pixels").removeClass("active"),
+                $(".canvas_size_inches").removeClass("active"),
+                $(".canvas_size_mm").addClass("active")),
+                canvas.calcOffset(),
+                canvas.renderAll(),
+                $("#autosave").data("saved", "yes"),
+                stopProcess = !1,
+                data.instructions ? ($("#instructions").html(data.instructions),
+                $("#instructions-button").show()) : $("#instructions-button").hide(),
+                0 == demo_as_id || setDemoOverlay(),
+                initMasonry_related(loadedtemplateid),
+                loadTemplates_related(),
+                initMasonry_bg()
+            } else
+                appSpinner.hide(),
+                $.toast({
+                    text: data.msg,
+                    icon: "error",
+                    loader: !1,
+                    position: "top-right"
+                })
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            switch (appSpinner.hide(),
+            jqXHR.status) {
+            case 400:
+                var excp = $.parseJSON(jqXHR.responseText).error;
+                DEBUG && console.log("UnableToComplyException:" + excp.message, "warning");
+                break;
+            case 500:
+                excp = $.parseJSON(jqXHR.responseText).error;
+                DEBUG && console.log("PanicException:" + excp.message, "panic");
+                break;
+            default:
+                DEBUG && console.log("HTTP status=" + jqXHR.status + "," + textStatus + "," + errorThrown + "," + jqXHR.responseText)
+            }
+            $.toast({
+                text: "Something went wrong",
+                icon: "error",
                 hideAfter: 2e3,
                 loader: !1,
                 position: "top-right"
             })
-        }).error(function() {
-            $("#alertModal").modal("show"),
-            $("#responceMessage").html("Something went wrong. Please try again later.")
-        }).always(function() {
-            appSpinner.hide()
-        })
-    }
-}),
+        }
+    }),
+    $("#downloads-remaining-text").hide();
+    var urlDownloadsRemaining = appUrl + "editor/get-remaining-downloads/" + templateid;
+    $.ajax({
+        url: urlDownloadsRemaining,
+        type: "GET",
+        dataType: "json"
+    }).done(function(data) {
+        data.success && data.remaining && data.remaining > 0 && showDownloadsRemaining(data.remaining)
+    }).fail(function() {})
+}
 $("#unsaved_changes_commit").click(function(e) {
     e.preventDefault();
     var $templateid = $("#unsavedChanges").data("templateid")
@@ -5393,8 +6083,9 @@ function showRevertTemplate() {
     $("#revertTemplateModal").modal("show")
 }
 function revertTemplate() {
-    appSpinner.show();
-    var url = appUrl + "design/editor/revert-template";
+    appSpinner.show(),
+    templateIdToRevert = loadedtemplateid;
+    var url = appUrl + "design/app/revert-template";
     $.ajax({
         url: url,
         method: "POST",
@@ -5525,7 +6216,17 @@ objectFlipVerticalSwitch && (objectFlipVerticalSwitch.onclick = function() {
 var objectLock = document.getElementById("objectlock");
 objectLock && (objectLock.onclick = function() {
     var activeObject = canvas.getActiveObject();
-    activeObject && (activeObject.lockMovementY ? (activeObject.lockMovementY = activeObject.lockMovementX = !1,
+    activeObject._objects && "activeSelection" === activeObject.type ? activeObject.forEachObject(function($c) {
+        $c.lockMovementY ? ($c.lockMovementY = $c.lockMovementX = !1,
+        $c.hasControls = !0,
+        $c.set({
+            borderColor: "#4dd7fa"
+        })) : ($c.lockMovementY = $c.lockMovementX = !0,
+        $c.hasControls = !1,
+        $c.set({
+            borderColor: "#ff0000"
+        }))
+    }) : activeObject.lockMovementY ? (activeObject.lockMovementY = activeObject.lockMovementX = !1,
     activeObject.hasControls = !0,
     activeObject.set({
         borderColor: "#4dd7fa"
@@ -5535,7 +6236,7 @@ objectLock && (objectLock.onclick = function() {
         borderColor: "#ff0000"
     })),
     canvas.renderAll(),
-    save_history())
+    save_history()
 }
 ),
 $("#group").on("click", function() {
@@ -5579,13 +6280,13 @@ var ChangeOpacity = function() {
     var activeObject = canvas.getActiveObject();
     if (activeObject) {
         var $opacity = co.getValue();
-        activeObject._objects ? activeObject.forEachObject(function($c) {
-            "group" === $c.type ? $c.set("opacity", $opacity) : activeObject.set("opacity", $opacity)
+        activeObject._objects && "activeSelection" === activeObject.type ? activeObject.forEachObject(function($c) {
+            $c.set("opacity", $opacity)
         }) : activeObject.set("opacity", $opacity),
         canvas.renderAll()
     }
 }
-  , co = $("#changeopacity").slider().on("slide", ChangeOpacity).data("slider");
+  , co = $("#changeopacity").slider().on("change", ChangeOpacity).data("slider");
 function ChangeStrokeWidth(e) {
     DEBUG && console.log("ChangeStrokeWidth"),
     s_history = !1;
@@ -5629,6 +6330,7 @@ var ChangeBorderWH = function() {
 function ChangeShadowColor(color) {
     var activeObject = canvas.getActiveObject();
     activeObject && activeObject.shadow && (activeObject.shadow.color = color.toString()),
+    lastShadowColor = color.toString(),
     canvas.renderAll()
 }
 $("#changeborderwh").slider().on("slideStop", function(e) {
@@ -5637,26 +6339,45 @@ $("#changeborderwh").slider().on("slideStop", function(e) {
 }),
 $("input#shadowSwitch").click(function() {
     var activeObject = canvas.getActiveObject();
-    $("input#shadowSwitch").is(":checked") ? (activeObject.shadow ? activeObject.shadow.color = "rgba(0, 0, 0, 1)" : activeObject.setShadow("5px 5px 5px rgba(0, 0, 0, 1)"),
-    $("#shadowGroup .tab-content").removeClass("editor-disabled"),
-    $("#shadowColor").spectrum("enable")) : (activeObject.shadow = null,
-    $("#shadowGroup .tab-content").addClass("editor-disabled"),
-    $("#shadowColor").spectrum("disable")),
+    if ($("input#shadowSwitch").is(":checked")) {
+        if (activeObject.shadow)
+            activeObject.shadow.color = "rgba(0, 0, 0, 1)";
+        else {
+            var shadowColor = lastShadowColor || "rgba(0, 0, 0, 1)"
+              , shadowBlur = lastShadowBlur || 5
+              , shadowOffsetX = lastShadowHorizontalOffset || 5
+              , shadowOffsetY = lastShadowVerticalOffset || 5;
+            activeObject.setShadow({
+                blur: shadowBlur,
+                offsetX: shadowOffsetX,
+                offsetY: shadowOffsetY,
+                color: shadowColor
+            })
+        }
+        $("#shadowGroup .tab-content").removeClass("editor-disabled"),
+        $("#shadowColor").spectrum("enable")
+    } else
+        activeObject.shadow = null,
+        $("#shadowGroup .tab-content").addClass("editor-disabled"),
+        $("#shadowColor").spectrum("disable");
     canvas.renderAll()
 }),
 $("#changeBlur").slider();
 var ChangeShadowBlur = function() {
     canvas.getActiveObject().shadow.blur = csb.getValue(),
+    lastShadowBlur = csb.getValue(),
     canvas.renderAll()
 }
   , csb = $("#changeBlur").slider().on("slide", ChangeShadowBlur).data("slider")
   , ChangeShadowHOffset = function() {
     canvas.getActiveObject().shadow.offsetX = csho.getValue(),
+    lastShadowHorizontalOffset = csho.getValue(),
     canvas.renderAll()
 }
   , csho = $("#changeHOffset").slider().on("slide", ChangeShadowHOffset).data("slider")
   , ChangeShadowVOffset = function() {
     canvas.getActiveObject().shadow.offsetY = csvo.getValue(),
+    lastShadowVerticalOffset = csvo.getValue(),
     canvas.renderAll()
 }
   , csvo = $("#changeVOffset").slider().on("slide", ChangeShadowVOffset).data("slider");
@@ -5683,22 +6404,34 @@ $("#clone").on("click", function() {
                         })
                     })
                 }
+                "#ff0000" == activeObject._objects[i].borderColor && (obj.lockMovementY = obj.lockMovementX = !1,
+                obj.hasControls = !0,
+                obj.set({
+                    borderColor: "#4dd7fa"
+                })),
                 obj.setCoords()
             });
-        else if (clone.scale(1),
-        canvas.add(clone),
-        clone.set({
-            scaleX: activeObject.get("scaleX"),
-            scaleY: activeObject.get("scaleY")
-        }),
-        "object" === _typeof(activeObject.fill) && ("Dpattern" === activeObject.fill.type || "pattern" === activeObject.fill.type)) {
-            var $p = activeObject.fill.toObject();
-            fabric.Dpattern.fromObject($p, function(fill) {
-                return clone.set({
-                    fill: fill,
-                    dirty: !0
+        else {
+            if (clone.scale(1),
+            canvas.add(clone),
+            clone.set({
+                scaleX: activeObject.get("scaleX"),
+                scaleY: activeObject.get("scaleY")
+            }),
+            "object" === _typeof(activeObject.fill) && ("Dpattern" === activeObject.fill.type || "pattern" === activeObject.fill.type)) {
+                var $p = activeObject.fill.toObject();
+                fabric.Dpattern.fromObject($p, function(fill) {
+                    return clone.set({
+                        fill: fill,
+                        dirty: !0
+                    })
                 })
-            })
+            }
+            "#ff0000" == activeObject.borderColor && (clone.lockMovementY = clone.lockMovementX = !1,
+            clone.hasControls = !0,
+            clone.set({
+                borderColor: "#4dd7fa"
+            }))
         }
         clone.set({
             left: activeObject.get("left") + 50,
@@ -5951,10 +6684,10 @@ $(document).ready(function() {
     var imageDz = null;
     null === imageDz && $("#myAwesomeDropzone").dropzone({
         url: appUrl + "editor/template/upload-image",
-        paramName: "nombre",
+        paramName: "file[]",
         maxFilesize: 20,
         thumbnailWidth: 140,
-        previewsContainer: ".uploaded_images_list",
+        previewsContainer: ".uploaded_images",
         acceptedFiles: ".png,.jpg,.jpeg,.svg",
         headers: {
             "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
@@ -5963,18 +6696,30 @@ $(document).ready(function() {
             imageDz = this,
             this.on("success", function(file, $answer) {
                 var data = JSON.parse($answer);
-                data.success ? ($(file.previewElement).data("id", data.id),
-                demo_as_id || $(file.previewElement).append('<i class="fa fa-trash-o deleteImage" data-target="' + data.id + '"></i>')) : $.toast({
-                    text: data.msg,
-                    icon: "error",
-                    loader: !1,
-                    position: "top-right",
-                    hideAfter: 3e3
-                })
+                if (data.success) {
+                    $(file.previewElement).data("id", data.id);
+                    var deleteBtn = "";
+                    demo_as_id || (deleteBtn = '<i class="fa fa-trash-o deleteImage" data-target="' + data.id + '"></i>'),
+                    $(".uploaded_images .dz-preview").each(function(index, element) {
+                        var img = $(element).find(".dz-image img").attr("src")
+                          , name = $(element).find(".dz-filename span").html()
+                          , items = '<div data-id="' + data.id + '" class="dz-preview dz-processing dz-image-preview dz-success dz-complete thumb"><div class="dz-image"><img data-dz-thumbnail="" alt="' + name + '" src="' + img + '"></div> \x3c!-- <div class="dz-details"> <div class="dz-filename"><span data-dz-name="">' + name + "</span></div>  </div> --\x3e" + deleteBtn + "</div>";
+                        items = $(items),
+                        infinites.image.infiniteScroll("appendItems", items).masonry("appended", items)
+                    }),
+                    $(".uploaded_images").html("")
+                } else
+                    $.toast({
+                        text: data.msg,
+                        icon: "error",
+                        loader: !1,
+                        position: "top-right",
+                        hideAfter: 3e3
+                    })
             })
         }
     }),
-    $("#template_tags,#text_tags,#element_tags, #bg_tags,#new_element_tags").select2({
+    $("#template_tags,#element_tags, #bg_tags,#new_element_tags").select2({
         tags: !0,
         width: "100%",
         tokenSeparators: [","]
@@ -5982,6 +6727,7 @@ $(document).ready(function() {
     $("input[name=metric_units1]").val(["in"]),
     $("input[name=metric_units]").val(["in"]),
     $("#undo").hide(),
+    $("#productImageDownload").hide(),
     $(".page *").length || ($("#addnewpagebutton").hide(),
     $("#saveimage").hide(),
     $("#saveastemplate").hide(),
@@ -5989,10 +6735,13 @@ $(document).ready(function() {
     $(".zoom-control").hide(),
     $("#options").hide()),
     $("#savetemplate").hide(),
-    $templates = getTemplates2(0, ""),
+    initMasonry_template(),
+    loadTemplates_template(),
+    initMasonry_image(),
+    loadTemplates_image(),
     getUploadedImages(0)
 }),
-$(window).on('load',function() {
+$(window).load(function() {
     if ("administrator" == currentUserRole && !hideVideoModal) {
         $("#modal-video").modal(),
         $(document).on("click", "#hide-video", function() {
@@ -6118,69 +6867,12 @@ $color_selector_options.move = function(color) {
 ,
 $("#colorSelector").spectrum($color_selector_options);
 var $color_selector2_options = $spectrum_options;
-function getCatimages2($offset, $tags) {
-    if (!elementsLoading) {
-        elementsLoading = !0;
-        var $grid = $("#catimage_container")
-          , $elements = "";
-        0 == $offset && ($grid.empty(),
-        offsetElements = 0),
-        $(".sub-menu.visible").length && $(".loading-icon").css({
-            left: $grid.offset().left + $grid.outerWidth() / 2 - 32,
-            top: $(window).outerHeight() / 2 - 16
-        }).show();
-        var url = appUrl + "design/get-catimages.php";
-        return $.getJSON(url, {
-            offset: $offset,
-            limit: 48,
-            tags: $tags,
-            safari: isSafari,
-            design_as_id: design_as_id
-        }).done(function($answer) {
-            "0" == $answer.err && $answer.data ? (jQuery.each($answer.data, function($i, $val) {
-                var img = this.img
-                  , thumb = this.thumb;
-                $elements += '<div class="col-sm-4 col-xs-6 thumb ' + this.isownitem + '" id="' + this.id + '"><a class="thumbnail" href="#"><img crossorigin="' + this.crossorigin + '" class="catImage img-responsive" data-imgsrc="' + img + '" src="' + thumb + '" alt=""></a><i class="fa fa-trash-o deleteElement" id="' + this.id + '"></i></div>'
-            }),
-            $grid.isotope().append($elements).isotope("appended", $elements).isotope("layout"),
-            $grid.imagesLoaded().always(function() {
-                $(".loading-icon").hide(),
-                $grid.isotope("layout"),
-                $grid.isotope("reloadItems"),
-                $grid.isotope({
-                    itemSelector: ".thumb",
-                    masonry: {
-                        columnWidth: ".thumb"
-                    }
-                })
-            }),
-            offsetElements += 48) : $(".loading-icon").hide(),
-            $answer.data || 0 != $offset || $grid.html("<h3>No Results</h3>"),
-            0 == $offset && navigator.userAgent.match(/Trident\/7\./) && setTimeout(function() {
-                $grid.isotope("layout"),
-                DEBUG && console.log("ie detected")
-            }, 3e3)
-        }).always(function() {
-            elementsLoading = !1,
-            0 == $offset && ($grid.isotope("reloadItems"),
-            $grid.isotope({
-                itemSelector: ".thumb",
-                masonry: {
-                    columnWidth: ".thumb"
-                }
-            }))
-        }),
-        !0
-    }
-}
+function getCatimages2($offset, $tags) {}
 function getUploadedImages($offset) {
-    var $grid = $(".uploaded_images_list")
-      , url = appUrl + "editor/get-additional-assets/?offset=" + $offset;
+    $(".uploaded_images_list");
+    var url = appUrl + "editor/get-additional-assets/?offset=" + $offset;
     $.getJSON(url).done(function(data) {
-        data.success && jQuery.each(data.images, function(i, value) {
-            var deleteBtn = demo_as_id ? "" : '<i data-target="' + value.id + '" class="fa fa-trash-o deleteImage"></i>';
-            $grid.append('<div data-id="' + value.id + '" class="dz-preview dz-processing dz-image-preview dz-success dz-complete"><div class="dz-image"><img data-dz-thumbnail="" alt="' + value.filename + '" src="' + value.img + '"></div>  <div class="dz-details"> <div class="dz-filename"><span data-dz-name="">' + value.filename + "</span></div>  </div> " + deleteBtn + "</div>")
-        }),
+        data.success,
         "administrator" != currentUserRole && "designer" != currentUserRole || ($("#tab-upload").hide(),
         !isNaN(design_as_id) && design_as_id > 0 ? $("#tab-upload").show() : data.images.length > 0 && ($("#tab-upload").show(),
         $("#tab-upload .dz-message").hide(),
@@ -6190,197 +6882,8 @@ function getUploadedImages($offset) {
         $("#myAwesomeDropzone").removeClass("dz-clickable")))
     })
 }
-function getBgimages2($offset, $tags) {
-    if (!backgroundsLoading) {
-        backgroundsLoading = !0;
-        var $grid = $("#background_container")
-          , $bgs = "";
-        "undefined" === $offset && ($offset = 0),
-        0 == $offset && ($grid.empty(),
-        offsetBackgrounds = 0),
-        $(".sub-menu.visible").length && $(".loading-icon").css({
-            left: $grid.offset().left + $grid.outerWidth() / 2 - 32,
-            top: $(window).outerHeight() / 2 - 16
-        }).show();
-        var url = appUrl + "editor/get-bg-images";
-        return $.getJSON(url, {
-            offset: $offset,
-            limit: 24,
-            tags: $tags,
-            demo_as_id: demo_as_id,
-            design_as_id: design_as_id,
-            template_id: loadedtemplateid
-        }).done(function($answer) {
-            if ("0" == $answer.err && $answer.data) {
-                var hidden = demo_as_id > 0 ? "hidden" : "";
-                jQuery.each($answer.data, function($i, $val) {
-                    $bgs += '<div class="col-sm-4 col-xs-6 thumb ' + this.isownitem + '" id="' + this.id + '"><a class="thumbnail bgImage" href="#" data-imgsrc="' + this.url + '"><img class="img-responsive" src="' + this.thumb + '" alt=""><span class="thumb-overlay"><h3>' + this.name + '</h3></span></a><i class="fa fa-trash-o deleteBg" id="' + this.id + " " + hidden + '"></i></div>'
-                }),
-                $grid.isotope().append($bgs).isotope("appended", $bgs).isotope("layout"),
-                $grid.imagesLoaded().always(function() {
-                    $(".loading-icon").hide(),
-                    $grid.isotope("layout"),
-                    $grid.isotope("reloadItems"),
-                    $grid.isotope({
-                        itemSelector: ".thumb",
-                        masonry: {
-                            columnWidth: ".thumb"
-                        }
-                    })
-                }),
-                offsetBackgrounds += 24
-            } else
-                $(".loading-icon").hide();
-            $answer.data || 0 != $offset || $grid.html("<h3>No Results</h3>")
-        }).always(function() {
-            backgroundsLoading = !1,
-            0 == $offset && ($grid.isotope("reloadItems"),
-            $grid.isotope({
-                itemSelector: ".thumb",
-                masonry: {
-                    columnWidth: ".thumb"
-                }
-            }))
-        }),
-        !0
-    }
-}
-function getTemplates2($offset, $tags) {
-    if (!templatesloading) {
-        templatesloading = !0;
-        var $grid = $("#template_container");
-        0 == $offset && ($grid.empty(),
-        offsetTemplates = 0),
-        $(".sub-menu.visible").length && $(".loading-icon").css({
-            left: $("#template_container").offset().left + $("#template_container").outerWidth() / 2 - 32,
-            top: $(window).outerHeight() / 2 - 16
-        }).show();
-        var url = appUrl + "editor/get-thumbnails";
-        return $.getJSON(url, {
-            offset: $offset,
-            limit: 24,
-            tags: $tags,
-            design_as_id: design_as_id,
-            demo_as_id: demo_as_id,
-            demo_templates: demo_templates,
-            language_code: language_code
-        }).done(function($answer) {
-            "0" == $answer.err && $answer.data ? ($grid.isotope().append($answer.data).isotope("appended", $answer.data).isotope("layout"),
-            $grid.imagesLoaded().always(function() {
-                $(".loading-icon").hide(),
-                $grid.isotope("layout"),
-                $grid.isotope("reloadItems"),
-                $grid.isotope({
-                    itemSelector: ".thumb",
-                    masonry: {
-                        columnWidth: ".thumb"
-                    }
-                })
-            })) : $(".loading-icon").hide(),
-            $answer.data || 0 != $offset || $grid.html("<h3>No Results</h3>"),
-            offsetTemplates += 24
-        }).always(function() {
-            $('#template-status').val("Thumbs Loaded"),templatesloading = !1,
-            0 == $offset && ($grid.isotope("reloadItems"),
-            $grid.isotope({
-                itemSelector: ".thumb",
-                masonry: {
-                    columnWidth: ".thumb"
-                }
-            }))
-        }),
-        !0
-    }
-}
-function getRelatedProducts($offset) {}
-function getTexts2($offset, $tags) {
-    if (!textsLoading) {
-        textsLoading = !0;
-        var $grid = $("#text_container")
-          , $texts = "";
-        0 == $offset && ($grid.empty(),
-        offsetTexts = 0),
-        $(".sub-menu.visible").length && $(".loading-icon").css({
-            left: $grid.offset().left + $grid.outerWidth() / 2 - 32,
-            top: $(window).outerHeight() / 2 - 16
-        }).show();
-        var url = appUrl + "design/get_texts.php";
-        return $.getJSON(url, {
-            offset: $offset,
-            limit: 12,
-            tags: $tags
-        }).done(function($answer) {
-            "0" == $answer.err && $answer.data ? (jQuery.each($answer.data, function($i, $val) {
-                $texts += '<div class="col-xs-6 thumb ' + this.isownitem + '" id="' + this.id + '"><a class="thumbnail" title="' + this.title + '" href="#" data-target="' + this.id + '"><img class="textImage img-responsive" src="' + this.thumb + '" alt=""></a><i class="fa fa-trash-o deleteText" id="' + this.id + '"></i></div>'
-            }),
-            $grid.isotope().append($texts).isotope("appended", $texts).isotope("layout"),
-            $grid.imagesLoaded().always(function() {
-                $(".loading-icon").hide(),
-                $grid.isotope("layout"),
-                $grid.isotope("reloadItems"),
-                $grid.isotope({
-                    itemSelector: ".thumb",
-                    masonry: {
-                        columnWidth: ".thumb"
-                    }
-                })
-            }),
-            offsetTexts += 12) : $(".loading-icon").hide(),
-            $answer.data || 0 != $offset || $grid.html("<h3>No Results</h3>")
-        }).always(function() {
-            textsLoading = !1,
-            0 == $offset && ($grid.isotope("reloadItems"),
-            $grid.isotope({
-                itemSelector: ".thumb",
-                masonry: {
-                    columnWidth: ".thumb"
-                }
-            }))
-        }),
-        !0
-    }
-}
-function handleFileSelect(evt) {
-    $("ul.navbar-nav>li.dropdown").removeClass("open");
-    for (var f, files = evt.target.files, i = 0; f = files[i]; i++)
-        if (-1 != f.name.indexOf(".ype")) {
-            var reader = new FileReader;
-            reader.onload = function(e) {
-                openTemplate(e.target.result)
-            }
-            ,
-            reader.readAsText(f)
-        }
-}
-function handleContextmenu(e) {
-    e.preventDefault(),
-    $(".custom-menu").find(".flatten").hide(),
-    $(".custom-menu").find(".unflatten").hide(),
-    canvas.getActiveObject() && canvas.getActiveObject().locked && !0 === canvas.getActiveObject().locked && $(".custom-menu").find(".unflatten").show(),
-    canvas.getActiveObject() && !canvas.getActiveObject().locked && $(".custom-menu").find(".flatten").show(),
-    canvas.getActiveObject() && canvas.getActiveObject().locked && !0 === canvas.getActiveObject().locked && !$("body").hasClass("admin") ? ($(".custom-menu").find(".copy").hide(),
-    $(".custom-menu").find(".cut").hide(),
-    $(".custom-menu").find(".unflatten").hide(),
-    $(".custom-menu").find(".flatten").hide()) : ($(".custom-menu").find(".copy").show(),
-    $(".custom-menu").find(".cut").show()),
-    $(".custom-menu").finish().toggle(100).css({
-        top: e.pageY + "px",
-        left: e.pageX + "px"
-    })
-}
-function flatten() {
-    var $objects = canvas.getActiveObjects();
-    $objects && ($.each($objects, function($i, $o) {
-        makeObjectNotSelectable($o)
-    }),
-    canvas.renderAll())
-}
-function unflatten() {
-    var $objects = canvas.getActiveObjects();
-    $objects && $.each($objects, function($i, $o) {
-        makeObjectSelectable($o)
-    })
-}
+function getBgimages2($offset, $tags) {}
+function getTemplates2($offset, $tags) {}
 $color_selector2_options.change = function(color) {
     DEBUG && console.log("color: ", color),
     null == window.localStorage[localStorageKey] && (window.localStorage[localStorageKey] = ";");
@@ -6430,8 +6933,8 @@ $("#bgcolorselect").spectrum({
     showInitial: !1,
     showButtons: !1,
     maxSelectionSize: 24,
-    togglePaletteMoreText: "Mostrar Avanzado",
-    togglePaletteLessText: "Ocultar Avanzando",
+    togglePaletteMoreText: "Show advanced",
+    togglePaletteLessText: "Hide advanced",
     move: function(color) {
         if (color) {
             colorVal = color.toHexString();
@@ -6474,8 +6977,8 @@ $("#colorStrokeSelector").spectrum({
     allowEmpty: !0,
     showButtons: !1,
     maxSelectionSize: 24,
-    togglePaletteMoreText: "Mostrar Avanzado",
-    togglePaletteLessText: "Ocultar Avanzando",
+    togglePaletteMoreText: "Show advanced",
+    togglePaletteLessText: "Hide advanced",
     change: function(color) {
         DEBUG && console.log("color: ", color),
         null == window.localStorage[localStorageKey] && (window.localStorage[localStorageKey] = ";");
@@ -6515,8 +7018,8 @@ $("#shadowColor").spectrum({
     flat: !0,
     showButtons: !1,
     maxSelectionSize: 24,
-    togglePaletteMoreText: "Mostrar Avanzado",
-    togglePaletteLessText: "Ocultar Avanzando",
+    togglePaletteMoreText: "Show advanced",
+    togglePaletteLessText: "Hide advanced",
     showAlpha: !0,
     move: function(color) {
         if (DEBUG && console.log("color: ", color),
@@ -6550,27 +7053,40 @@ $("#bgcolorcontainer .sp-palette-toggle").addClass("btn btn-alt4"),
 $("#bgcolorcontainer input").attr("placeholder", "Type a # hex color code and hit enter"),
 jQuery(function($) {
     $("#a").on("scroll", function() {
-        var $tags = $("#templatesearch").val() ? $("#templatesearch").val().toString() : "";
-        $(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight && ($templates = getTemplates2(offsetTemplates, $tags))
+        flag_scroll_templates_template || 100 * ($(this).scrollTop() + $(this).innerHeight()) / $(this)[0].scrollHeight > 95 && ($(aContainer_template).next().find(".loader-ellips").show(),
+        $(aContainer_template).next().find(".iscroll-button").hide(),
+        flag_scroll_templates_template = !0,
+        loadTemplates_template())
     }),
     $("#b").on("scroll", function() {
-        var $tags = $("#textsearch").val() ? $("#textsearch").val().toString() : "";
-        $(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight && ($texts = getTexts2(offsetTexts, $tags))
+        flag_scroll_templates_text || 100 * ($(this).scrollTop() + $(this).innerHeight()) / $(this)[0].scrollHeight > 95 && ($(aContainer_text).next().find(".loader-ellips").show(),
+        $(aContainer_text).next().find(".iscroll-button").hide(),
+        flag_scroll_templates_text = !0,
+        loadTemplates_text())
     }),
     $("#c").on("scroll", function() {
-        if ($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight) {
-            var $tags = $("#textsearch").val() ? $("#textsearch").val().toString() : "";
-            getCatimages2(offsetElements, $tags)
-        }
+        flag_scroll_templates_element || 100 * ($(this).scrollTop() + $(this).innerHeight()) / $(this)[0].scrollHeight > 95 && ($(aContainer_element).next().find(".loader-ellips").show(),
+        $(aContainer_element).next().find(".iscroll-button").hide(),
+        flag_scroll_templates_element = !0,
+        loadTemplates_element())
     }),
     $("#d").on("scroll", function() {
-        if ($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight) {
-            var $tags = $("#bgsearch").val() ? $("#bgsearch").val().toString() : "";
-            getBgimages2(offsetBackgrounds, $tags)
-        }
+        flag_scroll_templates_bg || 100 * ($(this).scrollTop() + $(this).innerHeight()) / $(this)[0].scrollHeight > 95 && ($(aContainer_bg).next().find(".loader-ellips").show(),
+        $(aContainer_bg).next().find(".iscroll-button").hide(),
+        flag_scroll_templates_bg = !0,
+        loadTemplates_bg())
     }),
     $("#e").on("scroll", function() {
-        $(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight && getRelatedProducts(offsetRelatedProducts)
+        flag_scroll_templates_related || 100 * ($(this).scrollTop() + $(this).innerHeight()) / $(this)[0].scrollHeight > 95 && ($(aContainer_related).next().find(".loader-ellips").show(),
+        $(aContainer_related).next().find(".iscroll-button").hide(),
+        flag_scroll_templates_related = !0,
+        loadTemplates_related())
+    }),
+    $("#f").on("scroll", function() {
+        flag_scroll_templates_image || 100 * ($(this).scrollTop() + $(this).innerHeight()) / $(this)[0].scrollHeight > 95 && ($(aContainer_image).next().find(".loader-ellips").show(),
+        $(aContainer_image).next().find(".iscroll-button").hide(),
+        flag_scroll_templates_image = !0,
+        loadTemplates_image())
     })
 }),
 $(".uploaded_images_list").on("click", ".dz-preview:not(.dz-error)", function(e) {
@@ -6614,30 +7130,78 @@ $(".uploaded_images_list").on("click", ".dz-preview:not(.dz-error)", function(e)
         }
     }
 }),
-$("#imagesPane").click(function(e) {
-    $offset = $(".uploaded_images_list").children().last().data("id"),
-    getUploadedImages($offset)
-}),
 $("#cancel_templates_search").click(function(e) {
     e.preventDefault(),
     $("#templatesearch").val(""),
     $("#a").scrollTop(0),
-    $templates = getTemplates2(0, "")
+    initMasonry_template(),
+    loadTemplates_template()
 }),
 $("#cancel_text_search").click(function(e) {
     e.preventDefault(),
     $("#textsearch").val(""),
-    getTexts2(0, "")
+    initMasonry_text(),
+    loadTemplates_text()
 }),
 $("#cancel_elements_search").click(function(e) {
     e.preventDefault(),
     $("#elementssearch").val(""),
-    getCatimages2(0, "")
+    initMasonry_element(),
+    loadTemplates_element()
 }),
 $("#cancel_bg_search").click(function(e) {
     e.preventDefault(),
     $("#bgsearch").val(""),
-    getBgimages2(0, "")
+    initMasonry_bg(),
+    loadTemplates_bg()
+});
+var relatedProductPage = 0
+  , relatedProductCount = 2;
+function getRelatedProducts(templateId, page) {}
+function getTexts2($offset, $tags) {}
+function handleFileSelect(evt) {
+    $("ul.navbar-nav>li.dropdown").removeClass("open");
+    for (var f, files = evt.target.files, i = 0; f = files[i]; i++)
+        if (-1 != f.name.indexOf(".ype")) {
+            var reader = new FileReader;
+            reader.onload = function(e) {
+                openTemplate(e.target.result)
+            }
+            ,
+            reader.readAsText(f)
+        }
+}
+function handleContextmenu(e) {
+    e.preventDefault(),
+    $(".custom-menu").find(".flatten").hide(),
+    $(".custom-menu").find(".unflatten").hide(),
+    canvas.getActiveObject() && canvas.getActiveObject().locked && !0 === canvas.getActiveObject().locked && $(".custom-menu").find(".unflatten").show(),
+    canvas.getActiveObject() && !canvas.getActiveObject().locked && $(".custom-menu").find(".flatten").show(),
+    canvas.getActiveObject() && canvas.getActiveObject().locked && !0 === canvas.getActiveObject().locked && !$("body").hasClass("admin") ? ($(".custom-menu").find(".copy").hide(),
+    $(".custom-menu").find(".cut").hide(),
+    $(".custom-menu").find(".unflatten").hide(),
+    $(".custom-menu").find(".flatten").hide()) : ($(".custom-menu").find(".copy").show(),
+    $(".custom-menu").find(".cut").show()),
+    $(".custom-menu").finish().toggle(100).css({
+        top: e.pageY + "px",
+        left: e.pageX + "px"
+    })
+}
+function flatten() {
+    var $objects = canvas.getActiveObjects();
+    $objects && ($.each($objects, function($i, $o) {
+        makeObjectNotSelectable($o)
+    }),
+    canvas.renderAll())
+}
+function unflatten() {
+    var $objects = canvas.getActiveObjects();
+    $objects && $.each($objects, function($i, $o) {
+        makeObjectSelectable($o)
+    })
+}
+$("#relatedProductsPane .col-lg-12.scroll-container").on("click", function() {
+    getRelatedProducts(loadedtemplateid)
 }),
 $(document).ready(function() {
     $("#canvaswhForm").validate({
@@ -6695,23 +7259,20 @@ $("#opentemplate_input").change(function(evt) {
     handleFileSelect(evt)
 }),
 $("#showmoreoptions").click(function() {
+    $("#showmoreoptions ul li").find("a.temphide").removeClass("temphide").css("display", "block"),
     $("#opacitySlider").hide(),
     $("#lineheightSlider").hide(),
     $("#charspacingSlider").hide(),
     $("#borderwhSlider").hide(),
     $("#textuppercase").hide(),
     $("#textlowercase").hide(),
-    $("#textcapitalize").hide(),
-    $("#showmoreoptions ul li a").removeClass("temphide");
+    $("#textcapitalize").hide();
     var activeObject = canvas.getActiveObject();
     if (activeObject) {
-        1 == activeObject.lockMovementY ? $("#objectlock").html("<i class='fa fa-unlock'></i>&nbsp;&nbsp; Unlock Object") : $("#objectlock").html("<i class='fa fa-lock' style='font-size:16px;'></i>&nbsp;&nbsp; Lock Position"),
+        activeObject._objects && "activeSelection" === activeObject.type ? $("#objectlock").html("<i class='fa fa-lock'></i>&nbsp;&nbsp; Toggle Lock") : 1 == activeObject.lockMovementY ? $("#objectlock").html("<i class='fa fa-unlock'></i>&nbsp;&nbsp; Unlock Object") : $("#objectlock").html("<i class='fa fa-lock' style='font-size:16px;'></i>&nbsp;&nbsp; Lock Position"),
         activeObject.get("stroke") ? $("#addremovestroke").html("<i class='fa' style='font-size: 18px;'>▣</i>&nbsp; Remove Stroke") : ($("#strokegroup").hide(),
         $("#addremovestroke").html("<i class='fa' style='font-size: 18px;'>▣</i>&nbsp; Add Stroke"));
         var objectopacity = activeObject.get("opacity");
-        activeObject._objects && activeObject.forEachObject(function($c) {
-            1 !== $c.opacity && (objectopacity = $c.opacity)
-        }),
         $("#changeopacity").slider("setValue", objectopacity);
         var objectborderwh = (canvas.get("width") - activeObject.get("width")) / 96 / 2;
         if ($("#changeborderwh").slider("setValue", objectborderwh),
@@ -6859,14 +7420,18 @@ $(document).unbind("keydown").bind("keydown", function(event) {
 var textuppercaseSwitch = document.getElementById("textuppercase");
 textuppercaseSwitch && (textuppercaseSwitch.onclick = function() {
     var activeObject = canvas.getActiveObject();
-    activeObject && /text/.test(activeObject.type) && (activeObject.text = activeObject.text.toUpperCase(),
+    activeObject && (activeObject._objects && "activeSelection" === activeObject.type ? activeObject.forEachObject(function(e) {
+        /text/.test(e.type) && (e.text = e.text.toUpperCase())
+    }) : /text/.test(activeObject.type) && (activeObject.text = activeObject.text.toUpperCase()),
     canvas.renderAll())
 }
 );
 var textlowercaseSwitch = document.getElementById("textlowercase");
 textlowercaseSwitch && (textlowercaseSwitch.onclick = function() {
     var activeObject = canvas.getActiveObject();
-    activeObject && /text/.test(activeObject.type) && (activeObject.text = activeObject.text.toLowerCase(),
+    activeObject && (activeObject._objects && "activeSelection" === activeObject.type ? activeObject.forEachObject(function(e) {
+        /text/.test(e.type) && (e.text = e.text.toLowerCase())
+    }) : /text/.test(activeObject.type) && (activeObject.text = activeObject.text.toLowerCase()),
     canvas.renderAll())
 }
 );
@@ -6961,8 +7526,11 @@ function trackRelatedProducts(listing_id) {
 }
 textcapitalizeSwitch && (textcapitalizeSwitch.onclick = function() {
     var activeObject = canvas.getActiveObject();
-    activeObject && /text/.test(activeObject.type) && (activeObject.text = activeObject.text.toLowerCase(),
-    activeObject.text = capitalizeFirstAllWords(activeObject.text),
+    activeObject && (activeObject._objects && "activeSelection" === activeObject.type ? activeObject.forEachObject(function(e) {
+        /text/.test(e.type) && (e.text = e.text.toLowerCase(),
+        e.text = capitalizeFirstAllWords(e.text))
+    }) : /text/.test(activeObject.type) && (activeObject.text = activeObject.text.toLowerCase(),
+    activeObject.text = capitalizeFirstAllWords(activeObject.text)),
     canvas.renderAll())
 }
 ),
@@ -6984,8 +7552,7 @@ $(".sidebar-elements li a").not(".sidebar-elements.zoom-control li a").click(fun
     $(this).parent().addClass("active")
 }),
 $("body").on("click", function(e) {
-    $(".submenu.visible").is(e.target) || 0 !== $(".submenu.visible").has(e.target).length || 0 !== $(".parent").parent().has(e.target).length || ($(".sidebar-elements .sub-menu").parent().removeClass("active"),
-    $(".loading-icon").hide())
+    $(".submenu.visible").is(e.target) || 0 !== $(".submenu.visible").has(e.target).length || 0 !== $(".parent").parent().has(e.target).length || $(".sidebar-elements .sub-menu").parent().removeClass("active")
 }),
 $(document).ajaxError(function(event, jqxhr, settings, thrownError) {
     "Unauthorized" != thrownError && 401 != jqxhr.status || 0 !== demo_as_id || ($("#loginModal").modal("show"),
@@ -7334,7 +7901,7 @@ function uploadFont() {
     appSpinner.show();
     var data = new FormData;
     data.append("file", $("#fontUpload").prop("files")[0]);
-    var url = appUrl + "admin/actions/fonts.php?action=upload";
+    var url = appUrl + "admin/Fonts/add-font";
     $.ajax({
         url: url,
         type: "POST",
@@ -7342,14 +7909,15 @@ function uploadFont() {
         contentType: !1,
         dataType: "json",
         data: data,
+        timeout: 12e4,
         success: function(data) {
-            0 === data.err ? ($("#fontDetailsModal").modal("show"),
+            data.success ? ($("#fontDetailsModal").modal("show"),
             $("#fontId").val(data.id),
             $("#fontOriginalName").val(data.originalName),
             $("#fontDisplayName").val(data.originalName)) : $.toast({
                 text: data.msg,
                 icon: "error",
-                hideAfter: 2e3,
+                hideAfter: 3e3,
                 loader: !1,
                 position: "top-right"
             })
@@ -7358,7 +7926,7 @@ function uploadFont() {
             $.toast({
                 text: "Something went wrong",
                 icon: "error",
-                hideAfter: 2e3,
+                hideAfter: 3e3,
                 loader: !1,
                 position: "top-right"
             })
@@ -7631,6 +8199,736 @@ function setupSymbolsPanel() {
                 }
             })
 }
+$("body").on("pattern_image_loaded", function(e) {
+    DEBUG && console.log("pattern_image_loaded"),
+    $(".pattern_tile").removeClass("loading"),
+    setTimeout(function() {
+        canvas._objects.map(function(o) {
+            "object" === _typeof(o.fill) && /pattern/.test(o.fill.type) && o.set("dirty", !0),
+            canvas.renderAll()
+        })
+    }, 100)
+}),
+$(".patternScale").slider().on("slide", updatePatternFill).data("slider"),
+$(".patternScale").slider().on("slideStart", function(e) {
+    $(".patternFillTab").addClass("fade")
+}),
+$(".patternScale").slider().on("slideStop", function(e) {
+    $(".patternFillTab").removeClass("fade")
+}),
+$("body").on("click", ".patternFillLabel", function(e) {
+    e.preventDefault();
+    var $btn = $(e.target);
+    $(".patternFillPreview").removeClass("open"),
+    $btn.toggleClass("open");
+    var $modal = $(".patternFillTab");
+    $modal.toggle(),
+    $modal.css({
+        left: $btn.offset().left,
+        top: $btn.offset().top + 34
+    });
+    var $ao = canvas.getActiveObject();
+    $ao && $ao.fill instanceof fabric.Dpattern && $(".patternScale").slider("setValue", 100 * $ao.fill.scale * 3.125 * fabric.devicePixelRatio)
+}),
+$(".patternFillTab").on("click", ".pattern_tile", function(e) {
+    var $ao = canvas.getActiveObject()
+      , $pattern_tile = $(e.target).parent(".pattern_tile");
+    $pattern_tile.addClass("loading"),
+    changeDynamicPattern($ao, $pattern_tile.data("imgsrc"), $(".patternFillPreview.open").data("currentsrc"))
+}),
+$(document).ready(function() {
+    getPatterns(0),
+    $("#patternsList").on("scroll", function(e) {
+        var element = $(e.target).get(0);
+        element.scrollTop > element.scrollHeight - element.offsetHeight - 10 && (patternsLoading || getPatterns(offsetPatterns))
+    })
+}),
+$("#font-symbols").dialog({
+    resizable: !1,
+    height: "auto",
+    width: "auto",
+    modal: !1,
+    autoOpen: !1,
+    dialogClass: "no-close",
+    position: {
+        my: "left center",
+        at: "left+20px center",
+        of: ".main-content"
+    },
+    open: function() {
+        $("#font-symbols").dialog("option", "position", {
+            my: "left center",
+            at: "left+20px center",
+            of: ".main-content"
+        }),
+        setupSymbolsPanel()
+    },
+    close: function() {}
+}),
+$("body").on("click", ".utf8-symbol", function(e) {
+    e.preventDefault();
+    var $textObject = canvas.getActiveObject();
+    if ($textObject && /text/.test($textObject.type)) {
+        var $symbol = $(this).text()
+          , $selectionStart = $textObject.text.length
+          , $selectionEnd = $textObject.text.length;
+        $textObject.isEditing && ($selectionStart = $textObject.selectionStart,
+        $selectionEnd = $textObject.selectionEnd),
+        $textObject.insertChars($symbol, "", $selectionStart, $selectionEnd),
+        $selectionEnd === $selectionStart && ($textObject.selectionStart = $textObject.selectionEnd = ++$selectionEnd),
+        $textObject.isEditing && ($textObject.hiddenTextarea.value = $textObject.text),
+        $textObject.dirty = !0,
+        canvas.renderAll()
+    }
+}),
+$("#showObSymbolsPanel").click(function() {
+    return $("#font-symbols").dialog("open")
+}),
+$("#fontSearch").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $(".dropdown-menu li").filter(function() {
+        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    })
+}),
+$("#font-dropdown").on("hide.bs.dropdown", function(e) {
+    $("#fontSearch").val(""),
+    $(".dropdown-menu li").filter(function() {
+        $(this).toggle($(this).text().toLowerCase().indexOf("") > -1)
+    }),
+    $("#fontSearch").blur()
+}),
+$(".left-sidebar-dropdown-menu").on("hide.bs.dropdown", function(e) {
+    $(".left-sidebar-dropdown-menu .dropdown-menu li").removeClass("active")
+});
+// var webSocketConn = !1
+//   , countConnection = 0;
+// function wsConection() {
+//     var conn = new WebSocket(wsDir);
+//     conn.onopen = function(e) {
+//         console.log("connected to WS"),
+//         webSocketConn = !0,
+//         countConnection++,
+//         conn.send(JSON.stringify({
+//             type: "id",
+//             userId: docUserId
+//         })),
+//         keepConnection()
+//     }
+//     ,
+//     conn.onclose = function(event) {
+//         conn.close(),
+//         webSocketConn = !1,
+//         reConnectWS()
+//     }
+//     ;
+//     var reConnectWS = function() {
+//         !webSocketConn && countConnection > 0 && setTimeout(function() {
+//             wsConection()
+//         }, 1e3)
+//     }
+//       , keepConnection = function keepConnection() {
+//         setTimeout(function() {
+//             keepConnection(),
+//             webSocketConn && conn && conn.send(JSON.stringify({
+//                 type: "id",
+//                 userId: docUserId
+//             }))
+//         }, 2e4)
+//     };
+//     conn.onmessage = function(msg) {
+//         var msgObj = JSON.parse(msg.data);
+//         msgObj.userId == docUserId && processWsMsg(msgObj)
+//     }
+//     ;
+//     var processWsMsg = function(msgObj) {
+//         switch (msgObj.type) {
+//         case "preview-svg":
+//             showPreviewPdf(msgObj);
+//             break;
+//         case "download-pdf":
+//             processDownloadButton(msgObj, "pdf");
+//             break;
+//         case "download-png":
+//             processDownloadButton(msgObj, "png");
+//             break;
+//         case "download-jpeg":
+//             processDownloadButton(msgObj, "jpeg");
+//             break;
+//         case "user-notification":
+//             var text = msgObj.msg;
+//             text.type && "background" == text.type ? "Finished" == text.text ? (toastInstance && (toastInstance.reset(),
+//             toastInstance = null),
+//             $.toast({
+//                 text: "Background added",
+//                 icon: "success",
+//                 loader: !1,
+//                 position: "top-right",
+//                 hideAfter: 4e3
+//             }),
+//             $("#uploadBgButton").prop("disabled", !1),
+//             initMasonry_element(),
+//             loadTemplates_element()) : updateToastMsg({
+//                 text: text.text,
+//                 icon: "info",
+//                 loader: !1,
+//                 position: "top-right",
+//                 hideAfter: !1
+//             }) : text.type && "element" == text.type && "Finished" == text.text ? (toastInstance && (toastInstance.reset(),
+//             toastInstance = null),
+//             $.toast({
+//                 text: "Elements added",
+//                 icon: "success",
+//                 loader: !1,
+//                 position: "top-right",
+//                 hideAfter: 4e3
+//             }),
+//             $("#uploadButton").prop("disabled", !1),
+//             $("#uploadCancelButton").click(),
+//             initMasonry_element(),
+//             loadTemplates_element()) : -1 != text.text.indexOf("Finished") ? (toastInstance && (toastInstance.reset(),
+//             toastInstance = null),
+//             $.toast({
+//                 text: text.text,
+//                 icon: "warning",
+//                 loader: !1,
+//                 position: "top-right",
+//                 hideAfter: 4e3
+//             }),
+//             $("#uploadButton").prop("disabled", !1),
+//             $("#uploadCancelButton").click(),
+//             initMasonry_element(),
+//             loadTemplates_element()) : updateToastMsg({
+//                 text: text.text,
+//                 icon: "info",
+//                 loader: !1,
+//                 position: "top-right",
+//                 hideAfter: !1
+//             })
+//         }
+//     }
+// }
+// wsConection();
+var toastInstance = null
+  , updateToastMsg = function(objectParameters) {
+    null == toastInstance ? (objectParameters.afterHidden = function() {
+        toastInstance = null
+    }
+    ,
+    objectParameters.beforeShow = function() {
+        var tag = $(".jq-toast-single.jq-has-icon.jq-icon-info").first();
+        $(tag).removeClass("jq-icon-info"),
+        $(tag).addClass("toast-loader-icon")
+    }
+    ,
+    toastInstance = $.toast(objectParameters)) : toastInstance.update(objectParameters)
+}
+  , referenceUpdates = 0
+  , pullingType = "pdf"
+  , pullingCount = 0
+  , pullingRequestId = ""
+  , checkDocsUpdates = function(requestId) {
+    referenceUpdates = setTimeout(function() {
+        var urlUpdate = appUrl + "admin/Documents/get-user-docs-updates/" + requestId + "/" + docUserId;
+        $.ajax({
+            url: urlUpdate,
+            method: "GET",
+            dataType: "json",
+            timeout: 9e4
+        }).done(function(data) {
+            if (data.response) {
+                if ("svg" == data.type && "svg" == pullingType)
+                    return void showPreviewPdf(data.data);
+                if ("pdf" == data.type && "pdf" == pullingType)
+                    return void processDownloadButton(data.data, "pdf");
+                if ("jpeg" == data.type && "jpeg" == pullingType)
+                    return void processDownloadButton(data.data, "jpeg");
+                if ("png" == data.type && "png" == pullingType)
+                    return void processDownloadButton(data.data, "png")
+            } else
+                $.toast({
+                    heading: getMessageErroByType(pullingType),
+                    text: "Please try again later.",
+                    icon: "error",
+                    position: "top-right",
+                    hideAfter: 4e3
+                })
+        })
+    }, 2e3),
+    pullingRequestId != requestId ? (pullingCount = 1,
+    pullingRequestId = requestId) : ++pullingCount > 2 && (clearTimeout(referenceUpdates),
+    $.toast({
+        heading: getMessageErroByType(pullingType),
+        text: "Please try again later.",
+        icon: "error",
+        position: "top-right",
+        hideAfter: 4e3
+    }))
+}
+  , timerPdfValue = 120
+  , timerPdfRef = 0
+  , downloadPdfTimer = function downloadPdfTimer() {
+    var initValue = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : void 0;
+    initValue && (timerPdfValue = initValue),
+    timerPdfRef = setTimeout(function() {
+        --timerPdfValue > 0 ? downloadPdfTimer() : (clearTimeout(timerPdfRef),
+        $.toast({
+            heading: getMessageErroByType(pullingType),
+            text: "Please try again later.",
+            icon: "error",
+            position: "top-right",
+            hideAfter: !1,
+            stack: 1
+        }))
+    }, 1e3)
+}
+  , getMessageErroByType = function(pullingType) {
+    var errorMsg = "";
+    switch (pullingType) {
+    case "svg":
+        errorMsg = "Error creating Preview";
+        break;
+    case "pdf":
+        errorMsg = "Error creating PDF";
+        break;
+    case "jpeg":
+        errorMsg = "Error creating JPG";
+        break;
+    case "png":
+        errorMsg = "Error creating PNG"
+    }
+    return errorMsg
+}
+  , infinites = []
+  , masonrys = []
+  , flag_scroll_templates_element = !1
+  , limit_element = 24
+  , aContainer_element = "#catimage_container"
+  , aSearch_element = "#elementssearch"
+  , aMethod_element = "get-elements"
+  , type_element = "element";
+function initMasonry_element() {
+    null != $(aContainer_element).data("infiniteScroll") && ($(aContainer_element).html(""),
+    $(aContainer_element).infiniteScroll().infiniteScroll("destroy"),
+    $(aContainer_element).masonry().masonry("destroy")),
+    infinites[type_element] = $(aContainer_element).masonry({
+        itemSelector: ".thumb",
+        columnWidth: 1,
+        percentPosition: !0,
+        stagger: 30,
+        visibleStyle: {
+            transform: "translateY(0)",
+            opacity: 1
+        },
+        hiddenStyle: {
+            transform: "translateY(100px)",
+            opacity: 0
+        }
+    }),
+    masonrys[type_element] = infinites[type_element].data("masonry"),
+    infinites[type_element].infiniteScroll({
+        path: function() {
+            var tags = $(aSearch_element).val() ? $(aSearch_element).val().toString() : "";
+            return appUrl + "design/app/" + aMethod_element + "/" + this.loadCount + "/" + limit_element + "/" + tags + "/" + design_as_id
+        },
+        responseType: "text",
+        outlayer: masonrys[type_element],
+        history: !1,
+        scrollThreshold: !1
+    }),
+    loadReadMore(aContainer_element, "loadTemplates_element"),
+    $(aContainer_element).next().find(".iscroll-button").show()
+}
+function getItemHTML_element(item) {
+    var img = item.img
+      , thumb = item.thumb;
+    return '<div class="col-xs-4 thumb ' + item.isownitem + '" id="' + item.id + '"><a class="thumbnail" href="#"><img crossorigin="' + item.crossorigin + '" class="catImage img-responsive" data-imgsrc="' + img + '" src="' + thumb + '" alt=""></a>' + ("designer" != currentUserRole ? '<i class="fa fa-trash-o deleteElement" id="' + item.id + '"></i>' : "") + "</div>"
+}
+function loadTemplates_element() {
+    infinites[type_element].infiniteScroll("loadNextPage"),
+    setTimeout(function() {
+        masonrys[type_element].layout(),
+        $(".infinite-scroll-request_catimage").hide()
+    }, 200),
+    setTimeout(function() {
+        $(aContainer_element).next().find(".loader-ellips").hide()
+    }, 1500)
+}
+
+// $(aContainer_element).on("load.infiniteScroll", function() {
+//     var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee(event, response) {
+//         var data, itemsHTML, items;
+//         return regeneratorRuntime.wrap(function(_context) {
+//             for (; ; )
+//                 switch (_context.prev = _context.next) {
+//                 case 0:
+//                     data = (data = JSON.parse(response)).data,
+//                     itemsHTML = data.map(getItemHTML_element).join(""),
+//                     (items = $(itemsHTML)).imagesLoaded(function() {
+//                         infinites[type_element].infiniteScroll("appendItems", items).masonry("appended", items)
+//                     }),
+//                     0 != data.length && setTimeout(function() {
+//                         flag_scroll_templates_element = !1,
+//                         $(aContainer_element).next().find(".iscroll-last").hide()
+//                     }, 500),
+//                     data.length < limit_element && ($(aContainer_element).next().find(".loader-ellips").hide(),
+//                     $(aContainer_element).next().find(".iscroll-button").hide(),
+//                     $(aContainer_element).next().find(".iscroll-last").show());
+//                 case 7:
+//                 case "end":
+//                     return _context.stop()
+//                 }
+//         }, _callee)
+//     }));
+//     return function(_x, _x2) {
+//         return _ref.apply(this, arguments)
+//     }
+// }());
+
+var flag_scroll_templates_bg = !1
+  , limit_bg = 24
+  , aContainer_bg = "#background_container"
+  , aSearch_bg = "#bgsearch"
+  , aMethod_bg = "get-backgrounds"
+  , type_bg = "bg";
+function initMasonry_bg() {
+    null != $(aContainer_bg).data("infiniteScroll") && ($(aContainer_bg).html(""),
+    $(aContainer_bg).infiniteScroll().infiniteScroll("destroy"),
+    $(aContainer_bg).masonry().masonry("destroy")),
+    infinites[type_bg] = $(aContainer_bg).masonry({
+        itemSelector: ".thumb",
+        columnWidth: 1,
+        percentPosition: !0,
+        stagger: 30,
+        visibleStyle: {
+            transform: "translateY(0)",
+            opacity: 1
+        },
+        hiddenStyle: {
+            transform: "translateY(100px)",
+            opacity: 0
+        }
+    }),
+    masonrys[type_bg] = infinites[type_bg].data("masonry"),
+    infinites[type_bg].infiniteScroll({
+        path: function() {
+            var tags = $(aSearch_bg).val() ? $(aSearch_bg).val().toString() : "";
+            return appUrl + "editor/" + aMethod_bg + "?loadCount=" + this.loadCount + "&limit_bg=" + limit_bg + "&tags=" + tags + "&design_as_id=" + design_as_id + "&demo_as_id=" + demo_as_id + "&loadedtemplateid=" + loadedtemplateid
+        },
+        responseType: "text",
+        outlayer: masonrys[type_bg],
+        history: !1,
+        scrollThreshold: !1
+    }),
+    loadReadMore(aContainer_bg, "loadTemplates_bg"),
+    $(aContainer_bg).next().find(".iscroll-button").show()
+}
+function getItemHTML_bg(item) {
+    demo_as_id;
+    return "superadmin" == currentUserRole || "administrator" == currentUserRole ? '<div class="col-xs-4 thumb ' + item.is_own_item + '" id="' + item.id + '"><a class="thumbnail bgImage" href="#" data-imgsrc="' + item.url + '"><img class="img-responsive" src="' + item.thumb + '" alt=""><span class="thumb-overlay"><h3>' + item.name + '</h3></span></a> <i class="fa fa-trash-o deleteBg" id="' + item.id + '"></i></div>' : '<div class="col-xs-4 thumb ' + item.is_own_item + '" id="' + item.id + '"><a class="thumbnail bgImage" href="#" data-imgsrc="' + item.url + '"><img class="img-responsive" src="' + item.thumb + '" alt=""><span class="thumb-overlay"><h3>' + item.name + "</h3></span></a></div>"
+}
+function loadTemplates_bg() {
+    infinites[type_bg].infiniteScroll("loadNextPage"),
+    setTimeout(function() {
+        masonrys[type_bg].layout(),
+        $(".infinite-scroll-request_background").hide()
+    }, 200),
+    setTimeout(function() {
+        $(aContainer_bg).next().find(".loader-ellips").hide()
+    }, 1500)
+}
+$(aContainer_bg).on("load.infiniteScroll", function(event, response) {
+    var data = JSON.parse(response)
+      , itemsHTML = (data = data.data).map(getItemHTML_bg).join("")
+      , $items = $(itemsHTML);
+    $items.imagesLoaded(function() {
+        infinites[type_bg].infiniteScroll("appendItems", $items).masonry("appended", $items)
+    }),
+    0 != data.length && setTimeout(function() {
+        flag_scroll_templates_bg = !1,
+        $(aContainer_bg).next().find(".iscroll-last").hide()
+    }, 500),
+    data.length < limit_bg && ($(aContainer_bg).next().find(".loader-ellips").hide(),
+    $(aContainer_bg).next().find(".iscroll-button").hide(),
+    $(aContainer_bg).next().find(".iscroll-last").show());
+});
+var flag_scroll_templates_text = !1
+  , limit_text = 24
+  , aContainer_text = "#text_container"
+  , aSearch_text = "#textsearch"
+  , aMethod_text = "get-texts"
+  , type_text = "text";
+function initMasonry_text() {
+    null != $(aContainer_text).data("infiniteScroll") && ($(aContainer_text).html(""),
+    $(aContainer_text).infiniteScroll().infiniteScroll("destroy"),
+    $(aContainer_text).masonry().masonry("destroy")),
+    infinites[type_text] = $(aContainer_text).masonry({
+        itemSelector: ".thumb",
+        columnWidth: 1,
+        percentPosition: !0,
+        stagger: 30,
+        visibleStyle: {
+            transform: "translateY(0)",
+            opacity: 1
+        },
+        hiddenStyle: {
+            transform: "translateY(100px)",
+            opacity: 0
+        }
+    }),
+    masonrys[type_text] = infinites[type_text].data("masonry"),
+    infinites[type_text].infiniteScroll({
+        path: function() {
+            var tags = $(aSearch_text).val() ? $(aSearch_text).val().toString() : "";
+            return appUrl + "design/app/" + aMethod_text + "/" + this.loadCount + "/" + limit_text + "/" + tags + "/" + design_as_id
+        },
+        responseType: "text",
+        outlayer: masonrys[type_text],
+        history: !1,
+        scrollThreshold: !1
+    }),
+    loadReadMore(aContainer_text, "loadTemplates_text"),
+    $(aContainer_text).next().find(".iscroll-button").show()
+}
+function getItemHTML_text(item) {
+    return '<div class="col-xs-6 thumb ' + item.isownitem + '" id="' + item.text_id + '"><a class="thumbnail" title="' + item.text_name + '" href="#" data-target="' + item.text_id + '"><img class="textImage img-responsive" src="' + item.text_thumbnail + '" alt=""></a><i class="fa fa-trash-o deleteText" id="' + item.text_id + '"></i></div>'
+}
+function loadTemplates_text() {
+    infinites[type_text].infiniteScroll("loadNextPage"),
+    setTimeout(function() {
+        masonrys[type_text].layout(),
+        $(".infinite-scroll-request_text").hide()
+    }, 200),
+    setTimeout(function() {
+        $(aContainer_text).next().find(".loader-ellips").hide()
+    }, 1500)
+}
+$(aContainer_text).on("load.infiniteScroll", function(event, response) {
+    var data = JSON.parse(response)
+      , itemsHTML = (data = data.data).map(getItemHTML_text).join("")
+      , $items = $(itemsHTML);
+    $items.imagesLoaded(function() {
+        infinites[type_text].infiniteScroll("appendItems", $items).masonry("appended", $items)
+    }),
+    0 != data.length && setTimeout(function() {
+        flag_scroll_templates_text = !1,
+        $(aContainer_text).next().find(".iscroll-last").hide()
+    }, 500),
+    data.length < limit_text && ($(aContainer_text).next().find(".loader-ellips").hide(),
+    $(aContainer_text).next().find(".iscroll-button").hide(),
+    $(aContainer_text).next().find(".iscroll-last").show())
+});
+var flag_scroll_templates_template = !1
+  , limit_template = 20
+  , aContainer_template = "#template_container"
+  , aSearch_template = "#templatesearch"
+  , aMethod_template = "get-thumbnails"
+  , type_template = "template";
+function initMasonry_template() {
+    null != $(aContainer_template).data("infiniteScroll") && ($(aContainer_template).html(""),
+    $(aContainer_template).infiniteScroll().infiniteScroll("destroy"),
+    $(aContainer_template).masonry().masonry("destroy")),
+    infinites[type_template] = $(aContainer_template).masonry({
+        itemSelector: ".thumb",
+        columnWidth: 1,
+        percentPosition: !0,
+        stagger: 30,
+        visibleStyle: {
+            transform: "translateY(0)",
+            opacity: 1
+        },
+        hiddenStyle: {
+            transform: "translateY(100px)",
+            opacity: 0
+        }
+    }),
+    masonrys[type_template] = infinites[type_template].data("masonry"),
+    infinites[type_template].infiniteScroll({
+        path: function() {
+            var tags = $(aSearch_template).val() ? $(aSearch_template).val().toString() : "";
+            return appUrl + "editor/" + aMethod_template + "/?load_count=" + this.loadCount + "&limit_template=" + limit_template + "&tags=" + tags + "&design_as_id=" + design_as_id + "&demo_as_id=" + demo_as_id + "&demo_templates=" + demo_templates + "&id=" + demo_templates + "&language_code=" + language_code
+        },
+        responseType: "text",
+        outlayer: masonrys[type_template],
+        history: !1,
+        scrollThreshold: !1
+    }),
+    loadReadMore(aContainer_template, "loadTemplates_template"),
+    $(aContainer_template).next().find(".iscroll-button").show(),
+    $('#template-status').val("Thumbs Loaded")
+}
+function getItemHTML_template($row) {
+    return $templates = '<div class="col-xs-6 thumb" id="' + $row.template_id + '">',
+    $row.instructionsId && ($templates += '<a class="instructions-overlay" onclick="loadInstructions(' + $row.template_id + ')" data-toggle="modal" data-target="#sellerInstructions"><h3>Seller Instructions</h3></a>'),
+    $templates += '<a class="thumbnail" data-target="' + $row.template_id + '">',
+    $templates += '<span class="thumb-overlay"><h3>' + $row.template_name + "</h3></span>",
+    $templates += '<div class="expired-notice" style="display:none;">EXPIRED</div>',
+    $templates += '<img class="tempImage img-responsive" src="' + $row.temp_source + '" alt="" style="">',
+    $templates += "</a>",
+    $templates += '<div class="badge-container">',
+    $templates += '<span class="badge dims">' + $row.width + " x " + $row.height + " " + $row.metrics + "</span>",
+    $templates += '<span class="badge tempId">ID: ' + $row.template_id + "</span>",
+    "designer" != currentUserRole && ($templates += '<i class="fa fa-trash-o deleteTemp" id="' + $row.template_id + '"></i>'),
+    $templates += "</div>",
+    $templates += "</div>",
+    $templates
+}
+function loadTemplates_template() {
+    infinites[type_template].infiniteScroll("loadNextPage"),
+    setTimeout(function() {
+        masonrys[type_template].layout()
+    }, 200),
+    setTimeout(function() {
+        $(aContainer_template).next().find(".loader-ellips").hide()
+    }, 1500)
+}
+$(aContainer_template).on("load.infiniteScroll", function(event, response) {
+    var data = JSON.parse(response)
+      , itemsHTML = (data = data.data).map(getItemHTML_template).join("")
+      , $items = $(itemsHTML);
+    $items.imagesLoaded(function() {
+        infinites[type_template].infiniteScroll("appendItems", $items).masonry("appended", $items)
+    }),
+    0 != data.length && setTimeout(function() {
+        flag_scroll_templates_template = !1,
+        $(aContainer_template).next().find(".iscroll-last").hide()
+    }, 500),
+    data.length < limit_template && ($(aContainer_template).next().find(".loader-ellips").hide(),
+    $(aContainer_template).next().find(".iscroll-button").hide(),
+    $(aContainer_template).next().find(".iscroll-last").show())
+});
+var flag_scroll_templates_related = !1, limit_related = 24, aContainer_related = "#related_products_container", aSearch_related = "", aMethod_related = "get-related-products", type_related = "related", templateId_related;
+function initMasonry_related(templateId) {
+    templateId_related = templateId,
+    null != $(aContainer_related).data("infiniteScroll") && ($(aContainer_related).html(""),
+    $(aContainer_related).infiniteScroll().infiniteScroll("destroy"),
+    $(aContainer_related).masonry().masonry("destroy")),
+    infinites[type_related] = $(aContainer_related).masonry({
+        itemSelector: ".thumb",
+        columnWidth: 1,
+        percentPosition: !0,
+        stagger: 30,
+        visibleStyle: {
+            transform: "translateY(0)",
+            opacity: 1
+        },
+        hiddenStyle: {
+            transform: "translateY(100px)",
+            opacity: 0
+        }
+    }),
+    masonrys[type_related] = infinites[type_related].data("masonry"),
+    infinites[type_related].infiniteScroll({
+        path: function() {
+            return appUrl + "editor/" + aMethod_related + "/" + templateId_related + "?demo_as_id=" + demo_as_id + "&loadCount=" + this.loadCount + "&limit_related=" + limit_related
+        },
+        responseType: "text",
+        outlayer: masonrys[type_related],
+        history: !1,
+        scrollThreshold: !1
+    }),
+    loadReadMore(aContainer_related, "loadTemplates_related"),
+    $(aContainer_related).next().find(".iscroll-button").show()
+}
+function getItemHTML_related(product) {
+    var newElement = $("<div/>");
+    $(newElement).addClass("grid-item"),
+    $(newElement).css("width", 140),
+    $(newElement).css("float", "left"),
+    $(newElement).css("margin", "0 0 10px 10px");
+    var productLink = $("<a/>");
+    $(productLink).attr("href", product.url),
+    $(productLink).attr("target", "_blank");
+    var productImage = $("<img/>");
+    return $(productImage).attr("src", product.image),
+    $(productImage).css("width", "100%"),
+    $(productLink).append(productImage),
+    $(newElement).append(productLink),
+    $("<div/>").append(newElement).html()
+}
+function loadTemplates_related() {
+    infinites[type_related].infiniteScroll("loadNextPage"),
+    setTimeout(function() {
+        masonrys[type_related] && (masonrys[type_related].layout(),
+        $(".infinite-scroll-request_related_products").show())
+    }, 500),
+    setTimeout(function() {
+        $(aContainer_related).next().find(".loader-ellips").hide()
+    }, 1500)
+}
+$(aContainer_related).on("load.infiniteScroll", function(event, response) {
+    var data = JSON.parse(response);
+    if (data.total > 0) {
+        $("#relatedProductsPane a:hidden").removeClass("invisible");
+        var itemsHTML = (data = data.products).map(getItemHTML_related).join("")
+          , $items = $(itemsHTML);
+        $items.imagesLoaded(function() {
+            infinites[type_related].infiniteScroll("appendItems", $items).masonry("appended", $items)
+        }),
+        0 != data.length && setTimeout(function() {
+            flag_scroll_relateds_related = !1,
+            $(aContainer_related).next().find(".iscroll-last").hide()
+        }, 500),
+        data.length < limit_related && ($(aContainer_related).next().find(".loader-ellips").hide(),
+        $(aContainer_related).next().find(".iscroll-button").hide(),
+        $(aContainer_related).next().find(".iscroll-last").show())
+    } else
+        $("#relatedProductsPane a:visible").addClass("invisible")
+});
+var flag_scroll_templates_image = !1, limit_image = 24, aContainer_image = ".uploaded_images_list", aSearch_image = "", aMethod_image = "get-uploaded-images", type_image = "image", templateId_image;
+function initMasonry_image(templateId) {
+    templateId_image = templateId,
+    null != $(aContainer_image).data("infiniteScroll") && ($(aContainer_image).html(""),
+    $(aContainer_image).infiniteScroll().infiniteScroll("destroy"),
+    $(aContainer_image).masonry().masonry("destroy")),
+    infinites[type_image] = $(aContainer_image).masonry({
+        itemSelector: ".thumb",
+        columnWidth: 1,
+        percentPosition: !0,
+        stagger: 30,
+        visibleStyle: {
+            transform: "translateY(0)",
+            opacity: 1
+        },
+        hiddenStyle: {
+            transform: "translateY(100px)",
+            opacity: 0
+        }
+    }),
+    masonrys[type_image] = infinites[type_image].data("masonry"),
+    infinites[type_image].infiniteScroll({
+        path: function() {
+            return appUrl + "editor/" + aMethod_image + "/" + limit_image + "/" + this.loadCount
+        },
+        responseType: "text",
+        outlayer: masonrys[type_image],
+        history: !1,
+        scrollThreshold: !1
+    }),
+    loadReadMore(aContainer_image, "loadTemplates_image"),
+    $(aContainer_image).next().find(".iscroll-button").show()
+}
+function getItemHTML_image(product) {
+    var deleteBtn = demo_as_id ? "" : '<i data-target="' + product.id + '" class="fa fa-trash-o deleteImage"></i>';
+    return '<div data-id="' + product.id + '" class="dz-preview dz-processing dz-image-preview dz-success dz-complete thumb"><div class="dz-image"><img data-dz-thumbnail="" alt="' + product.filename + '" src="' + product.img + '"></div> \x3c!-- <div class="dz-details"> <div class="dz-filename"><span data-dz-name="">' + product.filename + "</span></div>  </div> --\x3e" + deleteBtn + "</div>"
+}
+function loadTemplates_image() {
+    infinites[type_image].infiniteScroll("loadNextPage"),
+    setTimeout(function() {
+        masonrys[type_image] && (masonrys[type_image].layout(),
+        $(".infinite-scroll-request_image_products").show())
+    }, 500),
+    setTimeout(function() {
+        $(aContainer_image).next().find(".loader-ellips").hide()
+    }, 1500)
+}
+function loadReadMore(container, loadFunctionName) {
+    "page-load" == $(container).next().attr("class") && $(container).next().remove();
+    var html_load = '<div class="page-load">';
+    html_load += '<div class="loader-ellips"><img class="loading-spin" src="' + appUrl + 'design/assets/img/loader.svg"></div>',
+    html_load += '<p class="iscroll-last">End of Results</p>',
+    html_load += "</div>",
+    $(container).after(html_load)
+}
 function initCanvasEvents(lcanvas) {
     var selectedObject;
     lcanvas && (canvas = lcanvas);
@@ -7643,6 +8941,7 @@ function initCanvasEvents(lcanvas) {
             if ("geofilter" !== template_type && "geofilter2" !== template_type && $("#canvas" + currentcanvasid).css("box-shadow", "0px 0px 10px #888888"),
             e.target.hidden ? $("#hideobject").html("<i class='fa fa-eye'></i>&nbsp; Unhide object in pdf/png") : $("#hideobject").html("<i class='fa fa-eye'></i>&nbsp; Hide object in pdf/png"),
             $(".tools-top").addClass("toolbar-show"),
+            console.log("Show Toolbar"),
             !e.target || "false" !== e.target.selectable) {
                 selectedObject.set({
                     transparentCorners: !1,
@@ -7731,7 +9030,13 @@ function initCanvasEvents(lcanvas) {
                     fontDisplayName || (fontDisplayName = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"),
                     $("#font-selected").html('<span style="overflow:hidden"><a href="#" style="font-family: ' + fontFamily + '" >' + fontDisplayName + '</a>&nbsp;&nbsp;<span class="caret"></span></span>'),
                     $("#fontsize").val(fontSize),
-                    setupSymbolsPanel(fontFamily)
+                    setupSymbolsPanel(fontFamily),
+                    $("#font-dropdown").on("shown.bs.dropdown", function() {
+                        $("#fontSearch").focus(),
+                        $("#fonts-dropdown").scrollTop($('#fonts-dropdown li a[data-ff="' + fontFamily + '"]').position().top - $("#fonts-dropdown li:first").position().top),
+                        $("#fonts-dropdown li a").removeClass("font-selected"),
+                        $('#fonts-dropdown li a[data-ff="' + fontFamily + '"]').addClass("font-selected")
+                    })
                 } else
                     $(".textelebtns").hide(),
                     $("#objectflipvertical").show(),
@@ -7887,15 +9192,15 @@ function initCanvasEvents(lcanvas) {
                         showInput: !0,
                         showInitial: !0,
                         allowEmpty: !0,
-                        showButtons: !1,
+                        showButtons: !0,
                         maxSelectionSize: 24,
-                        togglePaletteMoreText: "Mostrar Avanzado",
-                        togglePaletteLessText: "Ocultar Avanzando",
+                        togglePaletteMoreText: "Show advanced",
+                        togglePaletteLessText: "Hide advanced",
                         change: function(color) {
                             DEBUG && console.log("color: ", color);
                             var local_store = window.localStorage[localStorageKey];
                             -1 === local_store.search(color) && (window.localStorage[localStorageKey] = local_store + ";" + color);
-                            var newcolorVal = color.toHexString()
+                            var newcolorVal = color.toRgbString()
                               , $oldcolorval = $(this).data("previous-color")
                               , $cb = $(this).parents(".colorSelectorBox")
                               , $cpicker2 = $cb.find(".dynamiccolorpicker2")
@@ -7976,10 +9281,10 @@ function initCanvasEvents(lcanvas) {
                                 showInput: !0,
                                 showInitial: !0,
                                 allowEmpty: !0,
-                                showButtons: !1,
+                                showButtons: !0,
                                 maxSelectionSize: 24,
-                                togglePaletteMoreText: "Mostrar Avanzado",
-                                togglePaletteLessText: "Ocultar Avanzando",
+                                togglePaletteMoreText: "Show advanced",
+                                togglePaletteLessText: "Hide advanced",
                                 change: function(color) {
                                     DEBUG && console.log("color: ", color);
                                     var local_store = window.localStorage[localStorageKey];
@@ -8039,17 +9344,18 @@ function initCanvasEvents(lcanvas) {
                 }),
                 "line" !== selectedObject.type && "image" !== selectedObject.type || $(".colorSelectorBox.single").hide(),
                 "rect" === selectedObject.type ? $("#objectborderwh").show() : $("#objectborderwh").hide(),
-                "" === selectedObject.fill ? ($("#colorSelector").css("background-image", 'url("assets/img/transbg.png")'),
-                $("#colorSelector").css("background-color", "#ffffff")) : ($("#colorSelector").css("background-color", selectedObject.fill),
+                "" === selectedObject.fill || "rgba(0,0,0,0)" === selectedObject.fill ? ($("#colorSelector, #dynamiccolorpickers .sp-preview").css("background-image", 'url("assets/img/transbg.png")'),
+                $("#colorSelector, #dynamiccolorpickers .sp-preview").css("background-color", "#ffffff")) : ($("#colorSelector").css("background-color", selectedObject.fill),
                 $("#colorSelector").css("background-image", "none")),
-                $(".color-fill .sp-clear").click(function() {
-                    $(".sp-container").addClass("sp-hidden"),
-                    selectedObject.set("fill", ""),
+                $(".color-fill .sp-clear, .dynamic-fill .sp-clear").click(function() {
+                    console.log("here"),
+                    $(".sp-container.color-fill, .sp-container.dynamic-fill").addClass("sp-hidden"),
+                    selectedObject.set("fill", "rgba(0,0,0,0)"),
                     canvas.renderAll(),
                     save_history()
                 }),
                 $(".color-stroke .sp-clear").click(function() {
-                    $(".sp-container").addClass("sp-hidden"),
+                    $(".sp-container.color-stroke").addClass("sp-hidden"),
                     selectedObject.set("stroke", ""),
                     canvas.renderAll(),
                     save_history()
@@ -8093,32 +9399,35 @@ function initCanvasEvents(lcanvas) {
         })
     }
     void 0 === window.localStorage[localStorageKey] && (window.localStorage[localStorageKey] = ";"),
-    canvas.on("object:selected", function(e) {
+    canvas.observe("object:selected", function(e) {
         objectSelected(e, "selected")
     }),
-    canvas.on("selection:updated", function(e) {
+    canvas.observe("selection:updated", function(e) {
         objectSelected(e, "updated")
     }),
-    canvas.on("selection:created", function(e) {
+    canvas.observe("selection:created", function(e) {
         objectSelected(e, "created")
     }),
-    canvas.on("selection:updated", deselectLockedObject),
-    canvas.on("selection:created", deselectLockedObject),
-    canvas.on("object:moving", function(e) {
+    canvas.observe("selection:cleared", function(e) {
+        $(".sp-container.color-fill, .sp-container.dynamic-fill").addClass("sp-hidden")
+    }),
+    canvas.observe("selection:updated", deselectLockedObject),
+    canvas.observe("selection:created", deselectLockedObject),
+    canvas.observe("object:moving", function(e) {
         $(".tools-top").removeClass("toolbar-show"),
         e.target.setCoords()
     }),
-    canvas.on("object:rotating", function(e) {
+    canvas.observe("object:rotating", function(e) {
         e.e.shiftKey ? e.target.snapAngle = 0 : e.target.snapAngle = 5;
         var $angle = parseInt(e.target.angle % 360);
         $(".rotation_info_block").html($angle + "°").show()
     }),
-    canvas.on("object:scaling", function(e) {
+    canvas.observe("object:scaling", function(e) {
         e.target && /text/.test(e.target.type) && e.target && e.target.scaleX === e.target.scaleY && $("#fontsize").val((e.target.fontSize * e.target.scaleX / 1.3).toFixed(0)),
         e.target.setCoords();
         document.getElementById("loadCanvasHei").value
     }),
-    canvas.on("object:modified", function(e) {
+    canvas.observe("object:modified", function(e) {
         if (DEBUG && console.log("object is modified"),
         $(".tools-top").addClass("toolbar-show"),
         s_history = !0,
@@ -8155,7 +9464,7 @@ function initCanvasEvents(lcanvas) {
             e.target.fill.coords.y2 = e.target.height / 2))
         }
     }),
-    canvas.on("object:added", function(e) {
+    canvas.observe("object:added", function(e) {
         if (e.target.isUngrouping)
             delete e.target.isUngrouping;
         else {
@@ -8177,10 +9486,10 @@ function initCanvasEvents(lcanvas) {
             canvas.renderAll()
         }
     }),
-    canvas.on("mouse:up", function(e) {
+    canvas.observe("mouse:up", function(e) {
         canvas.renderAll()
     }),
-    canvas.on("mouse:up", function(e) {
+    canvas.observe("mouse:up", function(e) {
         if (e.target && /text/.test(e.target.type) && e.target.isEditing) {
             DEBUG && console.log("style at positon", e.target.getStyleAtPosition());
             var styleAtPosition = e.target.getStyleAtPosition();
@@ -8192,15 +9501,27 @@ function initCanvasEvents(lcanvas) {
             void 0 !== styleAtPosition.fontFamily) {
                 var fontDisplayName = $("#fonts-dropdown").find('a[data-ff="' + styleAtPosition.fontFamily + '"]').parent().find("span").text();
                 DEBUG && console.log("fontDisplayName", fontDisplayName),
-                $("#font-selected").html('<span style="overflow:hidden"><a href="#" style="font-family: ' + styleAtPosition.fontFamily + '" >' + fontDisplayName + '</a>&nbsp;&nbsp;<span class="caret"></span></span>')
+                $("#font-selected").html('<span style="overflow:hidden"><a href="#" style="font-family: ' + styleAtPosition.fontFamily + '" >' + fontDisplayName + '</a>&nbsp;&nbsp;<span class="caret"></span></span>'),
+                $("#font-dropdown").on("shown.bs.dropdown", function() {
+                    $("#fontSearch").focus(),
+                    $("#fonts-dropdown").scrollTop($('#fonts-dropdown li a[data-ff="' + styleAtPosition.fontFamily + '"]').position().top - $("#fonts-dropdown li:first").position().top),
+                    $("#fonts-dropdown li a").removeClass("font-selected"),
+                    $('#fonts-dropdown li a[data-ff="' + styleAtPosition.fontFamily + '"]').addClass("font-selected")
+                })
             } else {
                 var fontid = e.target.fontFamily || "font7";
                 fontDisplayName = $("#fonts-dropdown").find('a[data-ff="' + fontid + '"]').parent().find("span").text();
-                $("#font-selected").html('<span style="overflow:hidden"><a href="#" style="font-family: ' + e.target.fontFamily + '" >' + fontDisplayName + '</a>&nbsp;&nbsp;<span class="caret"></span></span>')
+                $("#font-selected").html('<span style="overflow:hidden"><a href="#" style="font-family: ' + e.target.fontFamily + '" >' + fontDisplayName + '</a>&nbsp;&nbsp;<span class="caret"></span></span>'),
+                $("#font-dropdown").on("shown.bs.dropdown", function() {
+                    $("#fontSearch").focus(),
+                    $("#fonts-dropdown").scrollTop($('#fonts-dropdown li a[data-ff="' + e.target.fontFamily + '"]').position().top - $("#fonts-dropdown li:first").position().top),
+                    $("#fonts-dropdown li a").removeClass("font-selected"),
+                    $('#fonts-dropdown li a[data-ff="' + e.target.fontFamily + '"]').addClass("font-selected")
+                })
             }
         }
     }),
-    canvas.on("text:editing:entered", function(e) {
+    canvas.observe("text:editing:entered", function(e) {
         DEBUG && console.log("text:editing:entered first"),
         selectedObject.hasControls = !0,
         $("#group").hide(),
@@ -8222,7 +9543,7 @@ function initCanvasEvents(lcanvas) {
         e.target.setCoords(),
         canvas.renderAll())
     }),
-    canvas.on("text:editing:exited", function(e) {
+    canvas.observe("text:editing:exited", function(e) {
         DEBUG && console.log("text:editing:exited"),
         "" == e.target.text && setTimeout(function() {
             return canvas.remove(e.target)
@@ -8240,97 +9561,57 @@ function initCanvasEvents(lcanvas) {
         $(".patternFillTab").hide(),
         $(".patternFillPreview").removeClass("open"),
         "LI" !== e.target.nodeName && $(".custom-menu").hide()),
+        $("#filltype, .filltype, #strokedropdown").click(function() {
+            $(".sp-container.color-fill, .sp-container.dynamic-fill, .sp-container.color-stroke").addClass("sp-hidden")
+        }),
         actobj && "image" === actobj.type && 0 !== $(e.target).closest(".ui-dialog").length || $("#object-properties").dialog("close"),
         actobj && (/text/.test(actobj.type) || 0 !== $(e.target).closest(".ui-dialog").length) || $("#font-symbols").dialog("close"),
-        "CANVAS" !== e.target.nodeName && "DIV" === e.target.nodeName && "sp-preview" !== e.target.className && e.target.className.indexOf("sp-light") < 0 && "sp-container" !== e.target.className && e.target.className.indexOf("ui-dialog") < 0 && $(".dpattern-holder").has(e.target).length < 1 && $(".patternFillTab").has(e.target).length < 1 && $("#font-symbols").has(e.target).length < 1 && (canvas.discardActiveObject().renderAll(),
+        "CANVAS" !== e.target.nodeName && "DIV" === e.target.nodeName && "sp-preview" !== e.target.className && !$(e.target).hasClass("sp-clear") && e.target.className.indexOf("sp-light") < 0 && "sp-container" !== e.target.className && e.target.className.indexOf("ui-dialog") < 0 && $(".dpattern-holder").has(e.target).length < 1 && $(".patternFillTab").has(e.target).length < 1 && $("#font-symbols").has(e.target).length < 1 && (canvas.discardActiveObject().renderAll(),
         $(".tools-top").removeClass("toolbar-show"),
         $(".patternFillTab").hide(),
         $(".patternFillPreview").removeClass("open"),
         $("#font-symbols").dialog("close"))
     })
 }
-$("body").on("pattern_image_loaded", function(e) {
-    DEBUG && console.log("pattern_image_loaded"),
-    $(".pattern_tile").removeClass("loading"),
-    setTimeout(function() {
-        canvas._objects.map(function(o) {
-            "object" === _typeof(o.fill) && /pattern/.test(o.fill.type) && o.set("dirty", !0),
-            canvas.renderAll()
-        })
-    }, 100)
-}),
-$(".patternScale").slider().on("slide", updatePatternFill).data("slider"),
-$(".patternScale").slider().on("slideStart", function(e) {
-    $(".patternFillTab").addClass("fade")
-}),
-$(".patternScale").slider().on("slideStop", function(e) {
-    $(".patternFillTab").removeClass("fade")
-}),
-$("body").on("click", ".patternFillLabel", function(e) {
-    e.preventDefault();
-    var $btn = $(e.target);
-    $(".patternFillPreview").removeClass("open"),
-    $btn.toggleClass("open");
-    var $modal = $(".patternFillTab");
-    $modal.toggle(),
-    $modal.css({
-        left: $btn.offset().left,
-        top: $btn.offset().top + 34
-    });
-    var $ao = canvas.getActiveObject();
-    $ao && $ao.fill instanceof fabric.Dpattern && $(".patternScale").slider("setValue", 100 * $ao.fill.scale * 3.125 * fabric.devicePixelRatio)
-}),
-$(".patternFillTab").on("click", ".pattern_tile", function(e) {
-    var $ao = canvas.getActiveObject()
-      , $pattern_tile = $(e.target).parent(".pattern_tile");
-    $pattern_tile.addClass("loading"),
-    changeDynamicPattern($ao, $pattern_tile.data("imgsrc"), $(".patternFillPreview.open").data("currentsrc"))
+$(aContainer_image).on("load.infiniteScroll", function(event, response) {
+    var data = JSON.parse(response)
+      , itemsHTML = (data = data.images).map(getItemHTML_image).join("")
+      , $items = $(itemsHTML);
+    $items.imagesLoaded(function() {
+        infinites[type_image].infiniteScroll("appendItems", $items).masonry("appended", $items)
+    }),
+    0 != data.length && setTimeout(function() {
+        flag_scroll_images_image = !1,
+        $(aContainer_image).next().find(".iscroll-last").hide()
+    }, 500),
+    data.length < limit_image && ($(aContainer_image).next().find(".loader-ellips").hide(),
+    $(aContainer_image).next().find(".iscroll-button").hide(),
+    $(aContainer_image).next().find(".iscroll-last").show())
 }),
 $(document).ready(function() {
-    getPatterns(0),
-    $("#patternsList").on("scroll", function(e) {
-        var element = $(e.target).get(0);
-        element.scrollTop > element.scrollHeight - element.offsetHeight - 10 && (patternsLoading || getPatterns(offsetPatterns))
-    })
-}),
-$("#font-symbols").dialog({
-    resizable: !1,
-    height: "auto",
-    width: "auto",
-    modal: !1,
-    autoOpen: !1,
-    dialogClass: "no-close",
-    position: {
-        my: "left center",
-        at: "left+20px center",
-        of: ".main-content"
-    },
-    open: function() {
-        $("#font-symbols").dialog("option", "position", {
-            my: "left center",
-            at: "left+20px center",
-            of: ".main-content"
-        }),
-        setupSymbolsPanel()
-    },
-    close: function() {}
-}),
-$("body").on("click", ".utf8-symbol", function(e) {
-    e.preventDefault();
-    var $textObject = canvas.getActiveObject();
-    if ($textObject && /text/.test($textObject.type)) {
-        var $symbol = $(this).text()
-          , $selectionStart = $textObject.text.length
-          , $selectionEnd = $textObject.text.length;
-        $textObject.isEditing && ($selectionStart = $textObject.selectionStart,
-        $selectionEnd = $textObject.selectionEnd),
-        $textObject.insertChars($symbol, "", $selectionStart, $selectionEnd),
-        $selectionEnd === $selectionStart && ($textObject.selectionStart = $textObject.selectionEnd = ++$selectionEnd),
-        $textObject.isEditing && ($textObject.hiddenTextarea.value = $textObject.text),
-        $textObject.dirty = !0,
-        canvas.renderAll()
-    }
-}),
-$("#showObSymbolsPanel").click(function() {
-    return $("#font-symbols").dialog("open")
+    var columns = [{
+        data: "date",
+        title: "Date"
+    }, {
+        data: "type",
+        title: "Type"
+    }, {
+        data: "template_id",
+        title: "Template ID"
+    }, {
+        data: "template_name",
+        title: "Template name"
+    }, {
+        data: "s3url",
+        title: "Download",
+        render: function(link) {
+            return '<a target="_blank" href="' + getS3Url(link) + '">Download</a>'
+        }
+    }];
+    // historyTable = $("#historyTable").DataTable({
+    //     ajax: appUrl + "design/app/get-download-history-server-process",
+    //     columns: columns,
+    //     bLengthChange: !1,
+    //     aaSorting: [[0, "desc"]]
+    // })
 });

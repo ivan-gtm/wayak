@@ -13,7 +13,7 @@ class BotCalculateColors extends Command
      *
      * @var string
      */
-    protected $signature = 'bot:getcolors';
+    protected $signature = 'wayak:getcolors';
 
     /**
      * The console command description.

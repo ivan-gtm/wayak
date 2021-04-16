@@ -18,8 +18,11 @@ use App\Http\Controllers\PacktController;
 
 use App\Http\Controllers\EtsyScrapperController;
 use App\Http\Controllers\TemplettScrapperController;
+use App\Http\Controllers\LinkedInController;
 
 // SCRAPPER
+    // Linkedin
+        Route::get('/linked', [LinkedInController::class, 'index']);
     // PACKT
         Route::get('/packt', [PacktController::class, 'index']);
     // OVER
@@ -148,6 +151,9 @@ use App\Http\Controllers\TemplettScrapperController;
     
     Route::get('/editor/get-thumbnails', [EditorController::class,'getTemplateThumbnails']);
     Route::get('/editor/load-template', [EditorController::class,'loadTemplate']);
+
+    Route::get('/{country}/editor/template/{template_key}', [EditorController::class, 'editTemplate'])->name('editor.editTemplate');
+    Route::get('/{country}/template/open/{template_key}', [EditorController::class, 'openTemplate'])->name('editor.openTemplate');
 
     Route::post('/editor/template/update', [EditorController::class, 'update']);
     Route::post('/editor/template/save-as', [EditorController::class, 'saveAs']);
