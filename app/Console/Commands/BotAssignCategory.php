@@ -49,7 +49,8 @@ class BotAssignCategory extends Command
 
         Template::where('title', 'like', '%invitation%')
             ->update([
-                'categories' => ['/invitations']
+                'categories' => ['/invitations'],
+                'mainCategory' => '/invitations'
             ]);
         
         // print_r( Template::where('title', 'like', '%invitation%')->count());
@@ -103,7 +104,8 @@ class BotAssignCategory extends Command
                     // '/cards',
                     // '/cards/wedding',
                     // '/cards/wedding/rehearsal-dinner'
-                ]
+                ],
+                'mainCategory' => '/invitations/wedding'
             ]);
             
         Template::where('title', 'like', '%engagement%')
@@ -115,7 +117,8 @@ class BotAssignCategory extends Command
                     // '/cards',
                     // '/cards/wedding',
                     // '/cards/wedding/engagement-party'
-                ]
+                ],
+                'mainCategory' => '/invitations/wedding'
             ]);
         
         Template::where('title', 'like', '%bridal%')
@@ -138,18 +141,22 @@ class BotAssignCategory extends Command
                     '/invitations',
                     '/invitations/wedding',
                     '/invitations/wedding/save-the-date'
-                ]
-            ]);
+                ],
+                'mainCategory' => '/invitations/wedding'
+                ]);
                 
-            
-            Template::where('title', 'like', '%rsvp%')
-            ->update([
+                
+        Template::where('title', 'like', '%rsvp%')
+        ->update([
                 'categories' => [
-                    // '/cards',
-                    // '/cards/wedding',
-                    // '/cards/wedding/responseand-rsvp-cards',
-                    ]
-                    ]);
+                '/invitations',
+                '/invitations/rsvp',
+                // '/cards',
+                // '/cards/wedding',
+                // '/cards/wedding/responseand-rsvp-cards',
+            ],
+            'mainCategory' => '/invitations/wedding/rsvp'
+        ]);
                     
         Template::where('title', 'like', '%cocktail%')
                         ->update([
@@ -159,7 +166,8 @@ class BotAssignCategory extends Command
                                 // '/cards',
                                 // '/cards/party',
                                 // '/cards/party/cocktail-party',
-                            ]
+                            ],
+                            'mainCategory' => '/invitations/cocktail-party'
                         ]);
 
         Template::where('title', 'like', '%card%thank%')
@@ -167,7 +175,8 @@ class BotAssignCategory extends Command
                 'categories' => [
                     '/invitations',
                     '/invitations/thank-you'
-                ]
+                ],
+                'mainCategory' => '/invitations/thank-you'
             ]);
         
         Template::where('title', 'like', '%menu%')
@@ -176,7 +185,8 @@ class BotAssignCategory extends Command
                     '/invitations',
                     '/invitations/wedding/menus',
                     '/menus'
-                ]
+                ],
+                'mainCategory' => '/invitations/wedding/menus',
             ]);
         
         
@@ -188,7 +198,8 @@ class BotAssignCategory extends Command
                     '/tags',
                     '/tags/gift',
                     '/gift-tags'
-                ]
+                ],
+                'mainCategory' => '/tags'
             ]);
         
         Template::where('title', 'like', '%tags%christmas%')
@@ -200,14 +211,16 @@ class BotAssignCategory extends Command
                     '/tags/christmas',
                     '/gift-tags',
                     '/christmas-tags',
-                ]
+                ],
+                'mainCategory' => '/tags'
             ]);
         
         Template::where('title', 'like', '%recipe%')
             ->update([
                 'categories' => [
                     '/recipe-cards',
-                ]
+                ],
+                'mainCategory' => '/recipe-cards'
             ]);
 
         
@@ -215,7 +228,8 @@ class BotAssignCategory extends Command
             ->update([
                 'categories' => [
                     '/event-programs',
-                ]
+                ],
+                'mainCategory' => '/event-programs'
             ]);
         
         Template::where('title', 'like', '%wedding%program%')
@@ -223,28 +237,32 @@ class BotAssignCategory extends Command
                 'categories' => [
                     '/wedding-programs',
                     '/event-programs/wedding',
-                ]
+                ],
+                'mainCategory' => '/wedding-programs'
             ]);
         
         Template::where('title', 'like', '%coupon%')
             ->update([
                 'categories' => [
                     '/coupons',
-                ]
+                ],
+                'mainCategory' => '/coupons'
             ]);
         
         Template::where('title', 'like', '%label%')
             ->update([
                 'categories' => [
                     '/labels',
-                ]
+                ],
+                'mainCategory' => '/labels'
             ]);
         
         Template::where('title', 'like', '%calendar%')
             ->update([
                 'categories' => [
                     '/calendars',
-                ]
+                ],
+                'mainCategory' => '/calendars'
             ]);
         
         Template::where('title', 'like', '%communion%')
@@ -254,7 +272,8 @@ class BotAssignCategory extends Command
                     // '/cards/communion',
                     '/invitations',
                     '/invitations/communion',
-                ]
+                ],
+                'mainCategory' => '/invitations'
             ]);
         
         Template::where('title', 'like', '%bbq%')
@@ -265,7 +284,8 @@ class BotAssignCategory extends Command
                     // '/cards/bbq',
                     '/invitations',
                     '/invitations/bbq',
-                ]
+                ],
+                'mainCategory' => '/invitations'
             ]);
         
         Template::where('title', 'like', '%retirement%')
@@ -276,7 +296,8 @@ class BotAssignCategory extends Command
                     // '/cards/retirement-and-farewell',
                     '/invitations',
                     '/invitations/retirement-and-farewell',
-                ]
+                ],
+                'mainCategory' => '/invitations'
             ]);
         
         Template::where('title', 'like', '%party%dinner%')
@@ -287,7 +308,8 @@ class BotAssignCategory extends Command
                     // '/cards/dinner-party',
                     '/invitations',
                     '/invitations/dinner-party',
-                ]
+                ],
+                'mainCategory' => '/invitations'
             ]);
         
         Template::where('title', 'like', '%potluck%')
@@ -299,7 +321,8 @@ class BotAssignCategory extends Command
                     '/invitations',
                     '/invitations/dinner-party',
                     '/invitations/dinner-party/potluck',
-                ]
+                ],
+                'mainCategory' => '/invitations'
             ]);
         
         Template::where('title', 'like', '%christmas%')
@@ -311,7 +334,8 @@ class BotAssignCategory extends Command
                     '/invitations',
                     '/invitations/holidays',
                     '/invitations/holidays/christmas',
-                ]
+                ],
+                'mainCategory' => '/invitations'
             ]);
         
         Template::where('title', 'like', '%anniversary%')
@@ -321,7 +345,8 @@ class BotAssignCategory extends Command
                     // '/cards/anniversary'
                     '/invitations',
                     '/invitations/anniversary',
-                ]
+                ],
+                'mainCategory' => '/invitations'
             ]);
         
         Template::where('title', 'like', '%pool%')
@@ -331,7 +356,8 @@ class BotAssignCategory extends Command
                     // '/cards/summer-and-pool-party'
                     '/invitations',
                     '/invitations/summer-and-pool-party',
-                ]
+                ],
+                'mainCategory' => '/invitations'
             ]);
         
         Template::where('title', 'like', '%housewarming%')
@@ -343,7 +369,8 @@ class BotAssignCategory extends Command
                     '/invitations',
                     '/invitations/housewarming',
                     '/invitations/party/housewarming'
-                ]
+                ],
+                'mainCategory' => '/invitations'
             ]);
         
         Template::where('title', 'like', '%graduation%')
@@ -355,7 +382,8 @@ class BotAssignCategory extends Command
                     '/invitations',
                     '/invitations/graduation',
                     '/invitations/party/graduation'
-                ]
+                ],
+                'mainCategory' => '/invitations'
             ]);
         
         Template::where('title', 'like', '%easter%')
@@ -367,7 +395,8 @@ class BotAssignCategory extends Command
                     '/invitations',
                     '/invitations/easter',
                     '/invitations/holidays/easter'
-                ]
+                ],
+                'mainCategory' => '/invitations'
             ]);
         
         Template::where('title', 'like', '%patrick%')
@@ -379,7 +408,8 @@ class BotAssignCategory extends Command
                     '/invitations',
                     '/invitations/st-patricks-day',
                     '/invitations/holidays/st-patricks-day'
-                ]
+                ],
+                'mainCategory' => '/invitations'
             ]);
         
         Template::where('title', 'like', '%thanksgiving%')
@@ -391,7 +421,8 @@ class BotAssignCategory extends Command
                     '/invitations',
                     '/invitations/thanksgiving',
                     '/invitations/holidays/thanksgiving'
-                ]
+                ],
+                'mainCategory' => '/invitations'
             ]);
         
         Template::where('title', 'like', '%new%year%')
@@ -403,7 +434,8 @@ class BotAssignCategory extends Command
                     '/invitations',
                     '/invitations/new-year',
                     '/invitations/holidays/new-year'
-                ]
+                ],
+                'mainCategory' => '/invitations'
             ]);
         
         Template::where('title', 'like', '%valentine%')
@@ -415,7 +447,8 @@ class BotAssignCategory extends Command
                     '/invitations',
                     '/invitations/valentines-day',
                     '/invitations/holidays/valentines-day'
-                ]
+                ],
+                'mainCategory' => '/invitations'
             ]);
 
         Template::where('title', 'like', '%halloween%')
@@ -427,7 +460,8 @@ class BotAssignCategory extends Command
                     '/invitations',
                     '/invitations/halloween',
                     '/invitations/holidays/halloween'
-                ]
+                ],
+                'mainCategory' => '/invitations'
             ]);
         
         Template::where('title', 'like', '%baptism%')
@@ -438,7 +472,8 @@ class BotAssignCategory extends Command
                     '/invitations',
                     '/invitations/baptism',
                     '/invitations/holidays/baptism'
-                ]
+                ],
+                'mainCategory' => '/invitations'
             ]);
         
         Template::where('title', 'like', '%baby%shower%')
@@ -446,7 +481,8 @@ class BotAssignCategory extends Command
                 'categories' => [
                     // '/cards',
                     // '/cards/baby-shower'
-                ]
+                ],
+                'mainCategory' => '/invitations'
             ]);
         
         Template::where('title', 'like', '%brunch%')
@@ -454,7 +490,9 @@ class BotAssignCategory extends Command
                 'categories' => [
                     // '/cards',
                     // '/cards/party/brunch'
-                ]
+                    '/invitations/brunch'
+                ],
+                'mainCategory' => '/invitations'
             ]);
         
         Template::where('title', 'like', '%sleepover%')
@@ -462,7 +500,9 @@ class BotAssignCategory extends Command
                 'categories' => [
                     // '/cards',
                     // '/cards/party/sleepover'
-                ]
+                    '/invitations/sleepover'
+                ],
+                'mainCategory' => '/invitations'
             ]);
             
         echo "TERMINE !!";
