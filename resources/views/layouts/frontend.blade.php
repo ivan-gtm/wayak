@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en-US">
 	<head>
-        <link rel="stylesheet" href="{{ asset('assets/css/menu.css') }}">
-        <link rel="stylesheet" href="{{ asset('assets/css/home.css') }}">
-        <link rel="preconnect" href="https://fonts.gstatic.com">
-        <link href="https://fonts.googleapis.com/css2?family=PT+Sans+Caption&display=swap" rel="stylesheet">
         <title>@yield('title')</title>
         
         @yield('meta')
         
+        <link rel="stylesheet" href="{{ asset('assets/css/menu.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/css/home.css') }}">
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=PT+Sans+Caption&display=swap" rel="stylesheet">
         @yield('css')
 
 	</head>

@@ -7,6 +7,8 @@ use App\Models\Template;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Redis;
+use Storage;
+use Illuminate\Support\Facades\App;
 
 class CreateHomeCarousels extends Command
 {
@@ -41,29 +43,42 @@ class CreateHomeCarousels extends Command
      */
     public function handle()
     {
-
+        $country = 'us';
+        $language_code = 'en';
         $total_items_per_carousel = 30;
-
+        
+        
         $search_result = Template::where('title', 'like', '%baby shower%')
-            ->where('width','=','5')
-            ->where('height','=','7')
-            ->take($total_items_per_carousel)
-            ->get([
-                'title',
-                'slug',
-                'previewImageUrls',
-                'width',
-                'height',
-                'forSubscribers',
-                'previewImageUrls'
-            ]);
+        ->where('width','=','5')
+        ->where('height','=','7')
+        ->take($total_items_per_carousel)
+        ->get([
+            'title',
+            'slug',
+            'previewImageUrls',
+            'width',
+            'height',
+            'forSubscribers',
+            'previewImageUrls'
+        ]);
+
+        $templates = [];
+        foreach ($search_result as $template) {
+            
+            if( App::environment() == 'local' ){
+                $template->preview_image_url = asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls['carousel'] );
+            } else {
+                $template->preview_image_url = Storage::disk('s3')->url( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls['carousel'] );
+            }
+            $templates[] = $template;
+        }
 
         $carousels[] = [
             'slider_id' => Str::random(5),
             'title' => 'Templates for "Baby shower"',
-            'items' => $search_result
+            'items' => $templates
         ];
-
+            
         $search_result = Template::where('title', 'like', '%unicorn%')
             ->where('width','=','5')
             ->where('height','=','7')
@@ -78,10 +93,21 @@ class CreateHomeCarousels extends Command
                 'previewImageUrls'
             ]);
 
+        $templates = [];
+        foreach ($search_result as $template) {
+            
+            if( App::environment() == 'local' ){
+                $template->preview_image_url = asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls['carousel'] );
+            } else {
+                $template->preview_image_url = Storage::disk('s3')->url( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls['carousel'] );
+            }
+            $templates[] = $template;
+        }
+
         $carousels[] = [
             'slider_id' => Str::random(5),
-            'title' => 'Unicorn',
-            'items' => $search_result
+            'title' => 'Unicorn Templates',
+            'items' => $templates
         ];
 
         $search_result = Template::where('title', 'like', '%save%date%')
@@ -98,10 +124,21 @@ class CreateHomeCarousels extends Command
                 'previewImageUrls'
             ]);
 
+        $templates = [];
+        foreach ($search_result as $template) {
+            
+            if( App::environment() == 'local' ){
+                $template->preview_image_url = asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls['carousel'] );
+            } else {
+                $template->preview_image_url = Storage::disk('s3')->url( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls['carousel'] );
+            }
+            $templates[] = $template;
+        }
+
         $carousels[] = [
             'slider_id' => Str::random(5),
             'title' => 'Templates for "Save The Date"',
-            'items' => $search_result
+            'items' => $templates
         ];
 
         $search_result = Template::where('title', 'like', '%wedding%')
@@ -117,11 +154,22 @@ class CreateHomeCarousels extends Command
                 'forSubscribers',
                 'previewImageUrls'
             ]);
+        
+        $templates = [];
+        foreach ($search_result as $template) {
+            
+            if( App::environment() == 'local' ){
+                $template->preview_image_url = asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls['carousel'] );
+            } else {
+                $template->preview_image_url = Storage::disk('s3')->url( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls['carousel'] );
+            }
+            $templates[] = $template;
+        }
 
         $carousels[] = [
             'slider_id' => Str::random(5),
             'title' => 'Templates for "Wedding Invitations"',
-            'items' => $search_result
+            'items' => $templates
         ];
 
         $search_result = Template::where('title', 'like', '%birthday%')
@@ -138,10 +186,21 @@ class CreateHomeCarousels extends Command
                 'previewImageUrls'
             ]);
 
+        $templates = [];
+        foreach ($search_result as $template) {
+            
+            if( App::environment() == 'local' ){
+                $template->preview_image_url = asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls['carousel'] );
+            } else {
+                $template->preview_image_url = Storage::disk('s3')->url( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls['carousel'] );
+            }
+            $templates[] = $template;
+        }
+
         $carousels[] = [
             'slider_id' => Str::random(5),
             'title' => 'Birthday Invitation Templates',
-            'items' => $search_result
+            'items' => $templates
         ];
 
         $search_result = Template::where('title', 'like', '%glitter%')
@@ -158,10 +217,21 @@ class CreateHomeCarousels extends Command
                 'previewImageUrls'
             ]);
 
+        $templates = [];
+        foreach ($search_result as $template) {
+            
+            if( App::environment() == 'local' ){
+                $template->preview_image_url = asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls['carousel'] );
+            } else {
+                $template->preview_image_url = Storage::disk('s3')->url( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls['carousel'] );
+            }
+            $templates[] = $template;
+        }
+
         $carousels[] = [
             'slider_id' => Str::random(5),
             'title' => 'Glitter',
-            'items' => $search_result
+            'items' => $templates
         ];
         
         $search_result = Template::where('title', 'like', '%tropical%')
@@ -177,19 +247,31 @@ class CreateHomeCarousels extends Command
                 'forSubscribers',
                 'previewImageUrls'
             ]);
+        
+        $templates = [];
+        foreach ($search_result as $template) {
+            
+            if( App::environment() == 'local' ){
+                $template->preview_image_url = asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls['carousel'] );
+            } else {
+                $template->preview_image_url = Storage::disk('s3')->url( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls['carousel'] );
+            }
+            $templates[] = $template;
+        }
 
         $carousels[] = [
             'slider_id' => Str::random(5),
             'title' => 'Tropical',
-            'items' => $search_result
+            'items' => $templates
         ];
 
         $carousels = json_encode($carousels);
         // $carousels = json_decode($carousels);
+        // $carousels = json_decode($carousels);
 
         // echo "<pre>";p
         // print_r($carousels);
-        $country = 'us';
+        
         Redis::set('wayak:'.$country.':home:carousels', $carousels);
 
         return 0;

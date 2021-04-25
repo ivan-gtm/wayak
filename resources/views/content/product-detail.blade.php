@@ -1,14 +1,14 @@
 @extends('layouts.frontend')
     
     @section('title', $template->title.' | Template | Designer Online | WAYAK')
+
     @section('meta')
+        <meta charset="UTF-8">
         <meta property="og:url"           content="{{  URL::current() }}" />
         <meta property="og:type"          content="website" />
         <meta property="og:title"         content="{{ $template->title }} | Template | Design Online | WAYAK" />
-        <meta property="og:description"   content="Your description" />
+        <meta property="og:description"   content="Template ready for customization, get ready to download in minutes. Edit Online, choose between thousands of free design templates." />
         <meta property="og:image"         content="{{ asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["product_preview"] ) }}" />
-        <!-- Customize this template, and get ready to download in minutes. -->
-        <!-- Wayak provides unique "x" free design templates. This "x" template is created by the talented graphic designers at WAYAK.  -->
     @endsection
     
     @section('css')
@@ -74,7 +74,7 @@
                                         <div class="item-preview ">
                                             <img alt="{{ $template->title }}"
                                             itemprop="image"
-                                            src="{{ asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["product_preview"] ) }}">
+                                            src="{{ $preview_image }}">
                                             <div class="item-preview__actions">
                                                 <div class="item-preview__preview-buttons--social" data-view="socialButtons">
                                                     <div class="btn-group">

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use App\Models\Template;
+use Illuminate\Support\Facades\App;
 
 // use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
@@ -13,6 +13,9 @@ use Illuminate\Support\Str;
 use League\ColorExtractor\Color;
 use League\ColorExtractor\ColorExtractor;
 use League\ColorExtractor\Palette;
+
+use App\Models\Template;
+use Storage;
 
 // ini_set("max_execution_time", 0);   // no time-outs!
 // ini_set("request_terminate_timeout", 2000);   // no time-outs!
@@ -113,13 +116,16 @@ class ContentController extends Controller
             // echo $page;
             $response = '';
             foreach ($category_products as $template) {
+                
+                $template->preview_image = Storage::disk('s3')->url( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["carousel"] );
+
                 $response .= '<div class="grid__item template">
                         <a href="'.route( 'template.productDetail', [
                             'country' => $country,
                             'slug' => $template->slug
                         ] ).'">
                             <img class="img-fluid" loading="lazy" 
-                                    src="'.asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["carousel"] ).'" 
+                                    src="'.$template->preview_image.'" 
                                     alt="'.$template->title.'">
                         </a>
                     </div>';
@@ -139,6 +145,14 @@ class ContentController extends Controller
                 'categoryCaption',
                 'previewImageUrls'
             ]);
+        
+        $templates = [];
+        foreach ($category_products as $template) {
+            $template->preview_image = Storage::disk('s3')->url( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["carousel"] );
+            $templates[] = $template;
+        }
+        // echo "jasdasd";
+        // exit;
         
         $total_documents = Template::whereIn('categories', [$slug])->count();
 
@@ -182,7 +196,7 @@ class ContentController extends Controller
             'from_document' => $from_document,
             'to_document' => $to_document,
             'total_documents' => $total_documents,
-            'templates' => $category_products,
+            'templates' => $templates,
             'url_params' => $url_params
         ]);
     }
@@ -198,10 +212,11 @@ class ContentController extends Controller
         if( isset($request->searchQuery) ) {
             $search_query = $request->searchQuery;
         }
-        
+
         $template = Template::where('_id','=',$template_id)
             ->first([
                 'title',
+                'preview_image',
                 'format',
                 'categories',
                 'mainCategory',
@@ -213,6 +228,21 @@ class ContentController extends Controller
                 'createdAt',
                 'updatedAt'
             ]);
+
+        if( App::environment() == 'locals' ){
+            $preview_image = asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["product_preview"] );
+        } else {
+            $preview_image = Storage::disk('s3')->url( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["product_preview"] );
+        }
+        // print_r($preview_image);
+        // print_r("<br>");
+        // print_r(  );
+        // print_r("<br>");
+        
+        // // Storage::disk('local')->put('helloworld.txt', 'xx');
+
+        // print_r( Storage::disk('s3')->url( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["product_preview"] ) );
+        // exit;
 
         $category_name = $template->mainCategory;
         $category_name = substr( $template->mainCategory,1, strlen($category_name) );
@@ -249,8 +279,10 @@ class ContentController extends Controller
         // print_r($template->previewImageUrls['thumbnail']);
         // exit;
 
-        $thumb_path = public_path( 'design/template/'. $template_id.'/thumbnails/en/'.$template->previewImageUrls['thumbnail']);
-        $palette = Palette::fromFilename($thumb_path);
+        // $thumb_path = public_path( 'design/template/'. $template_id.'/thumbnails/en/'.$template->previewImageUrls['thumbnail']);
+        $thumb_path = $preview_image;
+        
+        $palette = Palette::fromFilename( $thumb_path );
         $extractor = new ColorExtractor($palette);
         $colors = $extractor->extract(10);
 
@@ -262,6 +294,7 @@ class ContentController extends Controller
 
         return view('content.product-detail',[
             'country' => $country,
+            'preview_image' => $preview_image,
             'language_code' => $language_code,
             'search_query' => $search_query,
             'menu' => $menu,

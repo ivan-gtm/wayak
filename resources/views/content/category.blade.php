@@ -145,7 +145,7 @@
                                     ] ) }}">
                                 <img class="img-fluid" 
                                     loading="lazy" 
-                                    src="{{ asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["carousel"] ) }}" 
+                                    src="{{ $template->preview_image }}" 
                                     alt="{{ $template->title }}">
                             </a>
                         </div>

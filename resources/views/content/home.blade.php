@@ -81,7 +81,7 @@
                                                                                             <div class="boxart-size-16x9 boxart-container boxart-rounded">
                                                                                                 <img class="boxart-image boxart-image-in-padded-container" 
                                                                                                     loading=lazy
-                                                                                                    src="{{ asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls->carousel ) }}"
+                                                                                                    src="{{ $template->preview_image_url }}"
                                                                                                     alt="{{ $template->title }}">
                                                                                                 <div class="fallback-text-container" aria-hidden="true">
                                                                                                     <p class="fallback-text">{{ $template->title }}</p>
