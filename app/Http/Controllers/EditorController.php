@@ -1058,7 +1058,7 @@ class EditorController extends Controller
 				'options' => "{\"width\":1728,\"height\":2304,\"metrics\":\"in\",\"type\":\"single\",\"instructionsId\":\"80\",\"scriptVersion\":4}",
 				'instructions' => ""
 			)
-		)->header('Access-Control-Allow-Origin : *')
+		)->header('Access-Control-Allow-Origin','*')
             ->header('Access-Control-Allow-Credentials', 'true');
 	}
 
