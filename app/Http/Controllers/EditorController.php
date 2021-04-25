@@ -183,7 +183,7 @@ class EditorController extends Controller
 
 			return $template;
 			
-		} elseif( App::environment() == 'production' ){
+		} else {
 			return str_replace('http:\/\/localhost','https:\/\/codepipeline-us-west-wyk.s3.us-west-2.amazonaws.com', Redis::get($template_key) );
 		}
 	}
