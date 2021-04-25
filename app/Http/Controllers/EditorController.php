@@ -1050,7 +1050,7 @@ class EditorController extends Controller
 
 		// $options = json_encode($options);
 
-		echo json_encode(
+		return response()->json(
 			array(
 				'err' => 0,
 				'data' => $array_final,
@@ -1058,7 +1058,10 @@ class EditorController extends Controller
 				'options' => "{\"width\":1728,\"height\":2304,\"metrics\":\"in\",\"type\":\"single\",\"instructionsId\":\"80\",\"scriptVersion\":4}",
 				'instructions' => ""
 			)
-		);
+		)->header('Content-Type', $type)
+        	->header('Access-Control-Allow-Origin', 'https://codepipeline-us-west-wyk.s3.us-west-2.amazonaws.com')
+			// ->header('Access-Control-Allow-Origin : *')
+            ->header('Access-Control-Allow-Credentials', 'true');
 	}
 
 	function loadRemainingDownloads($template_id){
