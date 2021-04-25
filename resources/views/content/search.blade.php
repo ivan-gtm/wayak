@@ -1,6 +1,6 @@
 @extends('layouts.frontend')
 
-@section('title', 'Results for: "'.$search_query.'"| Search | Wayak')
+@section('title', 'Results for: "'.$search_query.'" | Online Template Editor | Wayak')
     
     @section('meta')
         <link rel="stylesheet" href="{{ asset('assets/css/search.css') }}">
@@ -9,9 +9,11 @@
         
         <meta data-rh="true" charset="UTF-8">
         <meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+        {{--
         <meta data-rh="true" name="google-site-verification" content="">
         <meta data-rh="true" name="apple-itunes-app" content="">
         <meta data-rh="true" name="google" content="no-translate">
+        --}}
     @endsection
 
 @section('content')
@@ -68,15 +70,13 @@
                                 <div class="">
                                     <div class="content ratioMultiFormats contentLastRowFix">
                                         @foreach ($templates as $template )
-                                        <a target="_blank" class="captionWrapper item bottomIndentSmall" href="{{ 
-                                                route( 'admin.edit.template',[
-                                                'language_code' => $language_code,
-                                                'template_key' => $template->_id
-                                                ] )
-                                            }}" style="width: calc(var(--row-height) * 0.714286); flex-grow: 7.14286;">
+                                        <a target="_blank" class="captionWrapper item bottomIndentSmall" href="{{ route( 'template.productDetail', [
+                                                'country' => $country,
+                                                'slug' => $template->slug
+                                            ] ) }}" style="width: calc(var(--row-height) * 0.714286); flex-grow: 7.14286;">
                                             <div class="preview imgWrapper imgWrapper_" style="padding-bottom: 140%;">
                                                 <img alt="{{ $template->title }}" crossorigin="anonymous" loading="lazy" data-categ="invitations" data-value="{{ $template->_id }}" 
-                                                    src="{{ asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["carousel"] ) }}"
+                                                    src="{{ $template->preview_image }}"
                                                     class="itemImg">
                                             </div>
                                             <div class="caption proxima-semibold___1HNzk proxima-s___29loE noSubTitle">
@@ -119,7 +119,4 @@
             <div></div>
         </div>
     </div>
-    <!-- <meta name="google-site-verification" content=""> -->
-    <!-- <div style="width:0px; height:0px; display:none; visibility:hidden;" id="batBeacon183254530036"><img style="width:0px; height:0px; display:none; visibility:hidden;" id="batBeacon966510314538" width="0" height="0" alt="" src="https://bat.bing.com/action/0?ti=56305916&amp;Ver=2&amp;mid=7e47ba01-f86d-43df-bc0c-a54ea92a35bb&amp;sid=95ffe9405a8d11eb89bc47deb50efd0b&amp;vid=f245ec70512611eb90d0a310eac65bd9&amp;vids=0&amp;pi=1200101525&amp;lg=es&amp;sw=1920&amp;sh=1080&amp;sc=24&amp;tl=Crello&amp;p=https%3A%2F%2Fcrello.com%2Fmx%2Fhome%2F&amp;r=&amp;evt=pageLoad&amp;msclkid=N&amp;sv=1&amp;rn=102539"></div> -->
-
 @endsection

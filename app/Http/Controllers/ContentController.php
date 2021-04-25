@@ -346,10 +346,21 @@ class ContentController extends Controller
             ->get([
                 'title',
                 'forSubscribers',
+                'slug',
                 // 'category',
                 // 'categoryCaption',
                 'previewImageUrls'
             ]);
+
+        $templates = [];
+        foreach ($search_result as $template) {
+            if( App::environment() == 'local' ){
+                $template->preview_image = asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["carousel"] );
+            } else {
+                $template->preview_image = Storage::disk('s3')->url( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["carousel"] );
+            }
+            $templates[] = $template;
+        }
         
         $total_documents = Template::where('title', 'like', '%'.$search_query.'%')->count();
         $from_document = $skip + 1;
@@ -368,7 +379,7 @@ class ContentController extends Controller
             'from_document' => $from_document,
             'to_document' => $to_document,
             'total_documents' => $total_documents,
-            'templates' => $search_result
+            'templates' => $templates
         ]);
     }
 
