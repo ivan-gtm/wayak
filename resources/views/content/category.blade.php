@@ -3,6 +3,11 @@
 @section('title', $category_obj->name.' Templates | Designer Online | Wayak')
 
 @section('meta')
+    <meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
+    <meta name="description" content="Make custom {{ $category_obj->name }} designs within minutes. Wayak is an online editor tool to create all kinds of designs with thousands of templates as inspiration." />
+    <meta name="title" content="{{ $category_obj->name.' Templates | Designer Online | Wayak' }}" />
+    <meta name="keywords" content="{{ $category_obj->name }}" />
+    
     <link rel="stylesheet" href="{{ asset('assets/css/menu.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/home.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/category.css') }}">

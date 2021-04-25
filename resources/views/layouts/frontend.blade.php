@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="en-US">
 	<head>
+        <meta charset="UTF-8">
         <title>@yield('title')</title>
-        
         @yield('meta')
-        
         <link rel="stylesheet" href="{{ asset('assets/css/menu.css') }}">
         <link rel="stylesheet" href="{{ asset('assets/css/home.css') }}">
         <link rel="preconnect" href="https://fonts.gstatic.com">

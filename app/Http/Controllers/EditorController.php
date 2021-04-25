@@ -183,7 +183,7 @@ class EditorController extends Controller
 
 			return $template;
 		} else {
-			return str_replace('https:\/\/wayak.app', 'http:\/\/localhost:8001', Redis::get($template_key) );
+			return str_replace('https:\/\/codepipeline-us-west-wyk.s3.us-west-2.amazonaws.com', 'http:\/\/localhost:8001', Redis::get($template_key) );
 		}
 	}
 
@@ -935,7 +935,11 @@ class EditorController extends Controller
 				->first();
 
 	    // 	foreach($template_thumbnails as $thumbnail) {
-		    	$img_url = url('design/template/'.$thumbnail->template_id.'/thumbnails/'.$request->language_code.'/'.$thumbnail->filename);
+				if( App::environment() == 'local' ){
+					$img_url = url('design/template/'.$thumbnail->template_id.'/thumbnails/'.$request->language_code.'/'.$thumbnail->filename);
+				} else {
+					$img_url = Storage::disk('s3')->url( 'design/template/'.$thumbnail->template_id.'/thumbnails/'.$request->language_code.'/'.$thumbnail->filename );
+				}
 		//     	$thumbnails_html .= '<div class="col-xs-6 thumb" id="'.$request->demo_templates.'"><a class="thumbnail" data-target="'.$request->demo_templates.'"><span class="thumb-overlay"><h3>'.$thumbnail->title.'</h3></span><div class="expired-notice" style="display:none;">EXPIRED</div><img class="tempImage img-responsive" src="'.$img_url.'" alt="" style=""></a><div class="badge-container"><span class="badge dims">'.$thumbnail->dimentions.'</span><span class="badge tempId">ID: '.$request->demo_templates.'</span><i class="fa fa-trash-o deleteTemp" id="'.$request->demo_templates.'"></i></div></div>';
 		//     }
 		}

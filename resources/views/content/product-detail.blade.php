@@ -3,7 +3,11 @@
     @section('title', $template->title.' | Template | Designer Online | WAYAK')
 
     @section('meta')
-        <meta charset="UTF-8">
+        <meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
+        <meta name="description" content="{{ $template->width }}x{{ $template->height }}{{ $template->measureUnits }}. Customize this template, change the text and images as you wish. After that, preview and save your work, your design will be ready to print, share or download." />
+        <meta name="title" content="{{ $template->title }} | Template | Design Online | WAYAK" />
+        <meta name="keywords" content="{{ $template->title }}" />
+
         <meta property="og:url"           content="{{  URL::current() }}" />
         <meta property="og:type"          content="website" />
         <meta property="og:title"         content="{{ $template->title }} | Template | Design Online | WAYAK" />
