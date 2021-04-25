@@ -184,7 +184,7 @@ class EditorController extends Controller
 			return $template;
 			
 		} else {
-			return str_replace('http://localhost','https://codepipeline-us-west-wyk.s3.us-west-2.amazonaws.com', Redis::get($template_key) );
+			return str_replace('http://localhost','https:\/\/codepipeline-us-west-wyk.s3.us-west-2.amazonaws.com', Redis::get($template_key) );
 		}
 	}
 
