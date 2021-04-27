@@ -13,7 +13,7 @@ class ScrapAssets extends Command
      *
      * @var string
      */
-    protected $signature = 'wayak:scrapassets';
+    protected $signature = 'wayak:templett:scrapassets';
 
     /**
      * The console command description.

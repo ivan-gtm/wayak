@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use App\Models\Template;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redis;
 
 class BotAssignCategory extends Command
 {
@@ -39,25 +40,288 @@ class BotAssignCategory extends Command
      */
     public function handle()
     {
+        // self::massiveCategoryAssigment();
+        self::checkProductCategoryNotAssigned();
+        // self::verifyProductCategoryExists();
+    }
 
-        // Template::where('_id', '=', '1699299')
-        //     ->update([
-        //         'mainCategory' => '/invitations/wedding'
-        //     ]);
-        // echo "hihii";
+    function verifyProductCategoryExists(){
+        $templates = Template::where('title', 'regexp', '/.*(B|b)irthday.*/i')
+        ->get([
+            'title'
+            // 'category',
+            // 'categories',
+            // 'mainCategory'
+        ]);
+
+        // print_r($templates);
         // exit;
 
-        Template::where('title', 'like', '%invitation%')
+        // $templates = [];
+        foreach($templates as $template) {
+            print_r( $template->title );
+            print_r("\n");
+        }
+    }
+    
+    function checkProductCategoryNotAssigned(){
+        $templates = Template::whereNotNull('slug')
+        ->get([
+            'title',
+            'category',
+            'categories',
+            'mainCategory'
+        ]);
+
+        // $templates = [];
+        foreach($templates as $template) {
+            $category_name = $template->mainCategory;
+            $category_name = substr( $template->mainCategory,1, strlen($category_name) );
+            
+            if( Redis::exists('wayak:categories:'.$category_name) == false ){
+                print_r('wayak:categories:'.$category_name);
+                print_r("\n");
+                
+                if($category_name == 'invitations/wedding/rsvp'){
+                    $x = [
+                        'name' => 'RSVP Cards',
+                        'slug' => 'rsvp',
+                        'section' => 'cards',
+                        'children' => [],
+                        'parent' => [
+                            'name' => 'Wedding',
+                            'slug' => 'wedding',
+                            'section' => 'cards',
+                            'children' => [],
+                            'parent' => [
+                                'name' => 'Invitations',
+                                'slug' => 'invitations',
+                                'children' => [],
+                            ]
+                        ]
+                    ];
+                    Redis::set('wayak:categories:'.$category_name, json_encode($x) );
+                } elseif($category_name == 'invitations/wedding/menus'){
+                    $x = [
+                        'name' => 'Wedding Menus',
+                        'slug' => 'menus',
+                        'section' => 'cards',
+                        'children' => [],
+                        'parent' => [
+                            'name' => 'Wedding',
+                            'slug' => 'wedding',
+                            'section' => 'cards',
+                            'children' => [],
+                            'parent' => [
+                                'name' => 'Invitations',
+                                'slug' => 'invitations',
+                                'children' => [],
+                            ]
+                        ]
+                    ];
+                    Redis::set('wayak:categories:'.$category_name, json_encode($x) );
+                } elseif($category_name == 'invitations/wedding/bridal-shower'){
+                    $x = [
+                        'name' => 'Bridal Shower',
+                        'slug' => 'bridal-shower',
+                        'section' => 'cards',
+                        'children' => [],
+                        'parent' => [
+                            'name' => 'Wedding',
+                            'slug' => 'wedding',
+                            'section' => 'cards',
+                            'children' => [],
+                            'parent' => [
+                                'name' => 'Invitations',
+                                'slug' => 'invitations',
+                                'children' => [],
+                            ]
+                        ]
+                    ];
+                    Redis::set('wayak:categories:'.$category_name, json_encode($x) );
+                } elseif($category_name == 'invitations/wedding/bachelor-party'){
+                    $x = [
+                        'name' => 'Bachelor Party',
+                        'slug' => 'bachelor-party',
+                        'section' => 'cards',
+                        'children' => [],
+                        'parent' => [
+                            'name' => 'Wedding',
+                            'slug' => 'wedding',
+                            'section' => 'cards',
+                            'children' => [],
+                            'parent' => [
+                                'name' => 'Invitations',
+                                'slug' => 'invitations',
+                                'children' => [],
+                            ]
+                        ]
+                    ];
+                    Redis::set('wayak:categories:'.$category_name, json_encode($x) );
+                } elseif($category_name == 'invitations/cocktail-party'){
+                    $x = [
+                        'name' => 'Cocktail Party',
+                        'slug' => 'cocktail-party',
+                        'section' => 'cards',
+                        'children' => [],
+                        'parent' => [
+                            'name' => 'Invitations',
+                            'slug' => 'invitations',
+                            'children' => [],
+                        ]
+                    ];
+                    Redis::set('wayak:categories:'.$category_name, json_encode($x) );
+                } elseif($category_name == 'invitations/wedding/save-the-date'){
+                    $x = [
+                        'name' => 'Save the date',
+                        'slug' => 'save-the-date',
+                        'section' => 'cards',
+                        'children' => [],
+                        'parent' => [
+                            'name' => 'Wedding',
+                            'slug' => 'wedding',
+                            'section' => 'cards',
+                            'children' => [],
+                            'parent' => [
+                                'name' => 'Invitations',
+                                'slug' => 'invitations',
+                                'children' => [],
+                            ]
+                        ]
+                    ];
+                    Redis::set('wayak:categories:'.$category_name, json_encode($x) );
+                } elseif($category_name == 'invitations/holidays/baptism'){
+                    $x = [
+                        'name' => 'Baptism',
+                        'slug' => 'baptism',
+                        'section' => 'cards',
+                        'children' => [],
+                        'parent' => [
+                            'name' => 'Holidays',
+                            'slug' => 'holidays',
+                            'section' => 'cards',
+                            'children' => [],
+                            'parent' => [
+                                'name' => 'Invitations',
+                                'slug' => 'invitations',
+                                'children' => [],
+                            ]
+                        ]
+                    ];
+                    Redis::set('wayak:categories:'.$category_name, json_encode($x) );
+                } elseif($category_name == 'invitations/wedding/engagement-party'){
+                    $x = [
+                        'name' => 'Engagement Party',
+                        'slug' => 'engagement-party',
+                        'section' => 'cards',
+                        'children' => [],
+                        'parent' => [
+                            'name' => 'Wedding',
+                            'slug' => 'wedding',
+                            'section' => 'cards',
+                            'children' => [],
+                            'parent' => [
+                                'name' => 'Invitations',
+                                'slug' => 'invitations',
+                                'children' => [],
+                            ]
+                        ]
+                    ];
+                    Redis::set('wayak:categories:'.$category_name, json_encode($x) );
+                } elseif($category_name == 'invitations/party/graduation'){
+                    $x = [
+                        'name' => 'Graduation',
+                        'slug' => 'graduation',
+                        'section' => 'cards',
+                        'children' => [],
+                        'parent' => [
+                            'name' => 'Party',
+                            'slug' => 'party',
+                            'section' => 'cards',
+                            'children' => [],
+                            'parent' => [
+                                'name' => 'Invitations',
+                                'slug' => 'invitations',
+                                'children' => [],
+                            ]
+                        ]
+                    ];
+                    Redis::set('wayak:categories:'.$category_name, json_encode($x) );
+                } elseif($category_name == 'invitations/party/housewarming'){
+                    $x = [
+                        'name' => 'Housewarming',
+                        'slug' => 'housewarming',
+                        'section' => 'cards',
+                        'children' => [],
+                        'parent' => [
+                            'name' => 'Party',
+                            'slug' => 'party',
+                            'section' => 'cards',
+                            'children' => [],
+                            'parent' => [
+                                'name' => 'Invitations',
+                                'slug' => 'invitations',
+                                'children' => [],
+                            ]
+                        ]
+                    ];
+                    Redis::set('wayak:categories:'.$category_name, json_encode($x) );
+                } elseif($category_name == 'invitations/baby-shower'){
+                    $x = [
+                        'name' => 'Baby Shower',
+                        'slug' => 'baby-shower',
+                        'section' => 'cards',
+                        'children' => [],
+                        'parent' => [
+                            'name' => 'Invitations',
+                            'slug' => 'invitations',
+                            'children' => [],
+                        ]
+                    ];
+                    Redis::set('wayak:categories:'.$category_name, json_encode($x) );
+                } elseif($category_name == 'invitations/sleepover'){
+                    $x = [
+                        'name' => 'Sleepover',
+                        'slug' => 'sleepover',
+                        'section' => 'cards',
+                        'children' => [],
+                        'parent' => [
+                            'name' => 'Invitations',
+                            'slug' => 'invitations',
+                            'children' => [],
+                        ]
+                    ];
+                    Redis::set('wayak:categories:'.$category_name, json_encode($x) );
+                } elseif($category_name == 'invitations/brunch'){
+                    $x = [
+                        'name' => 'Brunch',
+                        'slug' => 'brunch',
+                        'section' => 'cards',
+                        'children' => [],
+                        'parent' => [
+                            'name' => 'Invitations',
+                            'slug' => 'invitations',
+                            'children' => [],
+                        ]
+                    ];
+                    Redis::set('wayak:categories:'.$category_name, json_encode($x) );
+                }
+
+            }
+            
+            // exit;
+        }
+    }
+
+    function massiveCategoryAssigment(){
+        
+        Template::where('title', 'regexp', '/.*(I|i)nvitation.*/i')
             ->update([
                 'categories' => ['/invitations'],
                 'mainCategory' => '/invitations'
             ]);
         
-        // print_r( Template::where('title', 'like', '%invitation%')->count());
-        // print_r("\n");
-        // exit;
-        
-        Template::where('title', 'like', '%birthday%')
+        Template::where('title', 'regexp', '/.*(B|b)irthday.*/i')
             ->update([
                 'categories' => [
                     '/invitations',
@@ -68,10 +332,7 @@ class BotAssignCategory extends Command
                 'mainCategory' => '/invitations/birthday'
             ]);
         
-        Template::where('title', 'like', '%wedding%invitation%')
-            ->orWhere('title', 'like', '%invitation%wedding%')
-            ->orWhere('title', 'like', '%invite%wedding%')
-            ->orWhere('title', 'like', '%wedding%invite%')
+        Template::where('title', 'regexp', '/.*(W|w)edding.*/i')
             ->update([
                 'categories' => [
                     '/invitations',
@@ -82,7 +343,7 @@ class BotAssignCategory extends Command
                 'mainCategory' => '/invitations/wedding'
             ]);
             
-        Template::where('title', 'like', '%bachelor%')
+        Template::where('title', 'regexp', '/.*(B|b)achelor.*/i')
             ->update([
                 'categories' => [
                     '/invitations',
@@ -95,7 +356,7 @@ class BotAssignCategory extends Command
                 'mainCategory' => '/invitations/wedding/bachelor-party'
             ]);
         
-        Template::where('title', 'like', '%rehearsal%')
+        Template::where('title', 'regexp', '/.*(R|r)ehearsal.*/i')
             ->update([
                 'categories' => [
                     '/invitations',
@@ -105,10 +366,10 @@ class BotAssignCategory extends Command
                     // '/cards/wedding',
                     // '/cards/wedding/rehearsal-dinner'
                 ],
-                'mainCategory' => '/invitations/wedding'
+                'mainCategory' => '/invitations/wedding/rehearsal-dinner'
             ]);
             
-        Template::where('title', 'like', '%engagement%')
+        Template::where('title', 'regexp', '/.*(E|e)ngagement.*/i')
             ->update([
                 'categories' => [
                     '/invitations',
@@ -118,10 +379,10 @@ class BotAssignCategory extends Command
                     // '/cards/wedding',
                     // '/cards/wedding/engagement-party'
                 ],
-                'mainCategory' => '/invitations/wedding'
+                'mainCategory' => '/invitations/wedding/engagement-party'
             ]);
         
-        Template::where('title', 'like', '%bridal%')
+        Template::where('title', 'regexp', '/.*(B|b)ridal.*/i')
             ->update([
                 'categories' => [
                     // '/cards',
@@ -135,18 +396,18 @@ class BotAssignCategory extends Command
                 'mainCategory' => '/invitations/wedding/bridal-shower'
             ]);
             
-        Template::where('title', 'like', '%save%date%')
+        Template::where('title', 'regexp', '/.*(S|s)ave.*(D|d)ate.*/i')
             ->update([
                 'categories' => [
                     '/invitations',
                     '/invitations/wedding',
                     '/invitations/wedding/save-the-date'
                 ],
-                'mainCategory' => '/invitations/wedding'
+                'mainCategory' => '/invitations/wedding/save-the-date'
                 ]);
                 
                 
-        Template::where('title', 'like', '%rsvp%')
+        Template::where('title', 'regexp', '/.*(RSVP|rsvp).*/i')
         ->update([
                 'categories' => [
                 '/invitations',
@@ -158,7 +419,7 @@ class BotAssignCategory extends Command
             'mainCategory' => '/invitations/wedding/rsvp'
         ]);
                     
-        Template::where('title', 'like', '%cocktail%')
+        Template::where('title', 'regexp', '/.*(C|c)ocktail.*/i')
                         ->update([
                             'categories' => [
                                 '/invitations',
@@ -170,7 +431,7 @@ class BotAssignCategory extends Command
                             'mainCategory' => '/invitations/cocktail-party'
                         ]);
 
-        Template::where('title', 'like', '%card%thank%')
+        Template::where('title', 'regexp', '/.*(T|t)hank.*(Y|y)ou.*/i')
             ->update([
                 'categories' => [
                     '/invitations',
@@ -179,7 +440,7 @@ class BotAssignCategory extends Command
                 'mainCategory' => '/invitations/thank-you'
             ]);
         
-        Template::where('title', 'like', '%menu%')
+        Template::where('title', 'regexp', '/.*(M|m)enu.*/i')
             ->update([
                 'categories' => [
                     '/invitations',
@@ -190,9 +451,7 @@ class BotAssignCategory extends Command
             ]);
         
         
-        Template::where('title', 'like', '%tags%')
-            ->orWhere('title', 'like', '%tags%gift%')
-            ->orWhere('title', 'like', '%gift%tags%')
+        Template::where('title', 'regexp', '/.*(T|t)tag.*/i')
             ->update([
                 'categories' => [
                     '/tags',
@@ -202,8 +461,8 @@ class BotAssignCategory extends Command
                 'mainCategory' => '/tags'
             ]);
         
-        Template::where('title', 'like', '%tags%christmas%')
-            ->orWhere('title', 'like', '%christmas%tags%')
+        Template::where('title', 'regexp', '/.*(T|t)ags.*(C|c)hristmas.*/i')
+            ->orWhere('title', 'regexp', '/.*(C|c)hristmas.*(T|t)ags.*/i')
             ->update([
                 'categories' => [
                     '/tags',
@@ -215,7 +474,7 @@ class BotAssignCategory extends Command
                 'mainCategory' => '/tags'
             ]);
         
-        Template::where('title', 'like', '%recipe%')
+        Template::where('title', 'regexp', '/.*(R|r)ecipe.*/i')
             ->update([
                 'categories' => [
                     '/recipe-cards',
@@ -224,7 +483,7 @@ class BotAssignCategory extends Command
             ]);
 
         
-        Template::where('title', 'like', '%program%')
+        Template::where('title', 'regexp', '/.*(P|p)rogram.*/i')
             ->update([
                 'categories' => [
                     '/event-programs',
@@ -232,7 +491,7 @@ class BotAssignCategory extends Command
                 'mainCategory' => '/event-programs'
             ]);
         
-        Template::where('title', 'like', '%wedding%program%')
+        Template::where('title', 'regexp', '/.*(W|w)edding.*(P|p)rogram.*/i')
             ->update([
                 'categories' => [
                     '/wedding-programs',
@@ -241,7 +500,7 @@ class BotAssignCategory extends Command
                 'mainCategory' => '/wedding-programs'
             ]);
         
-        Template::where('title', 'like', '%coupon%')
+        Template::where('title', 'regexp', '/.*(C|c)oupon.*/i')
             ->update([
                 'categories' => [
                     '/coupons',
@@ -249,7 +508,7 @@ class BotAssignCategory extends Command
                 'mainCategory' => '/coupons'
             ]);
         
-        Template::where('title', 'like', '%label%')
+        Template::where('title', 'regexp', '/.*(L|l)abel.*/i')
             ->update([
                 'categories' => [
                     '/labels',
@@ -257,7 +516,7 @@ class BotAssignCategory extends Command
                 'mainCategory' => '/labels'
             ]);
         
-        Template::where('title', 'like', '%calendar%')
+        Template::where('title', 'regexp', '/.*(C|c)alendar.*/i')
             ->update([
                 'categories' => [
                     '/calendars',
@@ -265,7 +524,7 @@ class BotAssignCategory extends Command
                 'mainCategory' => '/calendars'
             ]);
         
-        Template::where('title', 'like', '%communion%')
+        Template::where('title', 'regexp', '/.*(C|c)ommunion.*/i')
             ->update([
                 'categories' => [
                     // '/cards',
@@ -276,8 +535,8 @@ class BotAssignCategory extends Command
                 'mainCategory' => '/invitations'
             ]);
         
-        Template::where('title', 'like', '%bbq%')
-            ->orWhere('title', 'like', '%barbecue%')
+        Template::where('title', 'regexp', '/.*bbq.*/i')
+            ->orWhere('title', 'regexp', '/.*barbecue.*/i')
             ->update([
                 'categories' => [
                     // '/cards',
@@ -288,8 +547,8 @@ class BotAssignCategory extends Command
                 'mainCategory' => '/invitations'
             ]);
         
-        Template::where('title', 'like', '%retirement%')
-            ->orWhere('title', 'like', '%farewell%')
+        Template::where('title', 'regexp', '/.*(R|r)etirement.*/i')
+            ->orWhere('title', 'regexp', '/.*(F|f)arewell.*/i')
             ->update([
                 'categories' => [
                     // '/cards',
@@ -300,8 +559,8 @@ class BotAssignCategory extends Command
                 'mainCategory' => '/invitations'
             ]);
         
-        Template::where('title', 'like', '%party%dinner%')
-            ->orWhere('title', 'not like', '%wedding%')
+        Template::where('title', 'regexp', '/.*(D|d)inner.*(P|p)arty.*/i')
+            ->orWhere('title', 'regexp', '/.*(D|d)inner.*/i')
             ->update([
                 'categories' => [
                     // '/cards',
@@ -312,7 +571,7 @@ class BotAssignCategory extends Command
                 'mainCategory' => '/invitations'
             ]);
         
-        Template::where('title', 'like', '%potluck%')
+        Template::where('title', 'regexp', '/.*(P|p)otluck.*/i')
             ->update([
                 'categories' => [
                     // '/cards',
@@ -325,7 +584,7 @@ class BotAssignCategory extends Command
                 'mainCategory' => '/invitations'
             ]);
         
-        Template::where('title', 'like', '%christmas%')
+        Template::where('title', 'regexp', '/.*(C|c)hristmas.*/i')
             ->update([
                 'categories' => [
                     // '/cards',
@@ -335,10 +594,10 @@ class BotAssignCategory extends Command
                     '/invitations/holidays',
                     '/invitations/holidays/christmas',
                 ],
-                'mainCategory' => '/invitations'
+                'mainCategory' => '/invitations/holidays/christmas'
             ]);
         
-        Template::where('title', 'like', '%anniversary%')
+        Template::where('title', 'regexp', '/.*(A|a)nniversary.*/i')
             ->update([
                 'categories' => [
                     // '/cards',
@@ -346,10 +605,10 @@ class BotAssignCategory extends Command
                     '/invitations',
                     '/invitations/anniversary',
                 ],
-                'mainCategory' => '/invitations'
+                'mainCategory' => '/invitations/anniversary'
             ]);
         
-        Template::where('title', 'like', '%pool%')
+        Template::where('title', 'regexp', '/.*(P|p)pool.*/i')
             ->update([
                 'categories' => [
                     // '/cards',
@@ -357,10 +616,10 @@ class BotAssignCategory extends Command
                     '/invitations',
                     '/invitations/summer-and-pool-party',
                 ],
-                'mainCategory' => '/invitations'
+                'mainCategory' => '/invitations/summer-and-pool-party'
             ]);
         
-        Template::where('title', 'like', '%housewarming%')
+        Template::where('title', 'regexp', '/.*(H|h)ousewarming.*/i')
             ->update([
                 'categories' => [
                     // '/cards',
@@ -370,10 +629,10 @@ class BotAssignCategory extends Command
                     '/invitations/housewarming',
                     '/invitations/party/housewarming'
                 ],
-                'mainCategory' => '/invitations'
+                'mainCategory' => '/invitations/party/housewarming'
             ]);
         
-        Template::where('title', 'like', '%graduation%')
+        Template::where('title', 'regexp', '/.*(G|g)raduation.*/i')
             ->update([
                 'categories' => [
                     // '/cards',
@@ -383,10 +642,10 @@ class BotAssignCategory extends Command
                     '/invitations/graduation',
                     '/invitations/party/graduation'
                 ],
-                'mainCategory' => '/invitations'
+                'mainCategory' => '/invitations/party/graduation'
             ]);
         
-        Template::where('title', 'like', '%easter%')
+        Template::where('title', 'regexp', '/.*(E|e)aster.*/i')
             ->update([
                 'categories' => [
                     // '/cards',
@@ -396,10 +655,10 @@ class BotAssignCategory extends Command
                     '/invitations/easter',
                     '/invitations/holidays/easter'
                 ],
-                'mainCategory' => '/invitations'
+                'mainCategory' => '/invitations/holidays/easter'
             ]);
         
-        Template::where('title', 'like', '%patrick%')
+        Template::where('title', 'regexp', '/.*(P|p)atrick.*/i')
             ->update([
                 'categories' => [
                     // '/cards',
@@ -412,7 +671,7 @@ class BotAssignCategory extends Command
                 'mainCategory' => '/invitations'
             ]);
         
-        Template::where('title', 'like', '%thanksgiving%')
+        Template::where('title', 'regexp', '/.*(T|t)hanksgiving.*/i')
             ->update([
                 'categories' => [
                     // '/cards',
@@ -422,10 +681,10 @@ class BotAssignCategory extends Command
                     '/invitations/thanksgiving',
                     '/invitations/holidays/thanksgiving'
                 ],
-                'mainCategory' => '/invitations'
+                'mainCategory' => '/invitations/holidays/thanksgiving'
             ]);
         
-        Template::where('title', 'like', '%new%year%')
+        Template::where('title', 'regexp', '/.*(N|n)ew.*(Y|y)ear.*/i')
             ->update([
                 'categories' => [
                     // '/cards',
@@ -435,10 +694,10 @@ class BotAssignCategory extends Command
                     '/invitations/new-year',
                     '/invitations/holidays/new-year'
                 ],
-                'mainCategory' => '/invitations'
+                'mainCategory' => '/invitations/holidays/new-year'
             ]);
         
-        Template::where('title', 'like', '%valentine%')
+        Template::where('title', 'regexp', '/.*(V|v)alentine.*/i')
             ->update([
                 'categories' => [
                     // '/cards',
@@ -448,10 +707,10 @@ class BotAssignCategory extends Command
                     '/invitations/valentines-day',
                     '/invitations/holidays/valentines-day'
                 ],
-                'mainCategory' => '/invitations'
+                'mainCategory' => '/invitations/holidays/valentines-day'
             ]);
 
-        Template::where('title', 'like', '%halloween%')
+        Template::where('title', 'regexp', '/.*(H|h)alloween.*/i')
             ->update([
                 'categories' => [
                     // '/cards',
@@ -461,10 +720,10 @@ class BotAssignCategory extends Command
                     '/invitations/halloween',
                     '/invitations/holidays/halloween'
                 ],
-                'mainCategory' => '/invitations'
+                'mainCategory' => '/invitations/holidays/halloween'
             ]);
         
-        Template::where('title', 'like', '%baptism%')
+        Template::where('title', 'regexp', '/.*(B|b)aptism.*/i')
             ->update([
                 'categories' => [
                     // '/cards',
@@ -473,38 +732,43 @@ class BotAssignCategory extends Command
                     '/invitations/baptism',
                     '/invitations/holidays/baptism'
                 ],
-                'mainCategory' => '/invitations'
+                'mainCategory' => '/invitations/holidays/baptism'
             ]);
         
-        Template::where('title', 'like', '%baby%shower%')
+        Template::where('title', 'regexp', '/.*(B|b)aby.*(S|s)hower.*/i')
             ->update([
                 'categories' => [
                     // '/cards',
                     // '/cards/baby-shower'
+                    '/invitations',
+                    '/invitations/baby-shower'
                 ],
-                'mainCategory' => '/invitations'
+                'mainCategory' => '/invitations/baby-shower'
             ]);
         
-        Template::where('title', 'like', '%brunch%')
+        Template::where('title', 'regexp', '/.*(B|b)runch.*/i')
             ->update([
                 'categories' => [
                     // '/cards',
                     // '/cards/party/brunch'
+                    '/invitations',
                     '/invitations/brunch'
                 ],
-                'mainCategory' => '/invitations'
+                'mainCategory' => '/invitations/brunch'
             ]);
         
-        Template::where('title', 'like', '%sleepover%')
+        Template::where('title', 'regexp', '/.*(S|s)leepover.*/i')
             ->update([
                 'categories' => [
                     // '/cards',
                     // '/cards/party/sleepover'
+                    '/invitations',
                     '/invitations/sleepover'
                 ],
-                'mainCategory' => '/invitations'
+                'mainCategory' => '/invitations/sleepover'
             ]);
             
-        echo "TERMINE !!";
+        
+        echo "MASSIVE CATEGORY ASSIGMENT FINISHED !!";
     }
 }

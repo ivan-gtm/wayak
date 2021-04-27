@@ -3,7 +3,6 @@
 @section('title', 'Plantillas Formato Listo')
 
 @section('css')
-
     <style>
         ul.jqtree-tree {
             list-style: none outside;

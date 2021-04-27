@@ -15,7 +15,7 @@ class CrelloCreateThumbnails extends Command
      *
      * @var string
      */
-    protected $signature = 'wayak:create_thumbnails';
+    protected $signature = 'wayak:crello:create_thumbnails';
 
     /**
      * The console command description.

@@ -469,7 +469,6 @@ class CategoryController extends Controller
             ]
             // 'link' => url('template/'.self::strToSlug($category->SectionName).'/'.self::strToSlug($category->CategoryName))
         ];
-
         
         foreach($clean_category_obj as $category) {
             if($category['section'] == 'cards'){
@@ -484,8 +483,7 @@ class CategoryController extends Controller
 
         Redis::set('wayak:categories', json_encode($final_array));
 
-        
-        echo "<pre>";
+        // echo "<pre>";
         // print_r($final_array);
 
         foreach ($final_array as $cat_level_1) {
@@ -568,11 +566,16 @@ class CategoryController extends Controller
                 }
             }
         }
-        // print_r($final_array);
         
-        self::createURLs('',$final_array);
-
+        print_r($final_array);
+        echo "<pre>";
+        print_r($top_level_categories);
         exit;
+        // self::createURLs('',$final_array);
+
+        // exit;
+
+        $final_array = Redis::get('wayak:categories');
         
         return view('admin.categories.manage', [
             'data' => json_encode($final_array)

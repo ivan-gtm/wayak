@@ -13,7 +13,7 @@ class MigrateToUAT extends Command
      *
      * @var string
      */
-    protected $signature = 'wayak:migrateuat';
+    protected $signature = 'wayak:migrate-redis-dev-to-prod';
 
     /**
      * The console command description.
@@ -45,9 +45,9 @@ class MigrateToUAT extends Command
     }
 
     function migrateRedisKeys(){
-        self::migrateTemplates();
-        self::migrateCarousels();
-        self::migrateMenu();
+        // self::migrateTemplates();
+        // self::migrateCarousels();
+        // self::migrateMenu();
         self::migrateCategories();
         // self::migrateWayakConfig();
     }
@@ -86,8 +86,6 @@ class MigrateToUAT extends Command
     
     function migrateWayakConfig(){
         $redis_uat = Redis::connection('redisuat');
-        // $keys = $redis_uat->keys('*');
-
         $wayak_config = Redis::keys('wayak:*');
 
         foreach ($wayak_config as $config_keyname) {
@@ -101,16 +99,17 @@ class MigrateToUAT extends Command
     function migrateCarousels(){
         $redis_src = Redis::connection('redispro');
         $redis_dest = Redis::connection('default');
-        // $keys = $redis_uat->keys('*');
-
+        
         $carousels = $redis_src->keys('wayak:*:home:carousels');
 
         foreach ($carousels as $carousel_key) {
-            $redis_dest->set($carousel_key, $redis_src->get($carousel_key));
-            print_r("Migrated key >> ");
-            print_r($carousel_key);
-            print_r("\n");
-            usleep(500000);
+            if( $redis_dest->exists($carousel_key) == false ){
+                $redis_dest->set($carousel_key, $redis_src->get($carousel_key));
+                print_r("Migrated key >> ");
+                print_r($carousel_key);
+                print_r("\n");
+                usleep(500000);
+            }
         }
 
     }
@@ -123,11 +122,13 @@ class MigrateToUAT extends Command
         $carousels = $redis_src->keys('wayak:*:menu');
 
         foreach ($carousels as $carousel_key) {
-            $redis_dest->set($carousel_key, $redis_src->get($carousel_key));
-            print_r("Migrated key >> ");
-            print_r($carousel_key);
-            print_r("\n");
-            usleep(500000);
+            if( $redis_dest->exists($carousel_key) == false ){
+                $redis_dest->set($carousel_key, $redis_src->get($carousel_key));
+                print_r("Migrated key >> ");
+                print_r($carousel_key);
+                print_r("\n");
+                usleep(500000);
+            }
         }
 
     }
@@ -135,18 +136,29 @@ class MigrateToUAT extends Command
     function migrateCategories(){
         $redis_src = Redis::connection('redispro');
         $redis_dest = Redis::connection('default');
-        // $keys = $redis_uat->keys('*');
-
         $carousels = $redis_src->keys('wayak:categories:*');
 
         foreach ($carousels as $carousel_key) {
-            $redis_dest->set($carousel_key, $redis_src->get($carousel_key));
-            print_r("Migrated key >> ");
-            print_r($carousel_key);
-            print_r("\n");
-            usleep(500000);
+            if( $redis_dest->exists($carousel_key) == false ){
+                $redis_dest->set($carousel_key, $redis_src->get($carousel_key));
+                print_r("Migrated key >> ");
+                print_r($carousel_key);
+                print_r("\n");
+                usleep(500000);
+            }
         }
+        
+        $carousels = $redis_src->keys('laravel_database_green:categories');
 
+        foreach ($carousels as $carousel_key) {
+            if( $redis_dest->exists($carousel_key) == false ){
+                $redis_dest->set($carousel_key, $redis_src->get($carousel_key));
+                print_r("Migrated key >> ");
+                print_r($carousel_key);
+                print_r("\n");
+                usleep(500000);
+            }
+        }
     }
 
 }

@@ -19,7 +19,7 @@ class CreateKeywords extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Pupulate keyword mysql table';
 
     /**
      * Create a new command instance.

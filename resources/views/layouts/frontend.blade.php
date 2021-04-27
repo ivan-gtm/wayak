@@ -33,7 +33,7 @@
                                 <ul class="list" id="nav-sizes-list">
                                     @for($i = 0; $i < sizeof($menu->templates) / 3; $i++)
                                         <li class="list-item ">
-                                            <a class="item" href="{{ str_replace('localhost','localhost:8001',$menu->templates[$i]->url) }}">
+                                            <a class="item" href="{{ $menu->templates[$i]->url }}">
                                                 {{ $menu->templates[$i]->name }}
                                             </a>
                                         </li>
@@ -47,7 +47,7 @@
                                 <ul class="list">
                                     @for($i = (sizeof($menu->templates) / 3)+1; $i < ((sizeof($menu->templates) / 3) * 2)+1; $i++)
                                         <li class="list-item ">
-                                            <a class="item" href="{{ str_replace('localhost','localhost:8001',$menu->templates[$i]->url) }}">
+                                            <a class="item" href="{{ $menu->templates[$i]->url }}">
                                                 {{ $menu->templates[$i]->name }}
                                             </a>
                                         </li>
@@ -57,7 +57,7 @@
                                 <ul class="list">
                                     @for($i = ((sizeof($menu->templates) / 3)*2)+1; $i < sizeof($menu->templates); $i++)
                                         <li class="list-item ">
-                                            <a class="item" href="{{ str_replace('localhost','localhost:8001',$menu->templates[$i]->url) }}">
+                                            <a class="item" href="{{ $menu->templates[$i]->url }}">
                                                 {{ $menu->templates[$i]->name }}
                                             </a>
                                         </li>

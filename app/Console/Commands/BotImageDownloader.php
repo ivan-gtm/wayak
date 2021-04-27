@@ -21,7 +21,7 @@ class BotImageDownloader extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Auxiliar command to download from urls to local path';
 
     /**
      * Create a new command instance.

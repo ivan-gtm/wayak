@@ -209,6 +209,7 @@ class ContentController extends Controller
         $language_code = 'en';
         $template_id = substr($slug, strrpos($slug, '-')+1, strlen($slug)  );
         $search_query = '';
+
         if( isset($request->searchQuery) ) {
             $search_query = $request->searchQuery;
         }
@@ -234,28 +235,13 @@ class ContentController extends Controller
         } else {
             $preview_image = Storage::disk('s3')->url( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["product_preview"] );
         }
-        // print_r($preview_image);
-        // print_r("<br>");
-        // print_r(  );
-        // print_r("<br>");
-        
-        // // Storage::disk('local')->put('helloworld.txt', 'xx');
-
-        // print_r( Storage::disk('s3')->url( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["product_preview"] ) );
-        // exit;
 
         $category_name = $template->mainCategory;
         $category_name = substr( $template->mainCategory,1, strlen($category_name) );
         $breadcrumbs_str = Redis::get('wayak:categories:'.$category_name);
         $breadcrumbs_obj = json_decode($breadcrumbs_str);
 
-        // $x = [
-        //     'name' => 'Bridal Shower',
-        //     'slug' => 'invitations/wedding/bridal-shower',
-        //     'children' => []
-        // ];
-
-        // Redis::set('wayak:categories:'.$category_name, json_encode($x) );
+        
 
         // echo "<pre>";
         // print_r( $category_name );
@@ -264,8 +250,9 @@ class ContentController extends Controller
         // exit;
 
         $breadcrumbs_arr = self::getBreadCrumbs( $breadcrumbs_obj ) ;
-
-        // print_r($breadcrumbs_str);
+        
+        // echo "Ejemplo";
+        // print_r($breadcrumbs_obj);
         // exit;
         
         $url = "";
