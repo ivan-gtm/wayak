@@ -40,30 +40,10 @@ class BotAssignCategory extends Command
      */
     public function handle()
     {
-        // self::massiveCategoryAssigment();
+        self::massiveCategoryAssigment();
         self::checkProductCategoryNotAssigned();
-        // self::verifyProductCategoryExists();
     }
 
-    function verifyProductCategoryExists(){
-        $templates = Template::where('title', 'regexp', '/.*(B|b)irthday.*/i')
-        ->get([
-            'title'
-            // 'category',
-            // 'categories',
-            // 'mainCategory'
-        ]);
-
-        // print_r($templates);
-        // exit;
-
-        // $templates = [];
-        foreach($templates as $template) {
-            print_r( $template->title );
-            print_r("\n");
-        }
-    }
-    
     function checkProductCategoryNotAssigned(){
         $templates = Template::whereNotNull('slug')
         ->get([
