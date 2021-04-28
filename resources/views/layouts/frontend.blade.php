@@ -9,7 +9,15 @@
         <link rel="preconnect" href="https://fonts.gstatic.com">
         <link href="https://fonts.googleapis.com/css2?family=PT+Sans+Caption&display=swap" rel="stylesheet">
         @yield('css')
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-FQVV2SLQED"></script>
+            <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
 
+                gtag('config', 'G-FQVV2SLQED');
+        </script>
 	</head>
 	<body class="page-template-default page page-id-5380 lang-en page-menus webp wpb-js-composer js-comp-ver-6.1 vc_responsive loaded">
         <header>
@@ -195,7 +203,6 @@
             </div>
         </div>
 
-        @yield('scripts')
-
+        @yield('scripts')                 
 	</body>
 </html>
