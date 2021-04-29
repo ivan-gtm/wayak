@@ -21,10 +21,20 @@
 
 @section('content')
         <div class="page" itemscope itemtype="https://schema.org/Product">
+            <meta itemprop="sku" content="{{ $template->_id }}" />
+            <div itemprop="brand" itemtype="http://schema.org/Brand" itemscope>
+                <meta itemprop="name" content="Wayak" />
+            </div>
+            <div itemprop="offers" itemtype="http://schema.org/Offer" itemscope>
+                <link itemprop="url" href="{{ urlencode(URL::current().'?utm_source=microdata') }}" />
+                <meta itemprop="availability" content="https://schema.org/InStock" />
+                <meta itemprop="priceCurrency" content="USD" />
+                <meta itemprop="itemCondition" content="https://schema.org/NewCondition" />
+                <meta itemprop="price" content="0" />
+            </div>
             <div class="page__canvas">
                 <div class="canvas">
                     <div class="canvas__header">
-                       
                     </div>
                     <div class="js-canvas__body canvas__body">
                         <div class="grid-container">
@@ -54,11 +64,11 @@
                                             <a class="js-item-header__cart-button e-btn--3d -color-primary -size-m" 
                                                 rel="nofollow" title="Add to Cart" 
                                                 href="{{ 
-                                                route( 'admin.edit.template',[
-                                                'language_code' => $language_code,
-                                                'template_key' => $template->_id
-                                                ] )
-                                            }}">
+                                                        route('editor.openTemplate',[
+                                                        'country' => $country,
+                                                        'template_key' => $template->_id
+                                                    ] )
+                                                }}">
                                                 <!-- <span class="item-header__cart-button-icon">
                                                     <i class="e-icon -icon-cart -margin-right"></i>
                                                 </span> -->
@@ -141,8 +151,10 @@
                                             itemprop="aggregateRating"
                                             itemscope itemtype="https://schema.org/AggregateRating">
                                             <strong>Item Rating:</strong> &nbsp;&nbsp;<span>Minimum of 3 votes required</span>
-                                            <!-- Rated <span itemprop="ratingValue">3.5</span>/5
-                                            based on <span itemprop="reviewCount">11</span> customer reviews -->
+                                            <div style="display:none">
+                                                Rated <span itemprop="ratingValue">0</span>/5
+                                                based on <span itemprop="reviewCount">11</span> customer reviews
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="box -radius-all">
