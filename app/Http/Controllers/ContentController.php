@@ -229,6 +229,10 @@ class ContentController extends Controller
                 'createdAt',
                 'updatedAt'
             ]);
+        
+        if( isset($template->_id) == false ){
+            abort(404);
+        }
 
         if( App::environment() == 'locals' ){
             $preview_image = asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["product_preview"] );

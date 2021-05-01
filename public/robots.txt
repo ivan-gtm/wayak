@@ -1,2 +1,4 @@
 User-agent: *
-Disallow:
+Disallow: /us/template/open/
+
+sitemap: https://wayak.app/us/sitemap.xml

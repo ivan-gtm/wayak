@@ -6,7 +6,7 @@
         <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
         <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
         <meta name="csrf-token" content="{{ csrf_token() }}" />
-        <meta name="robots" content="noindex">
+        <meta name=”robots” content=”noindex,nofollow”>
         <meta name="googlebot" content="noindex">
         <meta name="description" content="🖍️ The largest collection of templates online. Ready to print or use on social media. Create invitations, resumes, presentations, posters, flyers. Check it out!"/>
 

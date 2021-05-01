@@ -50,11 +50,11 @@
                                             </a>
                                         </li>
                                     @endfor
-                                    <!-- <li class="list-item">
+                                    {{-- <li class="list-item">
                                         <a class="item cta animate-icon" href="https://wayak.app/index.php/posters/sizes?utm_source=nav&utm_content=viewallsizes&utm_medium=link&utm_campaign=templategallerynav">
                                             View All <i class="icon-to-animate icon-caret-right"></i>
                                         </a>
-                                    </li> -->
+                                    </li> --}}
                                 </ul>
                                 <ul class="list">
                                     @for($i = (sizeof($menu->templates) / 3)+1; $i < ((sizeof($menu->templates) / 3) * 2)+1; $i++)
@@ -64,7 +64,7 @@
                                             </a>
                                         </li>
                                     @endfor
-                                    <!-- <li class="list-item"><a class="item cta animate-icon" href="https://wayak.app/index.php/posters/gallery?utm_source=nav&utm_content=viewalltheme&utm_medium=link&utm_campaign=templategallerynav">View All <i class="icon-caret-right icon-to-animate"></i></a></li> -->
+                                    {{-- <li class="list-item"><a class="item cta animate-icon" href="https://wayak.app/index.php/posters/gallery?utm_source=nav&utm_content=viewalltheme&utm_medium=link&utm_campaign=templategallerynav">View All <i class="icon-caret-right icon-to-animate"></i></a></li> --}}
                                 </ul>
                                 <ul class="list">
                                     @for($i = ((sizeof($menu->templates) / 3)*2)+1; $i < sizeof($menu->templates); $i++)
@@ -74,12 +74,12 @@
                                             </a>
                                         </li>
                                     @endfor
-                                    <!-- <li class="list-item"><a class="item cta animate-icon" href="https://wayak.app/index.php/posters/gallery?utm_source=nav&utm_content=viewalltheme&utm_medium=link&utm_campaign=templategallerynav">View All <i class="icon-caret-right icon-to-animate"></i></a></li> -->
+                                    {{-- <li class="list-item"><a class="item cta animate-icon" href="https://wayak.app/index.php/posters/gallery?utm_source=nav&utm_content=viewalltheme&utm_medium=link&utm_campaign=templategallerynav">View All <i class="icon-caret-right icon-to-animate"></i></a></li> --}}
                                 </ul>
                             </div>
                         </div>
                     </div>
-                    {{--
+                    {{---
                     <div class="nav-item-container" id="marketing-nav-item"> <a class="nav-item" href="javascript:void(0);" title="Promote">By Industry <i class="nav-item-icon icon-caret-down"></i></a>
                         <div class="dropdown-list">
                             <div class="list-container">
@@ -95,7 +95,7 @@
                             </div>
                         </div>
                     </div>
-                    --}}
+                    ---}}
                 </div>
                 <div class="user-options">
                     <form action="{{ route('user.search',['country' => $country]) }}" class="inline-search-form" 
@@ -110,12 +110,16 @@
                             </svg>
                         </i>
                     </form>
-                    <div id="mobile-search-options"> <input type="checkbox" class="mobile-search-checkbox" value="1" id="mobile-search-bar" /> <label class="mobile-search-container action-btn-container -white -passive side-btn" for="mobile-search-bar" id="mobile-search-bar-label" onclick="document.getElementById('nav-mobile-search-input').focus();"
+                    <div id="mobile-search-options"> 
+                        <input type="checkbox" class="mobile-search-checkbox" value="1" id="mobile-search-bar" /> 
+                        <label class="mobile-search-container action-btn-container -white -passive side-btn" for="mobile-search-bar" id="mobile-search-bar-label" onclick="document.getElementById('nav-mobile-search-input').focus();"
                             aria-label="Search for inspiration"> <span class="_hidden">Search for inspiration</span> <i class="icon-search action-btn-icon"></i> </label>
                         <div id="mobile-search" class="inline-search-form -mobile">
-                            <form action="https://wayak.app/index.php/posters/search" class="mobile-search-form" name="mobile-search-form" id="mobile-search-form" method="GET" onclick="document.getElementById('nav-mobile-search-input').focus();" accept-charset="utf-8">
-                                <label for="nav-mobile-search-input" class="_hidden">Search for inspiration</label> <input class="mobile-search-input search-input" name="s" type="text" aria-label="Search for inspiration" id="nav-mobile-search-input" placeholder="Try &lsquo;sale flyer&rsquo;"
-                                    maxlength="50" /> <i class="icon-search search-submit mobile-search-submit" onclick="document.forms['mobile-search-form'].submit();"></i> </form>
+                            <form action="{{ route('user.search',['country' => $country]) }}" class="mobile-search-form" name="mobile-search-form" id="mobile-search-form" method="GET" onclick="document.getElementById('nav-mobile-search-input').focus();" accept-charset="utf-8">
+                                <label for="nav-mobile-search-input" class="_hidden">Search for inspiration</label> 
+                                <input class="mobile-search-input search-input" name="s" type="text" aria-label="Search for inspiration" id="nav-mobile-search-input" placeholder="Try &lsquo;sale flyer&rsquo;" maxlength="50" />
+                                <i class="icon-search search-submit mobile-search-submit" onclick="document.forms['mobile-search-form'].submit();"></i>
+                            </form>
                         </div>
                     </div>
                     
@@ -128,7 +132,7 @@
                             Claim Code
                         </span>
                     </a>
-                    
+                    {{---
                     <div class="nav-item-container -to-right for-mobile" id="nav-hamburger-container"> 
                         <input type="checkbox" class="nav-dropdown-btn" value="1" id="nav-hamburger-menu" /> 
                         <label class="action-btn-container -passive side-btn" id="label-hamburger-menu" for="nav-hamburger-menu" aria-label="Menu"> <span class="_hidden">Menu</span> <i class="icon-bars action-btn-icon"></i></label>
@@ -189,6 +193,7 @@
                             </div>
                         </div>
                     </div>
+                    ---}}
                 </div>
             </nav>
             <div class="nav-spacer"></div>

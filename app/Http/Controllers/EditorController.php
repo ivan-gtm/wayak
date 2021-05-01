@@ -1381,10 +1381,12 @@ class EditorController extends Controller
         // Redis::set('code:'.$purchase_code, $temporal_customer_key);
         // Redis::expire('code:'.$purchase_code, 2592000); // Codigo valido por 30 dias - 60*60*24*30 = 2592000
 
-		return redirect()->route('editor.editTemplate',[
-			'country' => $country,
-			'template_key' => $temporal_customer_key
-		]);
+		return redirect()
+			->header('X-Robots-Tag: noindex')
+			->route('editor.editTemplate',[
+				'country' => $country,
+				'template_key' => $temporal_customer_key
+			]);
 	}
 
 	function editTemplate($country, $template_key){
