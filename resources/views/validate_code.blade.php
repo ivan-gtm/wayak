@@ -1,8 +1,8 @@
 @extends('layouts.frontend')
     
     @section('title', 'Redeem Template Code | WAYAK')
+    
     @section('meta')
-
     @endsection
     
     @section('css')
@@ -61,12 +61,9 @@
     @section('content')
         <div id="wrapper">
             <div id="dialog">
-                <!-- <button class="close">×</button> -->
-                <h1>WAYAK</h1>
-                <h3>Se ha enviado un mensaje con un código de verificación de 4 dígitos a tu cuenta. Introduce el código para continuar.</h3>
-                <!-- <h3>Ingrese el código de verificación de 4 dígitos que recibio:</h3> -->
-                <!-- <span>(queremos asegurarnos de que sea usted antes de contactar a nuestros transportistas)</span> -->
-
+                <h1>REDEEM TEMPLATE CODE</h1>
+                <h3>Enter the 4-digit promo code to access your template.</h3>
+                
                 <div id="form">
                     <form method="post" action="{{ route('code.validate', [
                         'country' => $country
@@ -74,15 +71,16 @@
                         <!-- CROSS Site Request Forgery Protection -->
                         @csrf    
                         <input name="templates" type="hidden" value="{{ $templates }}" />
-                        <input name="digit1" type="text" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}" autofocus />
-                        <input name="digit2" type="text" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}" />
-                        <input name="digit3" type="text" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}" />
-                        <input name="digit4" type="text" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}" />
+                        <input class="digit" name="digit1" type="text" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}" autofocus />
+                        <input class="digit" name="digit2" type="text" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}" />
+                        <input class="digit" name="digit3" type="text" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}" />
+                        <input class="digit" name="digit4" type="text" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}" />
                         
-                        <button type="submit" class="btn btn-primary btn-embossed">VERIFICAR CODIGO</button>
-                        <a href="#" style="color: #b1b1b1;text-decoration: none;font-size: 15px;">
+                        <button type="submit" class="btn btn-primary btn-embossed">VERIFY CODE</button>
+                        <button type="button" class="btn btn-primary btn-embossed" onclick="resetForm()" style="margin-top: 8px;background-color: #d2d2d2;color: black;">RESET CODE</button>
+                        <!-- <a href="#" style="color: #b1b1b1;text-decoration: none;font-size: 15px;">
                             Usar versión demo
-                        </a>
+                        </a> -->
                     </form>
                 </div>
                 
@@ -103,6 +101,12 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
     <script>
+        function resetForm(){
+            console.log("sdas");
+            $('input.digit').val("");
+            $('#form > form > input:nth-child(3)').focus();
+        }
+
         $(function() {
             'use strict';
 
@@ -119,20 +123,25 @@
                 }
 
                 if (key === 9) {
-                return true;
+                    return true;
                 }
 
                 if (!sib || !sib.length) {
-                sib = body.find('input').eq(0);
+                    sib = body.find('#form > form > button:nth-child(7)');
+                    console.log("hello");
+                    console.log( sib );
+                    
+                    sib.select().focus().click();
+                } else {
+                    sib.select().focus();
                 }
-                sib.select().focus();
             }
 
             function onKeyDown(e) {
                 var key = e.which;
 
                 if (key === 9 || (key >= 48 && key <= 57)) {
-                return true;
+                    return true;
                 }
 
                 e.preventDefault();
@@ -150,9 +159,5 @@
         })
     </script>
 
-    <!-- Option 2: Separate Popper.js and Bootstrap JS
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/js/bootstrap.min.js" integrity="sha384-5h4UG+6GOuV9qXh6HqOLwZMY4mnLPraeTrjT5v07o347pj6IkfuoASuGBhfDsp3d" crossorigin="anonymous"></script>
-    -->
   </body>
 </html>

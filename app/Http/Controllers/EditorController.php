@@ -138,7 +138,9 @@ class EditorController extends Controller
 		}
 		
 		return redirect()->action(
-			[EditorController::class,'validateCode'], []
+			[EditorController::class,'validateCode'], [
+				'country' => $country
+			]
 		);
 	}
 
@@ -1312,7 +1314,7 @@ class EditorController extends Controller
 		]);
 	}
 	
-	function validatePurchaseCode(Request $request){
+	function validatePurchaseCode($country, Request $request){
 		
 		$purchase_code = $request->digit1.$request->digit2.$request->digit3.$request->digit4;
 
@@ -1321,30 +1323,39 @@ class EditorController extends Controller
 		}
 		
 		if( Redis::exists('code:'.$purchase_code) == true ){
-			// echo "<pre>";
-			// print_r($request->all());
-			// exit;
-			// echo 'code:'.$purchase_code;
-			// print_r(Redis::exists('code:'.$purchase_code));
-
-			// echo "exit0";
-			// exit;
-
+			
 			$template_key = Redis::get('code:'.$purchase_code);
-			// echo "<pre>";
-			// print_r( $templates );
-			// exit;
+			
+			$source_template_key = "template:en:".$template_key.":jsondata";
+			
+			$digits = 6;
+			$template_digits = rand(pow(10, $digits-1), pow(10, $digits)-1);
+			$new_template_key = 'temp:'.$template_digits;
+			$destination_template_key = "template:en:".$new_template_key.":jsondata";
+
+			Redis::set('code:'.$template_digits, $new_template_key );
+			Redis::set('temp:template:relation:temp:'.$template_digits, Redis::get('temp:template:relation:temp:'.$purchase_code) );
+			Redis::set($destination_template_key, Redis::get($source_template_key) );
+			
+			$expiration_time = 60*60*24; // 24 hours;
+			Redis::expire($destination_template_key, $expiration_time );
+			Redis::expire('code:'.$template_digits, $expiration_time );
+			Redis::expire('temp:template:relation:temp:'.$template_digits, $expiration_time );
 			
 			return redirect()->action(
 				[EditorController::class,'customerTemplate'], [ 
-					'country' => 'mx',
-					'template_key' => $template_key 
+					'country' => $country,
+					'template_key' => $new_template_key 
 				]
 			);
 		}
 
 		return redirect()->action(
-			[EditorController::class,'validateCode'], ['code_validation' => 0, 'templates' => $templates]
+			[EditorController::class,'validateCode'], [
+				'country' => $country,
+				'code_validation' => 0, 
+				'templates' => $templates
+			]
 		);
 
 	}

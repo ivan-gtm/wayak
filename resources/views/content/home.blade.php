@@ -3,7 +3,6 @@
 @section('title', 'Free Templates & Online Graphic Editor | WAYAK')
 
 @section('meta')
-    <meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
     <meta name="description" content="Design made easy with 40K+ ready-made templates. Create professional ads, posters, branded content, and stunning social media stories in minutes. Easily add music to your video and impress your audience with outstanding content!" />
     <meta name="title" content="Free Templates & Online Graphic Editor | WAYAK" />
     <meta name="keywords" content="Templates, Designer, Online, Printables, Instagram Templates, Facebook Templates, Social, Social Media" />

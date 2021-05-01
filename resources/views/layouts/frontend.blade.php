@@ -1,13 +1,17 @@
 <!DOCTYPE html>
 <html lang="en-US">
 	<head>
-        <meta charset="UTF-8">
         <title>@yield('title')</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <meta charSet="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         @yield('meta')
-        <link rel="stylesheet" href="{{ asset('assets/css/menu.css') }}">
-        <link rel="stylesheet" href="{{ asset('assets/css/home.css') }}">
+        
+        <link type="text/css" rel="stylesheet" href="{{ asset('assets/css/menu.css') }}">
+        <link type="text/css" rel="stylesheet" href="{{ asset('assets/css/home.css') }}">
         <link rel="preconnect" href="https://fonts.gstatic.com">
         <link href="https://fonts.googleapis.com/css2?family=PT+Sans+Caption&display=swap" rel="stylesheet">
+
         @yield('css')
         <!-- Global site tag (gtag.js) - Google Analytics -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-FQVV2SLQED"></script>

@@ -143,8 +143,8 @@ use App\Http\Controllers\LinkedInController;
     
 
 //EDITOR
-    Route::get('/{country}/validate-code', [EditorController::class, 'validateCode'])->name('code.validate.form');
-    Route::post('/{country}/validate-code', [EditorController::class,'validatePurchaseCode'])->name('code.validate');
+    Route::get('/{country}/code', [EditorController::class, 'validateCode'])->name('code.validate.form');
+    Route::post('/{country}/code', [EditorController::class,'validatePurchaseCode'])->name('code.validate');
     
     Route::get('/editor/get-thumbnails', [EditorController::class,'getTemplateThumbnails']);
     Route::get('/editor/load-template', [EditorController::class,'loadTemplate']);

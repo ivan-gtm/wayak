@@ -180,25 +180,25 @@
                                                     <tr>
                                                         <td class="meta-attributes__attr-name">Category</td>
                                                         <td class="meta-attributes__attr-detail">
-                                                            <a rel="nofollow" href="/attributes/print-dimensions/4x4">
+                                                            <!-- <a rel="nofollow" href="/attributes/print-dimensions/4x4"> -->
                                                                 {{ $breadcrumb->name }}
-                                                            </a>
+                                                            <!-- </a> -->
                                                         </td>
                                                     </tr>
                                                     <tr>
                                                         <td class="meta-attributes__attr-name">Format</td>
                                                         <td class="meta-attributes__attr-detail">
-                                                            <a rel="nofollow" href="/attributes/print-dimensions/4x4">
+                                                            <!-- <a rel="nofollow" href="/attributes/print-dimensions/4x4"> -->
                                                                 {{ $template->format }}
-                                                            </a>
+                                                            <!-- </a> -->
                                                         </td>
                                                     </tr>
                                                     <tr>
                                                         <td class="meta-attributes__attr-name">Dimensions</td>
                                                         <td class="meta-attributes__attr-detail">
-                                                            <a rel="nofollow" href="/attributes/print-dimensions/4x4">
+                                                            <!-- <a rel="nofollow" href="/attributes/print-dimensions/4x4"> -->
                                                                 {{ $template->width }}x{{ $template->height }} {{ $template->measureUnits }}
-                                                            </a>
+                                                            <!-- </a> -->
                                                         </td>
                                                     </tr>
                                                     @if( isset($template->tags) && sizeof($template->tags) > 0 )

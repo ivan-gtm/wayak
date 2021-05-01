@@ -5,9 +5,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
         <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
-        <meta content="" name="description">
-        <meta content="" name="author">
         <meta name="csrf-token" content="{{ csrf_token() }}" />
+        <meta name="robots" content="noindex">
+        <meta name="googlebot" content="noindex">
+        <meta name="description" content="🖍️ The largest collection of templates online. Ready to print or use on social media. Create invitations, resumes, presentations, posters, flyers. Check it out!"/>
 
         <link href="{{ asset('apple-touch-icon.png') }}" rel="apple-touch-icon" sizes="180x180">
         <link href="{{ asset('favicon-32x32.png') }}" rel="icon" sizes="32x32" type="image/png">
@@ -16,7 +17,7 @@
         <link color="#5bbad5" href="{{ asset('safari-pinned-tab.svg') }}" rel="mask-icon">
         <meta content="#ffffff" name="theme-color">
         <title>
-            WAYAK - Editor en linea
+            WAYAK - Online Editor
         </title>
         <link href="{{ asset('assets/css/spectrum.css') }}" rel="canonical"/>
         <link href="{{ asset('assets/lib/stroke-7/style.css') }}" rel="stylesheet" type="text/css"/>
@@ -35,23 +36,16 @@
         <!-- <link href="{{ asset('assets/lib/dropzone/dist/dropzone.css') }}" rel="stylesheet" type="text/css"/> -->
         <link href="{{ asset('assets/css/style.css?v=0301201901') }}" rel="stylesheet" type="text/css"/>
         <link href="{{ asset('assets/js/select2/select2.min.css') }}" rel="stylesheet"/>
-
-        <!-- The largest collection of templates online. Ready to print or use on social media. Create invitations, resumes, presentations, posters, flyers. Check it out! -->
-        <meta name="description" content="🖍️ La mayor colección de plantillas en línea. Listo para imprimir o usar en redes sociales. Cree invitaciones, currículums, presentaciones, carteles, volantes. ¡Echale un vistazo!"/>
-        
         <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.6.1/css/bootstrap-slider.min.css" rel="stylesheet" type="text/css"/> -->
-
         <!-- 
         <link rel="stylesheet" href="{{ asset('assets/css/spectrum.css') }}css/style.css">
         -->
+
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
         <script src="{{ asset('assets/js/jquery-ui-1.12.1/jquery-ui.min.js') }}"></script>
         <script src="{{ asset('assets/js/touchSwipe/jquery.touchSwipe.min.js') }}"></script>
         <script src="https://unpkg.com/infinite-scroll@4/dist/infinite-scroll.pkgd.min.js"></script>
-
-
         <script src="{{ asset('assets/js/imagesLoaded/imagesloaded.pkgd.min.js') }}"></script>
-
         <!-- <script src="{{ asset('assets/js/jquery-mobile/jquery.mobile-1.4.5.min.js?rev=ed515e27701f638073403bd54317e') }}"></script> -->
         <script src="{{ asset('assets/js/parsley/parsley.min.js') }}"></script>
         <script src="{{ asset('assets/js/bootstrap-slider/bootstrap-slider.min.js') }}"></script>
@@ -62,25 +56,20 @@
         <script src="{{ asset('assets/js/dropzone/dropzone.js') }}"></script>
         <script src="{{ asset('assets/js/isotope.pkgd.min.js') }}"></script>
         <script src="{{ asset('assets/js/jquery-validate/jquery.validate.min.js') }}"></script>
-        
         <script src="{{ asset('assets/js/select2/select2.min.js') }}"></script>
         <script src="{{ asset('assets/js/vendor.js?rev=ed515e27701f638073403bd54317e') }}"></script>
         <script src="{{ asset('assets/js/nanoscroller/jquery.nanoscroller.min.js?rev=ed515e27701f638073403bd54317e') }}"></script>
         <script src="{{ asset('assets/js/fastclick/fastclick.js?rev=ed515e27701f638073403bd54317e') }}"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/simplebar/5.3.0/simplebar.min.js" integrity="sha512-AS9rZZDdb+y4W2lcmkNGwf4swm6607XJYpNST1mkNBUfBBka8btA6mgRmhoFQ9Umy8Nj/fg5444+SglLHbowuA==" crossorigin="anonymous"></script>
         <script src="{{ asset('assets/js/filesaver/FileSaver.min.js') }}"></script>
-
         <script src="{{ asset('assets/js/jszip/jszip.min.js') }}"></script>
-
         <!-- <script src="{{ asset('assets/js/fabricjs/2.4.6/fabric.min.js?rev=ed515e27701f638073403bd543') }}">
         </script> -->
         <script src="{{ asset('assets/js/fabricjs/fabric.js') }}"></script>
         <script src="{{ asset('assets/js/fabricjs/centering_guidelines.js') }}"></script>
         <script src="{{ asset('assets/js/fabricjs/aligning_guidelines.js') }}"></script>
         <script src="{{ asset('assets/js/bootstrap/bootstrap.min.js') }}" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-
         <script src="{{ asset('assets/js/toast/jquery.toast.min.js') }}" crossorigin="anonymous"></script>
-
         <script src="{{ asset('assets/js/webfontloader/webfontloader.js') }}" crossorigin="anonymous"></script>
 
     </head>
