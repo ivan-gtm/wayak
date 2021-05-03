@@ -53,7 +53,10 @@
                                         <div class="lolomoRow lolomoRow_title_card ltr-0 template-carousel" data-list-context="similars">
                                             <h2 class="rowHeader ltr-0">
                                                 <a aria-label="because you watched taco chronicles" class="rowTitle ltr-0" 
-                                                    href="/browse/similars/81040704">
+                                                    href="{{ route('user.search',[
+                                                        'country' => $country,
+                                                        'searchQuery' => $carousel->search_term
+                                                    ]) }}">
                                                     <span class="row-header-title">
                                                         {{ $carousel->title }}
                                                     </span>

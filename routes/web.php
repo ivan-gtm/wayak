@@ -143,9 +143,6 @@ use App\Http\Controllers\LinkedInController;
     
 
 //EDITOR
-    Route::get('/{country}/code', [EditorController::class, 'validateCode'])->name('code.validate.form');
-    Route::post('/{country}/code', [EditorController::class,'validatePurchaseCode'])->name('code.validate');
-    
     Route::get('/editor/get-thumbnails', [EditorController::class,'getTemplateThumbnails']);
     Route::get('/editor/load-template', [EditorController::class,'loadTemplate']);
 
@@ -177,12 +174,11 @@ use App\Http\Controllers\LinkedInController;
     
     
 // FRONTEND
-    // Route::get('mx/plantillas/invitaciones', [EditorController::class, 'home1']);
-    // Route::get('mx/plantillas/producto-ejemplo', [EditorController::class, 'product']);
-    // Route::get('mx/plantillas/category', [EditorController::class, 'category']);
+    Route::get('/{country}', [ContentController::class, 'showCountryHomepage'])->name('user.homepage');
+    Route::get('/{country}/code', [EditorController::class, 'validateCode'])->name('code.validate.form');
+    Route::post('/{country}/code', [EditorController::class,'validatePurchaseCode'])->name('code.validate');
 
     Route::get('/{country}/search', [ContentController::class, 'showSearchPage'])->name('user.search');
-    // Route::post('/{country}/search', [ContentController::class, 'showSearchPage'])->name('user.search.post');
 
     Route::get('/{country}/templates/{cat_lvl_1}', [ContentController::class, 'showCategoryPage'])->name('showCategoryLevel1');
     Route::get('/{country}/templates/{cat_lvl_1}/{cat_lvl_2}', [ContentController::class, 'showCategoryPage'])->name('showCategoryLevel2');
@@ -202,13 +198,9 @@ use App\Http\Controllers\LinkedInController;
     
     Route::get('/{country}/criar/{category}', [ContentController::class, 'showCategoryPage']);
     Route::get('/{country}/modelos/{category}', [ContentController::class, 'showCreatePage']);
-    // Route::get('/{country}/modelos/{category}', [ContentController::class, 'showProductDetail']);
-    // ($country, $template_id, $slug)
 
     Route::get('/', [ContentController::class, 'showHome']);
-    Route::get('mx', [EditorController::class, 'wayak_home']);
 
-    // Route::get('mx/plantillas', [EditorController::class, 'home']);
     Route::get('{country}/demo/{modelo_mercado_pago}', [EditorController::class, 'demoTemplateEditor'])->name('plantilla.demo');
     Route::get('/{country}/editar/plantilla/{template_key}', [EditorController::class, 'customerTemplate'])->name('plantilla.editar');
     

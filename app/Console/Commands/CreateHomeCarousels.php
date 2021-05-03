@@ -76,6 +76,7 @@ class CreateHomeCarousels extends Command
         $carousels[] = [
             'slider_id' => Str::random(5),
             'title' => 'Templates for "Baby shower"',
+            'search_term' => 'baby shower',
             'items' => $templates
         ];
             
@@ -107,6 +108,7 @@ class CreateHomeCarousels extends Command
         $carousels[] = [
             'slider_id' => Str::random(5),
             'title' => 'Unicorn Templates',
+            'search_term' => 'unicorn',
             'items' => $templates
         ];
 
@@ -138,6 +140,7 @@ class CreateHomeCarousels extends Command
         $carousels[] = [
             'slider_id' => Str::random(5),
             'title' => 'Templates for "Save The Date"',
+            'search_term' => 'save date',
             'items' => $templates
         ];
 
@@ -169,6 +172,7 @@ class CreateHomeCarousels extends Command
         $carousels[] = [
             'slider_id' => Str::random(5),
             'title' => 'Templates for "Wedding Invitations"',
+            'search_term' => 'wedding invitation',
             'items' => $templates
         ];
 
@@ -200,6 +204,7 @@ class CreateHomeCarousels extends Command
         $carousels[] = [
             'slider_id' => Str::random(5),
             'title' => 'Birthday Invitation Templates',
+            'search_term' => 'birthday',
             'items' => $templates
         ];
 
@@ -231,6 +236,7 @@ class CreateHomeCarousels extends Command
         $carousels[] = [
             'slider_id' => Str::random(5),
             'title' => 'Glitter',
+            'search_term' => 'glitter',
             'items' => $templates
         ];
         
@@ -262,6 +268,7 @@ class CreateHomeCarousels extends Command
         $carousels[] = [
             'slider_id' => Str::random(5),
             'title' => 'Tropical',
+            'search_term' => 'tropical',
             'items' => $templates
         ];
 

@@ -38,34 +38,6 @@ class EditorController extends Controller
 		);
 	}
 
-	function wayak_home(){
-
-		// $templates = Redis::keys('laravel_database_green:category:209:product:*');
-		// echo "<pre>";
-		// print_r($templates);
-		// exit;
-
-		// $template = Redis::keys('laravel_database_green:category:209:product:*');
-		// // $template = json_decode($template);
-
-		// echo "<pre>";
-		// print_r($template);
-		// exit;
-
-		// $templates = Redis::keys('laravel_database_template:*:jsondata');
-
-		// echo "<pre>";
-		// print_r($templates);
-		// exit;
-
-		// $template = Redis::get('laravel_database_template:g13780:jsondata');
-		// echo "<pre>";
-		// print_r(json_decode($template));
-		// exit;
-
-		return view('wayak',[ 'templates' => null ]);
-	}
-
 	function demoTemplateEditor($country, $modelo_mercado_pago){
 		// echo $country;
 		// exit;

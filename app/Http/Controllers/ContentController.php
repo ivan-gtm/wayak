@@ -29,29 +29,38 @@ use Storage;
 class ContentController extends Controller
 {
     
-    public function showHome(Request $request) {
+    public function showHome() {
         $country = 'us';
         $language_code = 'en';
-
-        $search_query = '';
-        if( isset($request->searchQuery) ) {
-            $search_query = $request->searchQuery;
-        }
 
         $carousels = json_decode(Redis::get('wayak:'.$country.':home:carousels'));
         $menu = json_decode(Redis::get('wayak:'.$country.':menu'));
         
-        // echo "<pre>";
-        // print_r($menu);
-        // exit;
-
         return view('content.home',[
             'language_code' => $language_code,
             'country' => $country,
             'menu' => $menu,
-            'search_query' => $search_query,
+            'search_query' => '',
             'carousels' => $carousels
         ]);
+    }
+   
+    public function showCountryHomepage( $country ) {
+        $language_code = 'en';
+        if( Redis::exists('wayak:'.$country.':home:carousels') ){
+            $carousels = json_decode(Redis::get('wayak:'.$country.':home:carousels'));
+            $menu = json_decode(Redis::get('wayak:'.$country.':menu'));
+            
+            return view('content.home',[
+                'language_code' => $language_code,
+                'country' => $country,
+                'menu' => $menu,
+                'search_query' => '',
+                'carousels' => $carousels
+            ]);
+        } else {
+            abort(404);
+        }
     }
 
     public function showCategoryPage($country, $cat_lvl_1_slug = null, $cat_lvl_2_slug = null, $cat_lvl_3_slug = null, Request $request){
