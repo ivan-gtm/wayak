@@ -1354,7 +1354,6 @@ class EditorController extends Controller
         // Redis::expire('code:'.$purchase_code, 2592000); // Codigo valido por 30 dias - 60*60*24*30 = 2592000
 
 		return redirect()
-			->header('X-Robots-Tag: noindex')
 			->route('editor.editTemplate',[
 				'country' => $country,
 				'template_key' => $temporal_customer_key
