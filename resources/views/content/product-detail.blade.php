@@ -8,11 +8,11 @@
         <meta name="title" content="{{ $template->title }} | Template | Design Online | WAYAK" />
         <meta name="keywords" content="{{ $template->title }}" />
 
-        <meta property="og:url"           content="{{  URL::current() }}" />
-        <meta property="og:type"          content="website" />
-        <meta property="og:title"         content="{{ $template->title }} | Template | Design Online | WAYAK" />
-        <meta property="og:description"   content="Template ready for customization, get ready to download in minutes. Edit Online, choose between thousands of free design templates." />
-        <meta property="og:image"         content="{{ asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["product_preview"] ) }}" />
+        <meta property="og:url" content="{{  URL::current() }}" />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="{{ $template->title }} | Template | Design Online | WAYAK" />
+        <meta property="og:description" content="Template ready for customization, get ready to download in minutes. Edit Online, choose between thousands of free design templates." />
+        <meta property="og:image" content="{{ asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["product_preview"] ) }}" />
     @endsection
     
     @section('css')
@@ -22,7 +22,7 @@
 @section('content')
         <div class="page" itemscope itemtype="https://schema.org/Product">
             <meta itemprop="sku" content="{{ $template->_id }}" />
-            <div itemprop="brand" itemtype="http://schema.org/Brand" itemscope>fv
+            <div itemprop="brand" itemtype="http://schema.org/Brand" itemscope>
                 <meta itemprop="name" content="Wayak" />
             </div>
             <div itemprop="offers" itemtype="http://schema.org/Offer" itemscope>
@@ -42,7 +42,7 @@
                         <div class="context-header ">
                             <div class="grid-container ">
                                 <nav class="breadcrumbs h-text-truncate ">
-                                    <a href="{{ url('') }}">Home</a>
+                                    <a href="{{ url('') }}">{{ __('product.home') }}</a>
                                     @foreach ($breadcrumbs as $breadcrumb)
                                         <a class="js-breadcrumb-category" 
                                             href="{{ $breadcrumb->url }}">{{ $breadcrumb->name }}</a>
@@ -114,7 +114,8 @@
                                             <div id="purchase-form" class="purchase-form">
                                                 <form data-view="purchaseForm" data-google-analytics-page="itemPage" data-google-analytics-payload="{&quot;actionData&quot;:null,&quot;productsArray&quot;:[{&quot;id&quot;:29900946,&quot;name&quot;:&quot;Dj Flyer&quot;,&quot;brand&quot;:&quot;Hotpin&quot;,&quot;category&quot;:&quot;Wakay.net/print-templates/flyers/events&quot;,&quot;quantity&quot;:&quot;1&quot;}],&quot;timestamp&quot;:1611619309}" action="/cart/add/29900946" accept-charset="UTF-8" method="post">
                                                     <p class="t-body -size-s" itemprop="description">
-                                                        The size of this template is {{ $template->width }}x{{ $template->height }}{{ $template->measureUnits }}. Click “Use This Template“, start your own design. Then you can change the text and images as you wish. After that, preview and save your work, your design will be ready to print, share or download.
+                                                        {{ __('product.product_description') }}
+                                                        <!-- The size of this template is {{ $template->width }}x{{ $template->height }}{{ $template->measureUnits }}. Click “Use This Template“, start your own design. Then you can change the text and images as you wish. After that, preview and save your work, your design will be ready to print, share or download. -->
                                                     </p>
                                                     <div class="purchase-form__button">
                                                         <a class="js-purchase__add-to-cart e-btn--3d -color-primary -size-m -width-full"
@@ -124,7 +125,7 @@
                                                                 'template_key' => $template->_id
                                                             ] )
                                                         }}" target="_blank">
-                                                            <strong>Customize this template</strong>
+                                                            <strong>{{ __('product.use_this_template') }}</strong>
                                                         </a>
                                                     </div>
                                                 </form>
@@ -148,7 +149,7 @@
 
                                     <div class="box -radius-all">
                                         <div class="rating-detailed--has-no-ratings">
-                                            <strong>Item Rating:</strong> &nbsp;&nbsp;<span>Minimum of 3 votes required</span>
+                                            <strong>{{ __('product.item_rating') }}</strong> &nbsp;&nbsp;<span>{{ __('product.minimum_votes') }}</span>
                                             <div itemprop="aggregateRating"
                                                 itemscope itemtype="https://schema.org/AggregateRating"
                                                 style="display:none">
@@ -178,7 +179,7 @@
                                                         </td>
                                                     </tr> -->
                                                     <tr>
-                                                        <td class="meta-attributes__attr-name">Category</td>
+                                                        <td class="meta-attributes__attr-name">{{ __('product.category') }}</td>
                                                         <td class="meta-attributes__attr-detail">
                                                             <!-- <a rel="nofollow" href="/attributes/print-dimensions/4x4"> -->
                                                                 {{ $breadcrumb->name }}
@@ -186,7 +187,7 @@
                                                         </td>
                                                     </tr>
                                                     <tr>
-                                                        <td class="meta-attributes__attr-name">Format</td>
+                                                        <td class="meta-attributes__attr-name">{{ __('product.format') }}</td>
                                                         <td class="meta-attributes__attr-detail">
                                                             <!-- <a rel="nofollow" href="/attributes/print-dimensions/4x4"> -->
                                                                 {{ $template->format }}
@@ -194,7 +195,7 @@
                                                         </td>
                                                     </tr>
                                                     <tr>
-                                                        <td class="meta-attributes__attr-name">Dimensions</td>
+                                                        <td class="meta-attributes__attr-name">{{ __('product.dimensions') }}</td>
                                                         <td class="meta-attributes__attr-detail">
                                                             <!-- <a rel="nofollow" href="/attributes/print-dimensions/4x4"> -->
                                                                 {{ $template->width }}x{{ $template->height }} {{ $template->measureUnits }}
@@ -221,7 +222,7 @@
                                     </div>
                                     <div class="box -radius-all">
                                         <div class="rating-detailed--has-no-ratings">
-                                            <strong>Colors:</strong> &nbsp;&nbsp;
+                                            <strong>{{ __('product.colors') }}</strong> &nbsp;&nbsp;
                                             <ul class="DM08FA">
                                                 @foreach( $colors as $hex_color )
                                                     <li class="Gu5L1Q" style="background-color: {{ $hex_color }};"><div class="_-pFsfA">{{ $hex_color }}</div></li>
@@ -361,5 +362,4 @@
             </div>
         </div>
         <div id="affiliate-tracker" class="is-hidden" data-view="affiliatesTracker" data-cookiebot-enabled="true"></div>
-        
 @endsection

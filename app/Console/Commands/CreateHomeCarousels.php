@@ -278,9 +278,11 @@ class CreateHomeCarousels extends Command
 
         // echo "<pre>";p
         // print_r($carousels);
+        foreach (['es','mx','co','ar','bo','ch','cu','do','sv','hn','ni', 'pe', 'uy', 've','py','pa','gt','pr','gq','us','ca','gb','gh','ke','lr','ng'] as $country) {
+            // print_r("\n".$country);
+            Redis::set('wayak:'.$country.':home:carousels', $carousels);
+        }
         
-        Redis::set('wayak:'.$country.':home:carousels', $carousels);
-
         return 0;
     }
 }

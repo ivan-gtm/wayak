@@ -1,5 +1,6 @@
 User-agent: *
 Disallow: /us/template/open/
 Disallow: /editor/
+Disallow: /us/editor/
 
 sitemap: https://wayak.app/us/sitemap.xml

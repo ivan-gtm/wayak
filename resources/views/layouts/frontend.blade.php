@@ -28,7 +28,7 @@
 
             <nav class="navbar -nomargin" id="nav">
                 <div class="logo-container">
-                    <a id="logo" href="{{ url('') }}" title="Go to the home page" class="embedded-remove-url">
+                    <a id="logo" href="{{ url('/'.$country) }}" title="{{ __('home.logo_alt_title') }}" class="embedded-remove-url">
                         <div class="logo-wrapper">
                             <img class="logo-img" src="{{ url('assets/img/logo.png') }}" alt="Wayak Logo" /> 
                         </div>
@@ -36,10 +36,10 @@
                 </div>
                 <div class="primary-nav visible-small-laptop visible-desktop" id="nav-primary-items">
                     <div class="nav-item-container hide-for-student">
-                        <a class="nav-item" href="{{ url('') }}">Home</a>
+                        <a class="nav-item" href="{{ url('/'.$country) }}">{{ __('menu.home') }}</a>
                     </div>
                     <div class="nav-item-container hide-for-student"> 
-                        <a class="nav-item" href="javascript:void(0);">Templates <i class="nav-item-icon icon-caret-down"></i></a>
+                        <a class="nav-item" href="javascript:void(0);">{{ __('menu.templates') }} <i class="nav-item-icon icon-caret-down"></i></a>
                         <div class="dropdown-list">
                             <div class="list-container">
                                 <ul class="list" id="nav-sizes-list">
@@ -102,8 +102,8 @@
                         name="nav-search-form" id="nav-search-form" method="GET" 
                         onclick="document.getElementById('nav-search-input').focus();" accept-charset="utf-8">
                         @csrf
-                        <label for="nav-search-input" class="_hidden">Search for inspiration</label>
-                        <input class="search-input" name="searchQuery" type="text" id="nav-search-input" aria-label="Search for inspiration" placeholder="Try &lsquo;Wedding Invitation&rsquo;" value="{{ $search_query }}" />
+                        <label for="nav-search-input" class="_hidden">{{ __('menu.search_btn_label') }}</label>
+                        <input class="search-input" name="searchQuery" type="text" id="nav-search-input" aria-label="{{ __('menu.search_btn_label') }}" placeholder="{{ __('menu.mobile_search_placeholder') }}" value="{{ $search_query }}" />
                         <i class="search-submit icon-search" onclick="document.forms['nav-search-form'].submit();">
                             <svg viewBox="0 0 24 24" width="24" height="24" class="sc-fubCfw hxbxfY">
                                 <path fill-rule="evenodd" clip-rule="evenodd" d="M17.4138 15.8368L21.8574 20.2857C22.0558 20.5064 22.046 20.8443 21.8352 21.0532L21.0575 21.8317C20.9532 21.937 20.8113 21.9962 20.6632 21.9962C20.5151 21.9962 20.3731 21.937 20.2688 21.8317L15.8252 17.3828C15.7023 17.2596 15.5907 17.1256 15.4919 16.9824L14.6587 15.8701C13.2802 16.9723 11.5682 17.5724 9.80409 17.5719C6.16878 17.5845 3.00983 15.0738 2.19744 11.5261C1.38504 7.97844 3.13601 4.34066 6.41372 2.76643C9.69143 1.1922 13.6211 2.10166 15.8763 4.95639C18.1314 7.81111 18.1102 11.8492 15.8252 14.68L16.9361 15.4475C17.1096 15.5586 17.2698 15.6892 17.4138 15.8368ZM4.24951 9.78627C4.24951 12.8576 6.73635 15.3475 9.80402 15.3475C11.2772 15.3475 12.69 14.7616 13.7317 13.7186C14.7733 12.6757 15.3585 11.2612 15.3585 9.78627C15.3585 6.7149 12.8717 4.22507 9.80402 4.22507C6.73635 4.22507 4.24951 6.7149 4.24951 9.78627Z"></path>
@@ -113,11 +113,11 @@
                     <div id="mobile-search-options"> 
                         <input type="checkbox" class="mobile-search-checkbox" value="1" id="mobile-search-bar" /> 
                         <label class="mobile-search-container action-btn-container -white -passive side-btn" for="mobile-search-bar" id="mobile-search-bar-label" onclick="document.getElementById('nav-mobile-search-input').focus();"
-                            aria-label="Search for inspiration"> <span class="_hidden">Search for inspiration</span> <i class="icon-search action-btn-icon"></i> </label>
+                            aria-label="{{ __('menu.search_btn_label') }}"> <span class="_hidden">{{ __('menu.search_btn_label') }}</span> <i class="icon-search action-btn-icon"></i> </label>
                         <div id="mobile-search" class="inline-search-form -mobile">
                             <form action="{{ route('user.search',['country' => $country]) }}" class="mobile-search-form" name="mobile-search-form" id="mobile-search-form" method="GET" onclick="document.getElementById('nav-mobile-search-input').focus();" accept-charset="utf-8">
-                                <label for="nav-mobile-search-input" class="_hidden">Search for inspiration</label> 
-                                <input class="mobile-search-input search-input" name="s" type="text" aria-label="Search for inspiration" id="nav-mobile-search-input" placeholder="Try &lsquo;sale flyer&rsquo;" maxlength="50" />
+                                <label for="nav-mobile-search-input" class="_hidden">{{ __('menu.search_btn_label') }}</label> 
+                                <input class="mobile-search-input search-input" name="s" type="text" aria-label="{{ __('menu.search_btn_label') }}" id="nav-mobile-search-input" placeholder="{{ __('menu.mobile_search_placeholder') }}" maxlength="50" />
                                 <i class="icon-search search-submit mobile-search-submit" onclick="document.forms['mobile-search-form'].submit();"></i>
                             </form>
                         </div>
@@ -129,7 +129,7 @@
                         'country' => $country
                         ]) }}" title="Claim Code">
                         <span class="action-btn-text login-btn-text">
-                            Claim Code
+                        {{ __('menu.claim_code') }}
                         </span>
                     </a>
                     {{---
@@ -204,9 +204,9 @@
         <div id="footer" class="site-footer js-site-footer" role="contentinfo">
             <div class="container-large">
                 <div class="footer-lower-content">
-                    <div>© 2021 wayak.app All rights reserved.</div>
+                    <div>{{ __('footer.copyright') }}</div>
                     <div class="remote-locations-container">
-                        Made with ♥ from MX
+                    {{ __('footer.made_with') }}
                     </div>
                 </div>
             </div>

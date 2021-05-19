@@ -1,11 +1,11 @@
 @extends('layouts.frontend')
 
-@section('title', 'Free Templates & Online Graphic Editor | WAYAK')
+@section('title', __('home.title'))
 
 @section('meta')
-    <meta name="description" content="Design made easy with 40K+ ready-made templates. Create professional ads, posters, branded content, and stunning social media stories in minutes. Easily add music to your video and impress your audience with outstanding content!" />
-    <meta name="title" content="Free Templates & Online Graphic Editor | WAYAK" />
-    <meta name="keywords" content="Templates, Designer, Online, Printables, Instagram Templates, Facebook Templates, Social, Social Media" />
+    <meta name="description" content="{{ __('home.meta_description') }}" />
+    <meta name="title" content="{{ __('home.meta_title') }}" />
+    <meta name="keywords" content="{{ __('home.meta_keywords') }}" />
 @endsection
 
 @section('content')
@@ -27,13 +27,13 @@
                                             <div class="bannerContainer___Y4ecx">
                                                 <div class="banner___3K0N2"></div>
                                             </div>
-                                            <p class="fugue-regular___3IC2i fugue-h3___3pmEB title___3smO3">Design whatever you want</p>
+                                            <p class="fugue-regular___3IC2i fugue-h3___3pmEB title___3smO3">{{ __('home.hero') }}</p>
                                             <div class="searchWrapper___ktY0d">
                                                 <div class="searchFormWrapper___2LC5i">
                                                     <form class="form___1I3Xs" novalidate="" method="GET" action="{{ route('user.search',['country' => $country]) }}">
 														@csrf
 														<div class="sc-dmlrTW guKkvw">
-															<input type="text" autocomplete="off" name="searchQuery" class="sc-kfzAmx sc-fKFyDc fTLfYv zomHz proxima-regular___3FDdY" placeholder="Search from thousands of formats and designs" value="" style="padding-left: 20px;">
+															<input type="text" autocomplete="off" name="searchQuery" class="sc-kfzAmx sc-fKFyDc fTLfYv zomHz proxima-regular___3FDdY" placeholder="{{ __('home.search_placeholder') }}" value="" style="padding-left: 20px;">
 														</div>
 														<div class="inputControls___BVQJr left___1UDlV"></div>
 														<div class="inputControls___BVQJr right___3zI72">
@@ -61,7 +61,7 @@
                                                         {{ $carousel->title }}
                                                     </span>
                                                     <span class="aro-row-header">
-                                                        <span class="see-all-link">Explore All</span>
+                                                        <span class="see-all-link">{{ __('home.carousel_explore_all') }}</span>
                                                         <span class="aro-row-chevron icon-akiraCaretRight"></span>
                                                     </span>
                                                 </a>

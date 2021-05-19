@@ -41,7 +41,7 @@
                                 title="" data-categ="landingMenuMaker" data-value="joinButton1">Start Now!</a></div>
                         <div class="wpb_text_column wpb_content_element ">
                             <div class="wpb_wrapper">
-                                <p><span style="font-size: 14px; line-height: 21px; color: #91949c;">Free to use. No credit card required.</span></p>
+                                <p><span style="font-size: 14px; line-height: 21px; color: #91949c;">{{ __('category.no_credit_card') }}</span></p>
                             </div>
                         </div>
                     </div>
@@ -68,14 +68,14 @@
                             <div class="wpb_wrapper">
                                 <h3 class="h-lg-64 h-md-40-48 h-sm-27-32" style="text-align: center;">
                                     <span style="color: #ffffff; text-shadow: 0px 10px 25px rgba(0, 0, 0, 0.5);">
-                                            Thousands of users worldwide
-                                        </span>
+                                        {{ __('category.hero_banners') }}
+                                    </span>
                                 </h3>
                             </div>
                         </div>
 
                         <div class="vc_btn3-container  padding-44 vc_btn3-center"><a class="vc_general vc_btn3 vc_btn3-size-md vc_btn3-shape-rounded vc_btn3-style-btn-crello vc_btn3-color-btn-yellow" href="https://crello.com/artboard/?newDesign=true&amp;width=21&amp;height=29.7&amp;group=EO&amp;format=Menu&amp;measureUnits=cm"
-                                title="" data-categ="landingMenuMaker" data-value="joinButton10">Pick a template</a></div>
+                                title="" data-categ="landingMenuMaker" data-value="joinButton10">{{ __('category.hero_btn') }}</a></div>
                         <div class="vc_empty_space  space-md-48 space-sm-32" style="/* height: 66px */">
                             <span class="vc_empty_space_inner"></span>
                         </div>

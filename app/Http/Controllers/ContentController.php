@@ -31,28 +31,46 @@ class ContentController extends Controller
     
     public function showHome() {
         $country = 'us';
-        $language_code = 'en';
+        $locale = 'en';
+        
+        App::setLocale($locale);
 
         $carousels = json_decode(Redis::get('wayak:'.$country.':home:carousels'));
         $menu = json_decode(Redis::get('wayak:'.$country.':menu'));
         
         return view('content.home',[
-            'language_code' => $language_code,
+            'language_code' => $locale,
             'country' => $country,
             'menu' => $menu,
             'search_query' => '',
             'carousels' => $carousels
         ]);
+
     }
    
     public function showCountryHomepage( $country ) {
-        $language_code = 'en';
+        if( in_array($country, ['us', 'ca']) ){
+            $locale = 'en';
+        } elseif( in_array($country, ['es','mx','co','ar','bo','ch','cu','do','sv','hn','ni', 'pe', 'uy', 've','py','pa','gt','pr','gq']) ){
+            $locale = 'es';
+        } else {
+            $locale = 'en';
+        }
+        
+        if( !in_array($locale, ['en', 'es']) ){
+            abort(400);
+        }
+    
+        App::setLocale($locale);
+
+        // $country = 'us';
+        
         if( Redis::exists('wayak:'.$country.':home:carousels') ){
             $carousels = json_decode(Redis::get('wayak:'.$country.':home:carousels'));
             $menu = json_decode(Redis::get('wayak:'.$country.':menu'));
             
             return view('content.home',[
-                'language_code' => $language_code,
+                'language_code' => $locale,
                 'country' => $country,
                 'menu' => $menu,
                 'search_query' => '',
@@ -71,6 +89,20 @@ class ContentController extends Controller
         // echo "<pre>";
         // print_r($pages);
         // exit;
+
+        if( in_array($country, ['us', 'ca']) ){
+            $locale = 'en';
+        } elseif( in_array($country, ['es','mx','co','ar','bo','ch','cu','do','sv','hn','ni', 'pe', 'uy', 've','py','pa','gt','pr','gq']) ){
+            $locale = 'es';
+        } else {
+            $locale = 'en';
+        }
+        
+        if( !in_array($locale, ['en', 'es']) ){
+            abort(400);
+        }
+        
+        App::setLocale($locale);
 
         $search_query = '';
         if( isset($request->searchQuery) ) {
@@ -216,6 +248,21 @@ class ContentController extends Controller
 
     public function showTemplatePage($country, $slug){
         $language_code = 'en';
+        
+        if( in_array($country, ['us', 'ca']) ){
+            $locale = 'en';
+        } elseif( in_array($country, ['es','mx','co','ar','bo','ch','cu','do','sv','hn','ni', 'pe', 'uy', 've','py','pa','gt','pr','gq']) ){
+            $locale = 'es';
+        } else {
+            $locale = 'en';
+        }
+        
+        if( !in_array($locale, ['en', 'es']) ){
+            abort(400);
+        }
+        
+        App::setLocale($locale);
+        
         $template_id = substr($slug, strrpos($slug, '-')+1, strlen($slug)  );
         $search_query = '';
 

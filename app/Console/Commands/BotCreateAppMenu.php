@@ -67,8 +67,9 @@ class BotCreateAppMenu extends Command
             }
         }
 
-        // print_r($menu);
-        Redis::set('wayak:'.$country.':menu', json_encode($menu) );
+        foreach (['es','mx','co','ar','bo','ch','cu','do','sv','hn','ni', 'pe', 'uy', 've','py','pa','gt','pr','gq','us','ca','gb','gh','ke','lr','ng'] as $country) {
+            Redis::set('wayak:'.$country.':menu', str_replace('\\/us\\/','\\/'.$country.'\\/',json_encode($menu)) );
+        }
 
     }
 }
