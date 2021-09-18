@@ -20,6 +20,8 @@ use App\Http\Controllers\EtsyScrapperController;
 use App\Http\Controllers\TemplettScrapperController;
 use App\Http\Controllers\LinkedInController;
 
+Route::get('/api/demo-url', [AdminController::class, 'getTemplateObjects']);
+
 // SCRAPPER
     // Linkedin
         Route::get('/linked', [LinkedInController::class, 'index']);
@@ -76,9 +78,19 @@ use App\Http\Controllers\LinkedInController;
     // Route::get('/translate/template', [TranslatorController::class, 'translateTemplate']);
 
 // ADMIN
+    // 
+        Route::get('/admin/etsy/gallery', [AdminController::class, 'etsyGallery'])->name('admin.assetsgallery');
+        Route::get('/admin/etsy/gallery/static', [AdminController::class, 'staticGallery'])->name('admin.staticGallery');
+        Route::get('/admin/etsy/gallery/static/set-keywords/{img_id}', [AdminController::class, 'setIMGKeywords'])->name('admin.setIMGKeywords');
+        Route::post('/admin/etsy/gallery/static/set-keywords/{img_id}', [AdminController::class, 'setIMGKeywords'])->name('admin.saveKeywords');
+        
+        Route::get('/admin/etsy/gallery/template-assets/{app}/{template_id}', [AdminController::class, 'getTemplateAssets'])->name('admin.getTemplateAssets');
+
+    // 
         Route::get('/admin', [AdminController::class, 'adminHome'])->name('admin.home');
     // CATEGORIES
         Route::get('/admin/categories', [CategoryController::class, 'manage'])->name('admin.category.manage');
+        Route::get('/admin/categories/translate/{from}/{to}', [CategoryController::class, 'translateCategory'])->name('admin.category.translate');
 
         Route::get('/admin/template/edit/{language_code}/{template_key}', [EditorController::class, 'adminTemplateEditor'])->name('admin.edit.template');
         // TEMPORAL
@@ -174,6 +186,8 @@ use App\Http\Controllers\LinkedInController;
     
     
 // FRONTEND
+    Route::get('/', [ContentController::class, 'showHome']);
+    
     Route::get('/{country}', [ContentController::class, 'showCountryHomepage'])->name('user.homepage');
     Route::get('/{country}/code', [EditorController::class, 'validateCode'])->name('code.validate.form');
     Route::post('/{country}/code', [EditorController::class,'validatePurchaseCode'])->name('code.validate');
@@ -198,8 +212,6 @@ use App\Http\Controllers\LinkedInController;
     
     Route::get('/{country}/criar/{category}', [ContentController::class, 'showCategoryPage']);
     Route::get('/{country}/modelos/{category}', [ContentController::class, 'showCreatePage']);
-
-    Route::get('/', [ContentController::class, 'showHome']);
 
     Route::get('{country}/demo/{modelo_mercado_pago}', [EditorController::class, 'demoTemplateEditor'])->name('plantilla.demo');
     Route::get('/{country}/editar/plantilla/{template_key}', [EditorController::class, 'customerTemplate'])->name('plantilla.editar');

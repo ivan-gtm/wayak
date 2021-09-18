@@ -58,8 +58,8 @@ class BotAssignCategory extends Command
             $category_name = $template->mainCategory;
             $category_name = substr( $template->mainCategory,1, strlen($category_name) );
             
-            if( Redis::exists('wayak:categories:'.$category_name) == false ){
-                print_r('wayak:categories:'.$category_name);
+            if( Redis::exists('wayak:en:categories:'.$category_name) == false ){
+                print_r('wayak:en:categories:'.$category_name);
                 print_r("\n");
                 
                 if($category_name == 'invitations/wedding/rsvp'){
@@ -80,7 +80,7 @@ class BotAssignCategory extends Command
                             ]
                         ]
                     ];
-                    Redis::set('wayak:categories:'.$category_name, json_encode($x) );
+                    Redis::set('wayak:en:categories:'.$category_name, json_encode($x) );
                 } elseif($category_name == 'invitations/wedding/menus'){
                     $x = [
                         'name' => 'Wedding Menus',
@@ -99,7 +99,7 @@ class BotAssignCategory extends Command
                             ]
                         ]
                     ];
-                    Redis::set('wayak:categories:'.$category_name, json_encode($x) );
+                    Redis::set('wayak:en:categories:'.$category_name, json_encode($x) );
                 } elseif($category_name == 'invitations/wedding/bridal-shower'){
                     $x = [
                         'name' => 'Bridal Shower',
@@ -118,7 +118,7 @@ class BotAssignCategory extends Command
                             ]
                         ]
                     ];
-                    Redis::set('wayak:categories:'.$category_name, json_encode($x) );
+                    Redis::set('wayak:en:categories:'.$category_name, json_encode($x) );
                 } elseif($category_name == 'invitations/wedding/bachelor-party'){
                     $x = [
                         'name' => 'Bachelor Party',
@@ -137,7 +137,7 @@ class BotAssignCategory extends Command
                             ]
                         ]
                     ];
-                    Redis::set('wayak:categories:'.$category_name, json_encode($x) );
+                    Redis::set('wayak:en:categories:'.$category_name, json_encode($x) );
                 } elseif($category_name == 'invitations/cocktail-party'){
                     $x = [
                         'name' => 'Cocktail Party',
@@ -150,7 +150,7 @@ class BotAssignCategory extends Command
                             'children' => [],
                         ]
                     ];
-                    Redis::set('wayak:categories:'.$category_name, json_encode($x) );
+                    Redis::set('wayak:en:categories:'.$category_name, json_encode($x) );
                 } elseif($category_name == 'invitations/wedding/save-the-date'){
                     $x = [
                         'name' => 'Save the date',
@@ -169,7 +169,7 @@ class BotAssignCategory extends Command
                             ]
                         ]
                     ];
-                    Redis::set('wayak:categories:'.$category_name, json_encode($x) );
+                    Redis::set('wayak:en:categories:'.$category_name, json_encode($x) );
                 } elseif($category_name == 'invitations/holidays/baptism'){
                     $x = [
                         'name' => 'Baptism',
@@ -188,7 +188,7 @@ class BotAssignCategory extends Command
                             ]
                         ]
                     ];
-                    Redis::set('wayak:categories:'.$category_name, json_encode($x) );
+                    Redis::set('wayak:en:categories:'.$category_name, json_encode($x) );
                 } elseif($category_name == 'invitations/wedding/engagement-party'){
                     $x = [
                         'name' => 'Engagement Party',
@@ -207,7 +207,7 @@ class BotAssignCategory extends Command
                             ]
                         ]
                     ];
-                    Redis::set('wayak:categories:'.$category_name, json_encode($x) );
+                    Redis::set('wayak:en:categories:'.$category_name, json_encode($x) );
                 } elseif($category_name == 'invitations/party/graduation'){
                     $x = [
                         'name' => 'Graduation',
@@ -226,7 +226,7 @@ class BotAssignCategory extends Command
                             ]
                         ]
                     ];
-                    Redis::set('wayak:categories:'.$category_name, json_encode($x) );
+                    Redis::set('wayak:en:categories:'.$category_name, json_encode($x) );
                 } elseif($category_name == 'invitations/party/housewarming'){
                     $x = [
                         'name' => 'Housewarming',
@@ -245,7 +245,7 @@ class BotAssignCategory extends Command
                             ]
                         ]
                     ];
-                    Redis::set('wayak:categories:'.$category_name, json_encode($x) );
+                    Redis::set('wayak:en:categories:'.$category_name, json_encode($x) );
                 } elseif($category_name == 'invitations/baby-shower'){
                     $x = [
                         'name' => 'Baby Shower',
@@ -258,7 +258,7 @@ class BotAssignCategory extends Command
                             'children' => [],
                         ]
                     ];
-                    Redis::set('wayak:categories:'.$category_name, json_encode($x) );
+                    Redis::set('wayak:en:categories:'.$category_name, json_encode($x) );
                 } elseif($category_name == 'invitations/sleepover'){
                     $x = [
                         'name' => 'Sleepover',
@@ -271,7 +271,7 @@ class BotAssignCategory extends Command
                             'children' => [],
                         ]
                     ];
-                    Redis::set('wayak:categories:'.$category_name, json_encode($x) );
+                    Redis::set('wayak:en:categories:'.$category_name, json_encode($x) );
                 } elseif($category_name == 'invitations/brunch'){
                     $x = [
                         'name' => 'Brunch',
@@ -284,7 +284,7 @@ class BotAssignCategory extends Command
                             'children' => [],
                         ]
                     ];
-                    Redis::set('wayak:categories:'.$category_name, json_encode($x) );
+                    Redis::set('wayak:en:categories:'.$category_name, json_encode($x) );
                 }
 
             }

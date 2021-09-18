@@ -1,11 +1,11 @@
 @extends('layouts.frontend')
 
-@section('title', $category_obj->name.' Templates | Designer Online | Wayak')
+@section('title', __('category.meta_title', ['cat_name' => $category_obj->name ]) )
 
 @section('meta')
     <meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
-    <meta name="description" content="Make custom {{ $category_obj->name }} designs within minutes. Wayak is an online editor tool to create all kinds of designs with thousands of templates as inspiration." />
-    <meta name="title" content="{{ $category_obj->name.' Templates | Designer Online | Wayak' }}" />
+    <meta name="title" content="{{ __('category.meta_title', ['cat_name' => $category_obj->name ]) }}" />
+    <meta name="description" content="{{ __('category.meta_description', ['cat_name' => $category_obj->name ]) }}" />
     <meta name="keywords" content="{{ $category_obj->name }}" />
     
     <link rel="stylesheet" href="{{ asset('assets/css/menu.css') }}">
@@ -23,22 +23,24 @@
                         <div class="vc_empty_space  space-md-56 space-sm-32"><span class="vc_empty_space_inner"></span></div>
                         <div class="wpb_text_column wpb_content_element ">
                             <div class="wpb_wrapper">
-                                <h1 class="h-lg-56 h-md-48-56 h-sm-40-48">{{ $category_obj->name }} Designer Online</h1>
+                                <h1 class="h-lg-56 h-md-48-56 h-sm-40-48">
+                                    {{ __('category.title', ['cat_name' => $category_obj->name ]) }}
+                                </h1>
                             </div>
                         </div>
                         <div class="vc_empty_space  space-md-24 space-sm-16" style="height: 24px"><span class="vc_empty_space_inner"></span></div>
                         <div class="wpb_text_column wpb_content_element ">
                             <div class="wpb_wrapper">
-                                Make custom "{{ $category_obj->name }}" designs within minutes. Wayak is an online design tool provides a smart and easy way 
-                                to create all kinds of designs with thousands of templates as inspiration.
-                                <br><br>
-                                Accent your ideas with many format ready templates, ranging from social media designs including Facebook covers, posters, photo cards, YouTube banner ads, and much, much more! 
-                                
-                                <!-- You can easily create  in just a few clicks! -->
+                                {!! __('category.abstract', ['cat_name' => $category_obj->name ]) !!}
                             </div>
                         </div>
-                        <div class="vc_btn3-container vc_btn3-inline"><a class="vc_general vc_btn3 vc_btn3-size-md vc_btn3-shape-rounded vc_btn3-style-btn-crello vc_btn3-color-btn-blue" href="https://crello.com/artboard/?newDesign=true&amp;width=21&amp;height=29.7&amp;group=EO&amp;format=Menu&amp;measureUnits=cm"
-                                title="" data-categ="landingMenuMaker" data-value="joinButton1">Start Now!</a></div>
+                        <div class="vc_btn3-container vc_btn3-inline">
+                            <a class="vc_general vc_btn3 vc_btn3-size-md vc_btn3-shape-rounded vc_btn3-style-btn-crello vc_btn3-color-btn-blue" 
+                                href="#"
+                                title="">
+                                {{ __('category.explore_templates') }}
+                            </a>
+                        </div>
                         <div class="wpb_text_column wpb_content_element ">
                             <div class="wpb_wrapper">
                                 <p><span style="font-size: 14px; line-height: 21px; color: #91949c;">{{ __('category.no_credit_card') }}</span></p>
@@ -92,7 +94,8 @@
                             <div class="vc_column-inner">
                                 <div class="wpb_text_column wpb_content_element ">
                                     <div class="wpb_wrapper">
-                                        <h2 class="h-lg-40 h-md-40 h-sm-34-40" style="text-align: center;">30,000+ Ready-to-use Wedding Templates</h2>
+                                        <h2 class="h-lg-40 h-md-40 h-sm-34-40" style="text-align: center;">
+                                            30,000+ Ready-to-use Wedding Templates</h2>
                                         <p style="text-align: center;">Making Wedding designs never been easier</p>
                                     </div>
                                 </div>
@@ -125,7 +128,12 @@
                         <div class="vc_column-inner">
                             <div class="wpb_text_column wpb_content_element ">
                                 <div class="wpb_wrapper">
-                                    <h2 class="h-lg-40 h-md-40 h-sm-34-40" style="text-align: center;">{{ $total_documents }}+ Ready-to-use {{ $category_obj->name }} Templates</h2>
+                                    <h2 class="h-lg-40 h-md-40 h-sm-34-40" style="text-align: center;">
+                                        {!! __('category.subtitle', [
+                                            'total_templates' => $total_documents,
+                                            'cat_name' => $category_obj->name
+                                        ]) !!}
+                                    </h2>
                                     <p style="text-align: center;">Making Wedding designs never been easier</p>
                                 </div>
                             </div>
@@ -164,8 +172,12 @@
                         <span class="loader-ellips__dot"></span>
                         <span class="loader-ellips__dot"></span>
                     </div>
-                    <p class="infinite-scroll-last">End of content</p>
-                    <p class="infinite-scroll-error">No more pages to load</p>
+                    <p class="infinite-scroll-last">
+                        {{ __('category.infinite_scroll_end_of_content') }}
+                    </p>
+                    <p class="infinite-scroll-error">
+                        {{ __('category.infinite_scroll_no_more_pages') }}
+                    </p>
                 </div>
             </div>
         </div>

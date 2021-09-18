@@ -47,20 +47,19 @@ class CreateHomeCarousels extends Command
         $language_code = 'en';
         $total_items_per_carousel = 30;
         
-        
         $search_result = Template::where('title', 'like', '%baby shower%')
-        ->where('width','=','5')
-        ->where('height','=','7')
-        ->take($total_items_per_carousel)
-        ->get([
-            'title',
-            'slug',
-            'previewImageUrls',
-            'width',
-            'height',
-            'forSubscribers',
-            'previewImageUrls'
-        ]);
+            ->where('width','=','5')
+            ->where('height','=','7')
+            ->take($total_items_per_carousel)
+            ->get([
+                'title',
+                'slug',
+                'previewImageUrls',
+                'width',
+                'height',
+                'forSubscribers',
+                'previewImageUrls'
+            ]);
 
         $templates = [];
         foreach ($search_result as $template) {

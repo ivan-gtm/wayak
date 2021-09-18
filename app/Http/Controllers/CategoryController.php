@@ -445,7 +445,7 @@ class CategoryController extends Controller
 
         // print_r( $slugs_index );
         // print_r( $nav_menu );
-        // Redis::set('wayak:categories',json_encode($nav_menu));
+        // Redis::set('wayak:en:categories',json_encode($nav_menu));
         return $nav_menu;
     
     }
@@ -481,19 +481,19 @@ class CategoryController extends Controller
         // $top_level_categories = self::cleanJSON($top_level_categories);
         $final_array = array_merge($top_level_categories, self::manage_wayak_cats() );
 
-        Redis::set('wayak:categories', json_encode($final_array));
+        Redis::set('wayak:en:categories', json_encode($final_array));
 
         // echo "<pre>";
         // print_r($final_array);
 
         foreach ($final_array as $cat_level_1) {
-            // Redis::set('wayak:categories:')
+            // Redis::set('wayak:en:categories:')
             if( isset( $cat_level_1['slug'] )){
                 // $cat_level_1['children'] = [];
                 $key_name = $cat_level_1['slug'];
-                print_r('>> wayak:categories:'.$key_name);
+                print_r('>> wayak:en:categories:'.$key_name);
                 // print_r($cat_level_1);
-                Redis::set('wayak:categories:'.$key_name, json_encode($cat_level_1));
+                Redis::set('wayak:en:categories:'.$key_name, json_encode($cat_level_1));
             }
 
             if( isset( $cat_level_1['children'] ) ){
@@ -504,9 +504,9 @@ class CategoryController extends Controller
                         $cat_level_2['parent'] = $cat_level_1;
                         $cat_level_2['parent']['children'] = [];
 
-                        print_r('>> wayak:categories:'.$key_name);
+                        print_r('>> wayak:en:categories:'.$key_name);
                         print_r($cat_level_2);
-                        Redis::set('wayak:categories:'.$key_name, json_encode($cat_level_2));
+                        Redis::set('wayak:en:categories:'.$key_name, json_encode($cat_level_2));
                     }
 
                     if( isset( $cat_level_2['children'] ) ){
@@ -519,9 +519,9 @@ class CategoryController extends Controller
                                 $cat_level_3['parent']['parent'] = $cat_level_1;
                                 $cat_level_3['parent']['parent']['children'] = [];
 
-                                print_r('>> wayak:categories:'.$key_name);
+                                print_r('>> wayak:en:categories:'.$key_name);
                                 print_r($cat_level_3);
-                                Redis::set('wayak:categories:'.$key_name, json_encode($cat_level_3));
+                                Redis::set('wayak:en:categories:'.$key_name, json_encode($cat_level_3));
                             }
 
                             if( isset( $cat_level_3['children'] ) ){
@@ -534,9 +534,9 @@ class CategoryController extends Controller
                                         $cat_level_4['parent']['parent'] = $cat_level_2;
                                         $cat_level_4['parent']['parent']['children'] = [];
 
-                                        print_r('>> wayak:categories:'.$key_name);
+                                        print_r('>> wayak:en:categories:'.$key_name);
                                         print_r($cat_level_4);
-                                        Redis::set('wayak:categories:'.$key_name, json_encode($cat_level_4));
+                                        Redis::set('wayak:en:categories:'.$key_name, json_encode($cat_level_4));
                                     }
         
                                     if( isset( $cat_level_4['children'] ) ){
@@ -549,9 +549,9 @@ class CategoryController extends Controller
                                                 $cat_level_5['parent']['parent'] = $cat_level_3;
                                                 $cat_level_5['parent']['parent']['children'] = [];
 
-                                                print_r('>> wayak:categories:'.$key_name);
+                                                print_r('>> wayak:en:categories:'.$key_name);
                                                 print_r($cat_level_5);
-                                                Redis::set('wayak:categories:'.$key_name, json_encode($cat_level_5));
+                                                Redis::set('wayak:en:categories:'.$key_name, json_encode($cat_level_5));
                                             }
                 
                                             if( isset( $cat_level_5['children'] ) ){
@@ -575,7 +575,7 @@ class CategoryController extends Controller
 
         // exit;
 
-        $final_array = Redis::get('wayak:categories');
+        $final_array = Redis::get('wayak:en:categories');
         
         return view('admin.categories.manage', [
             'data' => json_encode($final_array)
@@ -644,5 +644,68 @@ class CategoryController extends Controller
     
     function strToSlug($string){
         return str_replace('\'',null, str_replace('--',null, str_replace( '&','and',str_replace(' ','-',strtolower($string)))));
+    }
+
+    public $html = '';
+
+    function translateCategory($origin_lang, $destination_lang, Request $request){
+        // $redis_src = Redis::connection('redispro');
+        // $redis_dest = Redis::connection('default');
+        
+        // echo "<pre>";
+        $wayak_categories = Redis::keys('wayak:categories:*');
+
+        foreach ($wayak_categories as $category_keyname) {
+            // print_r($wayak_config);
+            $category_key = str_replace('wayak:categories:',null, $category_keyname);
+            
+            $category_content = json_decode(Redis::get($category_keyname));
+            // print_r($category_content);
+
+            $this->html = '';
+            echo '<h1>** '.$category_key.'</h1>';
+            self::getCatHTML( $category_content );
+            echo $this->html;
+            echo '<hr>';
+            // exit;
+        }
+        
+        exit;
+        // Redis::rename( $template_key, $new_template_key);
+        // echo "Hello";
+        // exit;
+    }
+
+    function getCatHTML( $category_content ){
+        
+        $this->html .= '<ul class="template-content" data-type="$category_key">';
+            // $html .= '<li lang="en" data-type="key"><strong>'.$category_key.'</strong></li>';
+            if(isset($category_content->name)){
+                $this->html .= '<li lang="en" data-type="name">'.$category_content->name.'</li>';
+            }
+            
+            if(isset($category_content->slug)){
+                $this->html .= '<li lang="en" data-type="slug">'.$category_content->slug.'</li>';
+            }
+            
+            if(isset($category_content->section)){
+                $this->html .= '<li lang="en" data-type="section">'.$category_content->section.'</li>';
+            }
+        
+            if( isset($category_content->parent) ){
+                
+                // foreach ($category_content->parent as $key => $xxx) {
+                    
+                    // print_r( "parent" );
+                    // print_r( $category_content->parent );
+                    // exit;
+                    $this->html .= '<li lang="en" data-type="parent">';
+                    self::getCatHTML( $category_content->parent );
+                    $this->html .= '</li>';
+                // }
+            }
+        
+        $this->html .= '</ul>';
+
     }
 }

@@ -48,8 +48,11 @@ class MigrateToUAT extends Command
         // self::migrateTemplates();
         // self::migrateCarousels();
         // self::migrateMenu();
-        self::migrateCategories();
+        // self::migrateCategories();
         // self::migrateWayakConfig();
+        // self::migrateTemplatesFromProdToDev();
+        
+        self::migratePSDurls();
     }
     
     function migrateTemplates(){
@@ -77,6 +80,55 @@ class MigrateToUAT extends Command
                 $redis_dest->set($template_keyname, $redis_src->get($template_keyname));
                 print_r("Migrated key >> \n");
                 print_r($template_keyname);
+                usleep(500000);
+                // exit;
+            }
+        }
+
+    }
+
+    function migratePSDurls(){
+        
+        $redis_src = Redis::connection('default');
+        $redis_dest = Redis::connection('redisuat');
+
+        // $templates = $redis_src->keys('psdkeys:*');
+        $templates = $redis_src->keys('instagram:*');
+        // $templates = $redis_src->keys('gfxcosy:*');
+
+        foreach($templates as $template_key) {
+
+            if( $redis_dest->exists($template_key) == false ){
+                $redis_dest->set($template_key, $redis_src->get($template_key) );
+                $redis_src->del($template_key);
+                print_r("Migrated key >> \n");
+                print_r($template_key);
+                usleep(500000);
+                // exit;
+            }
+        }
+
+    }
+    
+    function migrateTemplatesFromProdToDev(){
+        
+        $redis_src = Redis::connection('redispro');
+        $redis_dest = Redis::connection('default');
+
+        $templates = $redis_src->keys('template:en:*:jsondata');
+
+        foreach ($templates as $template_key) {
+            // print_r( $template );
+            // print_r( $template_key );
+            // exit;
+            if( $redis_dest->exists($template_key) == false ){
+                
+                // print_r( $template_key );
+                // print_r( $redis_src->get($template_key) );
+                // exit;
+                $redis_dest->set($template_key, $redis_src->get($template_key) );
+                print_r("Migrated key >> \n");
+                print_r($template_key);
                 usleep(500000);
                 // exit;
             }
@@ -136,7 +188,7 @@ class MigrateToUAT extends Command
     function migrateCategories(){
         $redis_src = Redis::connection('redispro');
         $redis_dest = Redis::connection('default');
-        $carousels = $redis_src->keys('wayak:categories:*');
+        $carousels = $redis_src->keys('wayak:en:categories:*');
 
         foreach ($carousels as $carousel_key) {
             if( $redis_dest->exists($carousel_key) == false ){

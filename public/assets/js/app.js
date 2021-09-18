@@ -5951,6 +5951,7 @@ function loadTemplate(templateid) {
         url: url,
         type: "get",
         data: {
+            language_code: language_code,
             id: templateid,
             design_as_id: design_as_id,
             demo_as_id: demo_as_id,

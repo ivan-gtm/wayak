@@ -87,8 +87,8 @@
                                     <div class="box--no-padding">
                                         <div class="item-preview ">
                                             <img alt="{{ $template->title }}"
-                                            itemprop="image"
-                                            src="{{ $preview_image }}">
+                                                itemprop="image"
+                                                src="{{ $preview_image }}">
                                             <div class="item-preview__actions">
                                                 <div class="item-preview__preview-buttons--social" data-view="socialButtons">
                                                     <div class="btn-group">
@@ -231,6 +231,17 @@
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="grid-container">
+                                <ul>
+                                @foreach ($related_templates as $template)
+                                    <li>
+                                        <img alt="{{ $template->title }}"
+                                                itemprop="image"
+                                                src="{{ $template->preview_image }}">
+                                    </li>
+                                @endforeach
+                                </ul>
                             </div>
                         </div>
                     </div>

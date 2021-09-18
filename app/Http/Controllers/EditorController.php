@@ -993,6 +993,7 @@ class EditorController extends Controller
 
 		$template_ids = isset($request['id']) ? $request['id'] : null;
 		$language_code = isset($request['language_code']) ? $request['language_code'] : 'en';
+		// $language_code = 'es';
 
 		// $templates = Redis::keys('template:*');
 		

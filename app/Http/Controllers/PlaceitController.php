@@ -611,6 +611,7 @@ class PlaceitController extends Controller
 
             // $local_img_path = public_path('placeit/design/template/'.$template_id.'/assets/json/'.$template_id.'.json');
             $json_url = 'https://nice-assets-3.s3-accelerate.amazonaws.com/presets/'.$template_id.'/ui.json';
+            // https://nice-assets-2.s3-accelerate.amazonaws.com/smart_templates/7f096a014ead9cc35e191e4167e73bf1/structure.json
 
             self::downloadTemplateJSON( $template_id,  $json_url );
             // print_r("\n");
@@ -641,143 +642,169 @@ class PlaceitController extends Controller
 
         foreach ($placeit_templates as $key_template) {
             
-            $parent_template_id = null;
+            // $key_template = 'placeit:template:36573c84b9efc0f36a0d7544f8b0ab16:metadata';
             $original_metadata = json_decode(Redis::get($key_template));
-            $metadata = self::extractTemplateMetadata($original_metadata);
-            $new_template_id = self::generateRandString();
-
-            // print_r( $original_metadata );
-            // print_r( $metadata );
+            // print_r( $original_metadata->template_id );
             // exit;
 
-            // echo "<pre>";
-            $original_width = ceil($metadata['width'] / 3.125);
-            $original_height = ceil($metadata['height'] / 3.125);
-            $width = $original_width;
-            $height = $original_height;
-            $measureUnits = 'px';
+            $db_template = DB::table('thumbnails')
+                                    ->select('template_id')
+                                    ->where('original_template_id', '=', $original_metadata->template_id )
+                                    ->first();
 
-            $dimentions = $width.'x'.$height.' px';
-            // print_r( $dimentions );
-            // exit;
-            
-            $templates_name = $original_metadata->title;
-            $parent_template_id = ( $parent_template_id == null ) ? $new_template_id : $parent_template_id;
-
-            // print_r( $dimentions_arr  );
-            // print_r( $original_width );
-            // print_r( $original_height );
+            print_r( 'TEMPLATE>> '.$original_metadata->template_id.'<br>');
+            // print_r( $db_template->template_id );
             // exit;
 
-            $base_json = '["{\"width\": 1728.00, \"height\": 2304.00, \"rows\": 1, \"cols\": 1}",{"version":"2.7.0","objects":[{"type":"image","version":"2.7.0","originX":"center","originY":"center","left":903.969858637,"top":1291.4128696969,"width":4878,"height":6757,"fill":"rgb(0,0,0)","stroke":null,"strokeWidth":0,"strokeDashArray":null,"strokeLineCap":"butt","strokeDashOffset":0,"strokeLineJoin":"miter","strokeMiterLimit":4,"scaleX":0.4035511785,"scaleY":0.4035511785,"angle":0,"flipX":false,"flipY":false,"opacity":1,"shadow":null,"visible":true,"clipTo":null,"backgroundColor":"","fillRule":"nonzero","paintFirst":"fill","globalCompositeOperation":"source-over","transformMatrix":null,"skewX":0,"skewY":0,"crossOrigin":"Anonymous","cropX":0,"cropY":0,"src":"https://dbzkr7khx0kap.cloudfront.net/11984_1548096343.png","locked":false,"selectable":true,"evented":true,"lockMovementX":false,"lockMovementY":false,"filters":[]},{"type":"textbox","version":"2.7.0","originX":"center","originY":"top","left":864,"top":1022.793,"width":521.6418220016,"height":257.414,"fill":"#666666","stroke":null,"strokeWidth":1,"strokeDashArray":null,"strokeLineCap":"butt","strokeDashOffset":0,"strokeLineJoin":"miter","strokeMiterLimit":4,"scaleX":1,"scaleY":1,"angle":0,"flipX":false,"flipY":false,"opacity":1,"shadow":null,"visible":true,"clipTo":null,"backgroundColor":"","fillRule":"nonzero","paintFirst":"fill","globalCompositeOperation":"source-over","transformMatrix":null,"skewX":0,"skewY":0,"text":"\nWelcome\n","fontSize":"67","fontWeight":"normal","fontFamily":"font30218","fontStyle":"normal","lineHeight":1.2,"underline":false,"overline":false,"linethrough":false,"textAlign":"center","textBackgroundColor":"","charSpacing":0,"minWidth":20,"splitByGrapheme":false,"selectable":true,"editable":true,"evented":true,"lockMovementX":false,"lockMovementY":false,"styles":{}}],"overlay":{"type":"pattern","source":"function(){return patternSourceCanvas.setDimensions({width:80*scale,height:80*scale}),patternSourceCanvas.renderAll(),patternSourceCanvas.getElement()}","repeat":"repeat","crossOrigin":"","offsetX":0,"offsetY":0,"patternTransform":null,"id":32},"cwidth":1728,"cheight":2304}]';
-            $base_json = json_decode($base_json);
-            
-            $base_json[0] = str_replace(1728, ceil($original_width) , $base_json[0]);
-            $base_json[0] = str_replace(2304, ceil($original_height) , $base_json[0]);
-            
-            $base_page = $base_json[1];
-            unset($base_json[1]);
-            $base_json = array_values($base_json);
-
-            $page_objects = [];
-            $new_page_obj = clone($base_page);
-            
-            $new_page_obj->cwidth = $width;
-            $new_page_obj->cheight = $height;
-            
-            // Example image structure required for new json schema
-            $base_img_obj = $new_page_obj->objects[0];
-            
-            // Example text structure required for new json schema
-            $base_txt_obj = $new_page_obj->objects[1];
-            
-            if( isset($metadata['images']) ){
-                foreach( $metadata['images'] as $img_obj) {
-                    // print_r( $metadata['images'] );
-                    // exit;
-
-                    // https://nice-assets-2.s3-accelerate.amazonaws.com/image_library/08533dbb608c7c86a0b48df17a799406/image.png
-                    if( isset($img_obj->url) ){
-                        $img_url = $img_obj->url;
-                    } else {
-                        if( isset( $img_obj->path ) ){
-                            $img_url = 'https://nice-assets-2.s3-accelerate.amazonaws.com/'.$img_obj->path;
-                        } else {
-                            echo "DEBUG: 707 ";
-                            print_r($img_obj);
-                            exit;
-                        }
-                    }
-                    
-                    // echo '<img src="'.$img_url.'"><br>';
-                    $path_info = pathinfo( $img_url );
-                    // print_r($path_info);
-                    // exit;
-
-                    $local_img_path = public_path('/design/template/'.$new_template_id.'/assets/');
-                    self::downloadImage( $img_url, $local_img_path,  $new_template_id);
-
-                    $new_img_obj = self::transformToImgObj($new_template_id, $base_img_obj, $path_info['basename'] );
-                    $page_objects[] = $new_img_obj;
+            // if( isset( $db_template->template_id ) == false ){
+                
+                $parent_template_id = null;
+                $metadata = self::extractTemplateMetadata($original_metadata);
+                
+                if( isset( $db_template->template_id ) ){
+                    $new_template_id = $db_template->template_id;
+                } else {
+                    $new_template_id = self::generateRandString();
                 }
-            }
 
-            if( isset($metadata['text']) ){
-                $template_text = self::extractTemplateText($metadata['text']);
-                foreach ($template_text as $txt_obj) {
-                    $new_txt_obj = self::transformToTxtObj($base_txt_obj, $txt_obj, $measureUnits);
-                    $page_objects[] = $new_txt_obj;
-                }
-            } else {
-                // echo "dEBUG: 730: NO TEXT";
-                // print_r($metadata);
+                // print_r( $key_template );
+                // print_r( $original_metadata->template_id );
+                // print_r( $metadata );
                 // exit;
-            }
-            
 
-            $new_page_obj->objects = $page_objects;
-            $new_page_obj->cwidth = $width;
-            $new_page_obj->cheight = $height;
+                // echo "<pre>";
+                $original_width = ceil($metadata['width'] / 3.125);
+                $original_height = ceil($metadata['height'] / 3.125);
+                $width = $original_width;
+                $height = $original_height;
+                $measureUnits = 'px';
 
-            $base_json[] = $new_page_obj;
+                $dimentions = $width.'x'.$height.' px';
+                // print_r( $dimentions );
+                // exit;
+                
+                $templates_name = $original_metadata->title;
+                $parent_template_id = ( $parent_template_id == null ) ? $new_template_id : $parent_template_id;
 
-            // print_r( $base_json );
-            // print_r( $template_text );
-            // print_r( $page_objects );
-            // print_r( $page_objects );
+                // print_r( $dimentions_arr  );
+                // print_r( $original_width );
+                // print_r( $original_height );
+                // exit;
+
+                $base_json = '["{\"width\": 1728.00, \"height\": 2304.00, \"rows\": 1, \"cols\": 1}",{"version":"2.7.0","objects":[{"type":"image","version":"2.7.0","originX":"center","originY":"center","left":903.969858637,"top":1291.4128696969,"width":4878,"height":6757,"fill":"rgb(0,0,0)","stroke":null,"strokeWidth":0,"strokeDashArray":null,"strokeLineCap":"butt","strokeDashOffset":0,"strokeLineJoin":"miter","strokeMiterLimit":4,"scaleX":0.4035511785,"scaleY":0.4035511785,"angle":0,"flipX":false,"flipY":false,"opacity":1,"shadow":null,"visible":true,"clipTo":null,"backgroundColor":"","fillRule":"nonzero","paintFirst":"fill","globalCompositeOperation":"source-over","transformMatrix":null,"skewX":0,"skewY":0,"crossOrigin":"Anonymous","cropX":0,"cropY":0,"src":"https://dbzkr7khx0kap.cloudfront.net/11984_1548096343.png","locked":false,"selectable":true,"evented":true,"lockMovementX":false,"lockMovementY":false,"filters":[]},{"type":"textbox","version":"2.7.0","originX":"center","originY":"top","left":864,"top":1022.793,"width":521.6418220016,"height":257.414,"fill":"#666666","stroke":null,"strokeWidth":1,"strokeDashArray":null,"strokeLineCap":"butt","strokeDashOffset":0,"strokeLineJoin":"miter","strokeMiterLimit":4,"scaleX":1,"scaleY":1,"angle":0,"flipX":false,"flipY":false,"opacity":1,"shadow":null,"visible":true,"clipTo":null,"backgroundColor":"","fillRule":"nonzero","paintFirst":"fill","globalCompositeOperation":"source-over","transformMatrix":null,"skewX":0,"skewY":0,"text":"\nWelcome\n","fontSize":"67","fontWeight":"normal","fontFamily":"font30218","fontStyle":"normal","lineHeight":1.2,"underline":false,"overline":false,"linethrough":false,"textAlign":"center","textBackgroundColor":"","charSpacing":0,"minWidth":20,"splitByGrapheme":false,"selectable":true,"editable":true,"evented":true,"lockMovementX":false,"lockMovementY":false,"styles":{}}],"overlay":{"type":"pattern","source":"function(){return patternSourceCanvas.setDimensions({width:80*scale,height:80*scale}),patternSourceCanvas.renderAll(),patternSourceCanvas.getElement()}","repeat":"repeat","crossOrigin":"","offsetX":0,"offsetY":0,"patternTransform":null,"id":32},"cwidth":1728,"cheight":2304}]';
+                $base_json = json_decode($base_json);
+                
+                $base_json[0] = str_replace(1728, ceil($original_width) , $base_json[0]);
+                $base_json[0] = str_replace(2304, ceil($original_height) , $base_json[0]);
+                
+                $base_page = $base_json[1];
+                unset($base_json[1]);
+                $base_json = array_values($base_json);
+
+                $page_objects = [];
+                $new_page_obj = clone($base_page);
+                
+                $new_page_obj->cwidth = $width;
+                $new_page_obj->cheight = $height;
+                
+                // Example image structure required for new json schema
+                $base_img_obj = $new_page_obj->objects[0];
+                
+                // Example text structure required for new json schema
+                $base_txt_obj = $new_page_obj->objects[1];
+                
+                if( isset($metadata['images']) ){
+                    foreach( $metadata['images'] as $img_obj) {
+                        // print_r( $metadata['images'] );
+                        // exit;
+
+                        if( isset($img_obj->url) ){
+                            $img_url = $img_obj->url;
+                        } elseif( isset( $img_obj->path ) ){
+                            $img_url = 'https://nice-assets-2.s3-accelerate.amazonaws.com/'.$img_obj->path;
+                        } elseif( isset( $img_obj->image ) ){
+                            $img_url = 'https://nice-assets-2.s3-accelerate.amazonaws.com/'.$img_obj->image;
+                            // print_r($img_obj);
+                            // exit;
+                        } else {
+                            // echo "DEBUG: 707 ";
+                            // print_r($img_obj);
+                            // exit;
+                        }
+                        
+                        // echo '<img src="'.$img_url.'"><br>';
+                        // exit;
+
+                        $path_info = pathinfo( $img_url );
+                        $local_img_path = public_path('/design/template/'.$new_template_id.'/assets/');
+                        self::downloadImage( $img_url, $local_img_path,  $new_template_id);
+
+                        $new_img_obj = self::transformToImgObj($new_template_id, $base_img_obj, $path_info['basename'] );
+                        $page_objects[] = $new_img_obj;
+                    }
+                }
+
+                if( isset($metadata['text']) ){
+                    $template_text = self::extractTemplateText($metadata['text']);
+                    foreach ($template_text as $txt_obj) {
+                        $new_txt_obj = self::transformToTxtObj($base_txt_obj, $txt_obj, $measureUnits);
+                        $page_objects[] = $new_txt_obj;
+                    }
+                } else {
+                    // echo "dEBUG: 730: NO TEXT";
+                    // print_r($metadata);
+                    // exit;
+                }
+                
+
+                $new_page_obj->objects = $page_objects;
+                $new_page_obj->cwidth = $width;
+                $new_page_obj->cheight = $height;
+
+                $base_json[] = $new_page_obj;
+
+                // print_r( $base_json );
+                // print_r( $template_text );
+                // print_r( $page_objects );
+                // print_r( $page_objects );
+                // exit;
+
+                // print_r( $original_metadata );
+                // print_r( $metadata );
+                // exit;
+                
+                $final_json_template = json_encode($base_json);
+                
+                // print_r($base_json);
+                // print_r($final_json_template);
+                
+                // Saves template on wayak format
+                Redis::set('template:en:'.$new_template_id.':jsondata', $final_json_template);
+
+                print_r("\n".'  template:en:'.$new_template_id.':jsondata');
+
+                $template_info['template_id'] = $new_template_id;
+                $template_info['title'] = isset($original_template->config->title) ? $original_template->config->title : ' x ';
+                $template_info['filename'] = $new_template_id.'_thumbnail.png';
+                $template_info['dimentions'] = $dimentions;
+                
+                $local_img_path = public_path('/design/template/'.$new_template_id.'/thumbnails/en/');
+                $file_name = self::downloadImage( $original_metadata->thumb_img_url, $local_img_path, $new_template_id);
+                
+                // echo "PRO";
+                // exit;
+                self::registerThumbOnDB($new_template_id, $original_metadata->title, $file_name, $dimentions, $original_metadata->template_id);
+                self::registerTemplateOnDB($new_template_id, $original_metadata->template_id, $templates_name, $parent_template_id, $width, $height, $measureUnits);
+                $template_index++;
+
+                // if($template_index == 800){
+                //     echo "\n<br>TERMINE";
+                //     exit;
+                // }
+            // }
             // exit;
-
-            // print_r( $original_metadata );
-            // print_r( $metadata );
-            // exit;
-            
-            $final_json_template = json_encode($base_json);
-            
-            // print_r($base_json);
-            // print_r($final_json_template);
-            
-            // Saves template on wayak format
-            Redis::set('template:en:'.$new_template_id.':jsondata', $final_json_template);
-
-            print_r("\n".'  template:en:'.$new_template_id.':jsondata');
-
-            $template_info['template_id'] = $new_template_id;
-            $template_info['title'] = isset($original_template->config->title) ? $original_template->config->title : ' x ';
-            $template_info['filename'] = $new_template_id.'_thumbnail.png';
-            $template_info['dimentions'] = $dimentions;
-            
-            $local_img_path = public_path('/design/template/'.$new_template_id.'/thumbnails/en/');
-            $file_name = self::downloadImage( $original_metadata->thumb_img_url, $local_img_path, $new_template_id);
-            self::registerThumbOnDB($new_template_id, $original_metadata->title, $file_name, $dimentions, $key_template);
-            self::registerTemplateOnDB($new_template_id, $templates_name, $parent_template_id, $width, $height, $measureUnits);
-            // exit;
-
-            if($template_index == 100){
-                echo "\n<br>TERMINE";
-                exit;
-            }
-
         }
+
     }
 
     function downloadImage( $img_url, $local_img_path, $template_id ){
@@ -788,9 +815,8 @@ class PlaceitController extends Controller
         $path = $path_info['dirname'];
         $file_name = $path_info['basename'];
 
-        if (file_exists($full_local_img_path) == false) {
-            
-            
+        if (file_exists($full_local_img_path) == false || file_exists($full_local_img_path) && filesize($full_local_img_path) == 0) {
+
             @mkdir($path, 0777, true);
         
             set_time_limit(0);
@@ -833,7 +859,7 @@ class PlaceitController extends Controller
         }
     }
 
-    function registerTemplateOnDB($template_id, $name, $parent_template_id, $width, $height, $measureUnits){
+    function registerTemplateOnDB($template_id, $original_template_id, $name, $parent_template_id, $width, $height, $measureUnits){
         
         $thumbnail_rows = DB::table('templates')
                             ->where('template_id','=',$template_id)
@@ -842,8 +868,10 @@ class PlaceitController extends Controller
         if( $thumbnail_rows == 0 ){
             DB::table('templates')->insert([
                 'id' => null,
+                'source' => 'placeit',
                 'template_id' => $template_id,
-                'name' => htmlspecialchars_decode( $name ),
+                'original_template_id' => $template_id,
+                // 'name' => htmlspecialchars_decode( $name ),
                 'status' => 0,
                 'parent_template_id' => $parent_template_id,
                 'width' => $width,
@@ -890,8 +918,8 @@ class PlaceitController extends Controller
                     // https://nice-assets-2.s3-accelerate.amazonaws.com/fonts/e57deb519599baa7c80a41939506f8d4.ttf
                     $font_url = 'https://nice-assets-2.s3-accelerate.amazonaws.com/'.$font_assets->file;
                     $local_font_path = public_path('design/fonts_new/');
-
-                    $insert_result = self::registerFontOnDB( $font_assets->displayName, $font_assets->name, $font_url);
+                    $font_name = isset($font_assets->name) ? $font_assets->name : 'No Name';
+                    $insert_result = self::registerFontOnDB( $font_assets->displayName, $font_name, $font_url);
                     if( $insert_result == 0 ){
                         self::downloadFont( $font_url, $local_font_path);
                     }
@@ -1001,7 +1029,7 @@ class PlaceitController extends Controller
         $template_content['width'] = $template->original->size->high->width;
         $template_content['height'] = $template->original->size->high->height;
         $template_content['previewImage'] = $template->previewImage->value;
-        $template_content['backgroundColor'] = $template->backgroundColor->color;
+        $template_content['backgroundColor'] = isset($template->backgroundColor->color) ? $template->backgroundColor->color : null;
         $template_content['category'] = isset($template->category) ? $template->category : null;
 
         foreach ($template->text as $text_node) {
@@ -1048,9 +1076,9 @@ class PlaceitController extends Controller
                         
                     foreach ($node->layers as $layer) {
                         
-                        if(isset($layer->assetType) && $layer->assetType == 'image'){
+                        // if(isset($layer->assetType) && $layer->assetType == 'image'){
                             
-                            if( strpos($layer->path, 'imagedocument') > 0 ){
+                            if(isset($layer->path) && strpos($layer->path, 'imagedocument') > 0 ){
                                 $layer->path = str_replace('small', 'medium', $layer->image);
                                 $json_structure = self::downloadStructureJSON( $layer->id );
                                 
@@ -1066,14 +1094,14 @@ class PlaceitController extends Controller
                             }
 
                             $tmp_obj = new \stdClass();
-                            $tmp_obj->name = $layer->name;
+                            $tmp_obj->name = isset($layer->name) ? $layer->name : null;
                             $tmp_obj->image = $layer->image;
-                            $tmp_obj->path = $layer->path;
-                            $tmp_obj->originalFile = $layer->originalFile;
+                            $tmp_obj->path = isset($layer->path) ? $layer->path : null;
+                            $tmp_obj->originalFile = isset($layer->originalFile) ? $layer->originalFile : 'no name';
                             $tmp_obj->id = $layer->id;
                             // $tmp_obj->/'src' = $layer->src
                             $template_content['images'][] = $tmp_obj;
-                        }
+                        // }
                     }
                 }
                 // $template_content['images'][] = $node;
@@ -1096,7 +1124,7 @@ class PlaceitController extends Controller
                 // exit;
                 if( isset($node->layers) 
                     && is_array($node->layers) 
-                    && sizeof($node->layers) ){
+                    && sizeof($node->layers) > 0 ){
                         
                     foreach ($node->layers as $layer) {
                         if(isset($layer->assetType) && $layer->assetType == 'image'){
@@ -1252,22 +1280,39 @@ class PlaceitController extends Controller
         $img_path = public_path('/design/template/'.$new_template_id.'/assets/'.$file_name);
 
         if( file_exists($img_path) && filesize($img_path) > 0) {
-            list($width, $height, $type, $attr) = getimagesize($img_path);
+            $path = $img_path;
+            $extension = pathinfo($path, PATHINFO_EXTENSION);
             
-            // print_r(getimagesize($img_path));
-            // exit;
+            if($extension == 'svg' OR $extension == 'png' OR $extension == 'jpg' OR $extension == 'jpeg' OR $extension == 'gif'){
+                list($width, $height, $type, $attr) = getimagesize($img_path);
+                
+                // print_r(getimagesize($img_path));
+                // exit;
 
+                if( $extension != 'svg' ){
+                    $tmp_obj->width = $width;
+                    $tmp_obj->height = $height;
+                    $tmp_obj->src = asset('design/template/'.$new_template_id.'/assets/'.$file_name);
+                } else {
+                    $tmp_obj->width = 50;
+                    $tmp_obj->height = 50;
+                    $tmp_obj->src = asset('design/template/'.$new_template_id.'/assets/'.$file_name);
+                }
+                    
+                // print_r($type);
+                // print_r($img_path);
+                // return $tmp_obj;
+                // exit;
+
+            } else {
+                // print_r('UNKWNON EXTENSION >>'.$extension);
+                // exit;
+                return null;
+            }
+        } else {
+            return null;
         }
 
-        $tmp_obj->width = $width;
-        $tmp_obj->height = $height;
-        $tmp_obj->src = asset('design/template/'.$new_template_id.'/assets/'.$file_name);
-        
-        // echo "<pre>";
-        // print_r($tmp_obj);
-        // exit;
-
-        return $tmp_obj;
     }
    
 }

@@ -33,12 +33,12 @@ use App\Models\Template;
 // use App\Exports\MercadoLibreExport;
 // use Maatwebsite\Excel\Facades\Excel;
 
-// ini_set('memory_limit', -1);
-// ini_set("max_execution_time", 0);   // no time-outs!
-// ignore_user_abort(true);            // Continue downloading even after user closes the browser.
+ini_set('memory_limit', -1);
+ini_set("max_execution_time", 0);   // no time-outs!
+ignore_user_abort(true);            // Continue downloading even after user closes the browser.
 
-// error_reporting(E_ALL);
-// ini_set('display_errors', 1);
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
 
 class AdminController extends Controller
@@ -365,7 +365,7 @@ class AdminController extends Controller
         // $formated_templates_total = sizeof($formated_templates);
         $total_templates = DB::table('templates')
                     ->join('thumbnails', 'templates.template_id', '=', 'thumbnails.template_id')
-                    ->select('templates.template_id','format_ready','translation_ready','thumbnail_ready', 'filename','thumbnails.title', 'thumbnails.dimentions')
+                    ->select('templates.template_id','format_ready','templates.translation_ready','templates.thumbnail_ready', 'filename','thumbnails.title', 'thumbnails.dimentions')
                     // ->where('template_id','=', $template_key )
                     ->where('thumbnails.language_code','=', $language_code )
                     // ->where('thumbnails.dimentions','=', '5 x 7 in' )
@@ -537,7 +537,7 @@ class AdminController extends Controller
         return view('admin.home', [
         ]);
     }
-
+    
     function createDBProduct($template_key, Request $request){
         // echo "<pre>";
         // print_r( $template_key );
@@ -1122,7 +1122,7 @@ class AdminController extends Controller
         // Get all templates already formated
         $total_pages = DB::table('templates')
                     ->join('thumbnails', 'templates.template_id', '=', 'thumbnails.template_id')
-                    ->select('templates.template_id','format_ready','translation_ready','thumbnail_ready', 'filename')
+                    ->select('templates.template_id','format_ready','templates.translation_ready','templates.thumbnail_ready', 'filename')
                     // ->where('template_id','=', $template_key )
                     ->where('thumbnails.language_code','=', $language_code )
                     // ->where('thumbnails.dimentions','=', '5 x 7 in' )
@@ -1136,7 +1136,7 @@ class AdminController extends Controller
 
         $translation_ready_templates = DB::table('templates')
                     ->join('thumbnails', 'templates.template_id', '=', 'thumbnails.template_id')
-                    ->select('templates.template_id','format_ready','translation_ready','thumbnail_ready', 'filename')
+                    ->select('templates.template_id','format_ready','templates.translation_ready','templates.thumbnail_ready', 'filename')
                     // ->where('template_id','=', $template_key )
                     ->where('thumbnails.language_code','=', $language_code )
                     // ->where('thumbnails.dimentions','=', '5 x 7 in' )
@@ -1295,7 +1295,7 @@ class AdminController extends Controller
 
         $total_templates = DB::table('templates')
                     ->join('thumbnails', 'templates.template_id', '=', 'thumbnails.template_id')
-                    ->select('templates.template_id','format_ready','translation_ready','thumbnail_ready', 'filename')
+                    ->select('templates.template_id','format_ready','templates.translation_ready','templates.thumbnail_ready', 'filename')
                     // ->where('template_id','=', $template_key )
                     ->where('thumbnails.language_code','=', 'en' )
                     // ->where('thumbnails.dimentions','=', '5 x 7 in' )
@@ -1308,7 +1308,7 @@ class AdminController extends Controller
         
         $format_ready_templates = DB::table('templates')
                     ->join('thumbnails', 'templates.template_id', '=', 'thumbnails.template_id')
-                    ->select('templates.template_id','format_ready','translation_ready','thumbnail_ready', 'filename')
+                    ->select('templates.template_id','format_ready','templates.translation_ready','templates.thumbnail_ready', 'filename')
                     // ->where('template_id','=', $template_key )
                     ->where('thumbnails.language_code','=', 'en' )
                     // ->where('thumbnails.dimentions','=', '5 x 7 in' )
@@ -1411,7 +1411,7 @@ class AdminController extends Controller
 
         $total_templates = DB::table('templates')
                     ->join('thumbnails', 'templates.template_id', '=', 'thumbnails.template_id')
-                    ->select('templates.template_id','format_ready','translation_ready','thumbnail_ready', 'filename')
+                    ->select('templates.template_id','format_ready','templates.translation_ready','templates.thumbnail_ready', 'filename')
                     // ->where('template_id','=', $template_key )
                     ->where('thumbnails.language_code','=', $language_code )
                     // ->where('thumbnails.dimentions','=', '5 x 7 in' )
@@ -1425,7 +1425,7 @@ class AdminController extends Controller
         
         $translation_ready_templates = DB::table('templates')
                     ->join('thumbnails', 'templates.template_id', '=', 'thumbnails.template_id')
-                    ->select('templates.template_id','format_ready','translation_ready','thumbnail_ready', 'filename')
+                    ->select('templates.template_id','format_ready','templates.translation_ready','templates.thumbnail_ready', 'filename')
                     // ->where('template_id','=', $template_key )
                     ->where('thumbnails.language_code','=', $language_code )
                     // ->where('thumbnails.dimentions','=', '5 x 7 in' )
@@ -1487,7 +1487,7 @@ class AdminController extends Controller
 
         $total_templates = DB::table('templates')
             ->join('thumbnails', 'templates.template_id', '=', 'thumbnails.template_id')
-            ->select('templates.template_id','format_ready','translation_ready','thumbnail_ready', 'filename')
+            ->select('templates.template_id','format_ready','templates.translation_ready','templates.thumbnail_ready', 'filename')
             // ->where('template_id','=', $template_key )
             ->where('thumbnails.language_code','=', $destination_lang )
             // ->where('thumbnails.dimentions','=', '5 x 7 in' )
@@ -1501,7 +1501,7 @@ class AdminController extends Controller
         
         $thumb_ready_templates = DB::table('templates')
             ->join('thumbnails', 'templates.template_id', '=', 'thumbnails.template_id')
-            ->select('templates.template_id','format_ready','translation_ready','thumbnail_ready', 'filename')
+            ->select('templates.template_id','format_ready','templates.translation_ready','templates.thumbnail_ready', 'filename')
             // ->where('template_id','=', $template_key )
             ->where('thumbnails.language_code','=', $destination_lang )
             // ->where('thumbnails.dimentions','=', '5 x 7 in' )
@@ -1563,7 +1563,7 @@ class AdminController extends Controller
 
         $total_templates = DB::table('templates')
             ->join('thumbnails', 'templates.template_id', '=', 'thumbnails.template_id')
-            ->select('templates.template_id','format_ready','translation_ready','thumbnail_ready', 'filename')
+            ->select('templates.template_id','format_ready','templates.translation_ready','templates.thumbnail_ready', 'filename')
             // ->where('template_id','=', $template_key )
             ->where('thumbnails.language_code','=', $destination_lang )
             // ->where('thumbnails.dimentions','=', '5 x 7 in' )
@@ -1577,7 +1577,7 @@ class AdminController extends Controller
         
         $metadata_ready_templates = DB::table('templates')
             ->join('thumbnails', 'templates.template_id', '=', 'thumbnails.template_id')
-            ->select('templates.template_id','format_ready','translation_ready','thumbnail_ready','metadata_ready', 'filename')
+            ->select('templates.template_id','format_ready','templates.translation_ready','templates.thumbnail_ready','metadata_ready', 'filename')
             // ->where('template_id','=', $template_key )
             ->where('thumbnails.language_code','=', $destination_lang )
             // ->where('thumbnails.dimentions','=', '5 x 7 in' )
@@ -1719,6 +1719,610 @@ class AdminController extends Controller
         }
     }
 
+    function setIMGKeywords( $img_id, Request $request ){
+        
+        if( isset( $request->title ) 
+            && isset( $request->keywords )
+        ){
+            // echo "<pre>";
+            // // print_r( $request->all() );
+            // print_r( $request->img_id );
+            // exit;
+
+            foreach ($request->keywords as $keyword) {
+                $db_keyword = DB::table('keywords')
+                    ->select('id')
+                    ->where('word', '=', trim(strtolower($keyword)) )
+                    ->first();
+
+                if( isset($db_keyword->id) == false ){
+                    $keyword_id = DB::table('keywords')->insertGetId([
+                        'id' => null,
+                        'word' => trim(strtolower($keyword)),
+                        'language_code' => 'en',
+                    ]);
+                } else {
+                    $keyword_id = $db_keyword->id;
+                }
+
+                $db_image_has_keyword = DB::table('image_keywords')
+                    ->select('id')
+                    ->where('image_id', '=', $request->img_id)
+                    ->where('keyword_id', '=', $keyword_id)
+                    ->first();
+                
+                if( isset($db_image_has_keyword->id) == false ){
+                    DB::table('image_keywords')->insert([
+                        'id' => null,
+                        'image_id' => $request->img_id,
+                        'keyword_id' => $keyword_id,
+                    ]);
+                }
+            }
+
+            DB::table('images')
+			->where('id','=', $request->img_id)
+            ->update([
+                'title' => $request->title,
+                'status' => 1
+            ]);
+
+            echo 0;
+            exit;
+            // return redirect()->action(
+            //     [AdminController::class,'manageKeywords'], []
+            // );
+        }
+        
+        $db_image = DB::table('images')
+                    ->select('thumb_path','title','file_type','source','id','template_id')
+                    ->where('id', '=', $img_id)
+                    ->first();
+
+        $template_info = DB::select( DB::raw(
+            "SELECT
+                templates.source,
+                templates.template_id,
+                LOWER(CONCAT(
+                thumbnails.title,
+                ' ',
+                tmp_etsy_metadata.title,
+                ' ',
+                tmp_etsy_product.title
+                )) title
+            FROM 
+                templates,
+                thumbnails,
+                tmp_etsy_metadata,
+                tmp_etsy_product
+            WHERE 
+                templates.template_id = '".$db_image->template_id."'
+                AND thumbnails.template_id = templates.template_id
+                AND templates.fk_etsy_template_id = tmp_etsy_metadata.id
+                AND tmp_etsy_metadata.fk_product_id = tmp_etsy_product.id
+            LIMIT 1"
+        ));
+        
+        foreach ($template_info as $db_title) {
+            $title_words = ucwords($db_title->title);
+        }
+        preg_match_all('/(\w+)/', $title_words, $title_words_arr);
+        
+        $unique_keywords = array_unique($title_words_arr[1]);
+        
+        $recomendations = DB::select( DB::raw(
+            "SELECT keywords.word, COUNT(*) total FROM image_keywords, keywords WHERE image_id IN (
+                SELECT id FROM images WHERE template_id IN(
+                    SELECT template_id FROM images
+                    WHERE id IN(
+                        SELECT id FROM (SELECT image_id FROM image_keywords WHERE keyword_id IN(
+                            SELECT id FROM (SELECT * FROM keywords WHERE word IN(
+                            "."'".implode("','",$unique_keywords)."'"."
+                            )) keywords_ids
+                        )) iamges_with_keywords
+                    ) 
+                ) 
+            )
+            AND image_keywords.keyword_id = keywords.id
+            GROUP BY keywords.word
+            ORDER BY total DESC"
+        ));
+
+        foreach ($recomendations as $recomendation) {
+            $tmp_recomendations[] = ucwords($recomendation->word);
+        }
+        
+        $db_similar_titles = DB::select( DB::raw(
+            "SELECT title 
+            FROM images 
+            WHERE 
+                title IS NOT NULL
+                AND template_id IN(
+                        SELECT template_id FROM images
+                        WHERE id IN(
+                            SELECT * FROM (SELECT image_id FROM image_keywords WHERE keyword_id IN(
+                                SELECT id FROM (SELECT * FROM keywords WHERE word IN(
+                                    "."'".implode("','",$unique_keywords)."'"."
+                                )) keywords_ids
+                            )) iamges_with_keywords
+                        ) 
+                    )"
+        ));
+
+        foreach ($db_similar_titles as $similar_title) {
+            $tmp_similar_titles[] = ucwords($similar_title->title);
+        }
+
+        $db_similar_thumb = DB::select( DB::raw(
+            "SELECT title 
+            FROM thumbnails 
+            WHERE 
+            template_id IN(
+                        SELECT template_id FROM images
+                        WHERE id IN(
+                            SELECT * FROM (SELECT image_id FROM image_keywords WHERE keyword_id IN(
+                                SELECT id FROM (SELECT * FROM keywords WHERE word IN(
+                                    "."'".implode("','",$unique_keywords)."'"."
+                                )) keywords_ids
+                            )) iamges_with_keywords
+                        ) 
+                    )"
+        ));
+
+        foreach ($db_similar_thumb as $similar_thumb) {
+            $tmp_similar_thumbs[] = ucwords($similar_thumb->title);
+        }
+
+        $autocomplete = array_merge($tmp_recomendations,$unique_keywords);
+
+        // print_r( $db_image->template_id );
+        // print_r( '<br>' );
+        // print_r( $title_words_arr[1] );
+        
+        // print_r( '<pre>' );
+        // print_r( $unique_keywords );
+        // print_r( $tmp_recomendations );
+        // print_r( $autocomplete );
+
+        // print_r( $tmp_similar_titles );
+        // print_r( $tmp_similar_thumbs );
+        // print_r( '</pre>' );
+
+        $img_src = asset(  str_replace('/application/public/',null, $db_image->thumb_path) );
+
+        $existing_keywords = DB::table('image_keywords')
+                    ->join('keywords', 'image_keywords.keyword_id', '=', 'keywords.id')
+                    ->select('keywords.word')
+                    ->where('image_id','=', $img_id )
+                    ->get();
+        
+        return view('admin.assign_keywords', [
+            'unique_keywords' => $unique_keywords,
+            'tmp_recomendations' => $tmp_recomendations,
+            'autocomplete' => $autocomplete,
+            
+            'tmp_similar_titles' => $tmp_similar_titles,
+            'tmp_similar_thumbs' => $tmp_similar_thumbs,
+
+            'img_src' => $img_src,
+            'file_type' => strtoupper($db_image->file_type),
+            'source' => strtoupper($db_image->source),
+            'title' => $db_image->title,
+            'img_id' => $img_id,
+            'image_keywords' => $existing_keywords,
+        ]);
+    }
+
+    function downloadImage(){
+        //PDF file is stored under project/public/download/info.pdf
+        // $file= public_path(). "/download/info.pdf";
+        // $headers = [
+        //     'Content-Type' => 'application/pdf',
+        //  ];
+        // return response()->download($file, 'filename.pdf', $headers);
+
+        return Storage::download(public_path().'/instagram/thumbs/XF76rNksvh9bolJ.png');
+    }
+
+    function staticGallery(Request $request){
+        $itemsPerPage = 200;
+        $current_page = isset($request->page) ? $request->page : 1;
+        $imgs = [];
+        $templates = DB::table('images')
+            ->select('id','template_id','thumb_path','file_type','filename')
+            // ->where('source', '=','crello')
+            ->whereNull('status')
+            ->offset( ($current_page-1) *$itemsPerPage)
+            ->limit($itemsPerPage)
+            ->orderBy('id', 'desc')
+            ->get();
+        
+        $total_templates = DB::table('images')
+                            ->whereNull('status')
+                            ->count();
+        
+        $first_page = $current_page;
+        $last_page = ( $current_page+10 < round($total_templates/$itemsPerPage) ) ? $current_page+10 : round($total_templates/$itemsPerPage);
+        
+        // echo $first_page;
+        // echo '<br>';
+        // echo round($total_templates/100);
+        // echo '<br>';
+        // echo $last_page;
+        // exit;
+
+        for ($i=$first_page; $i <= $last_page; $i++) { 
+            $pages[] = $i;
+        }
+
+        foreach ($templates as $template) {
+            // print_r('<img src="'.asset(  str_replace('/application/public/',null, $template->thumb_path) ).'">');
+            // echo '<br>';
+            $tmp_img = new \stdClass();
+            $tmp_img->src = asset(  str_replace('/application/public/',null, $template->thumb_path) );
+            $tmp_img->id = $template->id;
+
+            $imgs[] = $tmp_img;
+        }
+
+        // echo "<pre>";
+        // print_r($imgs);
+        // exit;
+
+        return view('admin.assets', [
+            'total_templates' => $total_templates,
+            'current_page' => $current_page,
+            'last_page' => floor($total_templates/$itemsPerPage),
+            'pages' => $pages,
+            'imgs' => $imgs
+        ]);
+
+        exit;
+        /*
+        $scan = scandir( public_path('/over/templates/') );
+        foreach($scan as $folder) {
+            if( strlen($folder) > 3 
+                && $folder != '.DS_Store' 
+                && strpos($folder, ".zip") == 0 ) {
+
+                // echo $folder;
+                // echo '<br>';
+                
+                $scan_img = scandir( public_path('/over/templates/'.$folder.'/thumbnails/') );
+                foreach($scan_img as $img_path) {
+                    if( strlen($img_path) > 3 
+                        && $img_path != '.DS_Store' 
+                        && strpos($img_path, ".jpg") > 0 ) {
+                        
+                        echo '<br>';
+                        print_r('<img width="300" src="'.asset(  '/over/templates/'.$folder.'/thumbnails/'.$img_path ).'">');
+                        
+                        // $source = public_path('/over/templates/'.$folder.'/'.$img_path);
+                        // $destination = public_path('/over/templates/'.$folder.'/thumbnails/'.$img_path);
+                        // if ( file_exists( $source ) == true ) {
+                        //     @mkdir(public_path('/over/templates/'.$folder.'/thumbnails/'), 0777, true);
+                        //     if ( file_exists( $source ) == true ) {
+                        //         copy($source, $destination);
+                        //         unlink($source);
+                        //     }
+                        // }
+
+                    }
+                }
+                // $source = public_path('/over/templates/'.$folder.".zip");
+                // $destination = public_path('/over/templates/'.$folder.'/assets/'.$folder.".zip");
+
+                // if ( file_exists( $source ) == true ) {
+                //     echo '<br>';
+                //     echo $source;
+                //     echo '<br>';
+                //     echo $destination;
+                //     echo '<br>';
+                    
+                //     @mkdir(public_path('/over/templates/'.$folder.'/assets/'), 0777, true);
+                    
+                //     // self::recurseCopy($source, $destination);
+                //     if ( file_exists( $source ) == true ) {
+                //         copy($source, $destination);
+                //         unlink($source);
+                //         // exit;
+                //     }
+                // }
+            }
+        }
+        exit;
+        */
+
+        $templates = DB::table('templates')
+            ->join('thumbnails', 'templates.template_id', '=', 'thumbnails.template_id')
+            ->select('templates.template_id','thumbnails.original_template_id','templates.source', 'thumbnails.title', 'thumbnails.filename')
+            ->where('thumbnails.language_code','=', 'en' )
+            // ->where('templates.source','=','crello')
+            // ->where('templates.source','=','placeit')
+    		// ->where('templates.source','=','green')
+            ->where('templates.source','=','corjl')
+            // ->where('templates.source','=','templett')
+            ->offset(2600)
+            ->limit(400)
+            ->get();
+        
+        foreach ($templates as $template) {
+            
+            print_r( $template->template_id );
+            print_r( '<br>' );
+            if( is_dir( public_path('/design/template/'.$template->template_id.'/assets/') ) ){
+                $assets_scan = scandir( public_path('/design/template/'.$template->template_id.'/assets/') );
+                foreach($assets_scan as $asset_file) {
+                    if( strlen($asset_file) > 3 && $asset_file != '.DS_Store') {    
+                        print_r('<img height="300" width="300" src="'.asset(  '/design/template/'.$template->template_id.'/assets/'.$asset_file ).'">');
+                        echo '<br>';
+                    }
+                }
+            }
+    
+        }
+        exit;
+
+
+        $vendors = [
+            // 'desygner',
+            // 'foco',
+            // 'artory',
+            // 'adobe',
+            'magisto'
+        ];
+        
+        foreach($vendors as $vendor) {
+            if( is_dir( public_path($vendor.'/design/template/') ) ){
+    
+                $scan = scandir( public_path($vendor.'/design/template/') );
+                foreach($scan as $folder) {
+                    // echo public_path('canva/instagram-story/design/template'.$folder).'<br>';
+                    // exit;
+                    if( strlen($folder) > 3 && $folder != '.DS_Store') {
+                        
+                        if( $vendor == 'desygner' ){
+                            $thumbnails_folder = '/thumbnails/en/';
+                        } elseif( $vendor == 'foco' ){
+                            $thumbnails_folder = '/assets/';
+                        } else {
+                            $thumbnails_folder = '/thumbnails/';
+                        }
+
+                        $subscan = scandir( public_path($vendor.'/design/template/'.$folder.$thumbnails_folder) );
+                        foreach($subscan as $subfolder) {        
+                            if( strlen($subfolder) > 3 && $subfolder != '.DS_Store') {    
+                                print_r('<img src="'.asset( $vendor.'/design/template/'.$folder.$thumbnails_folder.$subfolder ).'">');
+                                echo '<br>';
+                            }
+                        }
+                        // echo '<br>';
+                        // print_r( asset( 'design/template/'.$template->template_id.'/assets/'.$folder ) );
+                        // && is_dir( public_path('canva/instagram-story/design/template/'.$folder) ) 
+                    }
+                }
+            }
+        }
+    }
+
+    function getTemplateObjects(){
+        $json_template = json_decode( Redis::get( 'template:en:q5LV6RnbzdYcMht:jsondata' ) );
+    
+        if( isset( $json_template[0] ) ){
+            unset( $json_template[0] );
+        }
+        
+        if( sizeof($json_template) > 0){
+            foreach( $json_template as $page ) {
+                $txt_objects = [];
+                foreach ($page->objects as $object) {
+                    if( $object->type == 'image' ){
+                        $tmp_obj = [];
+                        $tmp_obj['y'] = $object->top;
+                        $tmp_obj['x'] = $object->left;
+                        $tmp_obj['src'] = $object->src;
+
+                        $path = public_path('design/template/h8dImHgQnfoFxvL/assets/QgKYN8L8UhmQRh9RGFbGZc30AYat6Ot01RvI3cx2.png');
+                        $type = pathinfo($path, PATHINFO_EXTENSION);
+                        $data = file_get_contents($path);
+                        $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
+
+                        $tmp_obj['encoded_img'] = $base64;
+                        $img_objects[] = $tmp_obj;
+                        // echo "<pre>";
+                        // print_r( $object );
+                        // print_r( $tmp_obj );
+                        // exit;
+
+                    } elseif( $object->type == 'textbox' ){
+                        $tmp_obj = [];
+                        $tmp_obj['color'] = $object->fill;
+                        $tmp_obj['text'] = $object->text;
+                        $tmp_obj['fontSize'] = $object->fontSize;
+                        $tmp_obj['y'] = $object->top;
+                        $tmp_obj['x'] = $object->left;
+                        $txt_objects[] = $tmp_obj;
+                    }
+                }
+
+                $tmp_page['text'] = $txt_objects;
+                $tmp_page['images'] = $img_objects;
+                
+                $page_obj['pages'][] = $tmp_page;
+            }
+
+            return response()->json( $page_obj );
+        }
+        
+        return response()->json([]);
+    }
+
+    function etsyGallery(Request $request){
+        $itemsPerPage = 200;
+        $current_page = isset($request->page) ? $request->page : 1;
+        $imgs = [];
+
+        $destination_lang = 'en';
+        $template_metadata = DB::table('templates')
+            ->join('thumbnails', 'templates.template_id', '=', 'thumbnails.template_id')
+            ->select('templates.template_id','thumbnails.original_template_id','templates.source', 'thumbnails.title', 'thumbnails.filename')
+            ->where('thumbnails.language_code','=', 'en' )
+    		->where('templates.source','=','green')
+    		// ->where('templates.source','=','crello')
+            // ->where('templates.source','=','corjl')
+            // ->where('templates.source','=','placeit')
+            // ->ORwhere('templates.source','=','templett')
+            // ->whereRaw('thumbnails.title LIKE \'%save%\'')
+            ->orderBy('thumbnails.id', 'desc')
+            ->offset( ($current_page-1) *$itemsPerPage)
+            ->limit($itemsPerPage)
+            ->get();
+        
+        $total_templates = DB::table('templates')
+            ->join('thumbnails', 'templates.template_id', '=', 'thumbnails.template_id')
+            ->select('templates.template_id','thumbnails.original_template_id','templates.source', 'thumbnails.title', 'thumbnails.filename')
+            ->where('thumbnails.language_code','=', 'en' )
+    		->where('templates.source','=','green')
+    		->count();
+        
+        $first_page = $current_page;
+        $last_page = ( $current_page+10 < round($total_templates/$itemsPerPage) ) ? $current_page+10 : round($total_templates/$itemsPerPage);
+
+        for ($i=$first_page; $i <= $last_page; $i++) { 
+            $pages[] = $i;
+        }
+
+        foreach ($template_metadata as $template) {
+            $template_key = $template->template_id;
+            
+            $template_info['key'] = $template_key;
+            
+            if( $template->source == 'crello' ){
+                $template_info['thumbnail']  = asset( 'design/template/'. $template_key.'/thumbnails/'.$template->filename );
+            } else if( $template->source == 'templett' ){
+                $template_info['thumbnail']  = asset( 'design/template/'.$template->original_template_id.'/thumbnails/en/'.$template->filename );
+            } else if( $template->source == 'placeit' OR $template->source == 'corjl' OR $template->source == 'green' ){
+                $template_info['thumbnail']  = asset( 'design/template/'.$template->template_id.'/thumbnails/en/'.$template->filename );
+            } else {
+                $template_info['thumbnail']  = asset( 'design/template/'. $template_key.'/thumbnails/'.$template->filename );
+            }
+            
+            $tmp_img = new \stdClass();
+            $tmp_img->src = $template_info['thumbnail'];
+            $tmp_img->href = '/admin/etsy/gallery/template-assets/'.$template->source.'/'.$template->template_id;
+            $tmp_img->source = $template->source;
+            $tmp_img->title = $template->title;
+            $tmp_img->path = 'open /Volumes/BACKUP/wayak/public/design/template/'.$template->template_id.'/assets';
+            $tmp_img->original_template_id = $template->original_template_id;
+            $tmp_img->template_id = $template->template_id;
+
+            $templates[] = $tmp_img;
+        }
+
+        return view('admin.template_gallery', [
+            'total_templates' => $total_templates,
+            'current_page' => $current_page,
+            'last_page' => floor($total_templates/$itemsPerPage),
+            'pages' => $pages,
+            'templates' => $templates
+        ]);
+
+        // echo "<pre>";
+        // print_r($templates);
+        // exit;
+    }
+
+    function getTemplateAssets($app, $template_id){
+        
+        $template = DB::table('templates')
+            ->join('thumbnails', 'templates.template_id', '=', 'thumbnails.template_id')
+            ->select('templates.template_id','thumbnails.original_template_id','templates.source', 'thumbnails.title', 'thumbnails.filename')
+            ->where('thumbnails.language_code','=', 'en' )
+            ->where('templates.template_id','=', $template_id)
+            ->first();
+
+        if( $app == 'crello' ){
+            $template_info['thumbnail']  = asset( 'design/template/'.$template->template_id.'/thumbnails/'.$template->filename );
+        } else if( $app == 'templett' ){
+            $template_info['thumbnail']  = asset( 'design/template/'.$template->original_template_id.'/thumbnails/en/'.$template->filename );
+        } else if( $app == 'placeit' OR $app == 'corjl' OR $app == 'green' ){
+            $template_info['thumbnail']  = asset( 'design/template/'.$template->template_id.'/thumbnails/en/'.$template->filename );
+        } else {
+            $template_info['thumbnail']  = asset( 'design/template/'.$template->template_id.'/thumbnails/'.$template->filename );
+        }
+
+        $json_template = json_decode( Redis::get( 'template:en:'.$template->template_id.':jsondata' ) );
+    
+        if( isset( $json_template[0] ) ){
+            unset( $json_template[0] );
+        }
+        
+        if( sizeof($json_template) > 0){
+            foreach( $json_template as $page ) {
+                $txt_objects = [];
+                foreach ($page->objects as $object) {
+                    if( $object->type == 'image' ){
+                        $tmp_obj = [];
+                        $tmp_obj['y'] = $object->top;
+                        $tmp_obj['x'] = $object->left;
+                        $tmp_obj['src'] = str_replace('https://wayak.app/','http://localhost:8001/',$object->src);
+
+                        // $path = public_path('design/template/h8dImHgQnfoFxvL/assets/QgKYN8L8UhmQRh9RGFbGZc30AYat6Ot01RvI3cx2.png');
+                        // $type = pathinfo($path, PATHINFO_EXTENSION);
+                        // $data = file_get_contents($path);
+                        // $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
+                        // $tmp_obj['encoded_img'] = $base64;
+                        
+                        $img_objects[] = $tmp_obj;
+
+                    } elseif( $object->type == 'textbox' ){
+                        $tmp_obj = [];
+                        $tmp_obj['color'] = '#'.$object->fill;
+                        $tmp_obj['text'] = $object->text;
+                        $tmp_obj['fontSize'] = $object->fontSize;
+                        $tmp_obj['y'] = $object->top;
+                        $tmp_obj['x'] = $object->left;
+                        $txt_objects[] = $tmp_obj;
+                    }
+                }
+
+                $tmp_page['text'] = isset($txt_objects) ? $txt_objects : null;
+                $tmp_page['images'] = isset($img_objects) ? $img_objects : null;
+                
+                $template_objects['pages'][] = $tmp_page;
+            }
+        }
+        
+        // echo '<pre>';
+        // print_r( $template_objects );
+        // exit;
+
+        // if( is_dir( public_path('design/template/'.$template->template_id.'/assets') ) ){
+        //     $scan = scandir( public_path('design/template/'.$template->template_id.'/assets') );
+        //     $template_index = 0;
+        //     foreach($scan as $folder) {
+        //         if( strlen($folder) > 3 ) {
+        //             echo '<br>';
+        //             echo $folder;
+        //             echo '<br>';
+        //             echo public_path('design/template/'.$template->template_id.'/assets'.$folder).'<br>';
+        //             echo "<br>";
+        //             print_r( asset( 'design/template/'.$template->template_id.'/assets/'.$folder ) );
+        //             echo '<br>';
+        //             echo '<img width="500" src="'.asset( 'design/template/'.$template->template_id.'/assets/'.$folder ).'">';
+        //             // && is_dir( public_path('canva/instagram-story/design/template/'.$folder) ) 
+        //         }
+        //     }
+        // }
+        // exit;
+
+        return view('admin.template_assets', [
+            'template_info' => $template_info,
+            'path' => 'open /Volumes/BACKUP/wayak/public/design/template/'.$template->template_id.'/assets',
+            'template_objects' => $template_objects
+        ]);
+    }
+
     function bulkTranslate($origin_lang, $destination_lang, Request $request){
 
         // Save translated Google data on database
@@ -1737,7 +2341,7 @@ class AdminController extends Controller
         // Get format ready templates
         $ready_for_translation = DB::table('templates')
                     ->join('thumbnails', 'templates.template_id', '=', 'thumbnails.template_id')
-                    ->select('templates.template_id','format_ready','translation_ready','thumbnail_ready', 'filename')
+                    ->select('templates.template_id','templates.format_ready','templates.translation_ready','templates.thumbnail_ready', 'filename')
                     // ->where('template_id','=', $template_key )
                     ->where('thumbnails.language_code','=', 'en' )
                     // ->where('thumbnails.dimentions','=', '5 x 7 in' )
@@ -1750,27 +2354,41 @@ class AdminController extends Controller
         // echo "<pre>";
         // print_r( $ready_for_translation );
         // exit;
-                    
+
         $template_text = '';
         
         // $templates_on_page = 0;
-
         foreach ($ready_for_translation as $template) {
+
+            // echo "<pre>";
+            // print_r( $template );
+            // exit;
+            
             $template_key = $template->template_id;
             $source_template_key = 'template:'.$origin_lang.':'.$template_key.':jsondata';
+
+            // echo $template_key.'<br>';
+            // echo $source_template_key.'<br><br>';
             
             $source_template_exists = Redis::exists( $source_template_key );
             $template_format_ready = $template->format_ready;
             $template_translation_ready = $template->translation_ready;
             
-            
             if( $source_template_exists
                 && $template_format_ready 
                 && $template_translation_ready == false 
                 ){
+                
+                // print_r( $source_template_key );
+                // exit;
                 $template_text .= self::getTemplateHTMLText($source_template_key);
+                // print_r($template_text);
+                // exit;
             }
         }
+
+        // print_r($template_text);
+        // exit;
 
         return view('admin.bulk_translate', [
             'template_key' => $template_key,
@@ -1785,8 +2403,9 @@ class AdminController extends Controller
         $template_obj = json_decode( Redis::get($template_key) );
 
         // echo "<pre>";
+        // print_r( $template_key );
         // print_r( $template_obj );
-        // exit;GET 
+        // exit;
 
         if(isset($template_obj[1]->objects) == false){
             echo $template_key;
@@ -1857,7 +2476,7 @@ class AdminController extends Controller
         $limit = 10;
         $thumb_missing_product_preview = DB::table('templates')
             ->join('thumbnails', 'templates.template_id', '=', 'thumbnails.template_id')
-            ->select('templates.template_id','format_ready','translation_ready','thumbnail_ready', 'filename')
+            ->select('templates.template_id','templates.format_ready','templates.translation_ready','templates.thumbnail_ready', 'filename')
             // ->where('template_id','=', $template_key )
             ->where('thumbnails.language_code','=', $destination_lang )
             // ->where('thumbnails.dimentions','=', '5 x 7 in' )
@@ -2523,12 +3142,12 @@ class AdminController extends Controller
             ->join('thumbnails', 'thumbnails.template_id', '=', 'templates.template_id')
             ->where('thumbnails.language_code','=',$language_code)
             ->where('templates.status','=',5)
-            ->whereNull('templates.name')
+            // ->whereNull('templates.name')
             ->whereNotNull('templates.fk_etsy_template_id')
             ->select(
                 'templates.id',
-                'templates.name',
-                'templates.slug',
+                // 'templates.name',
+                // 'templates.slug',
                 'templates.template_id',
                 'templates.width',
                 'templates.height',

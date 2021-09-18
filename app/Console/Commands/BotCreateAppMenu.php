@@ -40,13 +40,13 @@ class BotCreateAppMenu extends Command
      */
     public function handle()
     {
-        $categories = Redis::keys('wayak:categories:*');
+        $categories = Redis::keys('wayak:en:categories:*');
         $country = 'us';
         
         $menu = [];
         foreach($categories as $category) {
             $cat_params = [];
-            $category_slug = str_replace( 'wayak:categories:',null, $category);
+            $category_slug = str_replace( 'wayak:en:categories:',null, $category);
 
             if( Template::whereNotNull('slug')->whereIn('categories', ['/'.$category_slug])->count() > 0 ){
                 

@@ -29,7 +29,7 @@ class GreenController extends Controller
         // exit;
 
         echo "<pre>";
-        $products = Redis::keys('*laravel_database_green:product:*');
+        $products = Redis::keys('laravel_database_green:product:*');
         // print_r($products);
         
         foreach ($products as $product_key_name) {
@@ -75,12 +75,14 @@ class GreenController extends Controller
                     $local_img_path = str_replace('\\','/' ,$local_img_path);
                     
                     
-                    // echo "<pre>";
-                    // echo "\n";
-                    // print_r($local_img_path);
-                    // exit;
-
-                    if( file_exists( $local_img_path )  == false ){
+                    
+                    if( file_exists($local_img_path) == false && filesize($local_img_path) == 0) {
+                        // echo "<pre>";
+                        echo "<br>";
+                        print_r($img_url);
+                        echo "\n";
+                        print_r($local_img_path);
+                        // exit;
 
                         self::downloadImage( $local_img_path, $img_url );
                     }
@@ -671,6 +673,12 @@ class GreenController extends Controller
     }
 
     function getAllCategories(){
+        // $cats = json_decode(Redis::get('laravel_database_green:categories'));
+        
+        // echo "<pre>";
+        // print_r($cats->CategoryTree);
+        // exit;
+
         $invitation_categories = Redis::sMembers('green:invitation_cats');
 
         return view('green.cats',[ 
@@ -698,6 +706,10 @@ class GreenController extends Controller
         $category_id = $request->category_id;
         $total_pages = $this->getTotalCategoryProductsPages($category_id);
         
+        // echo "<pre>";
+        // print_r( $total_pages );
+        // exit;
+        
         for ($page=1; $page < $total_pages; $page++) { 
             $product_result = $this->getREDISCategoryProducts($category_id, $page);
             $product_result_size = sizeof($product_result);
@@ -714,9 +726,9 @@ class GreenController extends Controller
                     $product_result[$i]->PreviewImage = asset('/design/template/'.$product_result[$i]->Id.'/thumbnails/'.$thumbnail_info->filename);
                 }
                 
-                if( Redis::exists('product:format_ready:'.$product_result[$i]->Id) ){
-                    unset($product_result[$i]);
-                }
+                // if( Redis::exists('product:format_ready:'.$product_result[$i]->Id) ){
+                //     unset($product_result[$i]);
+                // }
             }
 
             $products = array_merge($products, $product_result);

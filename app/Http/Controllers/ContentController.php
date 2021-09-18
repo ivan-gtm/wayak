@@ -39,6 +39,7 @@ class ContentController extends Controller
         $menu = json_decode(Redis::get('wayak:'.$country.':menu'));
         
         return view('content.home',[
+            'search_term' => '',
             'language_code' => $locale,
             'country' => $country,
             'menu' => $menu,
@@ -56,15 +57,13 @@ class ContentController extends Controller
         } else {
             $locale = 'en';
         }
-        
+
         if( !in_array($locale, ['en', 'es']) ){
             abort(400);
         }
-    
+
         App::setLocale($locale);
 
-        // $country = 'us';
-        
         if( Redis::exists('wayak:'.$country.':home:carousels') ){
             $carousels = json_decode(Redis::get('wayak:'.$country.':home:carousels'));
             $menu = json_decode(Redis::get('wayak:'.$country.':menu'));
@@ -120,7 +119,7 @@ class ContentController extends Controller
             $slug .=  '/'.$cat_lvl_3_slug;
         }
 
-        $category_redis_key = 'wayak:categories:'. substr($slug, 1,strlen($slug));
+        $category_redis_key = 'wayak:en:categories:'. substr($slug, 1,strlen($slug));
         if(Redis::exists( $category_redis_key ) == false){
             echo "CATEGORY DOES NOT EXISTS.";
             exit;
@@ -286,6 +285,57 @@ class ContentController extends Controller
                 'updatedAt'
             ]);
         
+        // echo "<pre>";
+        // print_r($template);
+        // exit;
+
+        $total = Template::where('mainCategory','=', $template->mainCategory )->count();
+        $per_page = 20;
+        $tota_pages = floor( $total / $per_page );
+        $page = rand( 1, $tota_pages );
+        $skip = $page * $per_page;
+        
+        // // echo $tota_pages.'<br>';
+        // // echo $skip.'<br>';
+        // // exit;
+
+        $related_content = Template::select([
+                'title',
+                'preview_image',
+                'format',
+                'categories',
+                'mainCategory',
+                'previewImageUrls',
+                'width',
+                'height',
+                'forSubscribers',
+                'measureUnits',
+                'createdAt',
+                'updatedAt'
+            ])
+            ->where('mainCategory','=', $template->mainCategory )
+            // ->orderBy('rand')
+            ->skip($skip)
+            ->take($per_page)
+            ->get();
+        
+        // $related_templates[] = [];
+        foreach ($related_content as $related_template) {
+            
+            if( App::environment() == 'locals' ){
+                $related_template->preview_image = asset( 'design/template/'.$related_template->_id.'/thumbnails/'.$language_code.'/'.$related_template->previewImageUrls["product_preview"] );
+            } else {
+                $related_template->preview_image = Storage::disk('s3')->url( 'design/template/'.$related_template->_id.'/thumbnails/'.$language_code.'/'.$related_template->previewImageUrls["product_preview"] );
+            }
+
+            $related_templates[] = $related_template;
+        }
+        
+        // echo "<pre>";
+        // // // print_r($related_content);
+        // print_r($related_templates);
+        // exit;
+        
         if( isset($template->_id) == false ){
             abort(404);
         }
@@ -298,10 +348,8 @@ class ContentController extends Controller
 
         $category_name = $template->mainCategory;
         $category_name = substr( $template->mainCategory,1, strlen($category_name) );
-        $breadcrumbs_str = Redis::get('wayak:categories:'.$category_name);
+        $breadcrumbs_str = Redis::get('wayak:en:categories:'.$category_name);
         $breadcrumbs_obj = json_decode($breadcrumbs_str);
-
-        
 
         // echo "<pre>";
         // print_r( $category_name );
@@ -348,7 +396,8 @@ class ContentController extends Controller
             'breadcrumbs' => $this->bread_array,
             'breadcrumb' => $breadcrumbs_obj,
             'template' => $template,
-            'colors' => $colors
+            'colors' => $colors,
+            'related_templates' => $related_templates
         ]);
     }
     
@@ -443,10 +492,10 @@ class ContentController extends Controller
                     <priority>0.5</priority>
                 </url>';
 
-        $categories = Redis::keys('wayak:categories:*');
+        $categories = Redis::keys('wayak:en:categories:*');
         foreach($categories as $category) {
             $cat_params = [];
-            $category_slug = str_replace( 'wayak:categories:',null, $category);
+            $category_slug = str_replace( 'wayak:en:categories:',null, $category);
 
             // echo "<pre>";
             // print_r( $category_slug );
