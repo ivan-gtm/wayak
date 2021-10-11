@@ -7,13 +7,13 @@ use Illuminate\Support\Facades\Redis;
 use App\Models\Post;
 use Illuminate\Support\Facades\DB;
 
-ini_set("max_execution_time", 0);   // no time-outs!
-ini_set("request_terminate_timeout", 2000);   // no time-outs!
-ini_set('memory_limit', -1);
-ini_set('display_errors', 1);
+// ini_set("max_execution_time", 0);   // no time-outs!
+// ini_set("request_terminate_timeout", 2000);   // no time-outs!
+// ini_set('memory_limit', -1);
+// ini_set('display_errors', 1);
 
-// ignore_user_abort(true);            // Continue downloading even after user closes the browser.
-error_reporting(E_ALL);
+// // ignore_user_abort(true);            // Continue downloading even after user closes the browser.
+// error_reporting(E_ALL);
 
 
 class PlaceitController extends Controller
@@ -26,573 +26,13 @@ class PlaceitController extends Controller
     public function index(Request $request)
     {
 
-        self::createWayakTemplate();
+        // self::builtCategoriesJSON();
+        // self::associateOriginalTemplateID();
+        // self::createWayakTemplate();
         exit;
 
-        // echo "<pre>";
-        // $products = Redis::keys('placeit*');
-        // foreach ($products as $product_key_name) {
-        //     Redis::rename($product_key_name, $product_key_name.':metadata');
-        //     // print_r( $product_key_name );
-        // }
-        // exit;
-        // echo "<pre>";
-        // $placeit_categories = [];
-        // $placeit_categories['urls'] = [
-        //     [
-        //         'title' => "Instagram Post Templates",
-        //         'url' => "instagram-post-templates"
-        //     ],
-        //     [
-        //         'title' => "Instagram Story Maker",
-        //         'url' => "instagram-story-templates"
-        //     ],
-        //     [
-        //         'title' => "Instagram Story Video Maker",
-        //         'url' => "instagram-story-video-template"
-        //     ],
-        //     [
-        //         'title' => "Facebook Cover Maker",
-        //         'url' => "facebook-cover-photo-maker"
-        //     ],
-        //     [
-        //         'title' => "Facebook Post Maker",
-        //         'url' => "facebook-post-template"
-        //     ],
-        //     [
-        //         'title' => "Facebook Cover Video Maker",
-        //         'url' => "facebook-cover-video-maker"
-        //     ],
-        //     [
-        //         'title' => "YouTube Thumbnails",
-        //         'url' => "gaming-templates?f_devices=YouTube%20Thumbnail%20Maker"
-        //     ],
-        //     [
-        //         'title' => "YouTube Banners",
-        //         'url' => "gaming-templates?f_devices=YouTube%20Banner%20Maker"
-        //     ],
-        //     [
-        //         'title' => "YouTube End Cards",
-        //         'url' => "gaming-templates?f_devices=YouTube%20End%20Card"
-        //     ],
-        //     [
-        //         'title' => "YouTube Video Templates",
-        //         'url' => "youtube-video-templates"
-        //     ],
-        //     [
-        //         'title' => "YouTube Channel Art Templates",
-        //         'url' => "youtube-templates"
-        //     ],
-        //     [
-        //         'title' => "Free Mockups",
-        //         'url' => "free-templates"
-        //     ],
-        //     [
-        //         'title' => "Android Mockups",
-        //         'url' => "android-mockup-generator"
-        //     ],
-        //     [
-        //         'title' => "App Store Screenshots",
-        //         'url' => "app-store-screenshot-generator"
-        //     ],
-        //     [
-        //         'title' => "Book Mockups",
-        //         'url' => "book-mockup-generator"
-        //     ],
-        //     // [
-        //     //     'title' => "Free Image Cropper",
-        //     //     'url' => "image-cropper"
-        //     // ],
-        //     [
-        //         'title' => "Hat Mockups",
-        //         'url' => "hat-mockup-generator"
-        //     ],
-        //     [
-        //         'title' => "Hoodie Mockups",
-        //         'url' => "hoodie-mockup-templates"
-        //     ],
-        //     [
-        //         'title' => "iMac Mockups",
-        //         'url' => "imac-mockup-generator"
-        //     ],
-        //     [
-        //         'title' => "iPad Mockups",
-        //         'url' => "ipad-mockup-generator"
-        //     ],
-        //     [
-        //         'title' => "iPhone Mockups",
-        //         'url' => "iphone-mockup-generator"
-        //     ],
-        //     [
-        //         'title' => "Long Sleeve Shirts",
-        //         'url' => "long-sleeve-shirt-mockup"
-        //     ],
-        //     [
-        //         'title' => "MacBook Mockups",
-        //         'url' => "macbook-mockup-generator"
-        //     ],
-        //     [
-        //         'title' => "Mug Mockups",
-        //         'url' => "coffee-mug-mockup-generator"
-        //     ],
-        //     [
-        //         'title' => "Musician Mockups",
-        //         'url' => "musician-templates"
-        //     ],
-        //     [
-        //         'title' => "Onesie Mockups",
-        //         'url' => "baby-onesie-mockup"
-        //     ],
-        //     [
-        //         'title' => "Responsive Mockups",
-        //         'url' => "responsive-mockup-generator"
-        //     ],
-        //     [
-        //         'title' => "T-Shirt Mockups ",
-        //         'url' => "tshirt-mockup-generator"
-        //     ],
-        //     [
-        //         'title' => "Tank Top Mockups",
-        //         'url' => "tank-top-mockup-generator"
-        //     ],
-        //     [
-        //         'title' => "Tote Bag Mockups",
-        //         'url' => "tote-bag-mockup-generator"
-        //     ],
-        //     [
-        //         'title' => "Transparent Mockups",
-        //         'url' => "transparent-mockup-generator"
-        //     ],
-        //     [
-        //         'title' => "Free Design Templates",
-        //         'url' => "free-templates"
-        //     ],
-        //     [
-        //         'title' => "Album Cover Maker",
-        //         'url' => "album-cover-templates"
-        //     ],
-        //     [
-        //         'title' => "Banner Ad Maker",
-        //         'url' => "online-banner-maker"
-        //     ],
-        //     [
-        //         'title' => "Beauty Design Templates",
-        //         'url' => "beauty-templates"
-        //     ],
-        //     [
-        //         'title' => "Birthday Design Templates",
-        //         'url' => "birthday-templates"
-        //     ],
-        //     [
-        //         'title' => "Book Cover Maker",
-        //         'url' => "book-cover-designs"
-        //     ],
-        //     [
-        //         'title' => "Business Card Maker",
-        //         'url' => "online-business-card-maker"
-        //     ],
-        //     [
-        //         'title' => "Cannabis Design Templates",
-        //         'url' => "cannabis-templates"
-        //     ],
-        //     [
-        //         'title' => "Flyer Maker",
-        //         'url' => "flyer-templates"
-        //     ],
-        //     // [
-        //     //     'title' => "Free Image Resizer",
-        //     //     'url' => "image-cropper"
-        //     // ],
-        //     [
-        //         'title' => "Musician Designs",
-        //         'url' => "musician-templates"
-        //     ],
-        //     [
-        //         'title' => "Pinterest Templates",
-        //         'url' => "pinterest-pin-maker"
-        //     ],
-        //     [
-        //         'title' => "Podcast Cover Maker",
-        //         'url' => "podcast-cover-templates"
-        //     ],
-        //     [
-        //         'title' => "Poster Templates",
-        //         'url' => "poster-templates?sortby=newest"
-        //     ],
-        //     [
-        //         'title' => "T-Shirt Design Maker",
-        //         'url' => "t-shirt-design-templates"
-        //     ],
-        //     [
-        //         'title' => "T-Shirt Label Maker",
-        //         'url' => "t-shirt-label-design"
-        //     ],
-        //     [
-        //         'title' => "Twitch Templates",
-        //         'url' => "twitch-templates"
-        //     ],
-        //     [
-        //         'title' => "Twitch Banners",
-        //         'url' => "gaming-templates?f_devices=Twitch%20Banner%20Maker"
-        //     ],
-        //     [
-        //         'title' => "Twitch Overlays",
-        //         'url' => "gaming-templates?f_devices=Twitch%20Overlay%20Maker"
-        //     ],
-        //     [
-        //         'title' => "Twitch Panels",
-        //         'url' => "gaming-templates?f_devices=Twitch%20Panel%20Maker"
-        //     ],
-        //     [
-        //         'title' => "Twitter Header Maker",
-        //         'url' => "twitter-header-template"
-        //     ],
-        //     [
-        //         'title' => "Twitter Post Templates",
-        //         'url' => "twitter-post-template"
-        //     ],
-        //     [
-        //         'title' => "Wellness Design Templates",
-        //         'url' => "wellness-templates"
-        //     ],
-        //     [
-        //         'title' => "Free Logos",
-        //         'url' => "free-templates?f_devices=Logo%20Maker"
-        //     ],
-        //     [
-        //         'title' => "Animated Logos",
-        //         'url' => "animated-logos"
-        //     ],
-        //     // [
-        //     //     'title' => "Free Image Cropper",
-        //     //     'url' => "image-cropper"
-        //     // ],
-        //     [
-        //         'title' => "Music Logo Maker",
-        //         'url' => "hip-hop-templates?f_devices=Logo%20Maker"
-        //     ],
-        //     [
-        //         'title' => "Musican Logos",
-        //         'url' => "musician-templates?f_devices=Logo%20Maker"
-        //     ],
-        //     [
-        //         'title' => "Video Maker",
-        //         'url' => "video-maker"
-        //     ],
-        //     [
-        //         'title' => "Animated Logos",
-        //         'url' => "animated-logos"
-        //     ],
-        //     [
-        //         'title' => "Animated Logos",
-        //         'url' => "gaming-templates?f_devices=Animated%20Logo"
-        //     ],
-        //     [
-        //         'title' => "Video Cropper",
-        //         'url' => "video-cropper"
-        //     ],
-        //     [
-        //         'title' => "Intro Maker",
-        //         'url' => "video-intro-maker"
-        //     ],
-        //     [
-        //         'title' => "Promo Video Maker",
-        //         'url' => "promo-video-templates"
-        //     ],
-        //     [
-        //         'title' => "Slideshow Video Maker",
-        //         'url' => "video-slideshow-maker"
-        //     ],
-        //     [
-        //         'title' => "Stream Starting Soon Template",
-        //         'url' => "stream-starting-soon-templates"
-        //     ],
-        //     [
-        //         'title' => "Video to Gif Converter",
-        //         'url' => "video-to-gif-converter"
-        //     ],
-        //     [
-        //         'title' => "Gaming",
-        //         'url' => "gaming-templates"
-        //     ],
-        //     [
-        //         'title' => "Free Gaming Templates",
-        //         'url' => "gaming-templates?sortby=free"
-        //     ],
-        //     // [
-        //     //     'title' => "Free Image Cropper",
-        //     //     'url' => "image-cropper"
-        //     // ],
-        //     [
-        //         'title' => "Free Online Video Cropper",
-        //         'url' => "video-cropper"
-        //     ],
-        //     [
-        //         'title' => "Gaming Video Intros",
-        //         'url' => "gaming-templates?f_devices=Intro%20Maker"
-        //     ],
-        //     [
-        //         'title' => "Mockup Generator",
-        //         'url' => "c/mockups"
-        //     ],
-        //     [
-        //         'title' => "Online Design Maker",
-        //         'url' => "c/design-templates"
-        //     ],
-        //     [
-        //         'title' => "Video to Gif Converter",
-        //         'url' => "video-to-gif-converter"
-        //     ],
-        //     [
-        //         'title' => "Facebook Ad Templates",
-        //         'url' => "facebook-ad-mockups"
-        //     ],
-        //     [
-        //         'title' => "Sportswear Mockups",
-        //         'url' => "sportswear-mockups"
-        //     ],
-        //     [
-        //         'title' => "App Video Mockups",
-        //         'url' => "app-video-mockups"
-        //     ],
-        //     [
-        //         'title' => "Apparel Mockups",
-        //         'url' => "apparel-mockups"
-        //     ],
-        //     [
-        //         'title' => "T-Shirt Video Mockups",
-        //         'url' => "t-shirt-video-mockups"
-        //     ],
-        //     [
-        //         'title' => "Banner Mockups",
-        //         'url' => "banner-mockups"
-        //     ],
-        //     [
-        //         'title' => "Beanie Mockups",
-        //         'url' => "beanie-mockups"
-        //     ],
-        //     [
-        //         'title' => "Business Card Mockups",
-        //         'url' => "business-card-mockups"
-        //     ],
-        //     [
-        //         'title' => "Garment Only Mockups",
-        //         'url' => "garment-only-mockups"
-        //     ],
-        //     [
-        //         'title' => "Heather Mockups",
-        //         'url' => "heather-mockups"
-        //     ],
-        //     [
-        //         'title' => "Home Decor Mockups",
-        //         'url' => "home-decor-mockups"
-        //     ],
-        //     [
-        //         'title' => "Packaging Mockups",
-        //         'url' => "packaging-mockups"
-        //     ],
-        //     [
-        //         'title' => "Phone Case Mockups",
-        //         'url' => "iphone-case-mockups"
-        //     ],
-        //     [
-        //         'title' => "Phone Grip Mockups",
-        //         'url' => "phone-grip-mockups"
-        //     ],
-        //     [
-        //         'title' => "Polo Shirt Mockups",
-        //         'url' => "polo-shirt-mockups"
-        //     ],
-        //     [
-        //         'title' => "Stationery Mockups",
-        //         'url' => "stationery-mockups"
-        //     ],
-        //     [
-        //         'title' => "Sublimated Mockups",
-        //         'url' => "sublimated-mockups"
-        //     ],
-        //     [
-        //         'title' => "Sweatshirt Mockups",
-        //         'url' => "sweatshirt-mockups"
-        //     ],
-        //     [
-        //         'title' => "Travel Mug Mockups",
-        //         'url' => "travel-mug-mockups"
-        //     ],
-        //     [
-        //         'title' => "T-Shirt Video Mockups",
-        //         'url' => "t-shirt-video-mockups"
-        //     ],
-        //     [
-        //         'title' => "YouTube Profile Picture Maker",
-        //         'url' => "logo-maker?industry=all&amp;industryId=YouTube"
-        //     ],
-        //     [
-        //         'title' => "Logo Maker",
-        //         'url' => "logo-maker"
-        //     ],
-        //     [
-        //         'title' => "Abstract Logo Maker",
-        //         'url' => "logo-maker?industry=Abstract&amp;industryId=Abstract"
-        //     ],
-        //     [
-        //         'title' => "Architect Logo Maker",
-        //         'url' => "logo-maker?industry=Architect&amp;industryId=Architect"
-        //     ],
-        //     [
-        //         'title' => "Avatar Maker",
-        //         'url' => "logo-maker?industry=Avatar Maker&amp;industryId=Avatar"
-        //     ],
-        //     [
-        //         'title' => "Bakery Logo Maker",
-        //         'url' => "logo-maker?industry=Bakery&amp;industryId=Bakery"
-        //     ],
-        //     [
-        //         'title' => "Bar Logo Maker",
-        //         'url' => "logo-maker?industry=Bar&amp;industryId=Bar"
-        //     ],
-        //     [
-        //         'title' => "Beauty Logo Maker",
-        //         'url' => "logo-maker?industry=Beauty&amp;industryId=Beauty"
-        //     ],
-        //     [
-        //         'title' => "Catering Logo Maker",
-        //         'url' => "logo-maker?industry=Catering&amp;industryId=Catering"
-        //     ],
-        //     [
-        //         'title' => "Consulting Logo Maker",
-        //         'url' => "logo-maker?industry=Consulting&amp;industryId=Consulting"
-        //     ],
-        //     [
-        //         'title' => "Daycare Logo Maker",
-        //         'url' => "logo-maker?industry=Daycare&amp;industryId=Daycare"
-        //     ],
-        //     [
-        //         'title' => "Dental Logo Maker",
-        //         'url' => "logo-maker?industry=Dental&amp;industryId=Dental"
-        //     ],
-        //     [
-        //         'title' => "Designer Logo Maker",
-        //         'url' => "logo-maker?industry=Design&amp;industryId=Design"
-        //     ],
-        //     [
-        //         'title' => "Medical Logo Maker",
-        //         'url' => "logo-maker?industry=Medical&amp;industryId=Medical"
-        //     ],
-        //     [
-        //         'title' => "Financial Logo Maker",
-        //         'url' => "logo-maker?industry=Finance&amp;industryId=Finance"
-        //     ],
-        //     [
-        //         'title' => "Fitness Logo Maker",
-        //         'url' => "logo-maker?industry=Fitness&amp;industryId=Fitness"
-        //     ],
-        //     [
-        //         'title' => "Gaming Logo Maker",
-        //         'url' => "logo-maker?industry=Gaming&amp;industryId=Gaming"
-        //     ],
-        //     [
-        //         'title' => "Law Firm Logo Maker",
-        //         'url' => "logo-maker?industry=Law&amp;industryId=Law"
-        //     ],
-        //     [
-        //         'title' => "HVAC Logo Maker",
-        //         'url' => "logo-maker?industry=HV_AC&amp;industryId=HV_AC"
-        //     ],
-        //     [
-        //         'title' => "Automotive Logo Maker",
-        //         'url' => "logo-maker?industry=Automotive&amp;industryId=Automotive"
-        //     ],
-        //     [
-        //         'title' => "Painter Logo Maker",
-        //         'url' => "logo-maker?industry=Painter&amp;industryId=Painter"
-        //     ],
-        //     [
-        //         'title' => "Pet Store Logo Maker",
-        //         'url' => "logo-maker?industry=Pets&amp;industryId=Pets"
-        //     ],
-        //     [
-        //         'title' => "Sports Logo Maker",
-        //         'url' => "logo-maker?industry=Sports Logos&amp;industryId=Sports"
-        //     ],
-        //     [
-        //         'title' => "Education Logo Maker",
-        //         'url' => "logo-maker?industry=Education&amp;industryId=Education"
-        //     ],
-        //     [
-        //         'title' => "Travel Agency Logo Maker",
-        //         'url' => "logo-maker?industry=Travel&amp;industryId=Travel"
-        //     ],
-        //     [
-        //         'title' => "Wellness Logo Maker",
-        //         'url' => "logo-maker?industry=Wellness&amp;industryId=Wellness"
-        //     ],
-        //     [
-        //         'title' => "Publishing Logo Maker",
-        //         'url' => "logo-maker?industry=Writer&amp;industryId=Writer"
-        //     ],
-        //     [
-        //         'title' => "Gaming Logos",
-        //         'url' => "logo-maker?industry=Gaming&amp;industryId=Gaming"
-        //     ],
-        //     [
-        //         'title' => "Coffee Shop Logo Maker",
-        //         'url' => "logo-maker?industry=Coffee Shop&amp;industryId=Coffee Shop"
-        //     ],
-        //     [
-        //         'title' => "Electrician Logo Maker",
-        //         'url' => "logo-maker?industry=Electrician&amp;industryId=Electrician"
-        //     ],
-        //     [
-        //         'title' => "Landscaping Logo Maker",
-        //         'url' => "logo-maker?industry=Landscaping&amp;industryId=Landscaping"
-        //     ],
-        //     [
-        //         'title' => "Real Estate Logo Maker",
-        //         'url' => "logo-maker?industry=Real Estate&amp;industryId=Real Estate"
-        //     ],
-        //     [
-        //         'title' => "Restaurant Logo Maker",
-        //         'url' => "logo-maker?industry=Restaurant&amp;industryId=Restaurant"
-        //     ],
-        //     [
-        //         'title' => "Arts and Crafts Logo Maker",
-        //         'url' => "logo-maker?industry=Arts and Crafts&amp;industryId=Arts and Crafts"
-        //     ],
-        //     [
-        //         'title' => "Event Planner Logo Maker",
-        //         'url' => "logo-maker?industry=Event Planner&amp;industryId=Event Planner"
-        //     ],
-        //     [
-        //         'title' => "Cleaning Services Logo Maker",
-        //         'url' => "logo-maker?industry=Cleaning Services&amp;industryId=Cleaning Services"
-        //     ],
-        //     [
-        //         'title' => "T-Shirt Sellers",
-        //         'url' => "logo-maker?industry=Clothing Brand&amp;industryId=Clothing Brand"
-        //     ],
-        //     [
-        //         'title' => "Maintenance Company Logos",
-        //         'url' => "logo-maker?industry=Service Provider&amp;industryId=Services"
-        //     ],
-        //     [
-        //         'title' => "Moving Company Logo Maker",
-        //         'url' => "logo-maker?industry=Moving Company&amp;industryId=Moving Companies"
-        //     ],
-        //     [
-        //         'title' => "Farmers Market Logo Maker",
-        //         'url' => "logo-maker?industry=Organic Products&amp;industryId=Organic Products"
-        //     ],
-        //     [
-        //         'title' => "Tech Company Logo Maker",
-        //         'url' => "logo-maker?industry=Technology&amp;industryId=Technology"
-        //     ]
-        // ];
-
-        // echo "<pre>";
-        // print_r($placeit_categories);
-        // $templates = Redis::set('placeit:categories', json_encode($placeit_categories) );
-        // exit;
+        
+        
 
         echo "<pre>";
         $templates = Redis::keys('placeit:*:metadata');
@@ -623,6 +63,629 @@ class PlaceitController extends Controller
         }
     }
 
+    function builtCategoriesJSON(){
+        echo "<pre>";
+        $placeit_categories = [];
+        $placeit_categories['urls'] = [
+            [
+                'title' => "Instagram Post Templates",
+                'url' => "instagram-post-templates"
+            ],
+            [
+                'title' => "Instagram Story Maker",
+                'url' => "instagram-story-templates"
+            ],
+            [
+                'title' => "Instagram Story Video Maker",
+                'url' => "instagram-story-video-template"
+            ],
+            [
+                'title' => "Facebook Cover Maker",
+                'url' => "facebook-cover-photo-maker"
+            ],
+            [
+                'title' => "Facebook Post Maker",
+                'url' => "facebook-post-template"
+            ],
+            [
+                'title' => "Facebook Cover Video Maker",
+                'url' => "facebook-cover-video-maker"
+            ],
+            [
+                'title' => "YouTube Thumbnails",
+                'url' => "gaming-templates?f_devices=YouTube%20Thumbnail%20Maker"
+            ],
+            [
+                'title' => "YouTube Banners",
+                'url' => "gaming-templates?f_devices=YouTube%20Banner%20Maker"
+            ],
+            [
+                'title' => "YouTube End Cards",
+                'url' => "gaming-templates?f_devices=YouTube%20End%20Card"
+            ],
+            [
+                'title' => "YouTube Video Templates",
+                'url' => "youtube-video-templates"
+            ],
+            [
+                'title' => "YouTube Channel Art Templates",
+                'url' => "youtube-templates"
+            ],
+            [
+                'title' => "Free Mockups",
+                'url' => "free-templates"
+            ],
+            [
+                'title' => "Android Mockups",
+                'url' => "android-mockup-generator"
+            ],
+            [
+                'title' => "App Store Screenshots",
+                'url' => "app-store-screenshot-generator"
+            ],
+            [
+                'title' => "Book Mockups",
+                'url' => "book-mockup-generator"
+            ],
+            // [
+            //     'title' => "Free Image Cropper",
+            //     'url' => "image-cropper"
+            // ],
+            [
+                'title' => "Hat Mockups",
+                'url' => "hat-mockup-generator"
+            ],
+            [
+                'title' => "Hoodie Mockups",
+                'url' => "hoodie-mockup-templates"
+            ],
+            [
+                'title' => "iMac Mockups",
+                'url' => "imac-mockup-generator"
+            ],
+            [
+                'title' => "iPad Mockups",
+                'url' => "ipad-mockup-generator"
+            ],
+            [
+                'title' => "iPhone Mockups",
+                'url' => "iphone-mockup-generator"
+            ],
+            [
+                'title' => "Long Sleeve Shirts",
+                'url' => "long-sleeve-shirt-mockup"
+            ],
+            [
+                'title' => "MacBook Mockups",
+                'url' => "macbook-mockup-generator"
+            ],
+            [
+                'title' => "Mug Mockups",
+                'url' => "coffee-mug-mockup-generator"
+            ],
+            [
+                'title' => "Musician Mockups",
+                'url' => "musician-templates"
+            ],
+            [
+                'title' => "Onesie Mockups",
+                'url' => "baby-onesie-mockup"
+            ],
+            [
+                'title' => "Responsive Mockups",
+                'url' => "responsive-mockup-generator"
+            ],
+            [
+                'title' => "T-Shirt Mockups ",
+                'url' => "tshirt-mockup-generator"
+            ],
+            [
+                'title' => "Tank Top Mockups",
+                'url' => "tank-top-mockup-generator"
+            ],
+            [
+                'title' => "Tote Bag Mockups",
+                'url' => "tote-bag-mockup-generator"
+            ],
+            [
+                'title' => "Transparent Mockups",
+                'url' => "transparent-mockup-generator"
+            ],
+            [
+                'title' => "Free Design Templates",
+                'url' => "free-templates"
+            ],
+            [
+                'title' => "Album Cover Maker",
+                'url' => "album-cover-templates"
+            ],
+            [
+                'title' => "Banner Ad Maker",
+                'url' => "online-banner-maker"
+            ],
+            [
+                'title' => "Beauty Design Templates",
+                'url' => "beauty-templates"
+            ],
+            [
+                'title' => "Birthday Design Templates",
+                'url' => "birthday-templates"
+            ],
+            [
+                'title' => "Book Cover Maker",
+                'url' => "book-cover-designs"
+            ],
+            [
+                'title' => "Business Card Maker",
+                'url' => "online-business-card-maker"
+            ],
+            [
+                'title' => "Cannabis Design Templates",
+                'url' => "cannabis-templates"
+            ],
+            [
+                'title' => "Flyer Maker",
+                'url' => "flyer-templates"
+            ],
+            // [
+            //     'title' => "Free Image Resizer",
+            //     'url' => "image-cropper"
+            // ],
+            [
+                'title' => "Musician Designs",
+                'url' => "musician-templates"
+            ],
+            [
+                'title' => "Pinterest Templates",
+                'url' => "pinterest-pin-maker"
+            ],
+            [
+                'title' => "Podcast Cover Maker",
+                'url' => "podcast-cover-templates"
+            ],
+            [
+                'title' => "Poster Templates",
+                'url' => "poster-templates?sortby=newest"
+            ],
+            [
+                'title' => "T-Shirt Design Maker",
+                'url' => "t-shirt-design-templates"
+            ],
+            [
+                'title' => "T-Shirt Label Maker",
+                'url' => "t-shirt-label-design"
+            ],
+            [
+                'title' => "Twitch Templates",
+                'url' => "twitch-templates"
+            ],
+            [
+                'title' => "Twitch Banners",
+                'url' => "gaming-templates?f_devices=Twitch%20Banner%20Maker"
+            ],
+            [
+                'title' => "Twitch Overlays",
+                'url' => "gaming-templates?f_devices=Twitch%20Overlay%20Maker"
+            ],
+            [
+                'title' => "Twitch Panels",
+                'url' => "gaming-templates?f_devices=Twitch%20Panel%20Maker"
+            ],
+            [
+                'title' => "Twitter Header Maker",
+                'url' => "twitter-header-template"
+            ],
+            [
+                'title' => "Twitter Post Templates",
+                'url' => "twitter-post-template"
+            ],
+            [
+                'title' => "Wellness Design Templates",
+                'url' => "wellness-templates"
+            ],
+            [
+                'title' => "Free Logos",
+                'url' => "free-templates?f_devices=Logo%20Maker"
+            ],
+            [
+                'title' => "Animated Logos",
+                'url' => "animated-logos"
+            ],
+            // [
+            //     'title' => "Free Image Cropper",
+            //     'url' => "image-cropper"
+            // ],
+            [
+                'title' => "Music Logo Maker",
+                'url' => "hip-hop-templates?f_devices=Logo%20Maker"
+            ],
+            [
+                'title' => "Musican Logos",
+                'url' => "musician-templates?f_devices=Logo%20Maker"
+            ],
+            [
+                'title' => "Video Maker",
+                'url' => "video-maker"
+            ],
+            [
+                'title' => "Animated Logos",
+                'url' => "animated-logos"
+            ],
+            [
+                'title' => "Animated Logos",
+                'url' => "gaming-templates?f_devices=Animated%20Logo"
+            ],
+            [
+                'title' => "Video Cropper",
+                'url' => "video-cropper"
+            ],
+            [
+                'title' => "Intro Maker",
+                'url' => "video-intro-maker"
+            ],
+            [
+                'title' => "Promo Video Maker",
+                'url' => "promo-video-templates"
+            ],
+            [
+                'title' => "Slideshow Video Maker",
+                'url' => "video-slideshow-maker"
+            ],
+            [
+                'title' => "Stream Starting Soon Template",
+                'url' => "stream-starting-soon-templates"
+            ],
+            [
+                'title' => "Video to Gif Converter",
+                'url' => "video-to-gif-converter"
+            ],
+            [
+                'title' => "Gaming",
+                'url' => "gaming-templates"
+            ],
+            [
+                'title' => "Free Gaming Templates",
+                'url' => "gaming-templates?sortby=free"
+            ],
+            // [
+            //     'title' => "Free Image Cropper",
+            //     'url' => "image-cropper"
+            // ],
+            [
+                'title' => "Free Online Video Cropper",
+                'url' => "video-cropper"
+            ],
+            [
+                'title' => "Gaming Video Intros",
+                'url' => "gaming-templates?f_devices=Intro%20Maker"
+            ],
+            [
+                'title' => "Mockup Generator",
+                'url' => "c/mockups"
+            ],
+            [
+                'title' => "Online Design Maker",
+                'url' => "c/design-templates"
+            ],
+            [
+                'title' => "Video to Gif Converter",
+                'url' => "video-to-gif-converter"
+            ],
+            [
+                'title' => "Facebook Ad Templates",
+                'url' => "facebook-ad-mockups"
+            ],
+            [
+                'title' => "Sportswear Mockups",
+                'url' => "sportswear-mockups"
+            ],
+            [
+                'title' => "App Video Mockups",
+                'url' => "app-video-mockups"
+            ],
+            [
+                'title' => "Apparel Mockups",
+                'url' => "apparel-mockups"
+            ],
+            [
+                'title' => "T-Shirt Video Mockups",
+                'url' => "t-shirt-video-mockups"
+            ],
+            [
+                'title' => "Banner Mockups",
+                'url' => "banner-mockups"
+            ],
+            [
+                'title' => "Beanie Mockups",
+                'url' => "beanie-mockups"
+            ],
+            [
+                'title' => "Business Card Mockups",
+                'url' => "business-card-mockups"
+            ],
+            [
+                'title' => "Garment Only Mockups",
+                'url' => "garment-only-mockups"
+            ],
+            [
+                'title' => "Heather Mockups",
+                'url' => "heather-mockups"
+            ],
+            [
+                'title' => "Home Decor Mockups",
+                'url' => "home-decor-mockups"
+            ],
+            [
+                'title' => "Packaging Mockups",
+                'url' => "packaging-mockups"
+            ],
+            [
+                'title' => "Phone Case Mockups",
+                'url' => "iphone-case-mockups"
+            ],
+            [
+                'title' => "Phone Grip Mockups",
+                'url' => "phone-grip-mockups"
+            ],
+            [
+                'title' => "Polo Shirt Mockups",
+                'url' => "polo-shirt-mockups"
+            ],
+            [
+                'title' => "Stationery Mockups",
+                'url' => "stationery-mockups"
+            ],
+            [
+                'title' => "Sublimated Mockups",
+                'url' => "sublimated-mockups"
+            ],
+            [
+                'title' => "Sweatshirt Mockups",
+                'url' => "sweatshirt-mockups"
+            ],
+            [
+                'title' => "Travel Mug Mockups",
+                'url' => "travel-mug-mockups"
+            ],
+            [
+                'title' => "T-Shirt Video Mockups",
+                'url' => "t-shirt-video-mockups"
+            ],
+            [
+                'title' => "YouTube Profile Picture Maker",
+                'url' => "logo-maker?industry=all&amp;industryId=YouTube"
+            ],
+            [
+                'title' => "Logo Maker",
+                'url' => "logo-maker"
+            ],
+            [
+                'title' => "Abstract Logo Maker",
+                'url' => "logo-maker?industry=Abstract&amp;industryId=Abstract"
+            ],
+            [
+                'title' => "Architect Logo Maker",
+                'url' => "logo-maker?industry=Architect&amp;industryId=Architect"
+            ],
+            [
+                'title' => "Avatar Maker",
+                'url' => "logo-maker?industry=Avatar Maker&amp;industryId=Avatar"
+            ],
+            [
+                'title' => "Bakery Logo Maker",
+                'url' => "logo-maker?industry=Bakery&amp;industryId=Bakery"
+            ],
+            [
+                'title' => "Bar Logo Maker",
+                'url' => "logo-maker?industry=Bar&amp;industryId=Bar"
+            ],
+            [
+                'title' => "Beauty Logo Maker",
+                'url' => "logo-maker?industry=Beauty&amp;industryId=Beauty"
+            ],
+            [
+                'title' => "Catering Logo Maker",
+                'url' => "logo-maker?industry=Catering&amp;industryId=Catering"
+            ],
+            [
+                'title' => "Consulting Logo Maker",
+                'url' => "logo-maker?industry=Consulting&amp;industryId=Consulting"
+            ],
+            [
+                'title' => "Daycare Logo Maker",
+                'url' => "logo-maker?industry=Daycare&amp;industryId=Daycare"
+            ],
+            [
+                'title' => "Dental Logo Maker",
+                'url' => "logo-maker?industry=Dental&amp;industryId=Dental"
+            ],
+            [
+                'title' => "Designer Logo Maker",
+                'url' => "logo-maker?industry=Design&amp;industryId=Design"
+            ],
+            [
+                'title' => "Medical Logo Maker",
+                'url' => "logo-maker?industry=Medical&amp;industryId=Medical"
+            ],
+            [
+                'title' => "Financial Logo Maker",
+                'url' => "logo-maker?industry=Finance&amp;industryId=Finance"
+            ],
+            [
+                'title' => "Fitness Logo Maker",
+                'url' => "logo-maker?industry=Fitness&amp;industryId=Fitness"
+            ],
+            [
+                'title' => "Gaming Logo Maker",
+                'url' => "logo-maker?industry=Gaming&amp;industryId=Gaming"
+            ],
+            [
+                'title' => "Law Firm Logo Maker",
+                'url' => "logo-maker?industry=Law&amp;industryId=Law"
+            ],
+            [
+                'title' => "HVAC Logo Maker",
+                'url' => "logo-maker?industry=HV_AC&amp;industryId=HV_AC"
+            ],
+            [
+                'title' => "Automotive Logo Maker",
+                'url' => "logo-maker?industry=Automotive&amp;industryId=Automotive"
+            ],
+            [
+                'title' => "Painter Logo Maker",
+                'url' => "logo-maker?industry=Painter&amp;industryId=Painter"
+            ],
+            [
+                'title' => "Pet Store Logo Maker",
+                'url' => "logo-maker?industry=Pets&amp;industryId=Pets"
+            ],
+            [
+                'title' => "Sports Logo Maker",
+                'url' => "logo-maker?industry=Sports Logos&amp;industryId=Sports"
+            ],
+            [
+                'title' => "Education Logo Maker",
+                'url' => "logo-maker?industry=Education&amp;industryId=Education"
+            ],
+            [
+                'title' => "Travel Agency Logo Maker",
+                'url' => "logo-maker?industry=Travel&amp;industryId=Travel"
+            ],
+            [
+                'title' => "Wellness Logo Maker",
+                'url' => "logo-maker?industry=Wellness&amp;industryId=Wellness"
+            ],
+            [
+                'title' => "Publishing Logo Maker",
+                'url' => "logo-maker?industry=Writer&amp;industryId=Writer"
+            ],
+            [
+                'title' => "Gaming Logos",
+                'url' => "logo-maker?industry=Gaming&amp;industryId=Gaming"
+            ],
+            [
+                'title' => "Coffee Shop Logo Maker",
+                'url' => "logo-maker?industry=Coffee Shop&amp;industryId=Coffee Shop"
+            ],
+            [
+                'title' => "Electrician Logo Maker",
+                'url' => "logo-maker?industry=Electrician&amp;industryId=Electrician"
+            ],
+            [
+                'title' => "Landscaping Logo Maker",
+                'url' => "logo-maker?industry=Landscaping&amp;industryId=Landscaping"
+            ],
+            [
+                'title' => "Real Estate Logo Maker",
+                'url' => "logo-maker?industry=Real Estate&amp;industryId=Real Estate"
+            ],
+            [
+                'title' => "Restaurant Logo Maker",
+                'url' => "logo-maker?industry=Restaurant&amp;industryId=Restaurant"
+            ],
+            [
+                'title' => "Arts and Crafts Logo Maker",
+                'url' => "logo-maker?industry=Arts and Crafts&amp;industryId=Arts and Crafts"
+            ],
+            [
+                'title' => "Event Planner Logo Maker",
+                'url' => "logo-maker?industry=Event Planner&amp;industryId=Event Planner"
+            ],
+            [
+                'title' => "Cleaning Services Logo Maker",
+                'url' => "logo-maker?industry=Cleaning Services&amp;industryId=Cleaning Services"
+            ],
+            [
+                'title' => "T-Shirt Sellers",
+                'url' => "logo-maker?industry=Clothing Brand&amp;industryId=Clothing Brand"
+            ],
+            [
+                'title' => "Maintenance Company Logos",
+                'url' => "logo-maker?industry=Service Provider&amp;industryId=Services"
+            ],
+            [
+                'title' => "Moving Company Logo Maker",
+                'url' => "logo-maker?industry=Moving Company&amp;industryId=Moving Companies"
+            ],
+            [
+                'title' => "Farmers Market Logo Maker",
+                'url' => "logo-maker?industry=Organic Products&amp;industryId=Organic Products"
+            ],
+            [
+                'title' => "Tech Company Logo Maker",
+                'url' => "logo-maker?industry=Technology&amp;industryId=Technology"
+            ]
+        ];
+
+        echo "<pre>";
+        print_r($placeit_categories);
+        Redis::set('placeit:categories', json_encode($placeit_categories) );
+        // exit;
+    }
+    
+    function associateOriginalTemplateID(){
+        $placeit_templates = Redis::keys('placeit:template:*:metadata');
+        
+        foreach ($placeit_templates as $template_key) {
+            
+            $template_metadata = Redis::get($template_key);
+            $template_metadata = json_decode($template_metadata);
+
+            print_r( "<hr>" );
+            echo '<h1>ANALYSIS >>'.$template_key.'</h1>';
+            print_r( "<br>" );
+            echo '<img src="'.$template_metadata->thumb_img_url.'">';
+
+            if(Redis::exists( 'placeit:template:'.$template_metadata->template_id.':jsondata' )){
+                
+                print_r( "<br>TEMPLATE EXISTS" );
+                print_r( "<br>" );
+
+                $meta = self::extractTemplateMetadata( $template_metadata );
+                if( isset($meta['images']) ){
+                    foreach($meta['images'] as $image){
+                        $path_info = pathinfo( $image->path );
+                        // $path_info['filename'];
+                    
+                        $db_template = DB::table('images')
+                            ->select('template_id')
+                            ->where('original_path', 'like', '%'.$path_info['filename'].'%')
+                            ->first();
+                        
+                        if( isset($db_template->template_id) ){
+    
+                            DB::table('templates')
+                                ->where('template_id', $db_template->template_id )
+                                ->update([ 'original_template_id' => $template_metadata->template_id ]);
+                            
+                            DB::table('thumbnails')
+                                ->where('template_id', $db_template->template_id )
+                                ->update([ 'original_template_id' => $template_metadata->template_id ]);
+                            
+                            echo "<pre>";
+                            print_r( "<br>" );
+                            print_r( $template_metadata->template_id );
+                            print_r( "<br>" );
+                            print_r( $db_template->template_id );
+                            // exit;
+                            break;
+                        }
+                    }
+                }
+                // $meta = json_decode($meta);
+                
+                // echo "<pre>";
+                // print_r( $template_metadata );
+                // print_r( $template_metadata->template_id );
+                // // print_r( $meta['images'] );
+                // print_r( $meta );
+                // exit;
+
+            }
+
+        }
+    }
+
     function createWayakTemplate(){
 
         // Place it - envato
@@ -645,6 +708,7 @@ class PlaceitController extends Controller
             // $key_template = 'placeit:template:36573c84b9efc0f36a0d7544f8b0ab16:metadata';
             $original_metadata = json_decode(Redis::get($key_template));
             // print_r( $original_metadata->template_id );
+            // print_r( $original_metadata );
             // exit;
 
             $db_template = DB::table('thumbnails')
@@ -1024,10 +1088,15 @@ class PlaceitController extends Controller
         // print_r($template->graphic);
         // exit;
 
+        // if(isset($template->original) == false || isset($template->previewImage) == false ){
+        //     print_r( $template );
+        //     exit;
+        // }
+
         $template_content = [];
 
-        $template_content['width'] = $template->original->size->high->width;
-        $template_content['height'] = $template->original->size->high->height;
+        $template_content['width'] = isset($template->original) ? $template->original->size->high->width : null;
+        $template_content['height'] = isset($template->original) ? $template->original->size->high->height : null;
         $template_content['previewImage'] = $template->previewImage->value;
         $template_content['backgroundColor'] = isset($template->backgroundColor->color) ? $template->backgroundColor->color : null;
         $template_content['category'] = isset($template->category) ? $template->category : null;

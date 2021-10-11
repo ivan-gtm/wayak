@@ -44,7 +44,7 @@
         <div class="col-2">
           {{ ($loop->index) }} - 
           {{ ($loop->index%6) }}
-          <a href="{{ $template->href }}" class="btn btn-primary">
+          <a href="{{ $template->href }}" class="btn btn-primary" style="{{ isset($template->canva_url) ? 'background-color:red' : 'background-color:transparent' }}">
             <img class="img-fluid" src="{{ $template->src }}">
             {{ $template->title }}
           </a>

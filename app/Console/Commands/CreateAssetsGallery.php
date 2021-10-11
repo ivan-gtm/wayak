@@ -49,10 +49,10 @@ class CreateAssetsGallery extends Command
         // Check if font/template relationship already exist
         $templates = DB::table('templates')
                     ->select('id', 'template_id','source')
-                    ->where('source','=','templett')
-                    // ->where('template_id','=','7snSftUj1u')
-                    // ->offset(3000)
-                    // ->limit(1000)
+                    ->where('source','=','placeit')
+                    ->where('template_id','=','lDwkOPQsXimhd5U')
+                    // ->offset(18000)
+                    // ->limit(9000)
                     ->get();
 
         foreach ($templates as $template) {
@@ -60,23 +60,27 @@ class CreateAssetsGallery extends Command
             $local_path = public_path('design/template/'.$template->template_id.'/assets/');
             
             print_r("\n\nPARSING >>".$template->template_id."\n");
-
+            
+            // Templat assets folder exists
             if( file_exists( $local_path ) ) {
                 $scan = scandir( $local_path );
                 foreach($scan as $file_name) {
-                    
-                    if( strlen($file_name) > 3 
-                        && $file_name != '.DS_Store' 
-                        && (
-                            strpos($file_name, ".png") > 0 
-                            OR strpos($file_name, ".jpg") > 0 
-                            OR strpos($file_name, ".jpeg") > 0 
-                            OR strpos($file_name, ".svg") > 0 
-                        ) ) {
 
-                        print_r("\t\t\n     ".$file_name);
+                    $file_path_info = pathinfo($file_name);
 
-                        $path_info = pathinfo($file_name); // dirname, filename, extension
+                    if( isset($file_path_info['extension']) && 
+                        (
+                            $file_path_info['extension'] == 'png'
+                            || $file_path_info['extension'] == 'jpg'
+                            || $file_path_info['extension'] == 'jpeg'
+                            || $file_path_info['extension'] == 'svg'
+                        )
+                        ) {
+
+                        print_r("\t\t\n     ".'EXTENSION >>'.$file_path_info['extension']);
+                        print_r("\t\t\n     PARSING FILE >>".$file_name);
+
+                        // $path_info = pathinfo($file_name); // dirname, filename, extension
                         $db_image = DB::table('images')
                                         ->select('id')
                                         ->where('template_id','=',$template->template_id)
@@ -87,8 +91,8 @@ class CreateAssetsGallery extends Command
                         if( isset( $db_image->id ) == false ){
                             
                             $canva_asset_id = self::generateRandString();
-                            $new_img_path = public_path('/instagram/assets/'.$canva_asset_id.'.'.$path_info['extension']);
-                            $new_thumb_path = public_path('/instagram/thumbs/'.$canva_asset_id.'.'.$path_info['extension']);
+                            $new_img_path = public_path('/instagram/assets/'.$canva_asset_id.'.'.$file_path_info['extension']);
+                            $new_thumb_path = public_path('/instagram/thumbs/'.$canva_asset_id.'.'.$file_path_info['extension']);
                             $template_row = [
                                 'id' => null,
                                 'source' => $template->source,
@@ -97,11 +101,11 @@ class CreateAssetsGallery extends Command
                                 'original_path' => $local_path.$file_name,
                                 'img_path' => $new_img_path,
                                 'thumb_path' => $new_thumb_path,
-                                'file_type' => $path_info['extension']
+                                'file_type' => $file_path_info['extension']
                             ];
 
                             // self::copyImage( $local_path.$file_name , $new_img_path);
-                            if( $path_info['extension'] == 'png' OR $path_info['extension'] == 'jpg' ){
+                            if( $file_path_info['extension'] == 'png' OR $file_path_info['extension'] == 'jpg' ){
                                 try {
                                     self::createThumb( $local_path.$file_name, $new_thumb_path);
                                 } catch (\Throwable $th) {
@@ -109,7 +113,7 @@ class CreateAssetsGallery extends Command
                                     $template_row['status'] = -1;
                                     // $imagePath = $local_path.$file_name;
                                     // $saveToDir = public_path('/instagram/thumbs/');
-                                    // $imageName = $canva_asset_id.'.'.$path_info['extension'];
+                                    // $imageName = $canva_asset_id.'.'.$file_path_info['extension'];
                                     
                                     // list($width_orig, $height_orig) = getimagesize( $imagePath );
                                     // $max_w = 500;
@@ -135,9 +139,22 @@ class CreateAssetsGallery extends Command
                                     // }
                                     // exit;
                                 }
+                            } elseif( $file_path_info['extension'] == 'svg' ){
+                                $old_path = $template_row['original_path'];
+                                $new_img_path = $template_row['img_path'];
+                                $thumb_path = $template_row['thumb_path'];
+                                
+                                self::copyImage($old_path, $new_img_path);
+                                self::copyImage($old_path, $thumb_path);
                             }
 
                             DB::table('images')->insert($template_row);
+                        }
+                    } else {
+                        if( isset($file_path_info['extension']) ){
+                            // print_r( "\n");
+                            // print_r( 'FILE >>'.$file_name ."\n");
+                            // print_r( 'NOT SUPPORTED >>'.$file_path_info['extension'] ."\n\n");
                         }
                     }
                 }

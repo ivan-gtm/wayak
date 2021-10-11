@@ -29,6 +29,11 @@
                             <button class="templateTxt">
                                 {{ $text['text'] }}
                             </button>
+                            <br>
+                            <hr>
+                            <button class="templateTxt">
+                                {{ str_replace(' ', '', $text['text']) }}
+                            </button>
                         </div>
                     @endforeach
                 @endforeach
@@ -42,18 +47,20 @@
                     PAGE {{ $loop->index }}
                 </div>
                 <div class="row row-cols-1 row-cols-md-2 g-4">
-                    @foreach($page['images'] as $image)
-                        <div class="col">
-                            <div class="card">
-                                <a href="{{ $image['src'] }}" target="_blank">
-                                    <img src="{{ $image['src'] }}" class="card-img-top" alt="...">
-                                </a>
-                                <div class="d-grid gap-2">
-                                    <button href="{{ $image['src'] }}" class="templateIMG btn btn-primary" type="button"">COPY</button>
+                    @if( isset($page['images']) )
+                        @foreach($page['images'] as $image)
+                            <div class="col">
+                                <div class="card">
+                                    <a href="{{ $image['src'] }}" target="_blank">
+                                        <img src="{{ $image['src'] }}" class="card-img-top" alt="...">
+                                    </a>
+                                    <div class="d-grid gap-2">
+                                        <button href="{{ $image['src'] }}" class="templateIMG btn btn-primary" type="button"">COPY</button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    @endforeach
+                        @endforeach
+                    @endif
                 </div>
             @endforeach
         </div>

@@ -59,11 +59,6 @@ Route::get('/api/demo-url', [AdminController::class, 'getTemplateObjects']);
     // PLACEIT
         Route::get('/admin/placeit', [PlaceitController::class, 'index']);
 
-    // ETSY
-        Route::get('/admin/etsy/templates/description', [AdminController::class, 'etsyDescriptionTemplate'])->name('etsy.editMetadata');
-        Route::post('/admin/etsy/templates/description', [AdminController::class, 'editEtsyDescriptionTemplate']);
-
-
 // Route::get( '/scrapper/etsy', [ EtsyScrapperController::class, 'extractMetaData' ]);
 // Route::get('/scrap-from-templett', [TemplettScrapperController::class, 'scrapURL']);
 
@@ -78,14 +73,6 @@ Route::get('/api/demo-url', [AdminController::class, 'getTemplateObjects']);
     // Route::get('/translate/template', [TranslatorController::class, 'translateTemplate']);
 
 // ADMIN
-    // 
-        Route::get('/admin/etsy/gallery', [AdminController::class, 'etsyGallery'])->name('admin.assetsgallery');
-        Route::get('/admin/etsy/gallery/static', [AdminController::class, 'staticGallery'])->name('admin.staticGallery');
-        Route::get('/admin/etsy/gallery/static/set-keywords/{img_id}', [AdminController::class, 'setIMGKeywords'])->name('admin.setIMGKeywords');
-        Route::post('/admin/etsy/gallery/static/set-keywords/{img_id}', [AdminController::class, 'setIMGKeywords'])->name('admin.saveKeywords');
-        
-        Route::get('/admin/etsy/gallery/template-assets/{app}/{template_id}', [AdminController::class, 'getTemplateAssets'])->name('admin.getTemplateAssets');
-
     // 
         Route::get('/admin', [AdminController::class, 'adminHome'])->name('admin.home');
     // CATEGORIES
@@ -116,15 +103,41 @@ Route::get('/api/demo-url', [AdminController::class, 'getTemplateObjects']);
         Route::get('/admin/{country}/create/code/{code}', [AdminController::class, 'createCode'])->name('code.create');
         Route::post('/admin/{country}/generate-code', [AdminController::class, 'generateCode'])->name('code.generate');
 
-    // MERCADO LIBRE
-        Route::get('/admin/create-product/{template_key}', [AdminController::class, 'createProduct'])->name('admin.createTemplate');
+    // BOT
+        Route::get('/admin/bot/templett/bulk-translation/{from}/{to}', [TemplettScrapperController::class, 'bulkTranslation']);
+        Route::post('/admin/bot/templett/bulk-translation/{from}/{to}', [TemplettScrapperController::class, 'bulkTranslation'])->name('templett.bulkTranslate');
+        Route::get('/admin/bot/generate-thumbs', [AdminController::class, 'generateProductThumbnails'])->name('admin.generateProductThumbnails');
+        Route::get('/admin/bot/db-missing-thumbs', [AdminController::class, 'registerMissingTemplatesOnDB']);
+
+
+// MARKETPLACE SELLING PRODUCTS
+    // PRODUCT
+        Route::get('/admin/create-product/{template_key}', [AdminController::class, 'createProduct'])->name('admin.createProduct');
         Route::post('/admin/create-product/{template_key}', [AdminController::class, 'createDBProduct']);
 
+    // ETSY
+        Route::get('/admin/etsy/gallery', [AdminController::class, 'etsyGallery'])->name('admin.etsy.templatesGallery');
+        
+        Route::get('/admin/etsy/gallery/template-dashboard/{app}/{template_id}', [AdminController::class, 'getTemplateDashboard'])->name('admin.etsy.templateDashboard');
+        Route::post('/admin/etsy/gallery/template-dashboard/{app}/{template_id}', [AdminController::class, 'getTemplateDashboard']);
+
+        Route::get('/admin/etsy/gallery/template-assets/{app}/{template_id}', [AdminController::class, 'getTemplateAssets'])->name('admin.etsy.templateAssets');
+
+        Route::get('/admin/etsy/templates/description', [AdminController::class, 'etsyDescriptionTemplate'])->name('admin.etsy.editMetadata');
+        Route::post('/admin/etsy/templates/description', [AdminController::class, 'editEtsyDescriptionTemplate']);
+        
+    // Assets Gallery
+        Route::get('/admin/assets-gallery/static', [AdminController::class, 'staticGallery'])->name('admin.staticGallery');
+        Route::get('/admin/assets-gallery/static/set-keywords/{img_id}', [AdminController::class, 'setIMGKeywords'])->name('admin.setIMGKeywords');
+        Route::post('/admin/assets-gallery/static/set-keywords/{img_id}', [AdminController::class, 'setIMGKeywords'])->name('admin.saveKeywords');
+        
+    
+    // MERCADO LIBRE
         Route::get('/admin/ml/templates/description', [AdminController::class, 'mlDescriptionTemplate'])->name('ml.getDescriptionMetadata');
         Route::post('/admin/ml/templates/description', [AdminController::class, 'editMlDescriptionTemplate'])->name('ml.editDescriptionMetadata');
 
-        Route::get('/admin/mercadolibre/catalogo', [AdminController::class, 'mercadoLibreCatalog'])->name('admin.ml.mercadoLibreCatalog');
-        Route::get('/admin/mercadolibre/excel/productos/{excel_id}', [AdminController::class, 'mercadoLibreExcelProducts'])->name('admin.ml.mercadoLibreExcelProducts');
+        Route::get('/admin/ml/catalogo', [AdminController::class, 'mercadoLibreCatalog'])->name('admin.ml.mercadoLibreCatalog');
+        Route::get('/admin/ml/excel/productos/{excel_id}', [AdminController::class, 'mercadoLibreExcelProducts'])->name('admin.ml.mercadoLibreExcelProducts');
         Route::get('/admin/ml/catalogo-excel', [AdminController::class, 'mercadoLibreExcel'])->name('admin.ml.generateProductExcel');
         Route::get('/admin/facebook/catalogo', [AdminController::class, 'facebookCSV'])->name('admin.fb.facebookCSV');
         
@@ -141,11 +154,7 @@ Route::get('/api/demo-url', [AdminController::class, 'getTemplateObjects']);
         
         Route::get('/admin/ml/update-url', [AdminController::class, 'updateURL']);
 
-    // BOT
-        Route::get('/admin/bot/templett/bulk-translation/{from}/{to}', [TemplettScrapperController::class, 'bulkTranslation']);
-        Route::post('/admin/bot/templett/bulk-translation/{from}/{to}', [TemplettScrapperController::class, 'bulkTranslation'])->name('templett.bulkTranslate');
-        Route::get('/admin/bot/generate-thumbs', [AdminController::class, 'generateProductThumbnails'])->name('admin.generateProductThumbnails');
-        Route::get('/admin/bot/db-missing-thumbs', [AdminController::class, 'registerMissingTemplatesOnDB']);
+    
 
 // DESIGNER
     // Route::get('/open',  [EditorController::class,'open']);
