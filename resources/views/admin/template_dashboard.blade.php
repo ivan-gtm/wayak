@@ -21,6 +21,13 @@
             <div class="col-6">
                 <h1> {{ $title }} </h1>
                 <div class="alert alert-secondary" role="alert">
+                    <a href="{{ route('admin.createProduct',[
+                                'template_key' => $template_id
+                            ]) }}">
+                        Edit Product
+                    </a>
+                </div>
+                <div class="alert alert-secondary" role="alert">
                     @if( isset($canva_url) )
                         <a href="{{ $canva_url }}">
                             Canva Template URL
@@ -40,14 +47,7 @@
                     @endif
                 </div>
                 <div class="alert alert-secondary" role="alert">
-                    <a href="{{ route('admin.createProduct',[
-                                'template_key' => $template_id
-                            ]) }}">
-                        Edit Product
-                    </a>
-                </div>
-                <div class="alert alert-secondary" role="alert">
-                    <a href="#">
+                    <a target="_blank" href="{{ $pdf_url }}">
                         Generate PDF / GET PDF
                     </a>
                 </div>

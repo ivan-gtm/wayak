@@ -61,6 +61,34 @@
                                  <a href="#" class="side-nav-link active">
                                     <i class="uil-home-alt"></i>
                                     <!-- <span class="badge badge-success float-right">4</span> -->
+                                    <span> Orders </span>
+                                 </a>
+                              </li>
+                              <li class="side-nav-item mm-active">
+                                 <a href="#" class="side-nav-link active">
+                                    <i class="uil-home-alt"></i>
+                                    <!-- <span class="badge badge-success float-right">4</span> -->
+                                    <span> Users </span>
+                                 </a>
+                              </li>
+                              <li class="side-nav-item mm-active">
+                                 <a href="#" class="side-nav-link active">
+                                    <i class="uil-home-alt"></i>
+                                    <!-- <span class="badge badge-success float-right">4</span> -->
+                                    <span> Products </span>
+                                 </a>
+                              </li>
+                              
+                              <li class="side-nav-item mm-active">
+                                 <a href="#" class="side-nav-link active">
+                                    <i class="uil-home-alt"></i>
+                                    <!-- <span class="badge badge-success float-right">4</span> -->
+                                    <span> Categories </span>
+                                 </a>
+                              </li>
+                              <!-- <li class="side-nav-item mm-active">
+                                 <a href="#" class="side-nav-link active">
+                                    <i class="uil-home-alt"></i>
                                     <span> Carousels </span>
                                  </a>
                               </li>
@@ -124,7 +152,7 @@
                                     <i class="uil-home-alt"></i>
                                     <span> Templett</span>
                                  </a>
-                              </li>
+                              </li> -->
                            </ul>
                            <!-- End Sidebar -->
                            <div class="clearfix"></div>
@@ -161,8 +189,8 @@
                         <img src="https://coderthemes.com/hyper/saas/assets/images/users/avatar-1.jpg" alt="user-image" class="rounded-circle">
                      </span>
                      <span>
-                     <span class="account-user-name">Nombre Persona</span>
-                     <span class="account-position">Editor</span>
+                     <span class="account-user-name">Daniel Gutierrez</span>
+                     <span class="account-position">Admin</span>
                      </span>
                      </a>
                      <div class="dropdown-menu dropdown-menu-right dropdown-menu-animated topbar-dropdown-menu profile-dropdown">

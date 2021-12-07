@@ -15,6 +15,7 @@ use App\Http\Controllers\PlaceitController;
 use App\Http\Controllers\CorjlController;
 use App\Http\Controllers\FocoController;
 use App\Http\Controllers\PacktController;
+use App\Http\Controllers\OrderController;
 
 use App\Http\Controllers\EtsyScrapperController;
 use App\Http\Controllers\TemplettScrapperController;
@@ -73,8 +74,11 @@ Route::get('/api/demo-url', [AdminController::class, 'getTemplateObjects']);
     // Route::get('/translate/template', [TranslatorController::class, 'translateTemplate']);
 
 // ADMIN
-    // 
+    // HOME
         Route::get('/admin', [AdminController::class, 'adminHome'])->name('admin.home');
+        
+        Route::get('/admin/orders', [AdminController::class, 'orders'])->name('admin.orders');
+
     // CATEGORIES
         Route::get('/admin/categories', [CategoryController::class, 'manage'])->name('admin.category.manage');
         Route::get('/admin/categories/translate/{from}/{to}', [CategoryController::class, 'translateCategory'])->name('admin.category.translate');
@@ -90,6 +94,11 @@ Route::get('/api/demo-url', [AdminController::class, 'getTemplateObjects']);
         Route::get('/admin/template/translate/{template_key}/{from}/{to}', [AdminController::class, 'translateTemplateForm'])->name('admin.translate.templateForm');
         Route::post('/admin/template/translate/{template_key}/{from}/{to}', [AdminController::class, 'translateTemplate'])->name('admin.translate.template');
         Route::get('/admin/template/gallery/{country}', [AdminController::class, 'viewGallery'])->name('admin.template.gallery');
+    // BOT
+        Route::get('/admin/bot/templett/bulk-translation/{from}/{to}', [TemplettScrapperController::class, 'bulkTranslation']);
+        Route::post('/admin/bot/templett/bulk-translation/{from}/{to}', [TemplettScrapperController::class, 'bulkTranslation'])->name('templett.bulkTranslate');
+        Route::get('/admin/bot/generate-thumbs', [AdminController::class, 'generateProductThumbnails'])->name('admin.generateProductThumbnails');
+        Route::get('/admin/bot/db-missing-thumbs', [AdminController::class, 'registerMissingTemplatesOnDB']);
 
     // KEYWORDS
         Route::get('/admin/metadata/keywords/manage', [AdminController::class, 'manageKeywords']);
@@ -103,13 +112,6 @@ Route::get('/api/demo-url', [AdminController::class, 'getTemplateObjects']);
         Route::get('/admin/{country}/create/code/{code}', [AdminController::class, 'createCode'])->name('code.create');
         Route::post('/admin/{country}/generate-code', [AdminController::class, 'generateCode'])->name('code.generate');
 
-    // BOT
-        Route::get('/admin/bot/templett/bulk-translation/{from}/{to}', [TemplettScrapperController::class, 'bulkTranslation']);
-        Route::post('/admin/bot/templett/bulk-translation/{from}/{to}', [TemplettScrapperController::class, 'bulkTranslation'])->name('templett.bulkTranslate');
-        Route::get('/admin/bot/generate-thumbs', [AdminController::class, 'generateProductThumbnails'])->name('admin.generateProductThumbnails');
-        Route::get('/admin/bot/db-missing-thumbs', [AdminController::class, 'registerMissingTemplatesOnDB']);
-
-
 // MARKETPLACE SELLING PRODUCTS
     // PRODUCT
         Route::get('/admin/create-product/{template_key}', [AdminController::class, 'createProduct'])->name('admin.createProduct');
@@ -117,6 +119,8 @@ Route::get('/api/demo-url', [AdminController::class, 'getTemplateObjects']);
 
     // ETSY
         Route::get('/admin/etsy/gallery', [AdminController::class, 'etsyGallery'])->name('admin.etsy.templatesGallery');
+        Route::get('/admin/gallery/vendor/{vendor}', [AdminController::class, 'getTemplatesByVendor'])->name('admin.templatesByVendor');
+        Route::get('/admin/etsy/get-pdf/{template_id}', [AdminController::class, 'etsyTemplateLinkPDF'])->name('admin.etsy.getPDF');
         
         Route::get('/admin/etsy/gallery/template-dashboard/{app}/{template_id}', [AdminController::class, 'getTemplateDashboard'])->name('admin.etsy.templateDashboard');
         Route::post('/admin/etsy/gallery/template-dashboard/{app}/{template_id}', [AdminController::class, 'getTemplateDashboard']);
@@ -222,8 +226,12 @@ Route::get('/api/demo-url', [AdminController::class, 'getTemplateObjects']);
     Route::get('/{country}/criar/{category}', [ContentController::class, 'showCategoryPage']);
     Route::get('/{country}/modelos/{category}', [ContentController::class, 'showCreatePage']);
 
-    Route::get('{country}/demo/{modelo_mercado_pago}', [EditorController::class, 'demoTemplateEditor'])->name('plantilla.demo');
+    Route::get('/{country}/demo/{modelo_mercado_pago}', [EditorController::class, 'demoTemplateEditor'])->name('plantilla.demo');
     Route::get('/{country}/editar/plantilla/{template_key}', [EditorController::class, 'customerTemplate'])->name('plantilla.editar');
+
+// Checkout ( Klarna )
+    Route::get('/{country}/checkout/{template_key}', [OrderController::class, 'checkout'])->name('template.checkout');
+    Route::get('/{country}/order/{order_id}/confirmation', [OrderController::class, 'confirmation'])->name('order.confirmation');
     
 // SITEMAPS
     Route::get('/{country}/sitemap.xml', [ContentController::class, 'sitemap']);
