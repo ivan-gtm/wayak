@@ -1,19 +1,10 @@
 @extends('layouts.frontend')
     
-    @section('title', $template->title.' | Template | Designer Online | WAYAK')
+    @section(' KLARNA DANIEL Gutierrez')
 
     @section('meta')
         <meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
-        <meta name="description" content="{{ $template->width }}x{{ $template->height }}{{ $template->measureUnits }}. Customize this template, change the text and images as you wish. After that, preview and save your work, your design will be ready to print, share or download." />
-        <meta name="title" content="{{ $template->title }} | Template | Design Online | WAYAK" />
-        <meta name="keywords" content="{{ $template->title }}" />
-
-        <meta property="og:url" content="{{  URL::current() }}" />
-        <meta property="og:type" content="website" />
-        <meta property="og:title" content="{{ $template->title }} | Template | Design Online | WAYAK" />
-        <meta property="og:description" content="Template ready for customization, get ready to download in minutes. Edit Online, choose between thousands of free design templates." />
-        <meta property="og:image" content="{{ asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["product_preview"] ) }}" />
-
+        
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
     @endsection
@@ -73,23 +64,16 @@
         <div class="col-md-8">
             <div class="card">
                 <div class="invoice p-5">
-                    <h5>Your template is ready!</h5> 
-                    
                     <span class="font-weight-bold d-block mt-4">
                         Hello, Daniel Gutierrez
                     </span> 
                     <br>
-                    <span>You order has been confirmed, you can start editing on following link !</span>
+                    <span>You order has been confirmed, below order details</span>
                     <br><br>
 
                     <a class="js-purchase__add-to-cart e-btn--3d -color-primary -size-m -width-full"
-                        href="{{ 
-                        route('editor.openTemplate',[
-                            'country' => $country,
-                            'template_key' => $template->_id
-                        ] )
-                    }}" target="_blank">
-                        <strong>Edit Template</strong>
+                        target="_blank">
+                        <strong>Track Order</strong>
                     </a>
                     <br><br><br>
                     <h5 class="text-center">Order Details</h5>
@@ -149,7 +133,7 @@
                             <tbody>
                                 @foreach($klarnaOrder->order_lines as $product)
                                     <tr>
-                                        <td width="20%"> <img src="https://i.imgur.com/u11K1qd.jpg" width="90"> </td>
+                                        <td width="20%"> <img src="https://www.klarna.com/demo/static/images/products/t-shirt.jpg" width="90"> </td>
                                         <td width="60%"> 
                                             <span class="font-weight-bold">
                                                 {{ $product->name }}

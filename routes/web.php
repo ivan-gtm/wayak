@@ -232,6 +232,10 @@ Route::get('/api/demo-url', [AdminController::class, 'getTemplateObjects']);
 // Checkout ( Klarna )
     Route::get('/{country}/checkout/{template_key}', [OrderController::class, 'checkout'])->name('template.checkout');
     Route::get('/{country}/order/{order_id}/confirmation', [OrderController::class, 'confirmation'])->name('order.confirmation');
+
+// Klarna Payments
+    Route::get('/{country}/klarna-demo', [OrderController::class, 'klarnaDemo'])->name('order.klarnaDemo');
+    Route::post('/{country}/klarna/place-order', [OrderController::class, 'klarnaPlaceOrder'])->name('order.klarnaPlaceOrder');
     
 // SITEMAPS
     Route::get('/{country}/sitemap.xml', [ContentController::class, 'sitemap']);
