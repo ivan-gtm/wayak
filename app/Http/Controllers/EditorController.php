@@ -1344,6 +1344,7 @@ class EditorController extends Controller
 
         $original_template_key = $template_key;
         $temporal_customer_key = 'temp:'.$purchase_code;
+
         
         Redis::set('temp:template:relation:temp:'.$purchase_code, $original_template_key);
         Redis::expire('temp:template:relation:temp:'.$purchase_code, 60*60*24*1); // Codigo valido por 30 dias - 60*60*24*30 = 2592000
@@ -1351,6 +1352,11 @@ class EditorController extends Controller
         Redis::set('template:'.$language_code.':'.$temporal_customer_key.':jsondata' ,Redis::get('template:'.$language_code.':'.$original_template_key.':jsondata'));
         Redis::expire('template:'.$temporal_customer_key.':jsondata', 60*60*24*1); // Codigo valido por 30 dias - 60*60*24*30 = 2592000
 		
+		// echo $original_template_key;
+		// echo "<br>";
+		// echo $temporal_customer_key;
+		// exit;
+
         // Redis::set('code:'.$purchase_code, $temporal_customer_key);
         // Redis::expire('code:'.$purchase_code, 2592000); // Codigo valido por 30 dias - 60*60*24*30 = 2592000
 

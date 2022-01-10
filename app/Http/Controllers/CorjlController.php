@@ -38,86 +38,6 @@ class CorjlController extends Controller
         // exit;
         // self::parseCategoryAndProducts();
         // exit;
-
-        echo "<pre>";
-        // $product = Redis::keys('corjl:*');
-        $product = Redis::keys('corjl:45IK5');
-        // print_r( $product );
-        // exit;
-        
-        $i=0;
-        foreach ($product as $product_key) {
-            $collection_ids = [];
-            $templates_obj = json_decode(Redis::get($product_key));
-            $product_key = str_replace('corjl:', null, $product_key);
-            
-            $fk_metadata = DB::table('tmp_etsy_metadata')
-                ->select('id','templett_url')
-                ->where('templett_url', 'like', '%'.$product_key)
-                ->first();
-            
-            $total_products = sizeof($templates_obj->templates);
-            for ($template_index=0; $template_index < $total_products; $template_index++) { 
-                $total_pages = sizeof($templates_obj->templates[$template_index]->pages);
-                for ($page_index=1; $page_index <= $total_pages; $page_index++) {
-                    $template_id = $product_key;
-                    // $templates_obj->templates[$template_index]->pages
-                    $svg_filename = 'svg_template_'.$template_index.'_page_'.$page_index.'.svg';
-                    echo "\n\n\n\n<br>".$svg_filename.'<hr>';
-                    $svg_file_path = public_path().'/corjl/design/template/'.$template_id.'/'.$svg_filename;
-                    $template_svg_content = self::openSVGTemplate($svg_file_path);
-                    
-                    $template_json_content = json_decode(self::svgToJSON($template_svg_content));
-
-                    $template_metadata = self::extractPageMetadata($template_json_content);
-
-                    // print_r($template_json_content);
-                    // exit;
-                }
-                # code...
-            }
-            // print_r( $templates_obj );
-            exit;
-            
-            // print_r( '%'.$product_key );
-            // print_r( $metadata_id );
-            // exit;
-            $parent_template_id = null;
-            
-            foreach ($templates_obj->templates as $template) {
-                $template_id = '3P6DCN';
-                // $template_id = self::generateRandString();
-                $parent_template_id = ( $parent_template_id == null ) ? $template_id : $parent_template_id;
-                // print_r( $template_id );
-                // exit;
-
-                // $page->total_pages;
-                // $page;
-                
-                if( isset($template->thumb_url) ){
-                    $local_img_path = public_path().'/corjl/design/template/'.$template_id.'/thumbnails/en/';
-                    $file_name = self::downloadImage( $template->thumb_url, $local_img_path,  $template_id);
-                    self::registerThumbOnDB($template_id, $template->name, $file_name, $template->dimentions, $product_key);
-                    // exit;
-                }
-
-                self::parseTemplatePages($template->pages, $template_id);
-                $collection_ids[] = $template_id;
-
-                $db_template_ids[] = self::registerTemplate($template_id, $template->name, $fk_metadata->id, $parent_template_id);
-            }
-
-
-            print_r( "\n\nTEMPLATE KEY >>" . $product_key ."\n");
-            print_r( $templates_obj );
-
-            $i++;
-
-            if($i == 10){
-                exit;
-            }
-            // exit;
-        }
     }
 
     function generateWayakTemplate() {
@@ -127,6 +47,7 @@ class CorjlController extends Controller
         
         foreach ($product as $product_key) {
             $template_svg_path = public_path('/corjl/design/template/'.str_replace('corjl:',null, $product_key).'/svg_template_0_page_1.svg');
+            
             echo $template_svg_path.'<br>';
             if( file_exists($template_svg_path) && filesize($template_svg_path) > 0) {
                 $collection_ids = [];
@@ -161,7 +82,9 @@ class CorjlController extends Controller
                                                     ->first();
                         
                         $total_products = sizeof($templates_obj->templates);
+                        
                         for ($template_index=0; $template_index < $total_products; $template_index++) {
+                            
                             if( isset( $db_template->template_id ) ){
                                 $new_template_id = $db_template->template_id;
                             } else {
@@ -211,7 +134,8 @@ class CorjlController extends Controller
                                 && is_array( $templates_obj->templates[$template_index]->pages )
                             ) {
                                 $total_pages = sizeof( $templates_obj->templates[$template_index]->pages );
-    
+                                $incomplete_template = false;
+
                                 for ($page_index=1; $page_index <= $total_pages; $page_index++) {
                                     $page_objects = [];
     
@@ -228,80 +152,89 @@ class CorjlController extends Controller
                                     
                                     $svg_filename = 'svg_template_'.$template_index.'_page_'.$page_index.'.svg';
                                     // echo "\n\n\n\n PARSING >>".$svg_filename.'<hr>';
-                                    $svg_file_path = public_path('/corjl/design/template/'.$original_product_key.'/'.$svg_filename);
-                                    // $svg_file_path = '/corjl/design/template/'.$original_product_key.'/'.$svg_filename;
                                     
-                                    $template_svg_content = self::openSVGTemplate($svg_file_path);
-                                    $template_json_content = json_decode(self::svgToJSON($template_svg_content));
-    
-                                    self::extractPageMetadata($template_json_content);
-    
-                                    $page_metadata = Redis::get('wayak:tmp:corjl:template:metadata');
-                                    $page_metadata = json_decode($page_metadata);
-                                    Redis::del('wayak:tmp:corjl:template:metadata');
-    
-                                    // print_r( "page_metadata>>" );
-                                    // print_r( $page_metadata );
-                                    // exit;
-                                    if(isset($page_metadata->images)){
-                                        foreach ($page_metadata->images as $page_img) {
-                                            
-                                            // print_r( $page_img->url );
-                                            // exit;
-                                            if( isset($page_img->url) ){
-                                                $local_img_path = public_path().'/design/template/'.$new_template_id.'/assets/';
-                                                self::downloadImage( $page_img->url, $local_img_path,  $new_template_id);
+                                    $svg_file_path = public_path('/corjl/design/template/'.$original_product_key.'/'.$svg_filename);
+                                    if( file_exists($svg_file_path) && filesize($svg_file_path) > 0) {
+                                        $template_svg_content = self::openSVGTemplate($svg_file_path);
+                                        $template_json_content = json_decode(self::svgToJSON($template_svg_content));
+        
+                                        self::extractPageMetadata($template_json_content);
+        
+                                        $page_metadata = Redis::get('wayak:tmp:corjl:template:metadata');
+                                        $page_metadata = json_decode($page_metadata);
+                                        Redis::del('wayak:tmp:corjl:template:metadata');
+        
+                                        // print_r( "page_metadata>>" );
+                                        // print_r( $page_metadata );
+                                        // exit;
+                                        if(isset($page_metadata->images)){
+                                            foreach ($page_metadata->images as $page_img) {
+                                                
+                                                // print_r( $page_img->url );
+                                                // exit;
+                                                if( isset($page_img->url) ){
+                                                    $local_img_path = public_path().'/design/template/'.$new_template_id.'/assets/';
+                                                    self::downloadImage( $page_img->url, $local_img_path,  $new_template_id);
+                                                }
+                                                
+                                                $path_info = pathinfo($page_img->url);
+                                                $new_img_obj = self::transformToImgObj($new_template_id, $base_img_obj, $path_info['basename'], $page_img );
+                        
+                                                $page_objects[] = $new_img_obj;
                                             }
-                                            
-                                            $path_info = pathinfo($page_img->url);
-                                            $new_img_obj = self::transformToImgObj($new_template_id, $base_img_obj, $path_info['basename'], $page_img );
-                    
-                                            $page_objects[] = $new_img_obj;
                                         }
-                                    }
-    
-                                    if(isset($page_metadata->text)){
-                                        foreach ($page_metadata->text as $page_txt_obj) {
-                                            // print_r( $page_txt_obj );
-                                            // exit;
-                                            $new_txt_obj = self::transformToTxtObj($base_txt_obj, $page_txt_obj, $measureUnits);
-                                            $page_objects[] = $new_txt_obj;
+        
+                                        if(isset($page_metadata->text)){
+                                            foreach ($page_metadata->text as $page_txt_obj) {
+                                                // print_r( $page_txt_obj );
+                                                // exit;
+                                                $new_txt_obj = self::transformToTxtObj($base_txt_obj, $page_txt_obj, $measureUnits);
+                                                $page_objects[] = $new_txt_obj;
+                                            }
                                         }
+        
+                                        // echo "METADATA >>";
+                                        $new_page_obj->objects = $page_objects;
+                                        $new_page_obj->cwidth = $width;
+                                        $new_page_obj->cheight = $height;
+        
+                                        $base_json[] = $new_page_obj;
+                                    } else {
+                                        $incomplete_template = true;
+                                        Redis::del('corjl:'.$original_product_key);
                                     }
-    
-                                    // echo "METADATA >>";
-                                    $new_page_obj->objects = $page_objects;
-                                    $new_page_obj->cwidth = $width;
-                                    $new_page_obj->cheight = $height;
-    
-                                    $base_json[] = $new_page_obj;
+                                    
+                                }
+
+                                if( $incomplete_template == false ){
+
+                                    // DOWNLOAD THUMBNAIL 
+                                    $thumb_url = $templates_obj->templates[$template_index]->thumb_url;
+                                    $local_img_path = public_path('/design/template/'.$new_template_id.'/thumbnails/en/');
+                                    $file_name = self::downloadImage( $thumb_url, $local_img_path,  $new_template_id);
+        
+                                    // print_r($base_json);
+                                    // exit;
+        
+                                    $final_json_template = json_encode($base_json);
+                                    
+                                    // print_r($base_json);
+                                    // print_r($final_json_template);
+                                    
+                                    // Saves template on wayak format
+                                    Redis::set('template:en:'.$new_template_id.':jsondata', $final_json_template);
+        
+                                    print_r("\n<br>".'  template:en:'.$new_template_id.':jsondata');
+                        
+                                    $template_info['template_id'] = $new_template_id;
+                                    $template_info['title'] = isset($original_template->config->title) ? $original_template->config->title : ' x ';
+                                    $template_info['filename'] = $new_template_id.'_thumbnail.png';
+                                    $template_info['dimentions'] = $dimentions;
+                                    
+                                    self::registerThumbOnDB($new_template_id, $templates_name, $file_name, $dimentions, $original_product_key);
+                                    self::registerTemplateOnDB($new_template_id, $original_product_key, $templates_name, $fk_etsy_template_id, $parent_template_id, $width, $height, $measureUnits);
                                 }
     
-                                // DOWNLOAD THUMBNAIL 
-                                $thumb_url = $templates_obj->templates[$template_index]->thumb_url;
-                                $local_img_path = public_path('/design/template/'.$new_template_id.'/thumbnails/en/');
-                                $file_name = self::downloadImage( $thumb_url, $local_img_path,  $new_template_id);
-    
-                                // print_r($base_json);
-                                // exit;
-    
-                                $final_json_template = json_encode($base_json);
-                                
-                                // print_r($base_json);
-                                // print_r($final_json_template);
-                                
-                                // Saves template on wayak format
-                                Redis::set('template:en:'.$new_template_id.':jsondata', $final_json_template);
-    
-                                print_r("\n<br>".'  template:en:'.$new_template_id.':jsondata');
-                    
-                                $template_info['template_id'] = $new_template_id;
-                                $template_info['title'] = isset($original_template->config->title) ? $original_template->config->title : ' x ';
-                                $template_info['filename'] = $new_template_id.'_thumbnail.png';
-                                $template_info['dimentions'] = $dimentions;
-                                
-                                self::registerThumbOnDB($new_template_id, $templates_name, $file_name, $dimentions, $original_product_key);
-                                self::registerTemplateOnDB($new_template_id, $original_product_key, $templates_name, $fk_etsy_template_id, $parent_template_id, $width, $height, $measureUnits);
     
                             } else {
                                 print_r("<br>");

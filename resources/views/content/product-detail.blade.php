@@ -17,6 +17,7 @@
     
     @section('css')
         <link rel="stylesheet" href="{{ asset('assets/css/product.css') }}">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     @endsection
 
 @section('content')
@@ -118,14 +119,25 @@
                                                         <!-- The size of this template is {{ $template->width }}x{{ $template->height }}{{ $template->measureUnits }}. Click “Use This Template“, start your own design. Then you can change the text and images as you wish. After that, preview and save your work, your design will be ready to print, share or download. -->
                                                     </p>
                                                     <div class="purchase-form__button">
+                                                        {{--
+                                                            <a class="js-purchase__add-to-cart e-btn--3d -color-primary -size-m -width-full"
+                                                                href="{{ 
+                                                                route('template.checkout',[
+                                                                    'country' => $country,
+                                                                    'template_key' => $template->_id
+                                                                ] )
+                                                            }}">
+                                                                <strong>{{ __('product.purchase') }}</strong>
+                                                            </a>
+                                                        --}}
                                                         <a class="js-purchase__add-to-cart e-btn--3d -color-primary -size-m -width-full"
                                                             href="{{ 
-                                                            route('template.checkout',[
-                                                                'country' => $country,
-                                                                'template_key' => $template->_id
-                                                            ] )
-                                                        }}">
-                                                            <strong>{{ __('product.purchase') }} ${{ $template->price }}</strong>
+                                                                route('editor.openTemplate',[
+                                                                    'country' => $country,
+                                                                    'template_key' => $template->_id
+                                                                ] )
+                                                            }}" target="_blank">
+                                                            <strong>{{ __('product.use_this_template') }}</strong>
                                                         </a>
                                                     </div>
                                                 </form>
@@ -232,16 +244,30 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="grid-container">
-                                <ul>
-                                @foreach ($related_templates as $template)
-                                    <li>
-                                        <img alt="{{ $template->title }}"
-                                                itemprop="image"
-                                                src="{{ $template->preview_image }}">
-                                    </li>
-                                @endforeach
+                            <div class="container pt-4">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h4>You may also like</h4>
+                                    </div>
+                                </div>
+                                <ul class="row pt-3">
+                                    @foreach ($related_templates as $template)
+                                        <li class="col-3">
+                                            <a href="{{ route( 'template.productDetail', ['country' => $country,'slug' => $template->slug] ) }}">
+                                                <img alt="{{ $template->title }}"
+                                                     src="{{ asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template['previewImageUrls']['thumbnail'] ) }}"
+                                                     loading="lazy">
+                                            </a>
+                                        </li>
+                                    @endforeach
                                 </ul>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="d-grid gap-2">
+                                            <a class="btn btn-secondary" href="{{ route( 'user.search', ['country' => $country] ) }}?category={{ urlencode( $template->mainCategory )}}">Explore More Like This</a>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -296,7 +322,9 @@
                             </div>
                         </div>
                         <div id="square-image-magnifier" class="magnifier" style="top: 2376px; left: 619.5px; display: none;">
-                            <div class="size-limiter"><img src="{{ asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["product_preview"] ) }}"></div>
+                            <div class="size-limiter">
+                                <img src="{{ asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["product_preview"] ) }}">
+                            </div>
                             <strong>{{ $template->title }}</strong>
                             <div class="info">
                                 <div class="author-category">

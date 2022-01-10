@@ -537,6 +537,11 @@ class AdminController extends Controller
         return view('admin.home', [
         ]);
     }
+    
+    function orders(){
+        return view('admin.orders', [
+        ]);
+    }
 
     function generateRandString($length = 15) {
 		$permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -2108,6 +2113,7 @@ class AdminController extends Controller
     }
 
     function staticGallery(Request $request){
+        
         $itemsPerPage = 200;
         $current_page = isset($request->page) ? $request->page : 1;
         $imgs = [];
@@ -2115,9 +2121,9 @@ class AdminController extends Controller
         
         $templates = DB::table('images')
             ->select('id','template_id','thumb_path','file_type','filename','status')
-            // ->where('source','=','corjl')
+            ->where('source','=','corjl')
             // ->where('source','=','crello')
-            ->where('source','=','placeit')
+            // ->where('source','=','placeit')
     		// ->where('source','=','green')
             // ->where('source','=','templett')
             // ->whereNull('status')
@@ -2127,7 +2133,7 @@ class AdminController extends Controller
             ->get();
 
         $total_templates = DB::table('images')
-                    ->where('source','=','placeit')
+                        ->where('source','=','corjl')
                             // ->whereNull('status')
                             ->count();
 
@@ -2191,8 +2197,6 @@ class AdminController extends Controller
             'imgs' => $imgs
         ]);
 
-        exit;
-
         /*
         $scan = scandir( public_path('/over/templates/') );
         foreach($scan as $folder) {
@@ -2247,47 +2251,17 @@ class AdminController extends Controller
         }
         exit;
         */
+    }
 
-        /*
-            $templates = DB::table('templates')
-                ->join('thumbnails', 'templates.template_id', '=', 'thumbnails.template_id')
-                ->select('templates.template_id','thumbnails.original_template_id','templates.source', 'thumbnails.title', 'thumbnails.filename')
-                ->where('thumbnails.language_code','=', 'en' )
-                // ->where('templates.source','=','crello')
-                // ->where('templates.source','=','placeit')
-                // ->where('templates.source','=','green')
-                ->where('templates.source','=','corjl')
-                // ->where('templates.source','=','templett')
-                ->offset(2600)
-                ->limit(400)
-                ->get();
-            
-            foreach ($templates as $template) {
-                
-                print_r( $template->template_id );
-                print_r( '<br>' );
-                if( is_dir( public_path('/design/template/'.$template->template_id.'/assets/') ) ){
-                    $assets_scan = scandir( public_path('/design/template/'.$template->template_id.'/assets/') );
-                    foreach($assets_scan as $asset_file) {
-                        if( strlen($asset_file) > 3 && $asset_file != '.DS_Store') {    
-                            print_r('<img height="300" width="300" src="'.asset(  '/design/template/'.$template->template_id.'/assets/'.$asset_file ).'">');
-                            echo '<br>';
-                        }
-                    }
-                }
-        
-            }
-            exit;
-        */
-
-
-        $vendors = [
-            // 'desygner',
-            // 'foco',
-            // 'artory',
-            // 'adobe',
-            // 'magisto'
-        ];
+    function getTemplatesByVendor( $vendor ){
+        // $vendors = [
+        //     'desygner',
+        //     // 'foco',
+        //     // 'artory',
+        //     // 'adobe',
+        //     // 'magisto'
+        // ];
+        $vendors[] = $vendor;
         
         foreach($vendors as $vendor) {
             if( is_dir( public_path($vendor.'/design/template/') ) ){
@@ -2296,7 +2270,10 @@ class AdminController extends Controller
                 foreach($scan as $folder) {
                     // echo public_path('canva/instagram-story/design/template'.$folder).'<br>';
                     // exit;
-                    if( strlen($folder) > 3 && $folder != '.DS_Store') {
+                    if( strlen($folder) > 3 
+                        && $folder != '.DS_Store'
+                        && $folder != '._.DS_Store'
+                        ) {
                         
                         if( $vendor == 'desygner' ){
                             $thumbnails_folder = '/thumbnails/en/';
@@ -2321,7 +2298,7 @@ class AdminController extends Controller
             }
         }
     }
-
+    
     function getTemplateObjects(){
         $json_template = json_decode( Redis::get( 'template:en:q5LV6RnbzdYcMht:jsondata' ) );
     
@@ -2374,10 +2351,99 @@ class AdminController extends Controller
         return response()->json([]);
     }
 
+    function createEtsyPDF( $template_id, $canva_url ){
+        // $canva_url = 'lasdlakdlaksdlaskd';
+        
+        $pdf_html = '
+        <style>@page { margin: 0px; }body { margin: 0px; }</style>
+        <style>
+            .center {
+                height: 200px;
+                position: relative;
+              }
+              
+              .center p {
+                margin: 0;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                text-align: center;
+              }
+        </style>
+        <body style="background-color:#fff;padding:0;margin:0">
+            <div style="background-color:#F4E2D8;
+            text-align: center;
+            padding:80px 0px;
+            wigth: 100px;
+            margin-top: 340px;
+            margin-right: 80px;
+            margin-left: 80px;">
+                <div>
+                    <p style="text-align: center;font-size:50px;color:#91641B">
+                        Links for Canva Template
+                    </p>
+                    WAYAK STUDIO
+                </div>
+            </div>
+
+            <div class="page_break" style="page-break-before: always;"></div>
+
+            <h2 style="text-align:center;padding-top:380px;color:#91641B;font-size:30px;">THANK YOU!</h2>
+            
+            <div style="margin:20px;padding:20px 80px;">
+                <p style="text-align: center;">Thank you for purchasing the Infopreneur Graphic Pack. We hope you enjoy your purchase.
+                In order to access your templates, simply click the button
+                below.</p>
+            </div>
+
+            <center>
+                <div style="background-color:#E1D0C0;margin:20px 20%;padding:20px 30px;">
+                    <a href="'.$canva_url.'" style="color:#91641B;font-size:30px;text-decoration:none;">
+                        EDIT TEMPLATE ON CANVA
+                    </a>
+                </div>
+            </center>
+            
+            <div class="page_break" style="page-break-before: always;"></div>
+
+            <div class="center">
+                <p>
+                    <a href="https://wayak.app/" style="color:#222222;font-size:30px;text-decoration:none;">
+                        WAYAK.APP
+                    </a>
+                    <br><br>
+                    Thanks for your purchase! Hope you like it!<br>
+                    I will be grateful for your review.
+                </p>
+            </div>
+
+        </body>
+        ';
+
+        $dompdf = new Dompdf();
+		$dompdf->loadHtml($pdf_html);
+		$dompdf->setPaper('A4', 'portrait');
+		// Render the HTML as PDF
+		$dompdf->render();
+		
+        // Output the generated PDF to Browser
+		// return $dompdf->stream();
+
+        $output = $dompdf->output();
+        $path = public_path('etsy_store/products/'.$template_id.'/pdf/');
+        // echo $path;
+        // exit;
+        @mkdir($path, 0777, true);
+        $template_id_path = $path.$template_id.'.pdf';
+        file_put_contents( $template_id_path, $output);
+    }
+
     function etsyGallery(Request $request){
         
         $itemsPerPage = 200;
         $current_page = isset($request->page) ? $request->page : 1;
+        $vendor = isset($request->vendor) ? $request->vendor : 'green';
         $imgs = [];
 
         $destination_lang = 'en';
@@ -2385,12 +2451,8 @@ class AdminController extends Controller
             ->join('thumbnails', 'templates.template_id', '=', 'thumbnails.template_id')
             ->select('templates.template_id','thumbnails.original_template_id','templates.source', 'thumbnails.title', 'thumbnails.filename', 'templates.canva_url')
             ->where('thumbnails.language_code','=', 'en' )
-    		// ->where('templates.source','=','green')
-    		// ->where('templates.source','=','crello')
-            ->where('templates.source','=','placeit')
-            // ->where('templates.source','=','corjl')
-            // ->where('templates.source','=','templett')
-            // ->whereRaw('thumbnails.title LIKE \'%hallo%\'')
+    		->where('templates.source','=',$vendor)
+    		// ->whereRaw('thumbnails.title LIKE \'%hallo%\'')
             ->orderBy('thumbnails.id', 'desc')
             ->offset( ($current_page-1) *$itemsPerPage)
             ->limit($itemsPerPage)
@@ -2398,9 +2460,9 @@ class AdminController extends Controller
         
         $total_templates = DB::table('templates')
             ->join('thumbnails', 'templates.template_id', '=', 'thumbnails.template_id')
-            ->select('templates.template_id','thumbnails.original_template_id','templates.source', 'thumbnails.title', 'thumbnails.filename')
+            ->select('templates.template_id')
             ->where('thumbnails.language_code','=', 'en' )
-    		->where('templates.source','=','placeit')
+    		->where('templates.source','=',$vendor)
             // ->whereRaw('thumbnails.title LIKE \'%hallo%\'')
     		->count();
         
@@ -2410,6 +2472,7 @@ class AdminController extends Controller
         for ($i=$first_page; $i <= $last_page; $i++) { 
             $pages[] = $i;
         }
+
         $templates = [];
         foreach ($template_metadata as $template) {
             $template_key = $template->template_id;
@@ -2456,11 +2519,54 @@ class AdminController extends Controller
         // exit;
     }
 
+    function createEtsyProductThumbs( $template_id ){
+        
+        $template = DB::table('thumbnails')
+                    ->select('template_id','filename','original_template_id')
+                    ->where('template_id','=', $template_id )
+                    ->where('language_code','=', 'en' )
+                    ->first();
+
+        // $template_key = $template_id;
+        $app = 'green';
+        $template_info['key'] = $template_id;
+        
+        if( $app == 'crello' ){
+            $template_info['thumbnail']  = public_path( 'design/template/'.$template->template_id.'/thumbnails/'.$template->filename );
+        } else if( $app == 'templett' ){
+            $template_info['thumbnail']  = public_path( 'design/template/'.$template->original_template_id.'/thumbnails/en/'.$template->filename );
+        } else if( $app == 'placeit' OR $app == 'corjl' OR $app == 'green' ){
+            $template_info['thumbnail']  = public_path( 'design/template/'.$template->template_id.'/thumbnails/en/'.$template->filename );
+        } else {
+            $template_info['thumbnail']  = public_path( 'design/template/'.$template->template_id.'/thumbnails/'.$template->filename );
+        }
+        
+        
+        self::emptyFolder($template_id);
+
+        $preview_images = [];
+        // 'etsy_store/canva_pdf/'
+        array_push($preview_images, self::processMockup($template_info,2) );
+        array_push($preview_images, self::processMockup($template_info,31) );
+        array_push($preview_images, self::processMockup($template_info,10) );
+        array_push($preview_images, self::processMockup($template_info,6) );
+        
+        // DB::table('templates')
+        // 		->where('template_id','=', $template_key)
+        // 		->update([
+        // 			'preview_ready' => true
+        //         ]);
+    }
+
     function getTemplateDashboard($app, $template_id, Request $request){
 
         if(isset($request->canvaURLInput)){
             // echo $request->canvaURLInput;
             
+            self::createEtsyPDF( $template_id, $request->canvaURLInput );
+            
+            self::createEtsyProductThumbs( $template_id );
+
             DB::table('templates')
 					->where('template_id','=', $template_id)
 					->update([
@@ -2493,11 +2599,12 @@ class AdminController extends Controller
         } else {
             $template_info['thumbnail']  = asset( 'design/template/'.$template->template_id.'/thumbnails/'.$template->filename );
         }
-
+        
         return view('admin.template_dashboard', [
             'app' => $app,
             'template_info' => $template_info,
             'title' => $template->title,
+            'pdf_url' => asset( 'etsy_store/canva_pdf/'.$template->template_id.'.pdf' ),
             'thumbnail_ready' => $template->thumbnail_ready,
             'metadata_ready' => $template->metadata_ready,
             'pdf_ready' => $template->pdf_ready,
@@ -2587,7 +2694,7 @@ class AdminController extends Controller
     
                         } elseif( isset($object->type) && $object->type == 'textbox' ){
                             $tmp_obj = [];
-                            $tmp_obj['color'] = '#'.$object->fill;
+                            $tmp_obj['color'] = str_replace('##', '#', '#'.$object->fill);
                             $tmp_obj['text'] = $object->text;
                             $tmp_obj['fontSize'] = $object->fontSize;
                             $tmp_obj['y'] = $object->top;
@@ -2607,23 +2714,31 @@ class AdminController extends Controller
             // print_r( $template_objects );
             // exit;
     
-            // if( is_dir( public_path('design/template/'.$template->template_id.'/assets') ) ){
-            //     $scan = scandir( public_path('design/template/'.$template->template_id.'/assets') );
-            //     $template_index = 0;
-            //     foreach($scan as $folder) {
-            //         if( strlen($folder) > 3 ) {
-            //             echo '<br>';
-            //             echo $folder;
-            //             echo '<br>';
-            //             echo public_path('design/template/'.$template->template_id.'/assets'.$folder).'<br>';
-            //             echo "<br>";
-            //             print_r( asset( 'design/template/'.$template->template_id.'/assets/'.$folder ) );
-            //             echo '<br>';
-            //             echo '<img width="500" src="'.asset( 'design/template/'.$template->template_id.'/assets/'.$folder ).'">';
-            //             // && is_dir( public_path('canva/instagram-story/design/template/'.$folder) ) 
-            //         }
-            //     }
-            // }
+            if( is_dir( public_path('design/template/'.$template->template_id.'/assets') ) ){
+                $scan = scandir( public_path('design/template/'.$template->template_id.'/assets') );
+                $template_index = 0;
+                
+                $tmp_page['images'] = [];
+                $tmp_page['text'] = [];
+
+                foreach($scan as $folder) {
+                    if( strlen($folder) > 3 ) {
+                        // echo '<br>';
+                        // echo $folder;
+                        // echo '<br>';
+                        // echo public_path('design/template/'.$template->template_id.'/assets'.$folder).'<br>';
+                        // echo "<br>";
+                        // print_r( asset( 'design/template/'.$template->template_id.'/assets/'.$folder ) );
+                        // echo '<br>';
+                        // echo '<img width="500" src="'.asset( 'design/template/'.$template->template_id.'/assets/'.$folder ).'">';
+                        // && is_dir( public_path('canva/instagram-story/design/template/'.$folder) ) 
+                        $tmp_obj = [];
+                        $tmp_obj['src'] = asset( 'design/template/'.$template->template_id.'/assets/'.$folder );
+                        $tmp_page['images'][] = $tmp_obj;
+                    }
+                }
+                $template_objects['pages'][] = $tmp_page;
+            }
             // exit;
     
             return view('admin.template_assets', [

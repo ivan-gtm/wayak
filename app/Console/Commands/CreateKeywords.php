@@ -43,7 +43,7 @@ class CreateKeywords extends Command
             ->join('tmp_etsy_metadata', 'tmp_etsy_metadata.id', '=', 'templates.fk_etsy_template_id')
             ->join('thumbnails', 'thumbnails.template_id', '=', 'templates.template_id')
             ->where('thumbnails.language_code','=','en')
-            ->where('templates.status','=',5)
+            // ->where('templates.status','=',5)
             ->whereNotNull('templates.fk_etsy_template_id')
             ->select('templates.template_id', 'templates.width', 'templates.height','templates.metrics','tmp_etsy_metadata.title','tmp_etsy_metadata.username','thumbnails.filename','thumbnails.title as title_','thumbnails.dimentions')
             ->get();

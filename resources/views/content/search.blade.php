@@ -48,21 +48,29 @@
                                     --}}
                                     <div class="pagination top">
                                         <div class="typography-marketing-display-s title___3sRwO">Plantillas de "{{ $search_query }}"</div>
-                                        <div class="paginationWrapper"><span class="typography-body-m paginationRange">{{ $from_document }}-{{ $to_document }} de {{ $total_documents }}</span>
+                                        <div class="paginationWrapper">
+                                            <span class="typography-body-m paginationRange">{{ $from_document }}-{{ $to_document }} de {{ $total_documents }}</span>
                                             <div class="paginationWrapper">
-                                                <a class="bhdLno lhRPKu button___33J2d" href="{{ route('user.search',['page' => ($page-1), 'country' => $country, 'searchQuery' => $search_query]) }}">
-                                                    <div class="sc-hKgILt chrFRV"><svg viewBox="0 0 16 16" width="16" height="16" direction="left" class="sc-fubCfw ecgval"><path d="M14.463 4.11761C14.5381 4.04234 14.6403 4 14.747 4C14.8536 4 14.9558 4.04234 15.0309 4.11761L15.8788 4.96052C15.9561 5.03267 16 5.13341 16 5.23884C16 5.34427 15.9561 5.44501 15.8788 5.51716L8.52792 12.8251C8.41552 12.9369 8.26304 12.9999 8.10398 13H7.89602C7.73696 12.9999 7.58448 12.9369 7.47208 12.8251L0.121197 5.51716C0.0438665 5.44501 0 5.34427 0 5.23884C0 5.13341 0.0438665 5.03267 0.121197 4.96052L0.969068 4.11761C1.04416 4.04234 1.14639 4 1.25302 4C1.35966 4 1.46189 4.04234 1.53698 4.11761L8 10.5428L14.463 4.11761Z"></path></svg></div>
-                                                </a>
+                                                @if( ($page-1) >= 1 )
+                                                    <a class="bhdLno lhRPKu button___33J2d" href="{{ route('user.search',['page' => ($page-1), 'country' => $country, 'searchQuery' => $search_query, 'category' => $category]) }}">
+                                                        <div class="sc-hKgILt chrFRV">
+                                                            <svg viewBox="0 0 16 16" width="16" height="16" direction="left" class="sc-fubCfw ecgval"><path d="M14.463 4.11761C14.5381 4.04234 14.6403 4 14.747 4C14.8536 4 14.9558 4.04234 15.0309 4.11761L15.8788 4.96052C15.9561 5.03267 16 5.13341 16 5.23884C16 5.34427 15.9561 5.44501 15.8788 5.51716L8.52792 12.8251C8.41552 12.9369 8.26304 12.9999 8.10398 13H7.89602C7.73696 12.9999 7.58448 12.9369 7.47208 12.8251L0.121197 5.51716C0.0438665 5.44501 0 5.34427 0 5.23884C0 5.13341 0.0438665 5.03267 0.121197 4.96052L0.969068 4.11761C1.04416 4.04234 1.14639 4 1.25302 4C1.35966 4 1.46189 4.04234 1.53698 4.11761L8 10.5428L14.463 4.11761Z"></path></svg>
+                                                        </div>
+                                                    </a>
+                                                @endif
                                                 <div class="sc-dmlrTW guKkvw">
-                                                    <form class="form___1I3Xs" novalidate="" method="GET" action="{{ route('user.search',['country' => $country]) }}">
+                                                    <form class="form___1I3Xs" novalidate="" method="GET" action="{{ route('user.search',['country' => $country, 'searchQuery' => $search_query, 'category' => $category]) }}">
                                                         @csrf
-                                                        <input type="text" class="sc-kfzAmx sc-fKFyDc fTLfYv ikXwLi pageInput___1mj0B" value="{{ $page }}">
+                                                        <input type="text" class="sc-kfzAmx sc-fKFyDc fTLfYv ikXwLi pageInput___1mj0B" name="page" value="{{ $page }}">
                                                     </form>
                                                 </div>
-                                                <a class="bhdLno lhRPKu button___33J2d" href="{{ route('user.search',['page' => ($page+1), 'country' => $country, 'searchQuery' => $search_query]) }}">
-                                                    <div class="sc-hKgILt chrFRV"><svg viewBox="0 0 16 16" width="16" height="16" direction="right" class="sc-fubCfw cnhfsE"><path d="M14.463 4.11761C14.5381 4.04234 14.6403 4 14.747 4C14.8536 4 14.9558 4.04234 15.0309 4.11761L15.8788 4.96052C15.9561 5.03267 16 5.13341 16 5.23884C16 5.34427 15.9561 5.44501 15.8788 5.51716L8.52792 12.8251C8.41552 12.9369 8.26304 12.9999 8.10398 13H7.89602C7.73696 12.9999 7.58448 12.9369 7.47208 12.8251L0.121197 5.51716C0.0438665 5.44501 0 5.34427 0 5.23884C0 5.13341 0.0438665 5.03267 0.121197 4.96052L0.969068 4.11761C1.04416 4.04234 1.14639 4 1.25302 4C1.35966 4 1.46189 4.04234 1.53698 4.11761L8 10.5428L14.463 4.11761Z"></path></svg>
-                                                    </div>
-                                                </a>
+                                                @if( ($page+1) <= $last_page )
+                                                    <a class="bhdLno lhRPKu button___33J2d" href="{{ route('user.search',['page' => ($page+1), 'country' => $country, 'searchQuery' => $search_query, 'category' => $category]) }}">
+                                                        <div class="sc-hKgILt chrFRV">
+                                                            <svg viewBox="0 0 16 16" width="16" height="16" direction="right" class="sc-fubCfw cnhfsE"><path d="M14.463 4.11761C14.5381 4.04234 14.6403 4 14.747 4C14.8536 4 14.9558 4.04234 15.0309 4.11761L15.8788 4.96052C15.9561 5.03267 16 5.13341 16 5.23884C16 5.34427 15.9561 5.44501 15.8788 5.51716L8.52792 12.8251C8.41552 12.9369 8.26304 12.9999 8.10398 13H7.89602C7.73696 12.9999 7.58448 12.9369 7.47208 12.8251L0.121197 5.51716C0.0438665 5.44501 0 5.34427 0 5.23884C0 5.13341 0.0438665 5.03267 0.121197 4.96052L0.969068 4.11761C1.04416 4.04234 1.14639 4 1.25302 4C1.35966 4 1.46189 4.04234 1.53698 4.11761L8 10.5428L14.463 4.11761Z"></path></svg>
+                                                        </div>
+                                                    </a>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>
@@ -70,43 +78,54 @@
                                 <div class="">
                                     <div class="content ratioMultiFormats contentLastRowFix">
                                         @foreach ($templates as $template )
-                                        <a target="_blank" class="captionWrapper item bottomIndentSmall" href="{{ route( 'template.productDetail', [
-                                                'country' => $country,
-                                                'slug' => $template->slug
-                                            ] ) }}" style="width: calc(var(--row-height) * 0.714286); flex-grow: 7.14286;">
-                                            <div class="preview imgWrapper imgWrapper_" style="padding-bottom: 140%;">
-                                                <img alt="{{ $template->title }}" crossorigin="anonymous" loading="lazy" data-categ="invitations" data-value="{{ $template->_id }}" 
-                                                    src="{{ $template->preview_image }}"
-                                                    class="itemImg">
-                                            </div>
-                                            <div class="caption proxima-semibold___1HNzk proxima-s___29loE noSubTitle">
-                                                <div class="title___3aJ-x">{{ $template->title }}</div>
-                                            </div>
-                                        </a>
+                                            <a target="_blank" class="captionWrapper item bottomIndentSmall" href="{{ route( 'template.productDetail', [
+                                                    'country' => $country,
+                                                    'slug' => $template->slug
+                                                ] ) }}" style="width: calc(var(--row-height) * 0.714286); flex-grow: 7.14286;">
+                                                <div class="preview imgWrapper imgWrapper_" style="padding-bottom: 140%;">
+                                                    <img alt="{{ $template->title }}" crossorigin="anonymous" loading="lazy" data-categ="invitations" data-value="{{ $template->_id }}" 
+                                                        src="{{ $template->preview_image }}"
+                                                        class="itemImg">
+                                                </div>
+                                                <div class="caption proxima-semibold___1HNzk proxima-s___29loE noSubTitle">
+                                                    <div class="title___3aJ-x">{{ $template->title }}</div>
+                                                </div>
+                                            </a>
                                         @endforeach
-                                        
                                     </div>
                                 </div>
                             </div>
                             <div class="containerBottom">
                                 <div class="pagination bottom___2OkNp">
-                                    <!-- <a class="bhdLno iISRbV nextPageButton___rOiwa" href="{{ route('user.search',['page' => ($page+1), 'country' => $country, 'searchQuery' => $search_query]) }}">
-                                        <div class="sc-hKgILt chrFRV">Página siguiente</div>
-                                    </a> -->
-                                    <div class="paginationWrapper"><span class="typography-body-m paginationRange">{{ $from_document }}-{{ $to_document }} de {{ $total_documents }}</span>
+                                    @if( ($page+1) <= $last_page )
+                                    <a class="bhdLno iISRbV nextPageButton___rOiwa" href="{{ route('user.search',['page' => ($page+1), 'country' => $country, 'searchQuery' => $search_query, 'category' => $category]) }}">
+                                        <div class="sc-hKgILt chrFRV">Next Page</div>
+                                    </a>
+                                    @endif
+
+                                    <div class="paginationWrapper">
+                                        <span class="typography-body-m paginationRange">{{ $from_document }}-{{ $to_document }} de {{ $total_documents }}</span>
                                         <div class="paginationWrapper">
-                                            <a class="bhdLno lhRPKu button___33J2d">
-                                                <div class="sc-hKgILt chrFRV"><svg viewBox="0 0 16 16" width="16" height="16" direction="left" class="sc-fubCfw ecgval"><path d="M14.463 4.11761C14.5381 4.04234 14.6403 4 14.747 4C14.8536 4 14.9558 4.04234 15.0309 4.11761L15.8788 4.96052C15.9561 5.03267 16 5.13341 16 5.23884C16 5.34427 15.9561 5.44501 15.8788 5.51716L8.52792 12.8251C8.41552 12.9369 8.26304 12.9999 8.10398 13H7.89602C7.73696 12.9999 7.58448 12.9369 7.47208 12.8251L0.121197 5.51716C0.0438665 5.44501 0 5.34427 0 5.23884C0 5.13341 0.0438665 5.03267 0.121197 4.96052L0.969068 4.11761C1.04416 4.04234 1.14639 4 1.25302 4C1.35966 4 1.46189 4.04234 1.53698 4.11761L8 10.5428L14.463 4.11761Z"></path></svg></div>
-                                            </a>
+                                            @if( ($page-1) >= 1 )
+                                                <a class="bhdLno lhRPKu button___33J2d" href="{{ route('user.search',['page' => ($page-1), 'country' => $country, 'searchQuery' => $search_query, 'category' => $category]) }}">
+                                                    <div class="sc-hKgILt chrFRV">
+                                                        <svg viewBox="0 0 16 16" width="16" height="16" direction="left" class="sc-fubCfw ecgval"><path d="M14.463 4.11761C14.5381 4.04234 14.6403 4 14.747 4C14.8536 4 14.9558 4.04234 15.0309 4.11761L15.8788 4.96052C15.9561 5.03267 16 5.13341 16 5.23884C16 5.34427 15.9561 5.44501 15.8788 5.51716L8.52792 12.8251C8.41552 12.9369 8.26304 12.9999 8.10398 13H7.89602C7.73696 12.9999 7.58448 12.9369 7.47208 12.8251L0.121197 5.51716C0.0438665 5.44501 0 5.34427 0 5.23884C0 5.13341 0.0438665 5.03267 0.121197 4.96052L0.969068 4.11761C1.04416 4.04234 1.14639 4 1.25302 4C1.35966 4 1.46189 4.04234 1.53698 4.11761L8 10.5428L14.463 4.11761Z"></path></svg>
+                                                    </div>
+                                                </a>
+                                            @endif
                                             <div class="sc-dmlrTW guKkvw">
-                                                <form class="form___1I3Xs" novalidate="" method="GET" action="{{ route('user.search',['country' => $country]) }}">
+                                                <form class="form___1I3Xs" novalidate="" method="GET" action="{{ route('user.search',['country' => $country, 'searchQuery' => $search_query, 'category' => $category]) }}">
                                                     @csrf
                                                     <input type="text" class="sc-kfzAmx sc-fKFyDc fTLfYv ikXwLi pageInput___1mj0B" name="page" value="{{ $page }}">
                                                 </form>
                                             </div>
-                                            <a class="bhdLno lhRPKu button___33J2d" href="{{ route('user.search',['page' => ($page+1), 'country' => $country, 'searchQuery' => $search_query]) }}">
-                                                <div class="sc-hKgILt chrFRV"><svg viewBox="0 0 16 16" width="16" height="16" direction="right" class="sc-fubCfw cnhfsE"><path d="M14.463 4.11761C14.5381 4.04234 14.6403 4 14.747 4C14.8536 4 14.9558 4.04234 15.0309 4.11761L15.8788 4.96052C15.9561 5.03267 16 5.13341 16 5.23884C16 5.34427 15.9561 5.44501 15.8788 5.51716L8.52792 12.8251C8.41552 12.9369 8.26304 12.9999 8.10398 13H7.89602C7.73696 12.9999 7.58448 12.9369 7.47208 12.8251L0.121197 5.51716C0.0438665 5.44501 0 5.34427 0 5.23884C0 5.13341 0.0438665 5.03267 0.121197 4.96052L0.969068 4.11761C1.04416 4.04234 1.14639 4 1.25302 4C1.35966 4 1.46189 4.04234 1.53698 4.11761L8 10.5428L14.463 4.11761Z"></path></svg></div>
-                                            </a>
+                                            @if( ($page+1) <= $last_page )
+                                                <a class="bhdLno lhRPKu button___33J2d" href="{{ route('user.search',['page' => ($page+1), 'country' => $country, 'searchQuery' => $search_query, 'category' => $category]) }}">
+                                                    <div class="sc-hKgILt chrFRV">
+                                                        <svg viewBox="0 0 16 16" width="16" height="16" direction="right" class="sc-fubCfw cnhfsE"><path d="M14.463 4.11761C14.5381 4.04234 14.6403 4 14.747 4C14.8536 4 14.9558 4.04234 15.0309 4.11761L15.8788 4.96052C15.9561 5.03267 16 5.13341 16 5.23884C16 5.34427 15.9561 5.44501 15.8788 5.51716L8.52792 12.8251C8.41552 12.9369 8.26304 12.9999 8.10398 13H7.89602C7.73696 12.9999 7.58448 12.9369 7.47208 12.8251L0.121197 5.51716C0.0438665 5.44501 0 5.34427 0 5.23884C0 5.13341 0.0438665 5.03267 0.121197 4.96052L0.969068 4.11761C1.04416 4.04234 1.14639 4 1.25302 4C1.35966 4 1.46189 4.04234 1.53698 4.11761L8 10.5428L14.463 4.11761Z"></path></svg>
+                                                    </div>
+                                                </a>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>

@@ -245,9 +245,7 @@ class ContentController extends Controller
         return view('content.create',[]);
     }
 
-    public function showTemplatePage($country, $slug){
-        $language_code = 'en';
-        
+    function getLocale($country){
         if( in_array($country, ['us', 'ca']) ){
             $locale = 'en';
         } elseif( in_array($country, ['es','mx','co','ar','bo','ch','cu','do','sv','hn','ni', 'pe', 'uy', 've','py','pa','gt','pr','gq']) ){
@@ -255,6 +253,13 @@ class ContentController extends Controller
         } else {
             $locale = 'en';
         }
+        
+        return $locale;
+    }
+
+    public function showTemplatePage($country, $slug){
+        $language_code = 'en';
+        $locale = self::getLocale($country);
         
         if( !in_array($locale, ['en', 'es']) ){
             abort(400);
@@ -269,6 +274,71 @@ class ContentController extends Controller
             $search_query = $request->searchQuery;
         }
 
+        $template = self::getTemplateMetadata($template_id);
+        $related_templates = self::getRelatedTemplates( $template->mainCategory, $language_code );
+        
+        if( isset($template->_id) == false ){
+            abort(404);
+        }
+
+        if( App::environment() == 'locals' ){
+            $preview_image = asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["product_preview"] );
+        } else {
+            $preview_image = Storage::disk('s3')->url( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["product_preview"] );
+        }
+
+        $template->price = rand(35,1000);
+        $category_name = $template->mainCategory;
+        $category_name = substr( $template->mainCategory,1, strlen($category_name) );
+        $breadcrumbs_str = Redis::get('wayak:en:categories:'.$category_name);
+        $breadcrumbs_obj = json_decode($breadcrumbs_str);
+
+        $breadcrumbs_arr = self::getBreadCrumbs( $breadcrumbs_obj ) ;
+        
+        // echo "<pre>";
+        // print_r($template);
+        // exit;
+        
+        $url = "";
+        $total_breads = sizeof($this->bread_array);
+        for ($i=0; $i < $total_breads; $i++) { 
+            $url .= '/'.$this->bread_array[$i]->slug;
+            $this->bread_array[$i]->url = url($country.'/templates'.$url);
+        }
+        
+        // print_r($template->previewImageUrls['thumbnail']);
+        // echo "<pre>";
+        // print_r( $related_templates );
+        // exit;
+
+        // $thumb_path = public_path( 'design/template/'. $template_id.'/thumbnails/en/'.$template->previewImageUrls['thumbnail']);
+        $thumb_path = $preview_image;
+        
+        $palette = Palette::fromFilename( $thumb_path );
+        $extractor = new ColorExtractor($palette);
+        $colors = $extractor->extract(10);
+
+        for ($i=0; $i < sizeof($colors); $i++) { 
+            $colors[$i] = Color::fromIntToHex($colors[$i]);
+        }
+
+        $menu = json_decode(Redis::get('wayak:'.$country.':menu'));
+
+        return view('content.product-detail',[
+            'country' => $country,
+            'preview_image' => $preview_image,
+            'language_code' => $language_code,
+            'search_query' => $search_query,
+            'menu' => $menu,
+            'breadcrumbs' => $this->bread_array,
+            'breadcrumb' => $breadcrumbs_obj,
+            'template' => $template,
+            'colors' => $colors,
+            'related_templates' => $related_templates
+        ]);
+    }
+
+    function getTemplateMetadata($template_id){
         $template = Template::where('_id','=',$template_id)
             ->first([
                 'title',
@@ -284,24 +354,24 @@ class ContentController extends Controller
                 'createdAt',
                 'updatedAt'
             ]);
-        
-        // echo "<pre>";
-        // print_r($template);
-        // exit;
+        return $template;
 
-        $total = Template::where('mainCategory','=', $template->mainCategory )->count();
-        $per_page = 20;
+    }
+
+    
+
+    function getRelatedTemplates($mainCategory, $language_code){
+
+        $total = Template::where('mainCategory','=', $mainCategory )->count();
+        $per_page = 32;
         $tota_pages = floor( $total / $per_page );
         $page = rand( 1, $tota_pages );
         $skip = $page * $per_page;
         
-        // // echo $tota_pages.'<br>';
-        // // echo $skip.'<br>';
-        // // exit;
-
         $related_content = Template::select([
                 'title',
                 'preview_image',
+                'slug',
                 'format',
                 'categories',
                 'mainCategory',
@@ -313,13 +383,13 @@ class ContentController extends Controller
                 'createdAt',
                 'updatedAt'
             ])
-            ->where('mainCategory','=', $template->mainCategory )
-            // ->orderBy('rand')
+            ->where('mainCategory','=', $mainCategory )
+            ->orderBy('rand')
             ->skip($skip)
             ->take($per_page)
             ->get();
         
-        // $related_templates[] = [];
+        $related_templates = [];
         foreach ($related_content as $related_template) {
             
             if( App::environment() == 'locals' ){
@@ -330,75 +400,8 @@ class ContentController extends Controller
 
             $related_templates[] = $related_template;
         }
-        
-        // echo "<pre>";
-        // // // print_r($related_content);
-        // print_r($related_templates);
-        // exit;
-        
-        if( isset($template->_id) == false ){
-            abort(404);
-        }
 
-        if( App::environment() == 'locals' ){
-            $preview_image = asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["product_preview"] );
-        } else {
-            $preview_image = Storage::disk('s3')->url( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["product_preview"] );
-        }
-
-        $category_name = $template->mainCategory;
-        $category_name = substr( $template->mainCategory,1, strlen($category_name) );
-        $breadcrumbs_str = Redis::get('wayak:en:categories:'.$category_name);
-        $breadcrumbs_obj = json_decode($breadcrumbs_str);
-
-        // echo "<pre>";
-        // print_r( $category_name );
-        // echo "\n";
-        // print_r( $breadcrumbs_obj );
-        // exit;
-
-        $breadcrumbs_arr = self::getBreadCrumbs( $breadcrumbs_obj ) ;
-        
-        // echo "Ejemplo";
-        // print_r($breadcrumbs_obj);
-        // exit;
-        
-        $url = "";
-        $total_breads = sizeof($this->bread_array);
-        for ($i=0; $i < $total_breads; $i++) { 
-            $url .= '/'.$this->bread_array[$i]->slug;
-            $this->bread_array[$i]->url = url($country.'/templates'.$url);
-        }
-        
-        // echo "<pre>";
-        // print_r($template->previewImageUrls['thumbnail']);
-        // exit;
-
-        // $thumb_path = public_path( 'design/template/'. $template_id.'/thumbnails/en/'.$template->previewImageUrls['thumbnail']);
-        $thumb_path = $preview_image;
-        
-        $palette = Palette::fromFilename( $thumb_path );
-        $extractor = new ColorExtractor($palette);
-        $colors = $extractor->extract(10);
-
-        for ($i=0; $i < sizeof($colors); $i++) { 
-            $colors[$i] = Color::fromIntToHex($colors[$i]);
-        }
-        
-        $menu = json_decode(Redis::get('wayak:'.$country.':menu'));
-
-        return view('content.product-detail',[
-            'country' => $country,
-            'preview_image' => $preview_image,
-            'language_code' => $language_code,
-            'search_query' => $search_query,
-            'menu' => $menu,
-            'breadcrumbs' => $this->bread_array,
-            'breadcrumb' => $breadcrumbs_obj,
-            'template' => $template,
-            'colors' => $colors,
-            'related_templates' => $related_templates
-        ]);
+        return $related_templates;
     }
     
     public $bread_array = [];
@@ -418,17 +421,16 @@ class ContentController extends Controller
     public function showSearchPage($country, Request $request){
         $language_code = 'en';
         $search_query = '';
+        $category = '';
         
         $page = 1;
-        $per_page = 100;
+        $per_page = 200;
         $skip = 0;
 
         if( isset($request->searchQuery) ) {
             $search_query = $request->searchQuery;
-            // print_r($search_query);
-            // exit;
         }
-
+        
         if( isset($request->page) ) {
             // print_r($page);
             // exit;
@@ -436,17 +438,79 @@ class ContentController extends Controller
             $skip = $per_page*($page-1);
         }
 
-        $search_result = Template::where('title', 'like', '%'.$search_query.'%')
-            ->skip($skip)
-            ->take($per_page)
-            ->get([
-                'title',
-                'forSubscribers',
-                'slug',
-                // 'category',
-                // 'categoryCaption',
-                'previewImageUrls'
-            ]);
+        
+        
+        if( isset($request->category) ) {
+            $category = $request->category;
+            if( $search_query == '' ){
+                $search_result = Template::where('mainCategory', '=', $request->category)
+                    ->skip($skip)
+                    ->take($per_page)
+                    ->get([
+                        'title',
+                        'forSubscribers',
+                        'slug',
+                        // 'category',
+                        // 'categoryCaption',
+                        'previewImageUrls'
+                    ]);
+                
+                $total_documents = Template::where('mainCategory', '=', $request->category)->count();
+                $from_document = $skip + 1;
+                $to_document = $skip + $per_page;
+            } else {
+                $search_result = Template::where('mainCategory', '=', $request->category)
+                    ->where('title', 'like', '%'.$search_query.'%')
+                    ->skip($skip)
+                    ->take($per_page)
+                    ->get([
+                        'title',
+                        'forSubscribers',
+                        'slug',
+                        // 'category',
+                        // 'categoryCaption',
+                        'previewImageUrls'
+                    ]);
+                
+                $total_documents = Template::where('mainCategory', '=', $request->category)
+                                        ->where('title', 'like', '%'.$search_query.'%')
+                                        ->count();
+                $from_document = $skip + 1;
+                $to_document = $skip + $per_page;
+            }
+        } else {
+            $search_result = Template::where('title', 'like', '%'.$search_query.'%')
+                ->skip($skip)
+                ->take($per_page)
+                ->get([
+                    'title',
+                    'forSubscribers',
+                    'slug',
+                    // 'category',
+                    // 'categoryCaption',
+                    'previewImageUrls'
+                ]);
+            
+            $total_documents = Template::where('title', 'like', '%'.$search_query.'%')
+                                        ->count();
+            $from_document = $skip + 1;
+            $to_document = $skip + $per_page;
+        }
+
+        $last_page = ceil( $total_documents / $per_page );
+
+
+        // Style
+        // Theme / categories
+        // labels
+        // color
+        // Price
+        
+        // echo "<pre>";
+        // // print_r( $request->category );
+        // // print_r( $request->all() );
+        // print_r($cats);
+        // exit;
 
         $templates = [];
         foreach ($search_result as $template) {
@@ -458,10 +522,6 @@ class ContentController extends Controller
             $templates[] = $template;
         }
         
-        $total_documents = Template::where('title', 'like', '%'.$search_query.'%')->count();
-        $from_document = $skip + 1;
-        $to_document = $skip + $per_page;
-        
         // echo $total_documents;
         // exit;
         $menu = json_decode(Redis::get('wayak:'.$country.':menu'));
@@ -471,7 +531,9 @@ class ContentController extends Controller
             'language_code' => $language_code,
             'menu' => $menu,
             'search_query' => $search_query,
+            'category' => $category,
             'page' => $page,
+            'last_page' => $last_page,
             'from_document' => $from_document,
             'to_document' => $to_document,
             'total_documents' => $total_documents,

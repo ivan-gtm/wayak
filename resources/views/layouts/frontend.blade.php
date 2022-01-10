@@ -126,7 +126,7 @@
                     <a class="action-btn-container side-btn for-anon" 
                         id="nav-login-signup-cta" 
                         href="{{ route('code.validate.form', [
-                        'country' => $country
+                            'country' => $country
                         ]) }}" title="Claim Code">
                         <span class="action-btn-text login-btn-text">
                         {{ __('menu.claim_code') }}
