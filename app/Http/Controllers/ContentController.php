@@ -392,11 +392,11 @@ class ContentController extends Controller
         $related_templates = [];
         foreach ($related_content as $related_template) {
             
-            if( App::environment() == 'local' ){
-                $related_template->preview_image = asset( 'design/template/'.$related_template->_id.'/thumbnails/'.$language_code.'/'.$related_template->previewImageUrls["product_preview"] );
-            } else {
+            // if( App::environment() == 'local' ){
+            //     $related_template->preview_image = asset( 'design/template/'.$related_template->_id.'/thumbnails/'.$language_code.'/'.$related_template->previewImageUrls["product_preview"] );
+            // } else {
                 $related_template->preview_image = Storage::disk('s3')->url( 'design/template/'.$related_template->_id.'/thumbnails/'.$language_code.'/'.$related_template->previewImageUrls["product_preview"] );
-            }
+            // }
 
             $related_templates[] = $related_template;
         }
