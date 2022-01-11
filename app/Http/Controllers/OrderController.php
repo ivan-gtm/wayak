@@ -92,7 +92,7 @@ class OrderController extends Controller
         $related_templates = [];
         foreach ($related_content as $related_template) {
             
-            if( App::environment() == 'locals' ){
+            if( App::environment() == 'local' ){
                 $related_template->preview_image = asset( 'design/template/'.$related_template->_id.'/thumbnails/'.$language_code.'/'.$related_template->previewImageUrls["product_preview"] );
             } else {
                 $related_template->preview_image = Storage::disk('s3')->url( 'design/template/'.$related_template->_id.'/thumbnails/'.$language_code.'/'.$related_template->previewImageUrls["product_preview"] );
