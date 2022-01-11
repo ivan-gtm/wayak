@@ -255,7 +255,7 @@
                                         <li class="col-3">
                                             <a href="{{ route( 'template.productDetail', ['country' => $country,'slug' => $template->slug] ) }}">
                                                 <img alt="{{ $template->title }}"
-                                                     src="{{ asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template['previewImageUrls']['thumbnail'] ) }}"
+                                                     src="{{  $template->preview_image }}"
                                                      loading="lazy">
                                             </a>
                                         </li>
