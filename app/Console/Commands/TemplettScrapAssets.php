@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 // use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 
-class ScrapAssets extends Command
+class TemplettScrapAssets extends Command
 {
     /**
      * The name and signature of the console command.

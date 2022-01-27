@@ -17,7 +17,7 @@ class CreateHomeCarousels extends Command
      *
      * @var string
      */
-    protected $signature = 'wayak:X-createcarousels';
+    protected $signature = 'wayak:front:createcarousels';
 
     /**
      * The console command description.

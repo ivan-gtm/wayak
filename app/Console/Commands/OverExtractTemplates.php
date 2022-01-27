@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Zip;
 
-class TMPOverTemplates extends Command
+class OverExtractTemplates extends Command
 {
     /**
      * The name and signature of the console command.

@@ -13,14 +13,14 @@ class MigrateToUAT extends Command
      *
      * @var string
      */
-    protected $signature = 'wayak:migrate-redis-dev-to-prod';
+    protected $signature = 'wayak:db:redis-dev-to-uat';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Migrate REDIS keys from DEV to UAT';
 
     /**
      * Create a new command instance.
@@ -45,20 +45,20 @@ class MigrateToUAT extends Command
     }
 
     function migrateRedisKeys(){
-        // self::migrateTemplates();
-        // self::migrateCarousels();
-        // self::migrateMenu();
-        // self::migrateCategories();
-        // self::migrateWayakConfig();
-        // self::migrateTemplatesFromProdToDev();
+        self::migrateTemplates();
+        self::migrateCarousels();
+        self::migrateMenu();
+        self::migrateCategories();
+        self::migrateWayakConfig();
         
-        self::migratePSDurls();
+        // self::migrateTemplatesFromProdToDev();
+        // self::migratePSDurls();
     }
     
     function migrateTemplates(){
         
-        $redis_src = Redis::connection('redispro');
-        $redis_dest = Redis::connection('default');
+        $redis_src = Redis::connection('default');
+        $redis_dest = Redis::connection('redisuat');
 
         $templates = DB::select( DB::raw(
             'SELECT
@@ -137,11 +137,12 @@ class MigrateToUAT extends Command
     }
     
     function migrateWayakConfig(){
-        $redis_uat = Redis::connection('redisuat');
-        $wayak_config = Redis::keys('wayak:*');
+        $redis_src = Redis::connection('default');
+        $redis_dest = Redis::connection('redisuat');
 
+        $wayak_config = $redis_src->keys('wayak:*');
         foreach ($wayak_config as $config_keyname) {
-            $redis_uat->set($config_keyname, Redis::get($config_keyname));
+            $redis_dest->set($config_keyname, $redis_src->get($config_keyname));
             print_r("Migrated key >> \n");
             print_r($config_keyname);
             usleep(500000);
@@ -149,8 +150,8 @@ class MigrateToUAT extends Command
     }
     
     function migrateCarousels(){
-        $redis_src = Redis::connection('redispro');
-        $redis_dest = Redis::connection('default');
+        $redis_src = Redis::connection('default');
+        $redis_dest = Redis::connection('redisuat');
         
         $carousels = $redis_src->keys('wayak:*:home:carousels');
 
@@ -167,8 +168,8 @@ class MigrateToUAT extends Command
     }
     
     function migrateMenu(){
-        $redis_src = Redis::connection('redispro');
-        $redis_dest = Redis::connection('default');
+        $redis_src = Redis::connection('default');
+        $redis_dest = Redis::connection('redisuat');
         // $keys = $redis_uat->keys('*');
 
         $carousels = $redis_src->keys('wayak:*:menu');
@@ -186,8 +187,9 @@ class MigrateToUAT extends Command
     }
     
     function migrateCategories(){
-        $redis_src = Redis::connection('redispro');
-        $redis_dest = Redis::connection('default');
+        $redis_src = Redis::connection('default');
+        $redis_dest = Redis::connection('redisuat');
+
         $carousels = $redis_src->keys('wayak:en:categories:*');
 
         foreach ($carousels as $carousel_key) {

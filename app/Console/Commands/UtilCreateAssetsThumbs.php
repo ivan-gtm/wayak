@@ -7,21 +7,21 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Image;
 
-class CreateAssetsGallery extends Command
+class UtilCreateAssetsThumbs extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'wayak:canva:createassetsgallery';
+    protected $signature = 'wayak:util:create-assets-thumbs';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Create image thumbnails from every asset image template';
 
     /**
      * Create a new command instance.
@@ -49,10 +49,11 @@ class CreateAssetsGallery extends Command
         // Check if font/template relationship already exist
         $templates = DB::table('templates')
                     ->select('id', 'template_id','source')
-                    ->where('source','=','placeit')
-                    ->where('template_id','=','lDwkOPQsXimhd5U')
+                    ->where('source','=','corjl')
+                    // ->where('template_id','=','lDwkOPQsXimhd5U')
                     // ->offset(18000)
                     // ->limit(9000)
+                    ->orderByDesc('id')
                     ->get();
 
         foreach ($templates as $template) {

@@ -469,6 +469,10 @@ class CategoryController extends Controller
             ]
             // 'link' => url('template/'.self::strToSlug($category->SectionName).'/'.self::strToSlug($category->CategoryName))
         ];
+
+        echo "<pre>";
+        print_r($clean_category_obj);
+        exit;
         
         foreach($clean_category_obj as $category) {
             if($category['section'] == 'cards'){

@@ -21,6 +21,7 @@
       <div class="row">
         <div class="col-6">
           <img class="img-fluid" src="{{ $img_src }}">
+          <a href="{{ $img_path }}">OPEN</a>
         </div>
           <div class="col-6">
             <label class="btn btn-outline-primary">{{ $file_type }}</label>

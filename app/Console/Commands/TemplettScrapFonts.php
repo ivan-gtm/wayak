@@ -7,14 +7,14 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 
 
-class ScrapFonts extends Command
+class TemplettScrapFonts extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'wayak:scrapfonts';
+    protected $signature = 'wayak:templett:scrapfonts';
 
     /**
      * The console command description.

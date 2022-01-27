@@ -84,7 +84,8 @@ Route::get('/api/demo-url', [AdminController::class, 'getTemplateObjects']);
         Route::get('/admin/categories/translate/{from}/{to}', [CategoryController::class, 'translateCategory'])->name('admin.category.translate');
 
         Route::get('/admin/template/edit/{language_code}/{template_key}', [EditorController::class, 'adminTemplateEditor'])->name('admin.edit.template');
-        // TEMPORAL
+        
+    // TEMPORAL
         Route::get('/admin/refactor', [AdminController::class, 'refactor'])->name('admin.keyrefactor');
         Route::get('/admin/thumbnail-generation', [AdminController::class, 'thumbnailGeneration'])->name('admin.thumbnailGeneration');
 

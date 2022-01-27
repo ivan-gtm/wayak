@@ -14,21 +14,21 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 ini_set('memory_limit', '-1');
 
-class VerifyTemplates extends Command
+class UtilVerifyTemplates extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'wayak:verifytemplates';
+    protected $signature = 'wayak:util:verifytemplates';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Verify Assets';
+    protected $description = 'Verify Template Assets';
 
     /**
      * Create a new command instance.
@@ -66,11 +66,11 @@ class VerifyTemplates extends Command
     function bulkTemplateVerification(){
 
         $templates = DB::table('templates')
-                            ->select('id', 'template_id')
+                            ->select('id', 'template_id', 'source')
                             // ->whereIn('status', [1,3,4,8])
                             // ->whereIn('status', [1])
-                            ->where('source','=', 'templett')
-                            ->where('template_id','=', '682087')
+                            ->where('source','=', 'corjl')
+                            // ->where('template_id','=', '682087')
 							->orderBy('id','DESC')
 							// ->limit(1000)
 							->get();
@@ -97,10 +97,10 @@ class VerifyTemplates extends Command
                     
                     print_r("\n>> PARSING PAGE");
 
-                    $downloaded_asset = self::parseTemplateObjects($objects, $template->template_id, $template->id);
+                    $downloaded_asset = self::parseTemplateObjects($objects, $template->template_id, $template->id, $template->source);
 
                     if( isset( $page->patternSourceCanvas ) && isset($page->patternSourceCanvas->objects) ){
-                        self::parseTemplateObjects( $page->patternSourceCanvas->objects, $template->template_id, $template->id);
+                        self::parseTemplateObjects( $page->patternSourceCanvas->objects, $template->template_id, $template->id, $template->source);
                     }
                     // print_r( "\n\n".$template_key."->".$downloaded_asset."->".sizeof($objects) );
 
@@ -123,14 +123,14 @@ class VerifyTemplates extends Command
 		}
     }
 
-    function parseTemplateObjects($objects, $template_key, $template_id){
+    function parseTemplateObjects($objects, $template_key, $template_id, $source){
         $downloaded_asset = 0;
         foreach ($objects as $index => $object) {
                         
             print_r("\n>> PARSING OBJ ".$object->type);
 
             if($object->type == 'image'){
-                if( $this->registerImagesOnDB($object->src, $template_key) ){
+                if( $this->registerImagesOnDB($object->src, $template_key, $source) ){
                     $downloaded_asset++;
                 } else {
                     print_r( "\n".$template_key."- MISSING IMG" );
@@ -140,7 +140,7 @@ class VerifyTemplates extends Command
                     ->update(['status' => 7]);
                 }
             } elseif($object->type == 'path' && isset($object->src) OR $object->type == 'path-group' && isset($object->src) ){
-                if( $this->registerSVGsOnDB($object->src, $template_key) ){
+                if( $this->registerSVGsOnDB($object->src, $template_key, $source) ){
                     $downloaded_asset++;
                 } else {
                     print_r( "\n".$template_key."- MISSING SVG" );
@@ -153,7 +153,7 @@ class VerifyTemplates extends Command
             } elseif($object->type == 'textbox' 
                         OR $object->type == 'i-text'){
                 
-                if( isset($object->fill->src) && $this->registerImagesOnDB($object->fill->src, $template_key) == false){
+                if( isset($object->fill->src) && $this->registerImagesOnDB($object->fill->src, $template_key, $source) == false){
 
                     print_r( "\n".$template_key."- MISSING IMG STATUS 7" );
 
@@ -185,7 +185,7 @@ class VerifyTemplates extends Command
                         ){
                 $downloaded_asset++;
             } elseif($object->type == 'text'){
-                if(isset($object->src) && $this->registerImagesOnDB($object->src, $template_key) == false){
+                if(isset($object->src) && $this->registerImagesOnDB($object->src, $template_key, $source) == false){
 
                     print_r( "\n".$template_key."- MISSING IMG" );
 
@@ -217,17 +217,18 @@ class VerifyTemplates extends Command
         return $downloaded_asset;
     }
 
-    function registerAssetOnDB($file_name, $template_path, $template_id){
+    function registerAssetOnDB($file_name, $template_path, $template_id, $source){
 		DB::table('images')->insert([
 			'id' => null,
+            'source' => $source,
 			'template_id' => $template_id,
-			'tmp_path' => $template_path,
+			'original_path' => $template_path,
 			'filename' => $file_name,
 			'status' => 0 // Estado inicial, metadatos extraidos de etsy
 		]);
 	}
 
-	function registerImagesOnDB($url, $template_id){
+	function registerImagesOnDB($url, $template_id, $source){
 		$diagonal = strripos($url, '/')+1;
 		$file_name = substr($url, $diagonal, strlen($url));
 		
@@ -240,8 +241,8 @@ class VerifyTemplates extends Command
 		// If this image does not exists on db
 		if( isset($images_query->template_id) == false ){
 			$path = 'design/template/images/'.$template_id;
-			$this->registerAssetOnDB($file_name, $path . '/'.$file_name, $template_id);
-        } 
+			$this->registerAssetOnDB($file_name, $path . '/'.$file_name, $template_id, $source);
+        }
         
         if (isset($images_query->status) &&  $images_query->status == 1) {
             return true;
@@ -249,7 +250,7 @@ class VerifyTemplates extends Command
         return false;
 	}
 
-	function registerSVGsOnDB($url, $template_id){
+	function registerSVGsOnDB($url, $template_id, $source){
 		
 		$diagonal = strripos($url, '/')+1;
 		$file_name = substr($url, $diagonal, strlen($url));
@@ -263,7 +264,7 @@ class VerifyTemplates extends Command
 		// If font id does not exists on db
 		if( isset($svg_query->template_id) == false ){
 			$path = 'design/template/images/'.$template_id;
-			$this->registerAssetOnDB($file_name, $path . '/'.$file_name, $template_id);
+			$this->registerAssetOnDB($file_name, $path . '/'.$file_name, $template_id, $source);
         } 
         
         if (isset($svg_query->status) && $svg_query->status == 1) {

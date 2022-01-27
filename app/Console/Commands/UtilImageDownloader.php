@@ -7,21 +7,21 @@ use App\Models\Template;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 
-class BotImageDownloader extends Command
+class UtilImageDownloader extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'wayak:imagedownloader';
+    protected $signature = 'wayak:util:image-downloader';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Auxiliar command to download from urls to local path';
+    protected $description = 'Auxiliar command to download from static urls to local path';
 
     /**
      * Create a new command instance.

@@ -1937,7 +1937,7 @@ class AdminController extends Controller
         $tmp_similar_thumbs = [];
 
         $db_image = DB::table('images')
-                    ->select('thumb_path','title','file_type','source','id','template_id')
+                    ->select('thumb_path','original_path','title','file_type','source','id','template_id')
                     ->where('id', '=', $img_id)
                     ->first();
 
@@ -2077,6 +2077,7 @@ class AdminController extends Controller
         // print_r( '</pre>' );
 
         $img_src = asset(  str_replace('/application/public/',null, $db_image->thumb_path) );
+        $img_path = asset(  str_replace('/application/public/',null, $db_image->original_path) );
 
         $existing_keywords = DB::table('image_keywords')
                     ->join('keywords', 'image_keywords.keyword_id', '=', 'keywords.id')
@@ -2093,6 +2094,7 @@ class AdminController extends Controller
             'tmp_similar_thumbs' => $tmp_similar_thumbs,
 
             'img_src' => $img_src,
+            'img_path' => $img_path,
             'file_type' => strtoupper($db_image->file_type),
             'source' => strtoupper($db_image->source),
             'title' => $db_image->title,
@@ -2121,9 +2123,10 @@ class AdminController extends Controller
         
         $templates = DB::table('images')
             ->select('id','template_id','thumb_path','file_type','filename','status')
-            ->where('source','=','corjl')
+            // ->where('source','=','corjl')
             // ->where('source','=','crello')
-            // ->where('source','=','placeit')
+            ->where('source','!=','placeit')
+            ->where('file_type','!=','svg')
     		// ->where('source','=','green')
             // ->where('source','=','templett')
             // ->whereNull('status')
@@ -2133,7 +2136,8 @@ class AdminController extends Controller
             ->get();
 
         $total_templates = DB::table('images')
-                        ->where('source','=','corjl')
+                            ->where('source','!=','placeit')
+                            ->where('file_type','!=','svg')
                             // ->whereNull('status')
                             ->count();
 

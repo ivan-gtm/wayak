@@ -1266,6 +1266,21 @@ class EditorController extends Controller
 	}
 
 	function validateCode($country, Request $request){
+		
+		if( in_array($country, ['us', 'ca']) ){
+            $locale = 'en';
+        } elseif( in_array($country, ['es','mx','co','ar','bo','ch','cu','do','sv','hn','ni', 'pe', 'uy', 've','py','pa','gt','pr','gq']) ){
+            $locale = 'es';
+        } else {
+            $locale = 'en';
+        }
+
+        if( !in_array($locale, ['en', 'es']) ){
+            abort(400);
+        }
+
+        App::setLocale($locale);
+
 		if( isset( $request->templates ) ){
 			$templates = $request->templates;
 		} else {

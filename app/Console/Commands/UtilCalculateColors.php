@@ -6,14 +6,14 @@ use Illuminate\Console\Command;
 use App\Models\Template;
 use Illuminate\Support\Facades\DB;
 
-class BotCalculateColors extends Command
+class UtilCalculateColors extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'wayak:getcolors';
+    protected $signature = 'wayak:util:getcolors';
 
     /**
      * The console command description.

@@ -61,8 +61,8 @@
     @section('content')
         <div id="wrapper">
             <div id="dialog">
-                <h1>REDEEM TEMPLATE CODE</h1>
-                <h3>Enter the 4-digit promo code to access your template.</h3>
+                <h1>{{ __('code.redeem_template') }}</h1>
+                <h3>{{ __('code.instructions') }}</h3>
                 
                 <div id="form">
                     <form method="post" action="{{ route('code.validate', [
@@ -76,8 +76,8 @@
                         <input class="digit" name="digit3" type="text" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}" />
                         <input class="digit" name="digit4" type="text" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}" />
                         
-                        <button type="submit" class="btn btn-primary btn-embossed">VERIFY CODE</button>
-                        <button type="button" class="btn btn-primary btn-embossed" onclick="resetForm()" style="margin-top: 8px;background-color: #d2d2d2;color: black;">RESET CODE</button>
+                        <button type="submit" class="btn btn-primary btn-embossed">{{ __('code.verify_btn') }}</button>
+                        <button type="button" class="btn btn-primary btn-embossed" onclick="resetForm()" style="margin-top: 8px;background-color: #d2d2d2;color: black;">{{ __('code.reset_btn') }}</button>
                         <!-- <a href="#" style="color: #b1b1b1;text-decoration: none;font-size: 15px;">
                             Usar versión demo
                         </a> -->
