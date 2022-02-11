@@ -60,20 +60,13 @@ class CorjlTemplateScrapper extends Command
                 // exit;
     
                 $db_template = DB::table('thumbnails')
-                                        ->select('template_id')
-                                        ->where('original_template_id', '=', $original_product_key )
+                                        ->select('template_id','status')
+                                        ->where( 'original_template_id', '=', $original_product_key )
+                                        ->where( 'status', '=', '0' )
                                         ->first();
                 
                 if( isset( $db_template->template_id ) == false 
-                    // && $original_product_key != 'N9IEO' 
-                    // && $original_product_key != '1DCM11' 
-                    // && $original_product_key != 'J3NKF' 
-                    // && $original_product_key != '1FBLI1' 
-                    // && $original_product_key != '5AK8N9' 
-                    // && $original_product_key != '2IIL6C' 
-                    // && $original_product_key != '1MLAEE' 
-                    // && $original_product_key != '958OO' 
-                    ){
+                    OR ( isset( $db_template->template_id ) == true AND $db_template->status == 0 ) ){
                     
                     echo "\n\t>> $original_product_key exists on thumbnails table ";
 
@@ -261,6 +254,7 @@ class CorjlTemplateScrapper extends Command
                 }
             } else {
                 echo "\n".'DOES NOT EXISTS >>'.$template_svg_path;
+                Redis::del($product_key);
             }
 
         }

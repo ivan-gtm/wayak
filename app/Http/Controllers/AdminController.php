@@ -423,24 +423,200 @@ class AdminController extends Controller
     }
     
     function createProduct($template_key){
+        
         $product_metadata = new \stdClass();
+        $title_words = '';
+        $autocomplete = [];
+        $tmp_similar_titles = [];
+        $tmp_similar_thumbs = [];
+        
+        // $template_key = 'WxtU57VQvgrE3IY';
+        $template_titles = DB::select( DB::raw(
+            "SELECT
+                thumbnails.template_id,
+                LOWER(CONCAT(
+                    thumbnails.title,
+                    ' ',
+                    IF(tmp_etsy_metadata.title IS NULL,'',tmp_etsy_metadata.title),
+                    ' ',
+                    IF(tmp_etsy_product.title IS NULL,'',tmp_etsy_product.title)
+                )) combined_title,
+                thumbnails.title title,
+				tmp_etsy_metadata.title title_2,
+				tmp_etsy_product.title title_3
+            FROM 
+                thumbnails
+                LEFT JOIN templates ON thumbnails.template_id = templates.template_id
+                LEFT JOIN tmp_etsy_metadata ON templates.fk_etsy_template_id = tmp_etsy_metadata.id
+                LEFT JOIN tmp_etsy_product ON tmp_etsy_metadata.fk_product_id = tmp_etsy_product.id
+            WHERE 
+                thumbnails.template_id = '".$template_key."'
+            LIMIT 1"
+        ));
+
+        foreach ($template_titles as $db_title) {
+            $full_title_words = ucwords($db_title->combined_title);
+            $title_1 = ucwords($db_title->title);
+            $title_2 = ucwords($db_title->title_2);
+            $title_3 = ucwords($db_title->title_3);
+        }
+
+        preg_match_all('/(\w+)/', $full_title_words, $title_1_arr);
+        $unique_title_keywords = array_unique($title_1_arr[1]);
+        $unique_title_keywords = array_unique(array_merge(self::getTemplateText($template_key),$unique_title_keywords));
+        // exit;
+
+        // echo "<pre>";
+        // // print_r('<br>'.$full_title_words);
+        // // print_r('<br>'.$title_1);
+        // // print_r('<br>'.$title_2);
+        // // print_r('<br>'.$title_3);
+        // print_r( $unique_title_keywords );
+        // exit;
+
+        if( empty($unique_title_keywords) == false ){
+
+            $similar_keywords = DB::select( DB::raw(
+                "SELECT keywords.* FROM (SELECT template_keywords.keyword_id, COUNT(*) total FROM (SELECT
+                template_id, keyword_id, COUNT(*) inlcuded_keys
+                FROM
+                    template_keywords 
+                WHERE
+                    keyword_id IN (
+                    SELECT
+                        id 
+                    FROM
+                        keywords 
+                    WHERE
+                        keywords.word IN (
+                                "."'".implode("','",$unique_title_keywords)."'"."
+                                ) 
+                            ) 
+                        GROUP BY template_id, keyword_id
+                        ORDER BY inlcuded_keys DESC 
+                        LIMIT 10) rt,
+                            template_keywords
+                        WHERE
+                            template_keywords.template_id = rt.template_id
+                        GROUP BY template_keywords.keyword_id
+                        ORDER BY total DESC 
+                        LIMIT 30) related_keywords,
+                        keywords
+                        WHERE
+                            keywords.id = related_keywords.keyword_id
+                    "
+            ));
+
+            foreach ($similar_keywords as $keyword) {
+                $tmp_related_keywords[] = ucwords($keyword->word);
+            }
+        
+            // echo "<pre>";
+            // print_r( $tmp_keywords );
+            // exit;
+
+
+            $keywords_by_rank = DB::select( DB::raw(
+                "SELECT keywords.* 
+                FROM 
+                keywords,
+                (SELECT keyword_id, COUNT(*) total
+                FROM template_keywords 
+                WHERE keyword_id IN( SELECT
+                    id 
+                FROM
+                    keywords 
+                WHERE
+                    keywords.word IN (
+                        "."'".implode("','",$unique_title_keywords)."'"."
+                    ) )
+                GROUP BY keyword_id
+                ORDER BY total DESC ) templates_keys 
+                WHERE templates_keys.keyword_id = keywords.id
+                 "
+            ));
+
+            foreach ($keywords_by_rank as $keyword) {
+                $tmp_ranked_keywords[] = ucwords($keyword->word);
+            }
+            
+            $title_recommendations = DB::select( DB::raw(
+                "SELECT
+                    thumbnails.title title,
+                    IF(tmp_etsy_metadata.title IS NULL,'',tmp_etsy_metadata.title) title_2,
+                    IF(tmp_etsy_product.title IS NULL,'',tmp_etsy_product.title) title_3
+                FROM (SELECT
+                    template_id, keyword_id, COUNT(*) inlcuded_keys
+                FROM
+                    template_keywords 
+                WHERE
+                    keyword_id IN (
+                    SELECT
+                        id 
+                    FROM
+                        keywords 
+                    WHERE
+                        keywords.word IN (
+                            "."'".implode("','",$unique_title_keywords)."'"."
+                        ) 
+                    ) 
+                GROUP BY template_id, keyword_id
+                ORDER BY inlcuded_keys DESC 
+                LIMIT 30) related_templates, 
+                templates,
+                thumbnails,
+                tmp_etsy_metadata,
+                tmp_etsy_product
+                WHERE 
+                    related_templates.template_id = templates.id
+                    AND templates.template_id = thumbnails.template_id
+                    AND templates.fk_etsy_template_id = tmp_etsy_metadata.id
+                    AND tmp_etsy_metadata.fk_product_id = tmp_etsy_product.id
+                GROUP BY
+                    title,
+                    title_2,
+                    title_3
+                LIMIT 10"
+            ));
+
+            foreach ($title_recommendations as $titles) {
+                $tmp_titles[] = ucwords($titles->title);
+                $tmp_titles[] = ucwords($titles->title_2);
+                // $tmp_titles[] = ucwords($titles->title_3);
+            }
+
+            $tmp_recomendation_titles = array_unique($tmp_titles);
+        }
+
         if (Redis::exists('template:en:'.$template_key.':metadata')) {
             $product_metadata = Redis::get('template:en:'.$template_key.':metadata');
             $product_metadata = json_decode($product_metadata);
-    
-            // echo "<pre>";
-            // print_r($product_metadata);
-            // exit;
         }
 
-        $product_metadata->title = (isset($product_metadata->title) && $product_metadata->title != '') ? $product_metadata->title : 'Invitation for | Birthday | 5x7';
-        $product_metadata->description = (isset($product_metadata->description) && $product_metadata->description != '') ? $product_metadata->description : Redis::get('wayak:etsy:description_template') ;
-        $product_metadata->tags = (isset($product_metadata->tags) && $product_metadata->tags != '') ? $product_metadata->tags : 'invitation,party,birthday';
-        
         $thumb_info = DB::table('thumbnails')
                 ->where('template_id','=',$template_key)
-                ->first();
+                ->first();        
+        
+        // echo "<pre>";
+        // print_r( $tmp_related_keywords );
+        // print_r( $tmp_ranked_keywords );
+        // print_r( $tmp_recomendation_titles );
 
+        // print_r('<br>'.$full_title_words);
+        // print_r('<br>'.$title_1);
+        // print_r('<br>'.$title_2);
+        // print_r('<br>'.$title_3);
+        // exit;
+        
+        $product_metadata->title = (isset($product_metadata->title) && $product_metadata->title != '') ? $product_metadata->title : $title_1;
+        $product_metadata->description = (isset($product_metadata->description) && $product_metadata->description != '') ? $product_metadata->description : Redis::get('wayak:etsy:description_template') ;
+        $product_metadata->tags = (isset($product_metadata->tags) && $product_metadata->tags != '') ? $product_metadata->tags : 'invitation,party,birthday';
+        $product_metadata->related_keywords = implode(",",$tmp_related_keywords);
+        $product_metadata->keywords_by_rank = implode(",",$tmp_ranked_keywords);
+        $product_metadata->recomended_titles = $tmp_recomendation_titles;
+        $product_metadata->title_1 = $title_1;
+        $product_metadata->title_2 = $title_2;
+        $product_metadata->title_3 = $title_3;
         $thumb_img_url = asset( 'design/template/'. $template_key.'/thumbnails/en/'.$thumb_info->filename);
 
         return view('admin.create_prod', [
@@ -450,6 +626,63 @@ class AdminController extends Controller
         ]);
     }
     
+    function getTemplateText($template_key){
+        if( Redis::exists( 'template:en:'.$template_key.':jsondata' ) ){
+            $json_template = json_decode( Redis::get( 'template:en:'.$template_key.':jsondata' ) );
+            
+            // echo "<pre>";
+            // print_r( $json_template );
+            // exit;
+        
+            if( isset( $json_template[0] ) ){
+                unset( $json_template[0] );
+            }
+            
+            if( sizeof($json_template) > 0){
+                $ttext = "";
+                foreach( $json_template as $page ) {
+                    $txt_objects = [];
+                    foreach ($page->objects as $object) {
+                        if( isset($object->type) && $object->type == 'textbox' ){
+                            $ttext .= " ".$object->text;
+                            // $txt_objects[] = $tmp_obj;
+                        }
+                    }
+    
+                    // $tmp_page['text'] = isset($tmp_obj) ? $tmp_obj : null;
+                    
+                    // $template_objects['pages'][] = $tmp_page;
+                }
+
+                preg_match_all('/(\w+)/', $ttext, $title_1_arr);
+                preg_match_all('/([a-zA-Z]\s)+/', $ttext, $words_space);
+                $unique_title_keywords = array_unique($title_1_arr[1]);
+                
+                $final_keywords = [];
+                foreach ($words_space[0] as $keyword) {
+                    if( strlen($keyword) >= 3 ){
+                        $final_keywords[] = str_replace( " ",null, $keyword );
+                    }
+                }
+                
+                foreach ($unique_title_keywords as $keyword) {
+                    if( strlen($keyword) >= 3 ){
+                        $final_keywords[] = $keyword;
+                    }
+                }
+
+                // echo "<pre>";
+                // // print_r( $ttext );
+                // // print_r( $xxxx );
+                // // print_r( $unique_title_keywords );
+                // print_r( $final_keywords );
+                // exit;
+
+                return $final_keywords;
+            }   
+        }
+    }
+
     function editMLMetadata($template_key){
         $thumb_info = DB::table('thumbnails')
                 ->where('template_id','=',$template_key)
@@ -2122,13 +2355,13 @@ class AdminController extends Controller
         $pages = [];
         
         $templates = DB::table('images')
-            ->select('id','template_id','thumb_path','file_type','filename','status')
+            ->select('id','template_id','thumb_path','file_type','filename','status','original_path')
             // ->where('source','=','corjl')
             // ->where('source','=','crello')
-            ->where('source','!=','placeit')
-            ->where('file_type','!=','svg')
     		// ->where('source','=','green')
             // ->where('source','=','templett')
+            ->where('source','!=','placeit')
+            ->where('file_type','!=','svg')
             // ->whereNull('status')
             ->offset( ($current_page-1) *$itemsPerPage)
             ->limit($itemsPerPage)
@@ -2142,7 +2375,7 @@ class AdminController extends Controller
                             ->count();
 
         // $templates = DB::select( DB::raw(
-        //     "SELECT id,template_id, thumb_path, file_type, filename, status
+        //     "SELECT id,template_id, thumb_path, file_type, filename, status, original_path
         //         FROM images
         //     WHERE 
         //         -- `status` IS NULL AND 
@@ -2156,9 +2389,9 @@ class AdminController extends Controller
         //                 LEFT JOIN tmp_etsy_product ON tmp_etsy_product.id = tmp_etsy_metadata.fk_product_id
                     
         //             WHERE 
-        //                 tmp_etsy_product.title LIKE '%halloween%'
-        //                 OR tmp_etsy_metadata.title LIKE '%halloween%'
-        //                 OR thumbnails.title LIKE '%halloween%'
+        //                 tmp_etsy_product.title LIKE '%sunflower%'
+        //                 OR tmp_etsy_metadata.title LIKE '%sunflower%'
+        //                 OR thumbnails.title LIKE '%sunflower%'
         //             GROUP BY templates.template_id
         //         )
         //     "
@@ -2183,6 +2416,7 @@ class AdminController extends Controller
             // echo '<br>';
             $tmp_img = new \stdClass();
             $tmp_img->src = asset(  str_replace('/application/public/',null, $template->thumb_path) );
+            $tmp_img->path = asset(  str_replace('/application/public/',null, $template->original_path) );
             $tmp_img->status = $template->status;
             $tmp_img->id = $template->id;
 
@@ -2355,8 +2589,8 @@ class AdminController extends Controller
         return response()->json([]);
     }
 
-    function createEtsyPDF( $template_id, $canva_url ){
-        // $canva_url = 'lasdlakdlaksdlaskd';
+    function createEtsyPDF( $template_id ){
+        $canva_url = 'lasdlakdlaksdlaskd';
         
         $pdf_html = '
         <style>@page { margin: 0px; }body { margin: 0px; }</style>
@@ -2511,6 +2745,7 @@ class AdminController extends Controller
         }
 
         return view('admin.template_gallery', [
+            'vendor' => $vendor,
             'total_templates' => $total_templates,
             'current_page' => $current_page,
             'last_page' => floor($total_templates/$itemsPerPage),
@@ -2608,7 +2843,10 @@ class AdminController extends Controller
             'app' => $app,
             'template_info' => $template_info,
             'title' => $template->title,
-            'pdf_url' => asset( 'etsy_store/canva_pdf/'.$template->template_id.'.pdf' ),
+            // 'pdf_url' => asset( 'etsy_store/canva_pdf/'.$template->template_id.'.pdf' ),
+            'pdf_url' => route( 'admin.etsy.getPDF', [
+                'template_id' => $template->template_id
+            ] ),
             'thumbnail_ready' => $template->thumbnail_ready,
             'metadata_ready' => $template->metadata_ready,
             'pdf_ready' => $template->pdf_ready,

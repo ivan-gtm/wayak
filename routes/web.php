@@ -121,7 +121,7 @@ Route::get('/api/demo-url', [AdminController::class, 'getTemplateObjects']);
     // ETSY
         Route::get('/admin/etsy/gallery', [AdminController::class, 'etsyGallery'])->name('admin.etsy.templatesGallery');
         Route::get('/admin/gallery/vendor/{vendor}', [AdminController::class, 'getTemplatesByVendor'])->name('admin.templatesByVendor');
-        Route::get('/admin/etsy/get-pdf/{template_id}', [AdminController::class, 'etsyTemplateLinkPDF'])->name('admin.etsy.getPDF');
+        Route::get('/admin/etsy/get-pdf/{template_id}', [AdminController::class, 'createEtsyPDF'])->name('admin.etsy.getPDF');
         
         Route::get('/admin/etsy/gallery/template-dashboard/{app}/{template_id}', [AdminController::class, 'getTemplateDashboard'])->name('admin.etsy.templateDashboard');
         Route::post('/admin/etsy/gallery/template-dashboard/{app}/{template_id}', [AdminController::class, 'getTemplateDashboard']);

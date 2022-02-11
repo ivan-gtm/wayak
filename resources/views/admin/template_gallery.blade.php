@@ -18,17 +18,17 @@
           <nav aria-label="Page navigation example">
             <ul class="pagination justify-content-center">
               <li class="page-item">
-                <a class="page-link" href="?page={{ $current_page-1 }}" aria-label="Previous">
+                <a class="page-link" href="?vendor={{ $vendor }}&page={{ $current_page-1 }}" aria-label="Previous">
                   <span aria-hidden="true">&laquo;</span>
                 </a>
               </li>
               @foreach ($pages as $page_number)
                 <li class="page-item">
-                  <a class="page-link" href="?page={{ $page_number }}">{{ $page_number }}</a>
+                  <a class="page-link" href="?vendor={{ $vendor }}&page={{ $page_number }}">{{ $page_number }}</a>
                 </li>
               @endforeach
               <li class="page-item">
-                <a class="page-link" href="?page={{ $last_page }}" aria-label="Next">
+                <a class="page-link" href="?vendor={{ $vendor }}&page={{ $last_page }}" aria-label="Next">
                   <span aria-hidden="true">&raquo;</span>
                 </a>
               </li>
@@ -56,20 +56,20 @@
       @endforeach
       <div class="row">
         <div class="col-12 p-2">
-          <nav aria-label="Page navigation example">
+        <nav aria-label="Page navigation example">
             <ul class="pagination justify-content-center">
               <li class="page-item">
-                <a class="page-link" href="?page={{ $current_page-1 }}" aria-label="Previous">
+                <a class="page-link" href="?vendor={{ $vendor }}&page={{ $current_page-1 }}" aria-label="Previous">
                   <span aria-hidden="true">&laquo;</span>
                 </a>
               </li>
               @foreach ($pages as $page_number)
                 <li class="page-item">
-                  <a class="page-link" href="?page={{ $page_number }}">{{ $page_number }}</a>
+                  <a class="page-link" href="?vendor={{ $vendor }}&page={{ $page_number }}">{{ $page_number }}</a>
                 </li>
               @endforeach
               <li class="page-item">
-                <a class="page-link" href="?page={{ $last_page }}" aria-label="Next">
+                <a class="page-link" href="?vendor={{ $vendor }}&page={{ $last_page }}" aria-label="Next">
                   <span aria-hidden="true">&raquo;</span>
                 </a>
               </li>

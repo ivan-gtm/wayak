@@ -55,7 +55,8 @@
                                         <img src="{{ $image['src'] }}" class="card-img-top" alt="...">
                                     </a>
                                     <div class="d-grid gap-2">
-                                        <button href="{{ $image['src'] }}" class="templateIMG btn btn-primary" type="button"">COPY</button>
+                                        <button href="{{ $image['src'] }}" class="templateIMG btn btn-primary" type="button">COPY</button>
+                                        <a href="{{ $image['src'] }}" class="templateIMG btn btn-primary" download>DOWNLOAD</a>
                                     </div>
                                 </div>
                             </div>

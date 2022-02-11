@@ -45,7 +45,7 @@ class UtilCreateKeywords extends Command
             ->where('thumbnails.language_code','=','en')
             // ->where('templates.status','=',5)
             ->whereNotNull('templates.fk_etsy_template_id')
-            ->select('templates.template_id', 'templates.width', 'templates.height','templates.metrics','tmp_etsy_metadata.title','tmp_etsy_metadata.username','thumbnails.filename','thumbnails.title as title_','thumbnails.dimentions')
+            ->select('templates.template_id', 'templates.id', 'templates.width', 'templates.height','templates.metrics','tmp_etsy_metadata.title','tmp_etsy_metadata.username','thumbnails.filename','thumbnails.title as title_','thumbnails.dimentions')
             ->get();
 
 
@@ -65,13 +65,14 @@ class UtilCreateKeywords extends Command
                         ->first();
                     
                     if( isset($db_word->id) ){
+                        $word_id = $db_word->id;
                         DB::table('keywords')
                             ->where('word','=', $word)
                             ->update([
                                 'counter' => ($db_word->counter+1)
                             ]);
                     } else {
-                        DB::table('keywords')->insert([
+                        $word_id = DB::table('keywords')->insertGetId([
                             'id' => null,
                             'word' => $word,
                             'counter' => 1,
@@ -79,8 +80,20 @@ class UtilCreateKeywords extends Command
                             'is_valid_for_title' => false,
                             'language_code' => 'en'
                         ]);
-                    } 
-
+                    }
+                    
+                    $word_relation = DB::table('template_keywords')
+                        ->where('template_id','=', $db_template->template_id)
+                        ->where('keyword_id','=', $word_id)
+                        ->first();
+                    
+                    if( isset($word_relation->id) == false ){
+                        DB::table('template_keywords')->insert([
+                            'id' => null,
+                            'template_id' => $db_template->id,
+                            'keyword_id' => $word_id
+                        ]);
+                    }
                 }
             }
             

@@ -29,12 +29,25 @@
                         <div class="mb-3">
                             <label for="titleInput" class="form-label">Title (140 chars)</label>
                             <input type="text" class="form-control" name="title" aria-describedby="titleHelp" maxlength="140" value="{{ isset($metadata->title) ? $metadata->title : null }}" required>
+                            
+                            <span>{{ $metadata->title_2 }}</span><br>
+                            <hr>
+                            <span>{{ $metadata->title_3 }}</span><br>
+                            @foreach($metadata->recomended_titles as $title)
+                                <hr>
+                                <span>{{ $title }}</span><br>
+                            @endforeach
+
+
                             <div id="titleHelp" class="form-text">Include keywords that buyers would use to search for your item.</div>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Tags</label>
                             <div class="form-text">What words might someone use to search for your listings? Use all 13 tags to get found.</div>
                             <input class="tags" name="tags" type="text" value="{{ isset($metadata->tags) ? $metadata->tags : null }}" data-role="tagsinput" required>
+                            
+                            <input class="tags" name="tags" type="text" value="{{ isset($metadata->related_keywords) ? $metadata->related_keywords : null }}" data-role="tagsinput" required>
+                            <input class="tags" name="tags" type="text" value="{{ isset($metadata->keywords_by_rank) ? $metadata->keywords_by_rank : null }}" data-role="tagsinput" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Colors</label>
