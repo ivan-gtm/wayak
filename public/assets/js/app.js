@@ -683,7 +683,7 @@ function getFonts2($o, $fontFamily) {
         setupSymbolsPanel($fontFamily)) : (WebFontConfig = {
             custom: {
                 families: [$fontFamily],
-                urls: [appUrl + "editor/get-css-fonts?templates=" + $fontFamily]
+                urls: [appUrl + "editor/get-css-fonts?templates=" + JSON.stringify($fontFamily)]
             },
             testStrings: {
                 fontFamily: "AB"
@@ -7591,7 +7591,7 @@ $("#loginForm").submit(function(e) {
 }),
 $(document).ready(function() {
     $.each(geofilterBackgrounds, function(key, value) {
-        key > 0 && ($("<img/>")[0].src = "/design/assets/img/" + value.filename)
+        key > 0 && ($("<img/>")[0].src = "/design/assets/img/" + value.filename) && ($("<img/>")[0].loading = "lazy")
     })
 });
 var makeCRCTable = function() {
@@ -8238,11 +8238,12 @@ $(".patternFillTab").on("click", ".pattern_tile", function(e) {
     changeDynamicPattern($ao, $pattern_tile.data("imgsrc"), $(".patternFillPreview.open").data("currentsrc"))
 }),
 $(document).ready(function() {
-    getPatterns(0),
-    $("#patternsList").on("scroll", function(e) {
-        var element = $(e.target).get(0);
-        element.scrollTop > element.scrollHeight - element.offsetHeight - 10 && (patternsLoading || getPatterns(offsetPatterns))
-    })
+    // Get background patterns
+    // getPatterns(0),
+    // $("#patternsList").on("scroll", function(e) {
+    //     var element = $(e.target).get(0);
+    //     element.scrollTop > element.scrollHeight - element.offsetHeight - 10 && (patternsLoading || getPatterns(offsetPatterns))
+    // })
 }),
 $("#font-symbols").dialog({
     resizable: !1,

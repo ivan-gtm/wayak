@@ -36,28 +36,30 @@ class CanvaController extends Controller
         // foreach($scan as $folder) {
         //     // echo public_path('canva/instagram-story/design/template'.$folder).'<br>';
         //     if(strlen($folder) > 3  && is_dir( public_path('canva/instagram-story/design/template/'.$folder) ) ){
-        //         $template_id = $folder;
-        //         if( Redis::exists('canva:originaljson:'.$template_id) == false ){
-        //             $template = self::getTemplate($template_id);
+                // $template_id = $folder;
+                
+                $template_id = 'EAE30hp1Ikw';
+                if( Redis::exists('canva:originaljson:'.$template_id) == false ){
+                    $template = self::getTemplate($template_id);
 
-        //             if($template != null) {
-        //                 preg_match_all('/JSON.parse\(\'(.*)\'\)\;/', str_replace('.js', '.nojs', $template), $salida);
-        //                 Redis::set('canva:originaljson:'.$template_id, $salida[1][0]);
-        //                 echo 'PARSED >>'.$template_id.'<br>';
+                    if($template != null) {
+                        preg_match_all('/JSON.parse\(\'(.*)\'\)\;/', str_replace('.js', '.nojs', $template), $salida);
+                        Redis::set('canva:originaljson:'.$template_id, $salida[1][0]);
+                        echo 'PARSED >>'.$template_id.'<br>';
                         
-        //                 if($template_index == 200){
-        //                     exit;
-        //                 }
-        //                 $template_index++;
-        //             } else {
-        //                 self::rcopy( public_path('canva/instagram-story/design/template/'.$folder), public_path('canva/instagram-story/design/'.$folder) );
-        //                 self::rrmdir( public_path('canva/instagram-story/design/template/'.$folder) );
-        //             }
+                        if($template_index == 200){
+                            exit;
+                        }
+                        $template_index++;
+                    } else {
+                        self::rcopy( public_path('canva/instagram-story/design/template/'.$folder), public_path('canva/instagram-story/design/'.$folder) );
+                        self::rrmdir( public_path('canva/instagram-story/design/template/'.$folder) );
+                    }
 
-        //             sleep( rand(10,20) );
-        //         } else {
-        //             echo 'ALREADY EXISTS >>'.$template_id.'<br>';
-        //         }
+                    sleep( rand(10,20) );
+                } else {
+                    echo 'ALREADY EXISTS >>'.$template_id.'<br>';
+                }
         //     }
         // }
         // exit;
@@ -66,18 +68,24 @@ class CanvaController extends Controller
         $template_index = 0;
         foreach($scan as $folder) {
             // echo public_path('canva/instagram-story/design/template'.$folder).'<br>';
+            // exit;
             if(strlen($folder) > 3  && is_dir( public_path('canva/instagram-story/design/template/'.$folder) ) ){
                 $template_id = $folder;
                 
-                print_r("TEMPLATE >> ID >> ");
-                print_r($template_id);
-                print_r("<br>");
+                // print_r("TEMPLATE >> ID >> ");
+                // print_r($template_id);
+                // print_r("<br>");
+                // exit;
                 
                 if( Redis::exists('canva:json:'.$template_id) ){
                     $template_content = Redis::get('canva:json:'.$template_id);
                     $template_content = json_decode($template_content);
+
                     // echo "<pre>";
-                    // print_r( json_decode($template_content) );
+                    // print_r( "KNOO" );
+                    // print_r( $template_content );
+                    // exit;
+
                     self::parseTempalte($template_content);
                     // exit;
                     // self::parseTempalte()
@@ -3218,11 +3226,27 @@ class CanvaController extends Controller
     }
 
     function parseTempalte($template){
-        // TAGS: page.b.F
-        // Title: page.b.D
-        // width: 1080 // page.b.C.A
+        echo "<pre>";
+        // // TAGS
+        // print_r($template->page->b->F);
 
+        // // Title: page.b.D
+        // print_r($template->page->b->D);
+        
+        // // Width
+        // print_r($template->page->b->C->A);
+        // // Eigth
+        // print_r($template->page->b->C->B);
 
+        // // TEMPLATE IMAGES 
+        // print_r( $template->page->M->D );
+        
+        // TEXT
+        // page.b.A[0].E[7].c[0].a.A[0].A
+        print_r( $template->page->b->A[0]->E );
+        exit;
+
+        
         // MEDIA 
         //     page.M.D[0].files[1]
 
@@ -3230,8 +3254,7 @@ class CanvaController extends Controller
         //     page.M.C[1].D[0].files[1].url
 
 
-        // TEXT
-        //     page.b.A[0].E[7].c[0].a.A[0].A
+        
 
         //     Call 123-456-7890
 
@@ -3249,8 +3272,7 @@ class CanvaController extends Controller
         // TEMPLATE FONTS 
         // print_r( $template->page->M->C );
 
-        // TEMPLATE IMAGES 
-        print_r( $template->page->M->D );
+        
 
         // TEMPLATE VIDEOS
         // print_r( $template->page->M->o );
@@ -3423,6 +3445,9 @@ class CanvaController extends Controller
         $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
         $header = substr($response, 0, $header_size);
         $body = substr($response, $header_size);
+
+        print_r($response);
+        exit;
         
         if($httpcode == "404"){
             echo "TEMPLATE $template_id DOES NOT EXISTS<br>";

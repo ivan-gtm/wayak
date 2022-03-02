@@ -41,36 +41,7 @@
         <link rel="stylesheet" href="{{ asset('assets/css/spectrum.css') }}css/style.css">
         -->
 
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-        <script src="{{ asset('assets/js/jquery-ui-1.12.1/jquery-ui.min.js') }}"></script>
-        <script src="{{ asset('assets/js/touchSwipe/jquery.touchSwipe.min.js') }}"></script>
-        <script src="https://unpkg.com/infinite-scroll@4/dist/infinite-scroll.pkgd.min.js"></script>
-        <script src="{{ asset('assets/js/imagesLoaded/imagesloaded.pkgd.min.js') }}"></script>
-        <!-- <script src="{{ asset('assets/js/jquery-mobile/jquery.mobile-1.4.5.min.js?rev=ed515e27701f638073403bd54317e') }}"></script> -->
-        <script src="{{ asset('assets/js/parsley/parsley.min.js') }}"></script>
-        <script src="{{ asset('assets/js/bootstrap-slider/bootstrap-slider.min.js') }}"></script>
-        <script src="{{ asset('assets/js/spectrum/spectrum.js') }}"></script>
-        <script src="{{ asset('assets/js/tagsfield/tagsfield.js') }}"></script>
-        <script src="{{ asset('assets/js/opentype/opentype.min.js') }}"></script>
-        <script src="{{ asset('assets/js/jquery-form/jquery.form.js') }}"></script>
-        <script src="{{ asset('assets/js/dropzone/dropzone.js') }}"></script>
-        <script src="{{ asset('assets/js/isotope.pkgd.min.js') }}"></script>
-        <script src="{{ asset('assets/js/jquery-validate/jquery.validate.min.js') }}"></script>
-        <script src="{{ asset('assets/js/select2/select2.min.js') }}"></script>
-        <script src="{{ asset('assets/js/vendor.js?rev=ed515e27701f638073403bd54317e') }}"></script>
-        <script src="{{ asset('assets/js/nanoscroller/jquery.nanoscroller.min.js?rev=ed515e27701f638073403bd54317e') }}"></script>
-        <script src="{{ asset('assets/js/fastclick/fastclick.js?rev=ed515e27701f638073403bd54317e') }}"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/simplebar/5.3.0/simplebar.min.js" integrity="sha512-AS9rZZDdb+y4W2lcmkNGwf4swm6607XJYpNST1mkNBUfBBka8btA6mgRmhoFQ9Umy8Nj/fg5444+SglLHbowuA==" crossorigin="anonymous"></script>
-        <script src="{{ asset('assets/js/filesaver/FileSaver.min.js') }}"></script>
-        <script src="{{ asset('assets/js/jszip/jszip.min.js') }}"></script>
-        <!-- <script src="{{ asset('assets/js/fabricjs/2.4.6/fabric.min.js?rev=ed515e27701f638073403bd543') }}">
-        </script> -->
-        <script src="{{ asset('assets/js/fabricjs/fabric.js') }}"></script>
-        <script src="{{ asset('assets/js/fabricjs/centering_guidelines.js') }}"></script>
-        <script src="{{ asset('assets/js/fabricjs/aligning_guidelines.js') }}"></script>
-        <script src="{{ asset('assets/js/bootstrap/bootstrap.min.js') }}" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-        <script src="{{ asset('assets/js/toast/jquery.toast.min.js') }}" crossorigin="anonymous"></script>
-        <script src="{{ asset('assets/js/webfontloader/webfontloader.js') }}" crossorigin="anonymous"></script>
+        
 
     </head>
     <body class="normal">
@@ -628,7 +599,7 @@
                                                 Alfa Slab One
                                             </span>
                                             <a data-ff="font1" href="#" title="Alfa Slab One">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Alfa_Slab_One_1490473638.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Alfa_Slab_One_1490473638.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -636,7 +607,7 @@
                                                 Averia Sans Libre
                                             </span>
                                             <a data-ff="font2" href="#" title="Averia Sans Libre">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Averia_Sans_Libre_1490473641.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Averia_Sans_Libre_1490473641.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -644,7 +615,7 @@
                                                 Source Sans Pro
                                             </span>
                                             <a data-ff="font3" href="#" title="Source Sans Pro">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Source_Sans_Pro_1490473644.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Source_Sans_Pro_1490473644.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -652,7 +623,7 @@
                                                 Lilita One
                                             </span>
                                             <a data-ff="font5" href="#" title="Lilita One">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Lilita_One_1490473649.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Lilita_One_1490473649.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -660,7 +631,7 @@
                                                 Dosis
                                             </span>
                                             <a data-ff="font6" href="#" title="Dosis">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Dosis_1490473650.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Dosis_1490473650.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -668,7 +639,7 @@
                                                 Abel
                                             </span>
                                             <a data-ff="font7" href="#" title="Abel">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Abel_1490473651.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Abel_1490473651.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -676,7 +647,7 @@
                                                 Kristi
                                             </span>
                                             <a data-ff="font8" href="#" title="Kristi">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Kristi_1490473652.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Kristi_1490473652.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -684,7 +655,7 @@
                                                 Ubuntu Mono
                                             </span>
                                             <a data-ff="font9" href="#" title="Ubuntu Mono">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Ubuntu_Mono_1490473653.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Ubuntu_Mono_1490473653.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -692,7 +663,7 @@
                                                 Bubblegum Sans
                                             </span>
                                             <a data-ff="font10" href="#" title="Bubblegum Sans">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Bubblegum_Sans_1490473656.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Bubblegum_Sans_1490473656.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -700,7 +671,7 @@
                                                 Overlock
                                             </span>
                                             <a data-ff="font11" href="#" title="Overlock">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Overlock_1490473658.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Overlock_1490473658.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -708,7 +679,7 @@
                                                 Patrick Hand
                                             </span>
                                             <a data-ff="font12" href="#" title="Patrick Hand">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Patrick_Hand_1490473660.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Patrick_Hand_1490473660.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -716,7 +687,7 @@
                                                 Crafty Girls
                                             </span>
                                             <a data-ff="font13" href="#" title="Crafty Girls">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Crafty_Girls_1490473661.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Crafty_Girls_1490473661.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -724,7 +695,7 @@
                                                 Noto Sans
                                             </span>
                                             <a data-ff="font14" href="#" title="Noto Sans">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Noto_Sans_1490473663.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Noto_Sans_1490473663.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -732,7 +703,7 @@
                                                 Droid Sans
                                             </span>
                                             <a data-ff="font15" href="#" title="Droid Sans">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Droid_Sans_1490473665.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Droid_Sans_1490473665.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -740,7 +711,7 @@
                                                 Yellowtail
                                             </span>
                                             <a data-ff="font16" href="#" title="Yellowtail">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Yellowtail_1490473667.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Yellowtail_1490473667.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -748,7 +719,7 @@
                                                 Permanent Marker
                                             </span>
                                             <a data-ff="font17" href="#" title="Permanent Marker">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Permanent_Marker_1490473669.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Permanent_Marker_1490473669.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -756,7 +727,7 @@
                                                 Just Another Hand
                                             </span>
                                             <a data-ff="font18" href="#" title="Just Another Hand">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Just_Another_Hand_1490473674.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Just_Another_Hand_1490473674.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -764,7 +735,7 @@
                                                 Unkempt
                                             </span>
                                             <a data-ff="font19" href="#" title="Unkempt">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Unkempt_1490473676.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Unkempt_1490473676.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -772,7 +743,7 @@
                                                 Lato
                                             </span>
                                             <a data-ff="font20" href="#" title="Lato">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Lato_1490473678.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Lato_1490473678.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -780,7 +751,7 @@
                                                 Arvo
                                             </span>
                                             <a data-ff="font21" href="#" title="Arvo">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Arvo_1490473679.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Arvo_1490473679.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -788,7 +759,7 @@
                                                 Cabin
                                             </span>
                                             <a data-ff="font22" href="#" title="Cabin">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Cabin_1490473680.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Cabin_1490473680.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -796,7 +767,7 @@
                                                 Playfair Display
                                             </span>
                                             <a data-ff="font23" href="#" title="Playfair Display">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Playfair_Display_1490473681.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Playfair_Display_1490473681.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -804,7 +775,7 @@
                                                 Cutive Mono
                                             </span>
                                             <a data-ff="font24" href="#" title="Cutive Mono">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Cutive_Mono_1490473684.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Cutive_Mono_1490473684.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -812,7 +783,7 @@
                                                 Crushed
                                             </span>
                                             <a data-ff="font25" href="#" title="Crushed">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Crushed_1490473686.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Crushed_1490473686.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -820,7 +791,7 @@
                                                 Parisienne
                                             </span>
                                             <a data-ff="font26" href="#" title="Parisienne">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Parisienne_1490473688.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Parisienne_1490473688.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -828,7 +799,7 @@
                                                 Codystar
                                             </span>
                                             <a data-ff="font27" href="#" title="Codystar">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Codystar_1490473690.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Codystar_1490473690.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -836,7 +807,7 @@
                                                 Lora
                                             </span>
                                             <a data-ff="font28" href="#" title="Lora">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Lora_1490473692.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Lora_1490473692.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -844,7 +815,7 @@
                                                 Niconne
                                             </span>
                                             <a data-ff="font29" href="#" title="Niconne">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Niconne_1490473693.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Niconne_1490473693.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -852,7 +823,7 @@
                                                 Fredericka the Great
                                             </span>
                                             <a data-ff="font30" href="#" title="Fredericka the Great">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Fredericka_the_Great_1490473694.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Fredericka_the_Great_1490473694.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -860,7 +831,7 @@
                                                 Give You Glory
                                             </span>
                                             <a data-ff="font31" href="#" title="Give You Glory">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Give_You_Glory_1490473698.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Give_You_Glory_1490473698.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -868,7 +839,7 @@
                                                 Rammetto One
                                             </span>
                                             <a data-ff="font32" href="#" title="Rammetto One">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Rammetto_One_1490473700.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Rammetto_One_1490473700.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -876,7 +847,7 @@
                                                 PT Sans
                                             </span>
                                             <a data-ff="font34" href="#" title="PT Sans">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/PT_Sans_1490473703.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/PT_Sans_1490473703.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -884,7 +855,7 @@
                                                 Poiret One
                                             </span>
                                             <a data-ff="font35" href="#" title="Poiret One">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Poiret_One_1490473705.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Poiret_One_1490473705.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -892,7 +863,7 @@
                                                 Cabin Sketch
                                             </span>
                                             <a data-ff="font36" href="#" title="Cabin Sketch">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Cabin_Sketch_1490473706.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Cabin_Sketch_1490473706.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -900,7 +871,7 @@
                                                 Cherry Cream Soda
                                             </span>
                                             <a data-ff="font37" href="#" title="Cherry Cream Soda">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Cherry_Cream_Soda_1490473709.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Cherry_Cream_Soda_1490473709.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -908,7 +879,7 @@
                                                 PT Sans Narrow
                                             </span>
                                             <a data-ff="font38" href="#" title="PT Sans Narrow">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/PT_Sans_Narrow_1490473712.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/PT_Sans_Narrow_1490473712.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -916,7 +887,7 @@
                                                 Montez
                                             </span>
                                             <a data-ff="font39" href="#" title="Montez">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Montez_1490473714.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Montez_1490473714.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -924,7 +895,7 @@
                                                 Short Stack
                                             </span>
                                             <a data-ff="font40" href="#" title="Short Stack">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Short_Stack_1490473715.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Short_Stack_1490473715.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -932,7 +903,7 @@
                                                 Lily Script One
                                             </span>
                                             <a data-ff="font41" href="#" title="Lily Script One">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Lily_Script_One_1490473718.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Lily_Script_One_1490473718.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -940,7 +911,7 @@
                                                 Tinos
                                             </span>
                                             <a data-ff="font42" href="#" title="Tinos">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Tinos_1490473720.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Tinos_1490473720.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -948,7 +919,7 @@
                                                 Neucha
                                             </span>
                                             <a data-ff="font43" href="#" title="Neucha">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Neucha_1490473721.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Neucha_1490473721.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -956,7 +927,7 @@
                                                 Bad Script
                                             </span>
                                             <a data-ff="font44" href="#" title="Bad Script">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Bad_Script_1490473722.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Bad_Script_1490473722.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -964,7 +935,7 @@
                                                 Corben
                                             </span>
                                             <a data-ff="font45" href="#" title="Corben">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Corben_1490473723.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Corben_1490473723.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -972,7 +943,7 @@
                                                 Yeseva One
                                             </span>
                                             <a data-ff="font46" href="#" title="Yeseva One">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Yeseva_One_1490473724.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Yeseva_One_1490473724.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -980,7 +951,7 @@
                                                 Arimo
                                             </span>
                                             <a data-ff="font47" href="#" title="Arimo">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Arimo_1490473727.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Arimo_1490473727.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -988,7 +959,7 @@
                                                 Petit Formal Script
                                             </span>
                                             <a data-ff="font48" href="#" title="Petit Formal Script">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Petit_Formal_Script_1490473728.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Petit_Formal_Script_1490473728.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -996,7 +967,7 @@
                                                 Kelly Slab
                                             </span>
                                             <a data-ff="font49" href="#" title="Kelly Slab">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Kelly_Slab_1490473732.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Kelly_Slab_1490473732.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1004,7 +975,7 @@
                                                 Oleo Script
                                             </span>
                                             <a data-ff="font50" href="#" title="Oleo Script">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Oleo_Script_1490473734.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Oleo_Script_1490473734.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1012,7 +983,7 @@
                                                 Noto Serif
                                             </span>
                                             <a data-ff="font51" href="#" title="Noto Serif">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Noto_Serif_1490473735.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Noto_Serif_1490473735.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1020,7 +991,7 @@
                                                 Ubuntu
                                             </span>
                                             <a data-ff="font52" href="#" title="Ubuntu">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Ubuntu_1490473737.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Ubuntu_1490473737.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1028,7 +999,7 @@
                                                 La Belle Aurore
                                             </span>
                                             <a data-ff="font53" href="#" title="La Belle Aurore">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/La_Belle_Aurore_1490473739.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/La_Belle_Aurore_1490473739.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1036,7 +1007,7 @@
                                                 The Girl Next Door
                                             </span>
                                             <a data-ff="font54" href="#" title="The Girl Next Door">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/The_Girl_Next_Door_1490473741.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/The_Girl_Next_Door_1490473741.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1044,7 +1015,7 @@
                                                 PT Mono
                                             </span>
                                             <a data-ff="font55" href="#" title="PT Mono">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/PT_Mono_1490473743.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/PT_Mono_1490473743.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1052,7 +1023,7 @@
                                                 Yesteryear
                                             </span>
                                             <a data-ff="font56" href="#" title="Yesteryear">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Yesteryear_1490473745.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Yesteryear_1490473745.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1060,7 +1031,7 @@
                                                 Marck Script
                                             </span>
                                             <a data-ff="font57" href="#" title="Marck Script">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Marck_Script_1490473746.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Marck_Script_1490473746.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1068,7 +1039,7 @@
                                                 Droid Sans Mono
                                             </span>
                                             <a data-ff="font58" href="#" title="Droid Sans Mono">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Droid_Sans_Mono_1490473748.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Droid_Sans_Mono_1490473748.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1076,7 +1047,7 @@
                                                 Contrail One
                                             </span>
                                             <a data-ff="font59" href="#" title="Contrail One">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Contrail_One_1490473752.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Contrail_One_1490473752.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1084,7 +1055,7 @@
                                                 Nova Mono
                                             </span>
                                             <a data-ff="font60" href="#" title="Nova Mono">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Nova_Mono_1490473753.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Nova_Mono_1490473753.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1092,7 +1063,7 @@
                                                 Bitter
                                             </span>
                                             <a data-ff="font61" href="#" title="Bitter">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Bitter_1490473755.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Bitter_1490473755.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1100,7 +1071,7 @@
                                                 Allura
                                             </span>
                                             <a data-ff="font62" href="#" title="Allura">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Allura_1490473757.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Allura_1490473757.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1108,7 +1079,7 @@
                                                 PT Serif
                                             </span>
                                             <a data-ff="font63" href="#" title="PT Serif">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/PT_Serif_1490473758.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/PT_Serif_1490473758.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1116,7 +1087,7 @@
                                                 Limelight
                                             </span>
                                             <a data-ff="font64" href="#" title="Limelight">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Limelight_1490473759.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Limelight_1490473759.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1124,7 +1095,7 @@
                                                 Lobster
                                             </span>
                                             <a data-ff="font65" href="#" title="Lobster">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Lobster_1490473761.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Lobster_1490473761.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1132,7 +1103,7 @@
                                                 Kreon
                                             </span>
                                             <a data-ff="font66" href="#" title="Kreon">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Kreon_1490473762.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Kreon_1490473762.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1140,7 +1111,7 @@
                                                 Fugaz One
                                             </span>
                                             <a data-ff="font67" href="#" title="Fugaz One">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Fugaz_One_1490473764.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Fugaz_One_1490473764.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1148,7 +1119,7 @@
                                                 Waiting for the Sunrise
                                             </span>
                                             <a data-ff="font68" href="#" title="Waiting for the Sunrise">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Waiting_for_the_Sunrise_1490473765.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Waiting_for_the_Sunrise_1490473765.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1156,7 +1127,7 @@
                                                 Shojumaru
                                             </span>
                                             <a data-ff="font69" href="#" title="Shojumaru">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Shojumaru_1490473768.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Shojumaru_1490473768.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1164,7 +1135,7 @@
                                                 Gochi Hand
                                             </span>
                                             <a data-ff="font70" href="#" title="Gochi Hand">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Gochi_Hand_1490473770.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Gochi_Hand_1490473770.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1172,7 +1143,7 @@
                                                 Reenie Beanie
                                             </span>
                                             <a data-ff="font71" href="#" title="Reenie Beanie">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Reenie_Beanie_1490473772.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Reenie_Beanie_1490473772.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1180,7 +1151,7 @@
                                                 Alex Brush
                                             </span>
                                             <a data-ff="font72" href="#" title="Alex Brush">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Alex_Brush_1490473774.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Alex_Brush_1490473774.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1188,7 +1159,7 @@
                                                 Schoolbell
                                             </span>
                                             <a data-ff="font73" href="#" title="Schoolbell">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Schoolbell_1490473776.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Schoolbell_1490473776.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1196,7 +1167,7 @@
                                                 Crete Round
                                             </span>
                                             <a data-ff="font74" href="#" title="Crete Round">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Crete_Round_1490473778.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Crete_Round_1490473778.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1204,7 +1175,7 @@
                                                 Shadows Into Light
                                             </span>
                                             <a data-ff="font75" href="#" title="Shadows Into Light">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Shadows_Into_Light_1490473780.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Shadows_Into_Light_1490473780.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1212,7 +1183,7 @@
                                                 Rokkitt
                                             </span>
                                             <a data-ff="font76" href="#" title="Rokkitt">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Rokkitt_1490473782.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Rokkitt_1490473782.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1220,7 +1191,7 @@
                                                 Josefin Slab
                                             </span>
                                             <a data-ff="font77" href="#" title="Josefin Slab">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Josefin_Slab_1490473783.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Josefin_Slab_1490473783.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1228,7 +1199,7 @@
                                                 Frijole
                                             </span>
                                             <a data-ff="font78" href="#" title="Frijole">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Frijole_1490473785.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Frijole_1490473785.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1236,7 +1207,7 @@
                                                 Fredoka One
                                             </span>
                                             <a data-ff="font79" href="#" title="Fredoka One">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Fredoka_One_1490473788.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Fredoka_One_1490473788.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1244,7 +1215,7 @@
                                                 Libre Baskerville
                                             </span>
                                             <a data-ff="font80" href="#" title="Libre Baskerville">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Libre_Baskerville_1490473790.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Libre_Baskerville_1490473790.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1252,7 +1223,7 @@
                                                 Racing Sans One
                                             </span>
                                             <a data-ff="font81" href="#" title="Racing Sans One">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Racing_Sans_One_1490473793.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Racing_Sans_One_1490473793.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1260,7 +1231,7 @@
                                                 Walter Turncoat
                                             </span>
                                             <a data-ff="font82" href="#" title="Walter Turncoat">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Walter_Turncoat_1490473796.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Walter_Turncoat_1490473796.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1268,7 +1239,7 @@
                                                 Sigmar One
                                             </span>
                                             <a data-ff="font83" href="#" title="Sigmar One">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Sigmar_One_1490473802.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Sigmar_One_1490473802.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1276,7 +1247,7 @@
                                                 Source Code Pro
                                             </span>
                                             <a data-ff="font84" href="#" title="Source Code Pro">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Source_Code_Pro_1490473804.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Source_Code_Pro_1490473804.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1284,7 +1255,7 @@
                                                 Gloria Hallelujah
                                             </span>
                                             <a data-ff="font85" href="#" title="Gloria Hallelujah">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Gloria_Hallelujah_1490473808.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Gloria_Hallelujah_1490473808.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1292,7 +1263,7 @@
                                                 Fontdiner Swanky
                                             </span>
                                             <a data-ff="font86" href="#" title="Fontdiner Swanky">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Fontdiner_Swanky_1490473810.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Fontdiner_Swanky_1490473810.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1300,7 +1271,7 @@
                                                 Calligraffitti
                                             </span>
                                             <a data-ff="font87" href="#" title="Calligraffitti">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Calligraffitti_1490473813.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Calligraffitti_1490473813.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1308,7 +1279,7 @@
                                                 Grand Hotel
                                             </span>
                                             <a data-ff="font88" href="#" title="Grand Hotel">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Grand_Hotel_1490473815.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Grand_Hotel_1490473815.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1316,7 +1287,7 @@
                                                 Tangerine
                                             </span>
                                             <a data-ff="font89" href="#" title="Tangerine">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Tangerine_1490473816.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Tangerine_1490473816.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1324,7 +1295,7 @@
                                                 Muli
                                             </span>
                                             <a data-ff="font90" href="#" title="Muli">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Muli_1490473817.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Muli_1490473817.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1332,7 +1303,7 @@
                                                 Just Me Again Down Here
                                             </span>
                                             <a data-ff="font91" href="#" title="Just Me Again Down Here">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Just_Me_Again_Down_Here_1490473818.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Just_Me_Again_Down_Here_1490473818.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1340,7 +1311,7 @@
                                                 Great Vibes
                                             </span>
                                             <a data-ff="font92" href="#" title="Great Vibes">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Great_Vibes_1490473821.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Great_Vibes_1490473821.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1348,7 +1319,7 @@
                                                 Cousine
                                             </span>
                                             <a data-ff="font93" href="#" title="Cousine">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Cousine_1490473822.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Cousine_1490473822.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1356,7 +1327,7 @@
                                                 Merienda One
                                             </span>
                                             <a data-ff="font94" href="#" title="Merienda One">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Merienda_One_1490473825.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Merienda_One_1490473825.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1364,7 +1335,7 @@
                                                 Monoton
                                             </span>
                                             <a data-ff="font95" href="#" title="Monoton">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Monoton_1490473827.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Monoton_1490473827.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1372,7 +1343,7 @@
                                                 Ubuntu Condensed
                                             </span>
                                             <a data-ff="font96" href="#" title="Ubuntu Condensed">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Ubuntu_Condensed_1490473829.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Ubuntu_Condensed_1490473829.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1380,7 +1351,7 @@
                                                 EB Garamond
                                             </span>
                                             <a data-ff="font97" href="#" title="EB Garamond">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/EB_Garamond_1490473833.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/EB_Garamond_1490473833.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1388,7 +1359,7 @@
                                                 Droid Serif
                                             </span>
                                             <a data-ff="font98" href="#" title="Droid Serif">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Droid_Serif_1490473835.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Droid_Serif_1490473835.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1396,7 +1367,7 @@
                                                 Bangers
                                             </span>
                                             <a data-ff="font99" href="#" title="Bangers">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Bangers_1490473837.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Bangers_1490473837.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1404,7 +1375,7 @@
                                                 Pacifico
                                             </span>
                                             <a data-ff="font100" href="#" title="Pacifico">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Pacifico_1490473839.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Pacifico_1490473839.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1412,7 +1383,7 @@
                                                 Luckiest Guy
                                             </span>
                                             <a data-ff="font101" href="#" title="Luckiest Guy">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Luckiest_Guy_1490473840.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Luckiest_Guy_1490473840.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1420,7 +1391,7 @@
                                                 Courgette
                                             </span>
                                             <a data-ff="font102" href="#" title="Courgette">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Courgette_1490473843.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Courgette_1490473843.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1428,7 +1399,7 @@
                                                 Over the Rainbow
                                             </span>
                                             <a data-ff="font103" href="#" title="Over the Rainbow">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Over_the_Rainbow_1490473844.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Over_the_Rainbow_1490473844.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1436,7 +1407,7 @@
                                                 Nothing You Could Do
                                             </span>
                                             <a data-ff="font104" href="#" title="Nothing You Could Do">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Nothing_You_Could_Do_1490473846.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Nothing_You_Could_Do_1490473846.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1444,7 +1415,7 @@
                                                 Titillium Web
                                             </span>
                                             <a data-ff="font105" href="#" title="Titillium Web">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Titillium_Web_1490473850.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Titillium_Web_1490473850.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1452,7 +1423,7 @@
                                                 Share
                                             </span>
                                             <a data-ff="font106" href="#" title="Share">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Share_1490473852.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Share_1490473852.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1460,7 +1431,7 @@
                                                 Crimson Text
                                             </span>
                                             <a data-ff="font107" href="#" title="Crimson Text">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Crimson_Text_1490473853.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Crimson_Text_1490473853.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1468,7 +1439,7 @@
                                                 Squada One
                                             </span>
                                             <a data-ff="font108" href="#" title="Squada One">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Squada_One_1490473856.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Squada_One_1490473856.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1476,7 +1447,7 @@
                                                 Carter One
                                             </span>
                                             <a data-ff="font109" href="#" title="Carter One">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Carter_One_1490473858.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Carter_One_1490473858.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1484,7 +1455,7 @@
                                                 Wallpoet
                                             </span>
                                             <a data-ff="font110" href="#" title="Wallpoet">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Wallpoet_1490473860.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Wallpoet_1490473860.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1492,7 +1463,7 @@
                                                 Spirax
                                             </span>
                                             <a data-ff="font111" href="#" title="Spirax">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Spirax_1490473863.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Spirax_1490473863.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1500,7 +1471,7 @@
                                                 Kavoon
                                             </span>
                                             <a data-ff="font112" href="#" title="Kavoon">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Kavoon_1490473864.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Kavoon_1490473864.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1508,7 +1479,7 @@
                                                 Vollkorn
                                             </span>
                                             <a data-ff="font113" href="#" title="Vollkorn">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Vollkorn_1490473866.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Vollkorn_1490473866.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1516,7 +1487,7 @@
                                                 Sansita One
                                             </span>
                                             <a data-ff="font114" href="#" title="Sansita One">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Sansita_One_1490473868.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Sansita_One_1490473868.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1524,7 +1495,7 @@
                                                 Noticia Text
                                             </span>
                                             <a data-ff="font115" href="#" title="Noticia Text">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Noticia_Text_1490473870.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Noticia_Text_1490473870.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1532,7 +1503,7 @@
                                                 Open Sans
                                             </span>
                                             <a data-ff="font117" href="#" title="Open Sans">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Open_Sans_1490473874.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Open_Sans_1490473874.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1540,7 +1511,7 @@
                                                 Forum
                                             </span>
                                             <a data-ff="font118" href="#" title="Forum">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Forum_1490473876.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Forum_1490473876.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1548,7 +1519,7 @@
                                                 Bevan
                                             </span>
                                             <a data-ff="font119" href="#" title="Bevan">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Bevan_1490473878.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Bevan_1490473878.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1556,7 +1527,7 @@
                                                 Handlee
                                             </span>
                                             <a data-ff="font120" href="#" title="Handlee">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Handlee_1490473879.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Handlee_1490473879.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1564,7 +1535,7 @@
                                                 Play
                                             </span>
                                             <a data-ff="font121" href="#" title="Play">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Play_1490473881.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Play_1490473881.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1572,7 +1543,7 @@
                                                 Coming Soon
                                             </span>
                                             <a data-ff="font122" href="#" title="Coming Soon">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Coming_Soon_1490473882.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Coming_Soon_1490473882.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1580,7 +1551,7 @@
                                                 Sacramento
                                             </span>
                                             <a data-ff="font123" href="#" title="Sacramento">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Sacramento_1490473884.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Sacramento_1490473884.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1588,7 +1559,7 @@
                                                 Oxygen
                                             </span>
                                             <a data-ff="font124" href="#" title="Oxygen">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Oxygen_1490473885.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Oxygen_1490473885.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1596,7 +1567,7 @@
                                                 Lemon
                                             </span>
                                             <a data-ff="font125" href="#" title="Lemon">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Lemon_1490473887.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Lemon_1490473887.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1604,7 +1575,7 @@
                                                 Homemade Apple
                                             </span>
                                             <a data-ff="font126" href="#" title="Homemade Apple">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Homemade_Apple_1490473888.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Homemade_Apple_1490473888.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1612,7 +1583,7 @@
                                                 Annie Use Your Telescope
                                             </span>
                                             <a data-ff="font127" href="#" title="Annie Use Your Telescope">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Annie_Use_Your_Telescope_1490473890.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Annie_Use_Your_Telescope_1490473890.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1620,7 +1591,7 @@
                                                 Love Ya Like A Sister
                                             </span>
                                             <a data-ff="font128" href="#" title="Love Ya Like A Sister">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Love_Ya_Like_A_Sister_1490473893.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Love_Ya_Like_A_Sister_1490473893.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1628,7 +1599,7 @@
                                                 Allan
                                             </span>
                                             <a data-ff="font129" href="#" title="Allan">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Allan_1490473896.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Allan_1490473896.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1636,7 +1607,7 @@
                                                 Patua One
                                             </span>
                                             <a data-ff="font130" href="#" title="Patua One">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Patua_One_1490473897.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Patua_One_1490473897.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1644,7 +1615,7 @@
                                                 Dancing Script
                                             </span>
                                             <a data-ff="font131" href="#" title="Dancing Script">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Dancing_Script_1490473899.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Dancing_Script_1490473899.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1652,7 +1623,7 @@
                                                 Slackey
                                             </span>
                                             <a data-ff="font132" href="#" title="Slackey">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Slackey_1490473901.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Slackey_1490473901.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1660,7 +1631,7 @@
                                                 Covered By Your Grace
                                             </span>
                                             <a data-ff="font133" href="#" title="Covered By Your Grace">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Covered_By_Your_Grace_1490473904.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Covered_By_Your_Grace_1490473904.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1668,7 +1639,7 @@
                                                 Griffy
                                             </span>
                                             <a data-ff="font134" href="#" title="Griffy">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Griffy_1490473907.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Griffy_1490473907.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1676,7 +1647,7 @@
                                                 Indie Flower
                                             </span>
                                             <a data-ff="font135" href="#" title="Indie Flower">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Indie_Flower_1490473908.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Indie_Flower_1490473908.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1684,7 +1655,7 @@
                                                 Ceviche One
                                             </span>
                                             <a data-ff="font136" href="#" title="Ceviche One">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Ceviche_One_1490473909.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Ceviche_One_1490473909.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1692,7 +1663,7 @@
                                                 Bree Serif
                                             </span>
                                             <a data-ff="font137" href="#" title="Bree Serif">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Bree_Serif_1490473912.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Bree_Serif_1490473912.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1700,7 +1671,7 @@
                                                 Comfortaa
                                             </span>
                                             <a data-ff="font138" href="#" title="Comfortaa">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Comfortaa_1490473913.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Comfortaa_1490473913.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1708,7 +1679,7 @@
                                                 Cuprum
                                             </span>
                                             <a data-ff="font139" href="#" title="Cuprum">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Cuprum_1490473916.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Cuprum_1490473916.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1716,7 +1687,7 @@
                                                 Coda
                                             </span>
                                             <a data-ff="font140" href="#" title="Coda">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Coda_1490473917.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Coda_1490473917.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1724,7 +1695,7 @@
                                                 Nunito
                                             </span>
                                             <a data-ff="font141" href="#" title="Nunito">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Nunito_1490473918.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Nunito_1490473918.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1732,7 +1703,7 @@
                                                 Gruppo
                                             </span>
                                             <a data-ff="font142" href="#" title="Gruppo">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Gruppo_1490473920.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Gruppo_1490473920.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1740,7 +1711,7 @@
                                                 Chewy
                                             </span>
                                             <a data-ff="font143" href="#" title="Chewy">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Chewy_1490473921.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Chewy_1490473921.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1748,7 +1719,7 @@
                                                 Audiowide
                                             </span>
                                             <a data-ff="font144" href="#" title="Audiowide">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Audiowide_1490473923.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Audiowide_1490473923.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1756,7 +1727,7 @@
                                                 Sanchez
                                             </span>
                                             <a data-ff="font145" href="#" title="Sanchez">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Sanchez_1490473925.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Sanchez_1490473925.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1764,7 +1735,7 @@
                                                 Kaushan Script
                                             </span>
                                             <a data-ff="font146" href="#" title="Kaushan Script">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Kaushan_Script_1490473927.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Kaushan_Script_1490473927.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1772,7 +1743,7 @@
                                                 Leckerli One
                                             </span>
                                             <a data-ff="font147" href="#" title="Leckerli One">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Leckerli_One_1490473929.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Leckerli_One_1490473929.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1780,7 +1751,7 @@
                                                 Merriweather
                                             </span>
                                             <a data-ff="font148" href="#" title="Merriweather">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Merriweather_1490473931.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Merriweather_1490473931.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1788,7 +1759,7 @@
                                                 Signika
                                             </span>
                                             <a data-ff="font149" href="#" title="Signika">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Signika_1490473934.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Signika_1490473934.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1796,7 +1767,7 @@
                                                 Damion
                                             </span>
                                             <a data-ff="font150" href="#" title="Damion">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Damion_1490473935.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Damion_1490473935.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1804,7 +1775,7 @@
                                                 Roboto Condensed
                                             </span>
                                             <a data-ff="font151" href="#" title="Roboto Condensed">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Roboto_Condensed_1490473936.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Roboto_Condensed_1490473936.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1812,7 +1783,7 @@
                                                 Kranky
                                             </span>
                                             <a data-ff="font152" href="#" title="Kranky">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Kranky_1490473940.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Kranky_1490473940.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1820,7 +1791,7 @@
                                                 Metamorphous
                                             </span>
                                             <a data-ff="font153" href="#" title="Metamorphous">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Metamorphous_1490473941.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Metamorphous_1490473941.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1828,7 +1799,7 @@
                                                 Inconsolata
                                             </span>
                                             <a data-ff="font154" href="#" title="Inconsolata">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Inconsolata_1490473944.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Inconsolata_1490473944.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1836,7 +1807,7 @@
                                                 Anonymous Pro
                                             </span>
                                             <a data-ff="font155" href="#" title="Anonymous Pro">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Anonymous_Pro_1490473947.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Anonymous_Pro_1490473947.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1844,7 +1815,7 @@
                                                 Lusitana
                                             </span>
                                             <a data-ff="font156" href="#" title="Lusitana">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Lusitana_1490473950.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Lusitana_1490473950.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1852,7 +1823,7 @@
                                                 Yanone Kaffeesatz
                                             </span>
                                             <a data-ff="font157" href="#" title="Yanone Kaffeesatz">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Yanone_Kaffeesatz_1490473952.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Yanone_Kaffeesatz_1490473952.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1860,7 +1831,7 @@
                                                 Archivo Narrow
                                             </span>
                                             <a data-ff="font158" href="#" title="Archivo Narrow">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Archivo_Narrow_1490473955.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Archivo_Narrow_1490473955.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1868,7 +1839,7 @@
                                                 Alegreya
                                             </span>
                                             <a data-ff="font159" href="#" title="Alegreya">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Alegreya_1490473958.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Alegreya_1490473958.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1876,7 +1847,7 @@
                                                 Nova Square
                                             </span>
                                             <a data-ff="font162" href="#" title="Nova Square">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Nova_Square_1490473963.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Nova_Square_1490473963.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1884,7 +1855,7 @@
                                                 Righteous
                                             </span>
                                             <a data-ff="font163" href="#" title="Righteous">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Righteous_1490473966.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Righteous_1490473966.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1892,7 +1863,7 @@
                                                 Passion One
                                             </span>
                                             <a data-ff="font165" href="#" title="Passion One">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Passion_One_1490473969.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Passion_One_1490473969.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1900,7 +1871,7 @@
                                                 Iceland
                                             </span>
                                             <a data-ff="font166" href="#" title="Iceland">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Iceland_1490473972.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Iceland_1490473972.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1908,7 +1879,7 @@
                                                 Rochester
                                             </span>
                                             <a data-ff="font167" href="#" title="Rochester">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Rochester_1490473973.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Rochester_1490473973.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1916,7 +1887,7 @@
                                                 Amatic SC
                                             </span>
                                             <a data-ff="font168" href="#" title="Amatic SC">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Amatic_SC_1490473974.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Amatic_SC_1490473974.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1924,7 +1895,7 @@
                                                 Changa One
                                             </span>
                                             <a data-ff="font169" href="#" title="Changa One">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Changa_One_1490473976.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Changa_One_1490473976.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1932,7 +1903,7 @@
                                                 Loved by the King
                                             </span>
                                             <a data-ff="font170" href="#" title="Loved by the King">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Loved_by_the_King_1490473978.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Loved_by_the_King_1490473978.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1940,7 +1911,7 @@
                                                 Delius
                                             </span>
                                             <a data-ff="font171" href="#" title="Delius">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Delius_1490473980.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Delius_1490473980.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1948,7 +1919,7 @@
                                                 Satisfy
                                             </span>
                                             <a data-ff="font172" href="#" title="Satisfy">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Satisfy_1490473981.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Satisfy_1490473981.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1956,7 +1927,7 @@
                                                 Black Ops One
                                             </span>
                                             <a data-ff="font173" href="#" title="Black Ops One">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Black_Ops_One_1490473982.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Black_Ops_One_1490473982.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1964,7 +1935,7 @@
                                                 Salsa
                                             </span>
                                             <a data-ff="font174" href="#" title="Salsa">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Salsa_1490473985.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Salsa_1490473985.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1972,7 +1943,7 @@
                                                 Roboto Slab
                                             </span>
                                             <a data-ff="font175" href="#" title="Roboto Slab">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Roboto_Slab_1490473986.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Roboto_Slab_1490473986.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1980,7 +1951,7 @@
                                                 Rancho
                                             </span>
                                             <a data-ff="font176" href="#" title="Rancho">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Rancho_1490473988.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Rancho_1490473988.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1988,7 +1959,7 @@
                                                 VT323
                                             </span>
                                             <a data-ff="font177" href="#" title="VT323">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/VT323_1490473990.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/VT323_1490473990.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -1996,7 +1967,7 @@
                                                 Cookie
                                             </span>
                                             <a data-ff="font178" href="#" title="Cookie">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Cookie_1490473991.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Cookie_1490473991.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2004,7 +1975,7 @@
                                                 Shadows Into Light Two
                                             </span>
                                             <a data-ff="font179" href="#" title="Shadows Into Light Two">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Shadows_Into_Light_Two_1490473992.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Shadows_Into_Light_Two_1490473992.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2012,7 +1983,7 @@
                                                 Fjalla One
                                             </span>
                                             <a data-ff="font180" href="#" title="Fjalla One">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Fjalla_One_1490473995.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Fjalla_One_1490473995.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2020,7 +1991,7 @@
                                                 Rock Salt
                                             </span>
                                             <a data-ff="font181" href="#" title="Rock Salt">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Rock_Salt_1490473996.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Rock_Salt_1490473996.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2028,7 +1999,7 @@
                                                 Roboto
                                             </span>
                                             <a data-ff="font182" href="#" title="Roboto">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Roboto_1490473998.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Roboto_1490473998.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2036,7 +2007,7 @@
                                                 Architects Daughter
                                             </span>
                                             <a data-ff="font184" href="#" title="Architects Daughter">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Architects_Daughter_1490474002.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Architects_Daughter_1490474002.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2044,7 +2015,7 @@
                                                 Freckle Face
                                             </span>
                                             <a data-ff="font185" href="#" title="Freckle Face">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Freckle_Face_1490474004.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Freckle_Face_1490474004.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2052,7 +2023,7 @@
                                                 Oswald
                                             </span>
                                             <a data-ff="font186" href="#" title="Oswald">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Oswald_1490474007.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Oswald_1490474007.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2060,7 +2031,7 @@
                                                 Playball
                                             </span>
                                             <a data-ff="font187" href="#" title="Playball">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Playball_1490474008.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Playball_1490474008.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2068,7 +2039,7 @@
                                                 Special Elite
                                             </span>
                                             <a data-ff="font188" href="#" title="Special Elite">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Special_Elite_1490474009.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Special_Elite_1490474009.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2076,7 +2047,7 @@
                                                 Montserrat
                                             </span>
                                             <a data-ff="font189" href="#" title="Montserrat">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Montserrat_1490474012.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Montserrat_1490474012.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2084,7 +2055,7 @@
                                                 Raleway
                                             </span>
                                             <a data-ff="font190" href="#" title="Raleway">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Raleway_1490474014.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Raleway_1490474014.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2092,7 +2063,7 @@
                                                 Abril Fatface
                                             </span>
                                             <a data-ff="font191" href="#" title="Abril Fatface">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Abril_Fatface_1490474016.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Abril_Fatface_1490474016.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2100,7 +2071,7 @@
                                                 Playfair Display SC
                                             </span>
                                             <a data-ff="font192" href="#" title="Playfair Display SC">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Playfair_Display_SC_1490474018.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Playfair_Display_SC_1490474018.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2108,7 +2079,7 @@
                                                 Berkshire Swash
                                             </span>
                                             <a data-ff="font193" href="#" title="Berkshire Swash">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Berkshire_Swash_1490474022.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Berkshire_Swash_1490474022.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2116,7 +2087,7 @@
                                                 Old Standard TT
                                             </span>
                                             <a data-ff="font194" href="#" title="Old Standard TT">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Old_Standard_TT_1490474025.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Old_Standard_TT_1490474025.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2124,7 +2095,7 @@
                                                 Pinyon Script
                                             </span>
                                             <a data-ff="font195" href="#" title="Pinyon Script">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Pinyon_Script_1490474029.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Pinyon_Script_1490474029.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2132,7 +2103,7 @@
                                                 Lobster Two
                                             </span>
                                             <a data-ff="font196" href="#" title="Lobster Two">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Lobster_Two_1490474031.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Lobster_Two_1490474031.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2140,7 +2111,7 @@
                                                 Mountains of Christmas
                                             </span>
                                             <a data-ff="font197" href="#" title="Mountains of Christmas">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Mountains_of_Christmas_1490474033.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Mountains_of_Christmas_1490474033.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2148,7 +2119,7 @@
                                                 Boogaloo
                                             </span>
                                             <a data-ff="font198" href="#" title="Boogaloo">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Boogaloo_1490474036.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Boogaloo_1490474036.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2156,7 +2127,7 @@
                                                 Monsieur La Doulaise
                                             </span>
                                             <a data-ff="font199" href="#" title="Monsieur La Doulaise">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Monsieur_La_Doulaise_1490474037.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Monsieur_La_Doulaise_1490474037.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2164,7 +2135,7 @@
                                                 Citadel
                                             </span>
                                             <a data-ff="font201" href="#" title="Citadel">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Citadel_1490505636.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Citadel_1490505636.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2172,7 +2143,7 @@
                                                 Copperplate
                                             </span>
                                             <a data-ff="font202" href="#" title="Copperplate">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Copperplate_1490478312.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Copperplate_1490478312.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2180,7 +2151,7 @@
                                                 Edwardian Script ITC
                                             </span>
                                             <a data-ff="font203" href="#" title="Edwardian Script ITC">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Edwardian_Script_ITC_1490478303.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Edwardian_Script_ITC_1490478303.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2188,7 +2159,7 @@
                                                 Open Sans Light
                                             </span>
                                             <a data-ff="font210" href="#" title="Open Sans Light">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Open_Sans_Light_1490536270.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Open_Sans_Light_1490536270.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2196,7 +2167,7 @@
                                                 Cinzel
                                             </span>
                                             <a data-ff="font319" href="#" title="Cinzel">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Cinzel_1493256758.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Cinzel_1493256758.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2204,7 +2175,7 @@
                                                 Beau
                                             </span>
                                             <a data-ff="font24172" href="#" title="Beau">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Beautiful_Friday_03_1538337382.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Beautiful_Friday_03_1538337382.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2212,7 +2183,7 @@
                                                 Adele
                                             </span>
                                             <a data-ff="font24173" href="#" title="Adele">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Adelicia_Script_1538383463.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Adelicia_Script_1538383463.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2220,7 +2191,7 @@
                                                 Miracle
                                             </span>
                                             <a data-ff="font24240" href="#" title="Miracle">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Madina_Script_1538383514.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Madina_Script_1538383514.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2228,7 +2199,7 @@
                                                 Florentina
                                             </span>
                                             <a data-ff="font24248" href="#" title="Florentina">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Fitri_1538387457.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Fitri_1538387457.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2236,7 +2207,7 @@
                                                 Britney
                                             </span>
                                             <a data-ff="font24278" href="#" title="Britney">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Braveheart_1538400485.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Braveheart_1538400485.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2244,7 +2215,7 @@
                                                 Floristic
                                             </span>
                                             <a data-ff="font24279" href="#" title="Floristic">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Isabella_1538400518.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Isabella_1538400518.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2252,7 +2223,7 @@
                                                 Chili
                                             </span>
                                             <a data-ff="font24283" href="#" title="Chili">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/BrideChalk__Sans_1538407599.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/BrideChalk__Sans_1538407599.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2260,7 +2231,7 @@
                                                 Ginger
                                             </span>
                                             <a data-ff="font24284" href="#" title="Ginger">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Husna_1538407918.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Husna_1538407918.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2268,7 +2239,7 @@
                                                 Wed
                                             </span>
                                             <a data-ff="font24424" href="#" title="Wed">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Farmhouse_1538476717.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Farmhouse_1538476717.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2276,7 +2247,7 @@
                                                 Maldives
                                             </span>
                                             <a data-ff="font24425" href="#" title="Maldives">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Malisia_Script_1538476810.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Malisia_Script_1538476810.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2284,7 +2255,7 @@
                                                 Cinzel Regular
                                             </span>
                                             <a data-ff="font24427" href="#" title="Cinzel Regular">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Cinzel_1538479153.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Cinzel_1538479153.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2292,7 +2263,7 @@
                                                 Extras 1
                                             </span>
                                             <a data-ff="font24433" href="#" title="Extras 1">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Mellisa_Extras_1538495752.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Mellisa_Extras_1538495752.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2300,7 +2271,7 @@
                                                 Extras 2
                                             </span>
                                             <a data-ff="font24434" href="#" title="Extras 2">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/valent_ornament_1538495801.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/valent_ornament_1538495801.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2308,7 +2279,7 @@
                                                 Sanya
                                             </span>
                                             <a data-ff="font24442" href="#" title="Sanya">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Love_Hewits_1538501349.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Love_Hewits_1538501349.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2316,7 +2287,7 @@
                                                 Barilla
                                             </span>
                                             <a data-ff="font24875" href="#" title="Barilla">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Arillyoni_1538694168.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Arillyoni_1538694168.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2324,7 +2295,7 @@
                                                 Delta
                                             </span>
                                             <a data-ff="font24876" href="#" title="Delta">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/PerfectCharm1_1538694263.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/PerfectCharm1_1538694263.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2332,7 +2303,7 @@
                                                 Arita
                                             </span>
                                             <a data-ff="font24877" href="#" title="Arita">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Mustica_Script_1538694306.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Mustica_Script_1538694306.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2340,7 +2311,7 @@
                                                 Glam
                                             </span>
                                             <a data-ff="font24878" href="#" title="Glam">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Miss_Couture_1538694342.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Miss_Couture_1538694342.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2348,7 +2319,7 @@
                                                 Gigi
                                             </span>
                                             <a data-ff="font25018" href="#" title="Gigi">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Spring_Market_ALP_1538916662.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Spring_Market_ALP_1538916662.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2356,7 +2327,7 @@
                                                 Plain
                                             </span>
                                             <a data-ff="font25035" href="#" title="Plain">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Sakkal_Majalla_1538937389.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Sakkal_Majalla_1538937389.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2364,7 +2335,7 @@
                                                 Kids font
                                             </span>
                                             <a data-ff="font25102" href="#" title="Kids font">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Starlight_1539031267.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Starlight_1539031267.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2372,7 +2343,7 @@
                                                 Loving
                                             </span>
                                             <a data-ff="font25103" href="#" title="Loving">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Stardust_1539031302.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Stardust_1539031302.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2380,7 +2351,7 @@
                                                 Wed calligraphy
                                             </span>
                                             <a data-ff="font25104" href="#" title="Wed calligraphy">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Virmigo_script_1539031356.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Virmigo_script_1539031356.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2388,7 +2359,7 @@
                                                 Ornament1
                                             </span>
                                             <a data-ff="font25105" href="#" title="Ornament1">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Virmigo_Sans_Flourish_1539031505.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Virmigo_Sans_Flourish_1539031505.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2396,7 +2367,7 @@
                                                 Anna
                                             </span>
                                             <a data-ff="font25188" href="#" title="Anna">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Blooming_Elegant_1539107107.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Blooming_Elegant_1539107107.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2404,7 +2375,7 @@
                                                 Kathy
                                             </span>
                                             <a data-ff="font25189" href="#" title="Kathy">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Cathiy_Betiey_1539107171.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Cathiy_Betiey_1539107171.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2412,7 +2383,7 @@
                                                 Dorothy
                                             </span>
                                             <a data-ff="font25190" href="#" title="Dorothy">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Daughter_Script_1539107235.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Daughter_Script_1539107235.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2420,7 +2391,7 @@
                                                 Wed 2
                                             </span>
                                             <a data-ff="font25191" href="#" title="Wed 2">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Sophia_EXT_Medium_1539107417.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Sophia_EXT_Medium_1539107417.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2428,7 +2399,7 @@
                                                 martha
                                             </span>
                                             <a data-ff="font25192" href="#" title="martha">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Siediffa_Script_1539107466.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Siediffa_Script_1539107466.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2436,7 +2407,7 @@
                                                 Bri
                                             </span>
                                             <a data-ff="font25280" href="#" title="Bri">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Aurellia_Script_1539177026.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Aurellia_Script_1539177026.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2444,7 +2415,7 @@
                                                 Classic
                                             </span>
                                             <a data-ff="font25287" href="#" title="Classic">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Mozart_Script_Black_1539181886.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Mozart_Script_Black_1539181886.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2452,7 +2423,7 @@
                                                 Chopin Script
                                             </span>
                                             <a data-ff="font25288" href="#" title="Chopin Script">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Chopin_Script_1539181990.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Chopin_Script_1539181990.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2460,7 +2431,7 @@
                                                 Mia 1
                                             </span>
                                             <a data-ff="font25934" href="#" title="Mia 1">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Melika_Letter_1539714019.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Melika_Letter_1539714019.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2468,7 +2439,7 @@
                                                 Mia 2
                                             </span>
                                             <a data-ff="font25935" href="#" title="Mia 2">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Melika_Letter_A_1539714379.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Melika_Letter_A_1539714379.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2476,7 +2447,7 @@
                                                 Mia 3
                                             </span>
                                             <a data-ff="font25936" href="#" title="Mia 3">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Melika_Letter_B_1539714393.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Melika_Letter_B_1539714393.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2484,7 +2455,7 @@
                                                 Mia 4
                                             </span>
                                             <a data-ff="font25937" href="#" title="Mia 4">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Melika_Letter_C_1539714579.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Melika_Letter_C_1539714579.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2492,7 +2463,7 @@
                                                 Mia 5
                                             </span>
                                             <a data-ff="font25938" href="#" title="Mia 5">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Melika_Letter_D_1539714593.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Melika_Letter_D_1539714593.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2500,7 +2471,7 @@
                                                 Mia 6
                                             </span>
                                             <a data-ff="font25940" href="#" title="Mia 6">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Melika_letter_E_1539714647.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Melika_letter_E_1539714647.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2508,7 +2479,7 @@
                                                 Eva 1
                                             </span>
                                             <a data-ff="font25941" href="#" title="Eva 1">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Aerials_1539714809.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Aerials_1539714809.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2516,7 +2487,7 @@
                                                 Eva 2
                                             </span>
                                             <a data-ff="font25945" href="#" title="Eva 2">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Aerials_Stylistic_One_1539715774.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Aerials_Stylistic_One_1539715774.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2524,7 +2495,7 @@
                                                 Eva 3
                                             </span>
                                             <a data-ff="font25946" href="#" title="Eva 3">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Aerials_Stylistic_Two_1539715970.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Aerials_Stylistic_Two_1539715970.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2532,7 +2503,7 @@
                                                 Sarah 1
                                             </span>
                                             <a data-ff="font25947" href="#" title="Sarah 1">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Sadhira_ALT_001_1539716008.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Sadhira_ALT_001_1539716008.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2540,7 +2511,7 @@
                                                 Sarah 2
                                             </span>
                                             <a data-ff="font25948" href="#" title="Sarah 2">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Sadhira_Script_1539716091.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Sadhira_Script_1539716091.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2548,7 +2519,7 @@
                                                 Sarah 3
                                             </span>
                                             <a data-ff="font25949" href="#" title="Sarah 3">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Sadhira_ALT_003_1539716116.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Sadhira_ALT_003_1539716116.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2556,7 +2527,7 @@
                                                 Sarah 4
                                             </span>
                                             <a data-ff="font25950" href="#" title="Sarah 4">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Sadhira_ALT_004_1539716168.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Sadhira_ALT_004_1539716168.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2564,7 +2535,7 @@
                                                 Extras
                                             </span>
                                             <a data-ff="font26287" href="#" title="Extras">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/AutumnEmbrace_Extras_1539901957.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/AutumnEmbrace_Extras_1539901957.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2572,7 +2543,7 @@
                                                 Savanna
                                             </span>
                                             <a data-ff="font26313" href="#" title="Savanna">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Still_Shine_1539934216.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Still_Shine_1539934216.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2580,7 +2551,7 @@
                                                 Aria
                                             </span>
                                             <a data-ff="font26394" href="#" title="Aria">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Aidan_1540045309.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Aidan_1540045309.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2588,7 +2559,7 @@
                                                 Extra 3
                                             </span>
                                             <a data-ff="font26395" href="#" title="Extra 3">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Aidan_Ornaments_1540045459.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Aidan_Ornaments_1540045459.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2596,7 +2567,7 @@
                                                 Dorothy 2
                                             </span>
                                             <a data-ff="font26419" href="#" title="Dorothy 2">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Daughter_Script_Alt_1540120188.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Daughter_Script_Alt_1540120188.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2604,7 +2575,7 @@
                                                 Extra 5
                                             </span>
                                             <a data-ff="font26430" href="#" title="Extra 5">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Ditto_Dingbats_1540140952.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Ditto_Dingbats_1540140952.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2612,7 +2583,7 @@
                                                 Extra 4
                                             </span>
                                             <a data-ff="font26431" href="#" title="Extra 4">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Daughter_Flourish_1540141005.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Daughter_Flourish_1540141005.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2620,7 +2591,7 @@
                                                 Extra 6
                                             </span>
                                             <a data-ff="font26432" href="#" title="Extra 6">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/chalisto_Extras_1540141045.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/chalisto_Extras_1540141045.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2628,7 +2599,7 @@
                                                 Alicia
                                             </span>
                                             <a data-ff="font26748" href="#" title="Alicia">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Adora_Bouton_1540419629.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Adora_Bouton_1540419629.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2636,7 +2607,7 @@
                                                 Classic 2
                                             </span>
                                             <a data-ff="font26903" href="#" title="Classic 2">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Shaqila_1540498056.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Shaqila_1540498056.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2644,7 +2615,7 @@
                                                 Magnolia
                                             </span>
                                             <a data-ff="font27571" href="#" title="Magnolia">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Bottomline_1540839830.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Bottomline_1540839830.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2652,7 +2623,7 @@
                                                 Bye bye
                                             </span>
                                             <a data-ff="font28140" href="#" title="Bye bye">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Amapola_Script_1541338335.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Amapola_Script_1541338335.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2660,7 +2631,7 @@
                                                 Bye bye1
                                             </span>
                                             <a data-ff="font28142" href="#" title="Bye bye1">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Amapola_Alternates_1541338389.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Amapola_Alternates_1541338389.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2668,7 +2639,7 @@
                                                 Amazing
                                             </span>
                                             <a data-ff="font28143" href="#" title="Amazing">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Amberlight_1541338422.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Amberlight_1541338422.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2676,7 +2647,7 @@
                                                 Amazing 1
                                             </span>
                                             <a data-ff="font28144" href="#" title="Amazing 1">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Amberlight_swash_1541338479.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Amberlight_swash_1541338479.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2684,7 +2655,7 @@
                                                 Cinnamon
                                             </span>
                                             <a data-ff="font28382" href="#" title="Cinnamon">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Chalisto_Script_1541571546.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Chalisto_Script_1541571546.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2692,7 +2663,7 @@
                                                 Edem
                                             </span>
                                             <a data-ff="font29674" href="#" title="Edem">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Edelweis_Script_1542923281.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Edelweis_Script_1542923281.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2700,7 +2671,7 @@
                                                 Alegreya Sans SC Thin
                                             </span>
                                             <a data-ff="font29693" href="#" title="Alegreya Sans SC Thin">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Alegreya_Sans_SC_Thin_1542982618.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Alegreya_Sans_SC_Thin_1542982618.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2708,7 +2679,7 @@
                                                 Ava
                                             </span>
                                             <a data-ff="font29768" href="#" title="Ava">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Azalea_1543144481.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Azalea_1543144481.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2716,7 +2687,7 @@
                                                 XBC 1
                                             </span>
                                             <a data-ff="font30357" href="#" title="XBC 1">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/AngieMakes_Blacksheep_Regular_1543838904.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/AngieMakes_Blacksheep_Regular_1543838904.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2724,7 +2695,7 @@
                                                 Xbc 2
                                             </span>
                                             <a data-ff="font30358" href="#" title="Xbc 2">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/AngieMakes_Dahlia_Darling_1543838898.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/AngieMakes_Dahlia_Darling_1543838898.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2732,7 +2703,7 @@
                                                 XBC 3
                                             </span>
                                             <a data-ff="font30359" href="#" title="XBC 3">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/AngieMakes_Claphands_1543838888.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/AngieMakes_Claphands_1543838888.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2740,7 +2711,7 @@
                                                 Xbc 4
                                             </span>
                                             <a data-ff="font30360" href="#" title="Xbc 4">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/AngieMakes_Helsinki_1543838969.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/AngieMakes_Helsinki_1543838969.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2748,7 +2719,7 @@
                                                 Xbc 5
                                             </span>
                                             <a data-ff="font30361" href="#" title="Xbc 5">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/AngieMakes_Shippey_1543839051.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/AngieMakes_Shippey_1543839051.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2756,7 +2727,7 @@
                                                 XBC 6
                                             </span>
                                             <a data-ff="font30362" href="#" title="XBC 6">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/AngieMakes_Hoodwink_1543839110.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/AngieMakes_Hoodwink_1543839110.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2764,7 +2735,7 @@
                                                 XBC 8
                                             </span>
                                             <a data-ff="font30363" href="#" title="XBC 8">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Strawberry_1543839304.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Strawberry_1543839304.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2772,7 +2743,7 @@
                                                 Jennifer
                                             </span>
                                             <a data-ff="font31359" href="#" title="Jennifer">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Crystal_Sky_1544968200.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Crystal_Sky_1544968200.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2780,7 +2751,7 @@
                                                 Britney
                                             </span>
                                             <a data-ff="font37178" href="#" title="Britney">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Barracuda_Script_1549792851.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Barracuda_Script_1549792851.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2788,7 +2759,7 @@
                                                 Mimosa
                                             </span>
                                             <a data-ff="font38185" href="#" title="Mimosa">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/paradise_1550317071.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/paradise_1550317071.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2796,7 +2767,7 @@
                                                 Kids Caps
                                             </span>
                                             <a data-ff="font38186" href="#" title="Kids Caps">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Panda_Tired_Caps_1550317083.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Panda_Tired_Caps_1550317083.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2804,7 +2775,7 @@
                                                 Nora
                                             </span>
                                             <a data-ff="font38206" href="#" title="Nora">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Nouradilla_1550329998.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Nouradilla_1550329998.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2812,7 +2783,7 @@
                                                 Funny kids
                                             </span>
                                             <a data-ff="font38862" href="#" title="Funny kids">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Sweet_Mia_1550844867.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Sweet_Mia_1550844867.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2820,7 +2791,7 @@
                                                 Amelia
                                             </span>
                                             <a data-ff="font38952" href="#" title="Amelia">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Olive_Sky_1550918525.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Olive_Sky_1550918525.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2828,7 +2799,7 @@
                                                 Move font
                                             </span>
                                             <a data-ff="font38953" href="#" title="Move font">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Mountains_Brush_Script_1550921106.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/Mountains_Brush_Script_1550921106.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                         <li>
@@ -2836,7 +2807,7 @@
                                                 girlish
                                             </span>
                                             <a data-ff="font38954" href="#" title="girlish">
-                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/hey_girl_1550921159.png') }}"/>
+                                                <img class="font-thumb" src="{{ asset('design/font_thumbs/hey_girl_1550921159.png') }}" loading="lazy"/>
                                             </a>
                                         </li>
                                     </ul>
@@ -3325,7 +3296,7 @@
                     </ul>
                     <img id="choose-img" src="{{ asset('assets/img/choose-a-template.png') }}"/>
                     <div style="display: inline-block; text-align:center; padding: 0 70px;">
-                        <img id="phone" src="{{ asset('assets/img/wayak-phone-background-2.png') }}" style="display: none; left: 50%; position: absolute; transform-origin: 0 0; opacity: .5;"/>
+                        <img id="phone" src="{{ asset('assets/img/wayak-phone-background-2.png') }}" style="display: none; left: 50%; position: absolute; transform-origin: 0 0; opacity: .5;" loading="lazy"/>
                         <div align="center" id="canvasbox-tab" style="margin-top:40px; text-align: -webkit-center; display: inline-block;">
                             <span id="infotext" style="font-size: 10px; opacity: 0.8; position: relative; left: 0px; top: 0px; z-index: 1000;">
                             </span>
@@ -4876,6 +4847,38 @@
         </div>
     </div>
 </div>
+        
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <script src="{{ asset('assets/js/jquery-ui-1.12.1/jquery-ui.min.js') }}"></script>
+        <script src="{{ asset('assets/js/touchSwipe/jquery.touchSwipe.min.js') }}"></script>
+        <script src="https://unpkg.com/infinite-scroll@4/dist/infinite-scroll.pkgd.min.js"></script>
+        <script src="{{ asset('assets/js/imagesLoaded/imagesloaded.pkgd.min.js') }}"></script>
+        <!-- <script src="{{ asset('assets/js/jquery-mobile/jquery.mobile-1.4.5.min.js?rev=ed515e27701f638073403bd54317e') }}"></script> -->
+        <script src="{{ asset('assets/js/parsley/parsley.min.js') }}"></script>
+        <script src="{{ asset('assets/js/bootstrap-slider/bootstrap-slider.min.js') }}"></script>
+        <script src="{{ asset('assets/js/spectrum/spectrum.js') }}"></script>
+        <script src="{{ asset('assets/js/tagsfield/tagsfield.js') }}"></script>
+        <script src="{{ asset('assets/js/opentype/opentype.min.js') }}"></script>
+        <script src="{{ asset('assets/js/jquery-form/jquery.form.js') }}"></script>
+        <script src="{{ asset('assets/js/dropzone/dropzone.js') }}"></script>
+        <script src="{{ asset('assets/js/isotope.pkgd.min.js') }}"></script>
+        <script src="{{ asset('assets/js/jquery-validate/jquery.validate.min.js') }}"></script>
+        <script src="{{ asset('assets/js/select2/select2.min.js') }}"></script>
+        <script src="{{ asset('assets/js/vendor.js?rev=ed515e27701f638073403bd54317e') }}"></script>
+        <script src="{{ asset('assets/js/nanoscroller/jquery.nanoscroller.min.js?rev=ed515e27701f638073403bd54317e') }}"></script>
+        <script src="{{ asset('assets/js/fastclick/fastclick.js?rev=ed515e27701f638073403bd54317e') }}"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/simplebar/5.3.0/simplebar.min.js" integrity="sha512-AS9rZZDdb+y4W2lcmkNGwf4swm6607XJYpNST1mkNBUfBBka8btA6mgRmhoFQ9Umy8Nj/fg5444+SglLHbowuA==" crossorigin="anonymous"></script>
+        <script src="{{ asset('assets/js/filesaver/FileSaver.min.js') }}"></script>
+        <script src="{{ asset('assets/js/jszip/jszip.min.js') }}"></script>
+        <!-- <script src="{{ asset('assets/js/fabricjs/2.4.6/fabric.min.js?rev=ed515e27701f638073403bd543') }}">
+        </script> -->
+        <script src="{{ asset('assets/js/fabricjs/fabric.js') }}"></script>
+        <script src="{{ asset('assets/js/fabricjs/centering_guidelines.js') }}"></script>
+        <script src="{{ asset('assets/js/fabricjs/aligning_guidelines.js') }}"></script>
+        <script src="{{ asset('assets/js/bootstrap/bootstrap.min.js') }}" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+        <script src="{{ asset('assets/js/toast/jquery.toast.min.js') }}" crossorigin="anonymous"></script>
+        <script src="{{ asset('assets/js/webfontloader/webfontloader.js') }}" crossorigin="anonymous"></script>
+
         <script type="text/javascript">
             $(document).ready(function() {
                 $("form[name='my-account']").ajaxForm({
@@ -4946,19 +4949,19 @@
             
             var demo_templates = '{{ (isset($templates)) ? $templates : '' }}';
             var geofilterBackgrounds = [{"id":0,"filename":"none"},{"id":"1","filename":"geo-wedding.jpg"},{"id":"2","filename":"geo-party.jpg"},{"id":"3","filename":"geo-cheers.jpg"},{"id":"4","filename":"geo-babygirl.jpg"}];
-        var currentUserRole = '';
+            var currentUserRole = '';
             var hideVideoModal = false;
         </script>
         <script type="text/javascript">
-    	var appUrl = '{{ url("") }}/';
-        if(demo_as_id) {
-            var demoJwt = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6InRlbXBsZXR0In0.IntcImlkXCI6XCIxNDM0N2YxODQ2MTA0ZDgzNWIwZDNkZjUxYzBiMjdmNVwiLFwidWlkXCI6XCIxNDM0N2YxODQ2MTA0ZDgzNWIwZDNkZjUxYzBiMjdmNVwiLFwiZGVtb0FzXCI6dHJ1ZSxcInRlbXBsYXRlSWRzXCI6W1wiNTM3ODI3MFwiXSxcImF2YXRhclwiOlwiaHR0cHM6XFxcL1xcXC90ZW1wbGV0dC5jb21cXFwvYWRtaW5cXFwvYXNzZXRzXFxcL2ltZ1xcXC9sb2dvLXJldGluYS5wbmdcIixcInJvbGVcIjpcImRlbW9cIixcImVtYWlsXCI6XCJkZW1vQHRlbXBsZXR0LmNvbVwiLFwidXNlcm5hbWVcIjpcImRlbW9cIixcImxhbmd1YWdlXCI6XCJlbmdsaXNoXCIsXCJ1bmlxdWVfaWRcIjpcInNpZF82MDI1ZWVjMThmNWI1XCIsXCJsb2NhdGlvblwiOntcImNvdW50cnlfY29kZVwiOlwiTVhcIixcImNvdW50cnlfbmFtZVwiOlwiTWV4aWNvXCIsXCJjaXR5X25hbWVcIjpcIkNpdWRhZCBOZXphaHVhbGNveW90bFwiLFwidGltZV96b25lXCI6XCItMDU6MDBcIn0sXCJjcmVhdGVkXCI6MTYxMzA5ODY4OSxcImV4cFwiOjE2MTMxODUwODl9Ig.FhI0bXyk_vYX9564t92umZPq7YXTGc4VO9971uFrsxvFXmdK51cYLdLC-Q61YO0-X1nHlcCAqiCGQx27W5FbvToSyOB29DJ16sCK-v0mrP3XhW0rz1MN6bATrfAMK-STiPRuR3ipQ721Zts_efM2vqtFWK-c3b6ITC4vkO01WooxgySm92vIXimD0p521cQD146_PJVdLZcKewaeLVP_sCXXe_EpugKBXePnbsnU4KdMKOfxq6T0bHYmQO5Weu4o8O8NulvoS0YDRliU12D5KOP4bQewrxSZjZbIBCIJATqVPlse6HvkJ74C19P56WpyjJx6CEYv0t7lGu_I0QrJtA";
-            $.ajaxSetup({
-                beforeSend: function(xhr) {
-                    xhr.setRequestHeader('x-demo-templett-jwt', demoJwt);
-                }
-            });
-        }
+            var appUrl = '{{ url("") }}/';
+            if(demo_as_id) {
+                var demoJwt = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6InRlbXBsZXR0In0.IntcImlkXCI6XCIxNDM0N2YxODQ2MTA0ZDgzNWIwZDNkZjUxYzBiMjdmNVwiLFwidWlkXCI6XCIxNDM0N2YxODQ2MTA0ZDgzNWIwZDNkZjUxYzBiMjdmNVwiLFwiZGVtb0FzXCI6dHJ1ZSxcInRlbXBsYXRlSWRzXCI6W1wiNTM3ODI3MFwiXSxcImF2YXRhclwiOlwiaHR0cHM6XFxcL1xcXC90ZW1wbGV0dC5jb21cXFwvYWRtaW5cXFwvYXNzZXRzXFxcL2ltZ1xcXC9sb2dvLXJldGluYS5wbmdcIixcInJvbGVcIjpcImRlbW9cIixcImVtYWlsXCI6XCJkZW1vQHRlbXBsZXR0LmNvbVwiLFwidXNlcm5hbWVcIjpcImRlbW9cIixcImxhbmd1YWdlXCI6XCJlbmdsaXNoXCIsXCJ1bmlxdWVfaWRcIjpcInNpZF82MDI1ZWVjMThmNWI1XCIsXCJsb2NhdGlvblwiOntcImNvdW50cnlfY29kZVwiOlwiTVhcIixcImNvdW50cnlfbmFtZVwiOlwiTWV4aWNvXCIsXCJjaXR5X25hbWVcIjpcIkNpdWRhZCBOZXphaHVhbGNveW90bFwiLFwidGltZV96b25lXCI6XCItMDU6MDBcIn0sXCJjcmVhdGVkXCI6MTYxMzA5ODY4OSxcImV4cFwiOjE2MTMxODUwODl9Ig.FhI0bXyk_vYX9564t92umZPq7YXTGc4VO9971uFrsxvFXmdK51cYLdLC-Q61YO0-X1nHlcCAqiCGQx27W5FbvToSyOB29DJ16sCK-v0mrP3XhW0rz1MN6bATrfAMK-STiPRuR3ipQ721Zts_efM2vqtFWK-c3b6ITC4vkO01WooxgySm92vIXimD0p521cQD146_PJVdLZcKewaeLVP_sCXXe_EpugKBXePnbsnU4KdMKOfxq6T0bHYmQO5Weu4o8O8NulvoS0YDRliU12D5KOP4bQewrxSZjZbIBCIJATqVPlse6HvkJ74C19P56WpyjJx6CEYv0t7lGu_I0QrJtA";
+                $.ajaxSetup({
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('x-demo-templett-jwt', demoJwt);
+                    }
+                });
+            }
         </script>
         <!-- build:app -->
         <script src="{{ asset('assets/js/app.js?rev='.time()) }}"></script>
@@ -4966,100 +4969,101 @@
         <script type="text/javascript">
             // Wait for window load
     
-    $(window).load(function () {  
-        // Animate loader off screen
-        $("#loadingpage").fadeOut("slow");
-        $('.deletecanvas').css('display', 'none');
-    });
+            $(window).load(function () {  
+                // Animate loader off screen
+                $("#loadingpage").fadeOut("slow");
+                $('.deletecanvas').css('display', 'none');
+            });
+            
+            var configSimpleScroll = function(containerId, itemsContainerId) {
+                var templatesSimpleBar = new SimpleBar(document.getElementById(containerId));
+                templatesSimpleBar.getScrollElement().addEventListener('scroll', function(e) {
+                    // console.log(e.srcElement.scrollHeight);
+                    // console.log(e.srcElement.scrollTop);
+                    // console.log(e.srcElement.offsetHeight);
+
+                    if((e.srcElement.scrollHeight - (e.srcElement.offsetHeight + e.srcElement.scrollTop)) < 30) {
+                        var selector = '#' + itemsContainerId;
+                        $(selector).scroll();
+                    }
+                });
+            };
     
-    var configSimpleScroll = function(containerId, itemsContainerId) {
-        var templatesSimpleBar = new SimpleBar(document.getElementById(containerId));
-        templatesSimpleBar.getScrollElement().addEventListener('scroll', function(e) {
-            // console.log(e.srcElement.scrollHeight);
-            // console.log(e.srcElement.scrollTop);
-            // console.log(e.srcElement.offsetHeight);
-
-            if((e.srcElement.scrollHeight - (e.srcElement.offsetHeight + e.srcElement.scrollTop)) < 30) {
-                var selector = '#' + itemsContainerId;
-                $(selector).scroll();
-            }
-        });
-    };
-    configSimpleScroll('a', 'template_container');
-    configSimpleScroll('b', 'text_container');
-    configSimpleScroll('c', 'catimage_container');
-    configSimpleScroll('d', 'bgscalecontainer');
-    //configSimpleScroll('e', 'related_products_container');
-    configSimpleScroll('f', 'uploaded_images_list');
+            configSimpleScroll('a', 'template_container');
+            configSimpleScroll('b', 'text_container');
+            configSimpleScroll('c', 'catimage_container');
+            configSimpleScroll('d', 'bgscalecontainer');
+            //configSimpleScroll('e', 'related_products_container');
+            configSimpleScroll('f', 'uploaded_images_list');
 
     
-    $(document).ready(function() {
-        // Set demo cookie after 30 seconds on page
-        if (0) {
-          setTimeout(function(){
-              $.get('/design/actions/setDemoCookie.php', {
-                      demo_as_id: demo_as_id
-                  });
-          }, 30000);
-        }
-        //initialize the javascript
-        App.init();
+            $(document).ready(function() {
+                // Set demo cookie after 30 seconds on page
+                if (0) {
+                setTimeout(function(){
+                    $.get('/design/actions/setDemoCookie.php', {
+                            demo_as_id: demo_as_id
+                        });
+                }, 30000);
+                }
+                //initialize the javascript
+                App.init();
 
-        //only if admin logged
-        setTimeout(function() {
-            loadSettings(); 
-        }, 250);
-        if(jQuery('body').hasClass('admin')) {
-            setTimeout(function(){ 
-                getTexts2(0,''); 
-            }, 500);
-            setTimeout(function () {
-                getCatimages2(0,''); 
-            }, 750);
-            $(".sidebar-elements li a").removeClass("invisible");
-            if(design_as_id > 0){
-                $('#relatedProductsPane a:visible').addClass('invisible');
-            }
-        }
-        setTimeout(function() {
-            getBgimages2(0,'');
-        }, 1000);
-        if(!$('body').hasClass('admin') || design_as_id) {
-            setTimeout(function(){ getRelatedProducts(0); }, 1000);
-        }
-        //Outdated browser notice
-        var $buoop = {
-            vs: {i:10,f:25,o:12.1,s:7},  // browser versions to notify
-            reminder: 24,                   // atfer how many hours should the message reappear
-                                            // 0 = show all the time
-            reminderClosed: 150,             // if the user closes message it reappears after x hours
-            //onshow: function(infos){},      // callback function after the bar has appeared
-            //onclick: function(infos){},     // callback function if bar was clicked
-            //onclose: function(infos){},     //
+                //only if admin logged
+                setTimeout(function() {
+                    loadSettings(); 
+                }, 250);
+                if(jQuery('body').hasClass('admin')) {
+                    setTimeout(function(){ 
+                        getTexts2(0,''); 
+                    }, 500);
+                    setTimeout(function () {
+                        getCatimages2(0,''); 
+                    }, 750);
+                    $(".sidebar-elements li a").removeClass("invisible");
+                    if(design_as_id > 0){
+                        $('#relatedProductsPane a:visible').addClass('invisible');
+                    }
+                }
+                setTimeout(function() {
+                    getBgimages2(0,'');
+                }, 1000);
+                if(!$('body').hasClass('admin') || design_as_id) {
+                    setTimeout(function(){ getRelatedProducts(0); }, 1000);
+                }
+                //Outdated browser notice
+                var $buoop = {
+                    vs: {i:10,f:25,o:12.1,s:7},  // browser versions to notify
+                    reminder: 24,                   // atfer how many hours should the message reappear
+                                                    // 0 = show all the time
+                    reminderClosed: 150,             // if the user closes message it reappears after x hours
+                    //onshow: function(infos){},      // callback function after the bar has appeared
+                    //onclick: function(infos){},     // callback function if bar was clicked
+                    //onclose: function(infos){},     //
 
-            //l: false,                       // set a language for the message, e.g. "en"
-            // overrides the default detection
-            //test: true,                    // true = always show the bar (for testing)
-            text: "Your browser is not up to date. Wayak relies on the latest web technologies. If you experience issues, please consider updating or switching to Chrome.",                       // custom notification html text
-            // Optionally include up to two placeholders "%s" which will be replaced with the browser version and contents of the link tag. Example: "Your browser (%s) is old.  Please <a%s>update</a>"
-            //text_xx: "",                    // custom notification text for language "xx"
-            // e.g. text_de for german and text_it for italian
-            newwindow: true,                 // open link in new window/tab
-            url: 'http://outdatedbrowser.com/'                       // the url to go to after clicking the notification
-        };
+                    //l: false,                       // set a language for the message, e.g. "en"
+                    // overrides the default detection
+                    //test: true,                    // true = always show the bar (for testing)
+                    text: "Your browser is not up to date. Wayak relies on the latest web technologies. If you experience issues, please consider updating or switching to Chrome.",                       // custom notification html text
+                    // Optionally include up to two placeholders "%s" which will be replaced with the browser version and contents of the link tag. Example: "Your browser (%s) is old.  Please <a%s>update</a>"
+                    //text_xx: "",                    // custom notification text for language "xx"
+                    // e.g. text_de for german and text_it for italian
+                    newwindow: true,                 // open link in new window/tab
+                    url: 'http://outdatedbrowser.com/'                       // the url to go to after clicking the notification
+                };
 
-        var $buo_f = function() {
-            var e = document.createElement("script");
-            e.src = "//browser-update.org/update.min.js";
-            document.body.appendChild(e);
-        };
-        try {
-            document.addEventListener("DOMContentLoaded", $buo_f,false);
-        }
-        catch(e) {
-            window.attachEvent("onload", $buo_f);
-        }
-    });
+                var $buo_f = function() {
+                    var e = document.createElement("script");
+                    e.src = "//browser-update.org/update.min.js";
+                    document.body.appendChild(e);
+                };
+                try {
+                    document.addEventListener("DOMContentLoaded", $buo_f,false);
+                }
+                catch(e) {
+                    window.attachEvent("onload", $buo_f);
+                }
+            });
         </script>
     </body>
 </html>

@@ -466,11 +466,11 @@ class AdminController extends Controller
         $unique_title_keywords = array_unique(array_merge(self::getTemplateText($template_key),$unique_title_keywords));
         // exit;
 
-        // echo "<pre>";
         // // print_r('<br>'.$full_title_words);
         // // print_r('<br>'.$title_1);
         // // print_r('<br>'.$title_2);
         // // print_r('<br>'.$title_3);
+        // echo "<pre>";
         // print_r( $unique_title_keywords );
         // exit;
 

@@ -77,7 +77,7 @@ Route::get('/api/demo-url', [AdminController::class, 'getTemplateObjects']);
     // HOME
         Route::get('/admin', [AdminController::class, 'adminHome'])->name('admin.home');
         
-        Route::get('/admin/orders', [AdminController::class, 'orders'])->name('admin.orders');
+        // Route::get('/admin/orders', [AdminController::class, 'orders'])->name('admin.orders');
 
     // CATEGORIES
         Route::get('/admin/categories', [CategoryController::class, 'manage'])->name('admin.category.manage');

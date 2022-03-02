@@ -281,9 +281,11 @@ class ContentController extends Controller
         if( isset($template->_id) == false ){
             abort(404);
         }
-
-        if( App::environment() == 'locals' ){
+        if( App::environment() == 'local' ){
             $preview_image = asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["product_preview"] );
+            // print_r($preview_image);
+            // echo App::environment();
+            // exit;
         } else {
             $preview_image = Storage::disk('s3')->url( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["product_preview"] );
         }
@@ -303,7 +305,11 @@ class ContentController extends Controller
             $this->bread_array[$i]->url = url($country.'/templates'.$url);
         }
         
-        $thumb_path = $preview_image;
+        if( App::environment() == 'local' ){
+            $thumb_path = public_path( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["product_preview"] );
+        } else {
+            $thumb_path = $preview_image;
+        }
         
         $palette = Palette::fromFilename( $thumb_path );
         $extractor = new ColorExtractor($palette);
@@ -383,10 +389,10 @@ class ContentController extends Controller
         $related_templates = [];
         foreach ($related_content as $related_template) {
             
-            if( App::environment() == 'locals' ){
-                $related_template->preview_image = asset( 'design/template/'.$related_template->_id.'/thumbnails/'.$language_code.'/'.$related_template->previewImageUrls["product_preview"] );
+            if( App::environment() == 'local' ){
+                $related_template->preview_image = asset( 'design/template/'.$related_template->_id.'/thumbnails/'.$language_code.'/'.$related_template->previewImageUrls["thumbnail"] );
             } else {
-                $related_template->preview_image = Storage::disk('s3')->url( 'design/template/'.$related_template->_id.'/thumbnails/'.$language_code.'/'.$related_template->previewImageUrls["product_preview"] );
+                $related_template->preview_image = Storage::disk('s3')->url( 'design/template/'.$related_template->_id.'/thumbnails/'.$language_code.'/'.$related_template->previewImageUrls["thumbnail"] );
             }
 
             $related_templates[] = $related_template;
@@ -505,7 +511,7 @@ class ContentController extends Controller
 
         $templates = [];
         foreach ($search_result as $template) {
-            if( App::environment() == 'locals' ){
+            if( App::environment() == 'local' ){
                 $template->preview_image = asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["carousel"] );
             } else {
                 $template->preview_image = Storage::disk('s3')->url( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["carousel"] );

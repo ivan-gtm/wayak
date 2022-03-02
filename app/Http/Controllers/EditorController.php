@@ -1118,7 +1118,8 @@ class EditorController extends Controller
 	function getCSSFonts(Request $request){
 		$templates = urldecode($request->templates);
 		
-		// print_r(json_decode($templates));
+		// print_r($templates);
+		// // print_r(json_decode($templates));
 		// exit;
 
 		$values = array();
@@ -1126,15 +1127,14 @@ class EditorController extends Controller
 
 		// $templates = explode(",", $templates);
 		// $templates = "'".implode("','", $templates)."'";
+		
+		if( isset($request->templates) && is_array( json_decode($templates) ) 
+			|| strpos(json_decode($templates),"font") !== false ){
+			
+			if( is_array( json_decode($templates) ) ){
+				$templates = "'".implode("','", json_decode($templates) )."'";
+			}
 
-		if( isset($request->templates) && is_array( json_decode($templates) ) ){
-			// $templates = json_decode($templates);
-			// $templates = urldecode($request['templates']);
-			$templates = "'".implode("','", json_decode($templates) )."'";
-			// print_r($templates);
-			// exit;
-
-			// "SELECT * FROM fonts WHERE "
 			$font_families = DB::Table('fonts')
 								->select(['font_id','name'])
 								->whereRAW('font_id IN('.$templates.')')
