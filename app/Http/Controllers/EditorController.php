@@ -1245,14 +1245,22 @@ class EditorController extends Controller
 	function registerTemplateDownload(Request $request){
 		// echo "<pre>";
 		// print_r($request->all());
-		DB::table('orders')->insert([
-			'template_id' => $request->templateId,
-			'filetype' => $request->filetype,
-			'option' => $request->option,
-			'purchase_code' => $request->purchase_code
-		]);
+		// exit;
+		// DB::table('orders')->insert([
+		// 	'template_id' => $request->templateId,
+		// 	'filetype' => $request->filetype,
+		// 	'option' => $request->option,
+		// 	'purchase_code' => $request->purchase_code
+		// ]);
 
-		// if()
+		$template_key = Redis::get('temp:template:relation:'.$request->templateId);
+		
+		if( Redis::hexists('analytics:btn:download',$template_key) ){
+            Redis::hincrby('analytics:btn:download',$template_key,1);
+        } else {
+            Redis::hset('analytics:btn:download',$template_key,1);
+        }
+		
 		Redis::del('code:'.$request->purchase_code);
 		Redis::del('temp:template:relation:temp:'.$request->purchase_code);
 		Redis::del('template:temp:'.$request->purchase_code.':jsondata');
@@ -1360,6 +1368,13 @@ class EditorController extends Controller
         $original_template_key = $template_key;
         $temporal_customer_key = 'temp:'.$purchase_code;
 
+		// Register action on edit template button
+		if( Redis::hexists('analytics:btn:edit',$template_key) ){
+            Redis::hincrby('analytics:btn:edit',$template_key,1);
+        } else {
+            Redis::hset('analytics:btn:edit',$template_key,1);
+        }
+
         
         Redis::set('temp:template:relation:temp:'.$purchase_code, $original_template_key);
         Redis::expire('temp:template:relation:temp:'.$purchase_code, 60*60*24*1); // Codigo valido por 30 dias - 60*60*24*30 = 2592000
@@ -1367,6 +1382,8 @@ class EditorController extends Controller
         Redis::set('template:'.$language_code.':'.$temporal_customer_key.':jsondata' ,Redis::get('template:'.$language_code.':'.$original_template_key.':jsondata'));
         Redis::expire('template:'.$temporal_customer_key.':jsondata', 60*60*24*1); // Codigo valido por 30 dias - 60*60*24*30 = 2592000
 		
+		// Redis::get('template:'.$language_code.':'.$original_template_key.':jsondata')
+
 		// echo $original_template_key;
 		// echo "<br>";
 		// echo $temporal_customer_key;
@@ -1389,6 +1406,13 @@ class EditorController extends Controller
         } else {
             $language_code = 'en';
         }
+
+		if( Redis::exists('template:'.$language_code.':'.$template_key.':jsondata') == false ){
+			return response()->json([
+				'success' => false,
+				'msg' => 'Template does not exists'
+			]);
+		}
 
 		$templates = $template_key;
 		$demo_as_id = 0;

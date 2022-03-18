@@ -258,6 +258,7 @@ class ContentController extends Controller
     }
 
     public function showTemplatePage($country, $slug){
+
         $language_code = 'en';
         $locale = self::getLocale($country);
         
@@ -269,6 +270,12 @@ class ContentController extends Controller
         
         $template_id = substr($slug, strrpos($slug, '-')+1, strlen($slug)  );
         $search_query = '';
+
+        if( Redis::hexists('analytics:template:views',$template_id) ){
+            Redis::hincrby('analytics:template:views',$template_id,1);
+        } else {
+            Redis::hset('analytics:template:views',$template_id,1);
+        }
 
         if( isset($request->searchQuery) ) {
             $search_query = $request->searchQuery;
@@ -290,7 +297,7 @@ class ContentController extends Controller
             $preview_image = Storage::disk('s3')->url( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["product_preview"] );
         }
 
-        $template->price = rand(35,1000);
+        // $template->price = rand(35,1000);
         $category_name = $template->mainCategory;
         $category_name = substr( $template->mainCategory,1, strlen($category_name) );
         $breadcrumbs_str = Redis::get('wayak:en:categories:'.$category_name);

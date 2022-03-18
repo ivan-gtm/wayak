@@ -83,18 +83,20 @@ Route::get('/api/demo-url', [AdminController::class, 'getTemplateObjects']);
         Route::get('/admin/categories', [CategoryController::class, 'manage'])->name('admin.category.manage');
         Route::get('/admin/categories/translate/{from}/{to}', [CategoryController::class, 'translateCategory'])->name('admin.category.translate');
 
-        Route::get('/admin/template/edit/{language_code}/{template_key}', [EditorController::class, 'adminTemplateEditor'])->name('admin.edit.template');
         
     // TEMPORAL
         Route::get('/admin/refactor', [AdminController::class, 'refactor'])->name('admin.keyrefactor');
         Route::get('/admin/thumbnail-generation', [AdminController::class, 'thumbnailGeneration'])->name('admin.thumbnailGeneration');
-
+        
     // TEMPLATES TRANLATION
+        Route::get('/admin/template/edit/{language_code}/{template_key}', [EditorController::class, 'adminTemplateEditor'])->name('admin.edit.template');
+
         Route::get('/admin/bulk-translate/{from}/{to}', [AdminController::class, 'bulkTranslate'])->name('admin.bulkTranslateText');
         Route::post('/admin/bulk-translate/{from}/{to}', [AdminController::class, 'bulkTranslate'])->name('admin.bulkTranslate');
         Route::get('/admin/template/translate/{template_key}/{from}/{to}', [AdminController::class, 'translateTemplateForm'])->name('admin.translate.templateForm');
         Route::post('/admin/template/translate/{template_key}/{from}/{to}', [AdminController::class, 'translateTemplate'])->name('admin.translate.template');
         Route::get('/admin/template/gallery/{country}', [AdminController::class, 'viewGallery'])->name('admin.template.gallery');
+    
     // BOT
         Route::get('/admin/bot/templett/bulk-translation/{from}/{to}', [TemplettScrapperController::class, 'bulkTranslation']);
         Route::post('/admin/bot/templett/bulk-translation/{from}/{to}', [TemplettScrapperController::class, 'bulkTranslation'])->name('templett.bulkTranslate');
@@ -215,9 +217,8 @@ Route::get('/api/demo-url', [AdminController::class, 'getTemplateObjects']);
     
     Route::get('/{country}/template/{slug}', [ContentController::class, 'showTemplatePage'])->name('template.productDetail');
 
-    Route::get('/{country}/create/{category}', [ContentController::class, 'showCreatePerCategoryPage']);
-    Route::get('/{country}/create', [ContentController::class, 'showCreatePage']);
-    
+    // Route::get('/{country}/create/{category}', [ContentController::class, 'showCreatePerCategoryPage']);
+    // Route::get('/{country}/create', [ContentController::class, 'showCreatePage']);
     
     Route::get('/{country}/plantillas/{category}', [ContentController::class, 'showCategoryPage']);
     Route::get('/{country}/plantilla/{template_id}/{slug}', [ContentController::class, 'showTemplatePage']);

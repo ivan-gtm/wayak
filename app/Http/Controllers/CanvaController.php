@@ -38,7 +38,7 @@ class CanvaController extends Controller
         //     if(strlen($folder) > 3  && is_dir( public_path('canva/instagram-story/design/template/'.$folder) ) ){
                 // $template_id = $folder;
                 
-                $template_id = 'EAE30hp1Ikw';
+                $template_id = '6rcAzqEs5BA';
                 if( Redis::exists('canva:originaljson:'.$template_id) == false ){
                     $template = self::getTemplate($template_id);
 

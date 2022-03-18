@@ -58,34 +58,49 @@
                            <ul class="metismenu side-nav mm-show">
                               <li class="side-nav-title side-nav-item">Navigation</li>
                               <li class="side-nav-item mm-active">
-                                 <a href="#" class="side-nav-link active">
-                                    <i class="uil-home-alt"></i>
-                                    <!-- <span class="badge badge-success float-right">4</span> -->
-                                    <span> Orders </span>
-                                 </a>
-                              </li>
-                              <li class="side-nav-item mm-active">
-                                 <a href="#" class="side-nav-link active">
-                                    <i class="uil-home-alt"></i>
-                                    <!-- <span class="badge badge-success float-right">4</span> -->
-                                    <span> Users </span>
-                                 </a>
-                              </li>
-                              <li class="side-nav-item mm-active">
-                                 <a href="#" class="side-nav-link active">
-                                    <i class="uil-home-alt"></i>
-                                    <!-- <span class="badge badge-success float-right">4</span> -->
-                                    <span> Products </span>
-                                 </a>
-                              </li>
-                              
-                              <li class="side-nav-item mm-active">
-                                 <a href="#" class="side-nav-link active">
+                                 <a href="/admin/categories" class="side-nav-link active">
                                     <i class="uil-home-alt"></i>
                                     <!-- <span class="badge badge-success float-right">4</span> -->
                                     <span> Categories </span>
                                  </a>
                               </li>
+                              <li class="side-nav-item mm-active">
+                                 <a href="/admin/metadata/keywords/manage" class="side-nav-link active">
+                                    <i class="uil-home-alt"></i>
+                                    <!-- <span class="badge badge-success float-right">4</span> -->
+                                    <span> Keywords </span>
+                                 </a>
+                              </li>
+                              
+                              <li class="side-nav-item mm-active">
+                                 <a href="/admin/metadata/product" class="side-nav-link active">
+                                    <i class="uil-home-alt"></i>
+                                    <!-- <span class="badge badge-success float-right">4</span> -->
+                                    <span> Template metadata </span>
+                                 </a>
+                              </li>
+                              <li class="side-nav-item mm-active">
+                                 <a href="/admin/us/manage-codes" class="side-nav-link active">
+                                    <i class="uil-home-alt"></i>
+                                    <!-- <span class="badge badge-success float-right">4</span> -->
+                                    <span> Promocodes</span>
+                                 </a>
+                              </li>
+                              <li class="side-nav-item mm-active">
+                                 <a href="/admin/etsy/gallery" class="side-nav-link active">
+                                    <i class="uil-home-alt"></i>
+                                    <!-- <span class="badge badge-success float-right">4</span> -->
+                                    <span> Etsy Template Gallery</span>
+                                 </a>
+                              </li>
+                              <li class="side-nav-item mm-active">
+                                 <a href="/admin/assets-gallery/static" class="side-nav-link active">
+                                    <i class="uil-home-alt"></i>
+                                    <!-- <span class="badge badge-success float-right">4</span> -->
+                                    <span> Assets Gallery</span>
+                                 </a>
+                              </li>
+                              
                               <!-- <li class="side-nav-item mm-active">
                                  <a href="#" class="side-nav-link active">
                                     <i class="uil-home-alt"></i>
