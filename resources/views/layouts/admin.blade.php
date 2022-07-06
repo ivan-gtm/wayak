@@ -90,8 +90,35 @@
                                  <a href="/admin/etsy/gallery" class="side-nav-link active">
                                     <i class="uil-home-alt"></i>
                                     <!-- <span class="badge badge-success float-right">4</span> -->
-                                    <span> Etsy Template Gallery</span>
+                                    <span>Template Gallery</span>
                                  </a>
+                                 <ul>
+                                    <li>
+                                       <a href="/admin/etsy/gallery?vendor=corjl">
+                                          <span>Corjl</span>
+                                       </a>
+                                    </li>
+                                    <li>
+                                       <a href="/admin/etsy/gallery?vendor=templett">
+                                          <span>templett</span>
+                                       </a>
+                                    </li>
+                                    <li>
+                                       <a href="/admin/etsy/gallery?vendor=green">
+                                          <span>green</span>
+                                       </a>
+                                    </li>
+                                    <li>
+                                       <a href="/admin/etsy/gallery?vendor=crello">
+                                          <span>crello</span>
+                                       </a>
+                                    </li>
+                                    <li>
+                                       <a href="/admin/etsy/gallery?vendor=placeit">
+                                          <span>placeit</span>
+                                       </a>
+                                    </li>
+                                 </ul>
                               </li>
                               <li class="side-nav-item mm-active">
                                  <a href="/admin/assets-gallery/static" class="side-nav-link active">

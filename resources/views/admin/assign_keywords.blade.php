@@ -41,6 +41,7 @@
                   <option value="{{ $keyword->word }}">{{ $keyword->word }}</option>
                 @endforeach
               </select>
+              <input class="form-control" value="{{ $comma_keywords }}">
             </div>
 
             <button type="button" onclick="insertKeyWords()" class="d-grid gap-2 col-6 mx-auto">SAVE CHANGES</button>

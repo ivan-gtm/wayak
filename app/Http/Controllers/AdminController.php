@@ -365,7 +365,7 @@ class AdminController extends Controller
         // $formated_templates_total = sizeof($formated_templates);
         $total_templates = DB::table('templates')
                     ->join('thumbnails', 'templates.template_id', '=', 'thumbnails.template_id')
-                    ->select('templates.template_id','format_ready','templates.translation_ready','templates.thumbnail_ready', 'filename','thumbnails.title', 'thumbnails.dimentions')
+                    ->select('templates.template_id','templates.format_ready','templates.translation_ready','templates.thumbnail_ready', 'filename','thumbnails.title', 'thumbnails.dimentions')
                     // ->where('template_id','=', $template_key )
                     ->where('thumbnails.language_code','=', $language_code )
                     // ->where('thumbnails.dimentions','=', '5 x 7 in' )
@@ -451,7 +451,7 @@ class AdminController extends Controller
                 LEFT JOIN tmp_etsy_product ON tmp_etsy_metadata.fk_product_id = tmp_etsy_product.id
             WHERE 
                 thumbnails.template_id = '".$template_key."'
-            LIMIT 1"
+            LIMIT 3"
         ));
 
         foreach ($template_titles as $db_title) {
@@ -464,55 +464,62 @@ class AdminController extends Controller
         preg_match_all('/(\w+)/', $full_title_words, $title_1_arr);
         $unique_title_keywords = array_unique($title_1_arr[1]);
         $unique_title_keywords = array_unique(array_merge(self::getTemplateText($template_key),$unique_title_keywords));
-        // exit;
+        
 
-        // // print_r('<br>'.$full_title_words);
-        // // print_r('<br>'.$title_1);
-        // // print_r('<br>'.$title_2);
-        // // print_r('<br>'.$title_3);
         // echo "<pre>";
+        // print_r('<br>'.$full_title_words);
+        // print_r('<br>'.$title_1);
+        // print_r('<br>'.$title_2);
+        // print_r('<br>'.$title_3);
         // print_r( $unique_title_keywords );
         // exit;
 
         if( empty($unique_title_keywords) == false ){
 
-            $similar_keywords = DB::select( DB::raw(
-                "SELECT keywords.* FROM (SELECT template_keywords.keyword_id, COUNT(*) total FROM (SELECT
-                template_id, keyword_id, COUNT(*) inlcuded_keys
+            $query_similar_keywords = "SELECT keywords.* FROM (SELECT template_keywords.keyword_id, COUNT(*) total FROM (SELECT
+            template_id, keyword_id, COUNT(*) inlcuded_keys
+            FROM
+                template_keywords 
+            WHERE
+                keyword_id IN (
+                SELECT
+                    id 
                 FROM
-                    template_keywords 
+                    keywords 
                 WHERE
-                    keyword_id IN (
-                    SELECT
-                        id 
-                    FROM
-                        keywords 
-                    WHERE
-                        keywords.word IN (
-                                "."'".implode("','",$unique_title_keywords)."'"."
-                                ) 
+                    keywords.word IN (
+                            "."'".implode("','",$unique_title_keywords)."'"."
                             ) 
-                        GROUP BY template_id, keyword_id
-                        ORDER BY inlcuded_keys DESC 
-                        LIMIT 10) rt,
-                            template_keywords
-                        WHERE
-                            template_keywords.template_id = rt.template_id
-                        GROUP BY template_keywords.keyword_id
-                        ORDER BY total DESC 
-                        LIMIT 30) related_keywords,
-                        keywords
-                        WHERE
-                            keywords.id = related_keywords.keyword_id
-                    "
+                        ) 
+                    GROUP BY template_id, keyword_id
+                    ORDER BY inlcuded_keys DESC 
+                    LIMIT 10) rt,
+                        template_keywords
+                    WHERE
+                        template_keywords.template_id = rt.template_id
+                    GROUP BY template_keywords.keyword_id
+                    ORDER BY total DESC 
+                    LIMIT 30) related_keywords,
+                    keywords
+                    WHERE
+                        keywords.id = related_keywords.keyword_id
+                ";
+
+            $similar_keywords = DB::select( DB::raw(
+                $query_similar_keywords
             ));
 
-            foreach ($similar_keywords as $keyword) {
-                $tmp_related_keywords[] = ucwords($keyword->word);
+            foreach ($unique_title_keywords as $keyword) {
+                $tmp_related_keywords[] = trim(ucwords(strtolower($keyword)));
             }
+            // foreach ($similar_keywords as $keyword) {
+            //     $tmp_related_keywords[] = ucwords($keyword->word);
+            // }
         
             // echo "<pre>";
-            // print_r( $tmp_keywords );
+            // // print_r( $unique_title_keywords );
+            // // print_r( $tmp_keywords );
+            // print_r( $tmp_related_keywords );
             // exit;
 
 
@@ -528,61 +535,66 @@ class AdminController extends Controller
                     keywords 
                 WHERE
                     keywords.word IN (
-                        "."'".implode("','",$unique_title_keywords)."'"."
+                        "."'".implode("','",$tmp_related_keywords)."'"."
                     ) )
                 GROUP BY keyword_id
                 ORDER BY total DESC ) templates_keys 
-                WHERE templates_keys.keyword_id = keywords.id
-                 "
+                WHERE templates_keys.keyword_id = keywords.id"
             ));
 
             foreach ($keywords_by_rank as $keyword) {
                 $tmp_ranked_keywords[] = ucwords($keyword->word);
             }
             
-            $title_recommendations = DB::select( DB::raw(
-                "SELECT
-                    thumbnails.title title,
-                    IF(tmp_etsy_metadata.title IS NULL,'',tmp_etsy_metadata.title) title_2,
-                    IF(tmp_etsy_product.title IS NULL,'',tmp_etsy_product.title) title_3
-                FROM (SELECT
-                    template_id, keyword_id, COUNT(*) inlcuded_keys
+            $query_title_recommendations = "SELECT
+                thumbnails.title title,
+                IF(tmp_etsy_metadata.title IS NULL,'',tmp_etsy_metadata.title) title_2,
+                IF(tmp_etsy_product.title IS NULL,'',tmp_etsy_product.title) title_3
+            FROM (SELECT
+                template_id, keyword_id, COUNT(*) inlcuded_keys
+            FROM
+                template_keywords 
+            WHERE
+                keyword_id IN (
+                SELECT
+                    id 
                 FROM
-                    template_keywords 
+                    keywords 
                 WHERE
-                    keyword_id IN (
-                    SELECT
-                        id 
-                    FROM
-                        keywords 
-                    WHERE
-                        keywords.word IN (
-                            "."'".implode("','",$unique_title_keywords)."'"."
-                        ) 
+                    keywords.word IN (
+                        "."'".implode("','",$unique_title_keywords)."'"."
                     ) 
-                GROUP BY template_id, keyword_id
-                ORDER BY inlcuded_keys DESC 
-                LIMIT 30) related_templates, 
-                templates,
-                thumbnails,
-                tmp_etsy_metadata,
-                tmp_etsy_product
-                WHERE 
-                    related_templates.template_id = templates.id
-                    AND templates.template_id = thumbnails.template_id
-                    AND templates.fk_etsy_template_id = tmp_etsy_metadata.id
-                    AND tmp_etsy_metadata.fk_product_id = tmp_etsy_product.id
-                GROUP BY
-                    title,
-                    title_2,
-                    title_3
-                LIMIT 10"
+                ) 
+            GROUP BY template_id, keyword_id
+            ORDER BY inlcuded_keys DESC 
+            LIMIT 30) related_templates, 
+            templates,
+            thumbnails,
+            tmp_etsy_metadata,
+            tmp_etsy_product
+            WHERE 
+                related_templates.template_id = templates.id
+                AND templates.template_id = thumbnails.template_id
+                AND templates.fk_etsy_template_id = tmp_etsy_metadata.id
+                AND tmp_etsy_metadata.fk_product_id = tmp_etsy_product.id
+            GROUP BY
+                title,
+                title_2,
+                title_3
+            LIMIT 20";
+
+            $title_recommendations = DB::select( DB::raw(
+                $query_title_recommendations
             ));
+
+            // echo "<pre>";
+            // print_r( $query_title_recommendations );
+            // exit;
 
             foreach ($title_recommendations as $titles) {
                 $tmp_titles[] = ucwords($titles->title);
                 $tmp_titles[] = ucwords($titles->title_2);
-                // $tmp_titles[] = ucwords($titles->title_3);
+                $tmp_titles[] = ucwords($titles->title_3);
             }
 
             $tmp_recomendation_titles = array_unique($tmp_titles);
@@ -611,8 +623,8 @@ class AdminController extends Controller
         $product_metadata->title = (isset($product_metadata->title) && $product_metadata->title != '') ? $product_metadata->title : $title_1;
         $product_metadata->description = (isset($product_metadata->description) && $product_metadata->description != '') ? $product_metadata->description : Redis::get('wayak:etsy:description_template') ;
         $product_metadata->tags = (isset($product_metadata->tags) && $product_metadata->tags != '') ? $product_metadata->tags : 'invitation,party,birthday';
-        $product_metadata->related_keywords = implode(",",$tmp_related_keywords);
-        $product_metadata->keywords_by_rank = implode(",",$tmp_ranked_keywords);
+        $product_metadata->related_keywords = $tmp_related_keywords;
+        $product_metadata->keywords_by_rank = $tmp_ranked_keywords;
         $product_metadata->recomended_titles = $tmp_recomendation_titles;
         $product_metadata->title_1 = $title_1;
         $product_metadata->title_2 = $title_2;
@@ -791,20 +803,34 @@ class AdminController extends Controller
         // echo "<pre>";
         // print_r( $template_info );
         // exit;
-        
         $template_info['demo_code'] = self::generateRandString(4);
         $template_info['description'] = str_replace('{{ templateDemoUrl }}', url('us/demo/'.$template_info['demo_code'] ), $template_info['description']);
-        $template_info['description'] = str_replace('{{ wayakCatalogUrl }}', url('' ), $template_info['description']);
+        $template_info['description'] = str_replace('{{ wayakCatalogUrl }}', url(''), $template_info['description']);
         $template_info['description'] = str_replace('{{ estyStoreName }}', 'For more templates visit: https://wayak.app/', $template_info['description']);
+        $template_info['description'] = str_replace('{{ etsyStoreCode }}', 'XXXetsyStoreCode', $template_info['description']);
         $template_info['description'] = str_replace('{{ template_id }}', $template_info['demo_code'], $template_info['description']);
         $template_info['description'] = str_replace('{{ etsyLinkStore }}', 'https://www.etsy.com/your/shops/wayakTemplateShop', $template_info['description']);
         // $template_info['description'] = str_replace('https://www.mercadolibre.com.mx/perfil/DANIELGTM', 'https://www.mercadolibre.com.mx/perfil/JAZMIN.STUDIO', $template_info['description']);
 
-        echo "<pre>";
-        print_r( $template_info );
-        exit;
+        // echo "<pre>";
+        // print_r( $template_info );
+        // exit;
 
-        Redis::set('template:en:'.$template_key.':metadata', json_encode( $template_info ));
+        // Redis::set('template:en:'.$template_key.':metadata', json_encode( $template_info ));
+        $id = DB::table('products')->insertGetId([
+            'id' => null,
+            'template_id' => $template_key,
+            'title' => $template_info['title'],
+            'tags' => $template_info['tags'],
+            'primaryColor' => $template_info['primaryColor'],
+            'secondaryColor' => $template_info['secondaryColor'],
+            'occasion' => $template_info['occasion'],
+            'holiday' => $template_info['holiday'],
+            'description' => $template_info['description'],
+        ]);
+
+        // self::createEtsyPDF( $template_id, $request->canvaURLInput );
+        self::createEtsyProductThumbs( $template_key );
         
         DB::table('templates')
 				    ->where('template_id','=',$template_key)
@@ -812,7 +838,7 @@ class AdminController extends Controller
                         'metadata_ready' => 1
                     ]);
         
-        return redirect()->route('admin.ml.getMissingMetadataTemplates');
+        return redirect()->route('admin.etsy.templatesGallery');
 
     }
 
@@ -1512,7 +1538,7 @@ class AdminController extends Controller
         // Get all templates already formated
         $total_pages = DB::table('templates')
                     ->join('thumbnails', 'templates.template_id', '=', 'thumbnails.template_id')
-                    ->select('templates.template_id','format_ready','templates.translation_ready','templates.thumbnail_ready', 'filename')
+                    ->select('templates.template_id','templates.format_ready','templates.translation_ready','templates.thumbnail_ready', 'filename')
                     // ->where('template_id','=', $template_key )
                     ->where('thumbnails.language_code','=', $language_code )
                     // ->where('thumbnails.dimentions','=', '5 x 7 in' )
@@ -1526,7 +1552,7 @@ class AdminController extends Controller
 
         $translation_ready_templates = DB::table('templates')
                     ->join('thumbnails', 'templates.template_id', '=', 'thumbnails.template_id')
-                    ->select('templates.template_id','format_ready','templates.translation_ready','templates.thumbnail_ready', 'filename')
+                    ->select('templates.template_id','templates.format_ready','templates.translation_ready','templates.thumbnail_ready', 'filename')
                     // ->where('template_id','=', $template_key )
                     ->where('thumbnails.language_code','=', $language_code )
                     // ->where('thumbnails.dimentions','=', '5 x 7 in' )
@@ -1685,7 +1711,7 @@ class AdminController extends Controller
 
         $total_templates = DB::table('templates')
                     ->join('thumbnails', 'templates.template_id', '=', 'thumbnails.template_id')
-                    ->select('templates.template_id','format_ready','templates.translation_ready','templates.thumbnail_ready', 'filename')
+                    ->select('templates.template_id','templates.format_ready','templates.translation_ready','templates.thumbnail_ready', 'filename')
                     // ->where('template_id','=', $template_key )
                     ->where('thumbnails.language_code','=', 'en' )
                     // ->where('thumbnails.dimentions','=', '5 x 7 in' )
@@ -1698,7 +1724,7 @@ class AdminController extends Controller
         
         $format_ready_templates = DB::table('templates')
                     ->join('thumbnails', 'templates.template_id', '=', 'thumbnails.template_id')
-                    ->select('templates.template_id','format_ready','templates.translation_ready','templates.thumbnail_ready', 'filename')
+                    ->select('templates.template_id','templates.format_ready','templates.translation_ready','templates.thumbnail_ready', 'filename')
                     // ->where('template_id','=', $template_key )
                     ->where('thumbnails.language_code','=', 'en' )
                     // ->where('thumbnails.dimentions','=', '5 x 7 in' )
@@ -1801,7 +1827,7 @@ class AdminController extends Controller
 
         $total_templates = DB::table('templates')
                     ->join('thumbnails', 'templates.template_id', '=', 'thumbnails.template_id')
-                    ->select('templates.template_id','format_ready','templates.translation_ready','templates.thumbnail_ready', 'filename')
+                    ->select('templates.template_id','templates.format_ready','templates.translation_ready','templates.thumbnail_ready', 'filename')
                     // ->where('template_id','=', $template_key )
                     ->where('thumbnails.language_code','=', $language_code )
                     // ->where('thumbnails.dimentions','=', '5 x 7 in' )
@@ -1815,7 +1841,7 @@ class AdminController extends Controller
         
         $translation_ready_templates = DB::table('templates')
                     ->join('thumbnails', 'templates.template_id', '=', 'thumbnails.template_id')
-                    ->select('templates.template_id','format_ready','templates.translation_ready','templates.thumbnail_ready', 'filename')
+                    ->select('templates.template_id','templates.format_ready','templates.translation_ready','templates.thumbnail_ready', 'filename')
                     // ->where('template_id','=', $template_key )
                     ->where('thumbnails.language_code','=', $language_code )
                     // ->where('thumbnails.dimentions','=', '5 x 7 in' )
@@ -1877,7 +1903,7 @@ class AdminController extends Controller
 
         $total_templates = DB::table('templates')
             ->join('thumbnails', 'templates.template_id', '=', 'thumbnails.template_id')
-            ->select('templates.template_id','format_ready','templates.translation_ready','templates.thumbnail_ready', 'filename')
+            ->select('templates.template_id','templates.format_ready','templates.translation_ready','templates.thumbnail_ready', 'filename')
             // ->where('template_id','=', $template_key )
             ->where('thumbnails.language_code','=', $destination_lang )
             // ->where('thumbnails.dimentions','=', '5 x 7 in' )
@@ -1891,7 +1917,7 @@ class AdminController extends Controller
         
         $thumb_ready_templates = DB::table('templates')
             ->join('thumbnails', 'templates.template_id', '=', 'thumbnails.template_id')
-            ->select('templates.template_id','format_ready','templates.translation_ready','templates.thumbnail_ready', 'filename')
+            ->select('templates.template_id','templates.format_ready','templates.translation_ready','templates.thumbnail_ready', 'filename')
             // ->where('template_id','=', $template_key )
             ->where('thumbnails.language_code','=', $destination_lang )
             // ->where('thumbnails.dimentions','=', '5 x 7 in' )
@@ -1941,7 +1967,8 @@ class AdminController extends Controller
     function getMissingMetadataTemplates(Request $request){
         
         // Get all templates already formated
-        $destination_lang = 'es';
+        $destination_lang = 'en';
+
         $current_page = 1;
         if( isset($request->page) ) {
             $current_page = $request->page;
@@ -1953,29 +1980,30 @@ class AdminController extends Controller
 
         $total_templates = DB::table('templates')
             ->join('thumbnails', 'templates.template_id', '=', 'thumbnails.template_id')
-            ->select('templates.template_id','format_ready','templates.translation_ready','templates.thumbnail_ready', 'filename')
+            ->select('templates.template_id','templates.format_ready','templates.translation_ready','templates.thumbnail_ready', 'filename')
             // ->where('template_id','=', $template_key )
             ->where('thumbnails.language_code','=', $destination_lang )
             // ->where('thumbnails.dimentions','=', '5 x 7 in' )
-            ->where('templates.status','=', 5 )
+            
+            // ->where('templates.status','=', 5 )
             ->where('templates.format_ready','1')
-            ->where('templates.translation_ready','1')
-            ->where('templates.thumbnail_ready','1')
+            // ->where('templates.translation_ready','1')
+            // ->where('templates.thumbnail_ready','1')
             ->count();
 
         $total_pages = ceil( $total_templates/$per_page );
         
         $metadata_ready_templates = DB::table('templates')
             ->join('thumbnails', 'templates.template_id', '=', 'thumbnails.template_id')
-            ->select('templates.template_id','format_ready','templates.translation_ready','templates.thumbnail_ready','metadata_ready', 'filename')
+            ->select('templates.template_id','templates.format_ready','templates.translation_ready','templates.thumbnail_ready','templates.metadata_ready', 'filename')
             // ->where('template_id','=', $template_key )
             ->where('thumbnails.language_code','=', $destination_lang )
             // ->where('thumbnails.dimentions','=', '5 x 7 in' )
             ->where('templates.status','=', 5 )
             ->where('templates.format_ready','1')
-            ->where('templates.translation_ready','1')
-            ->where('templates.thumbnail_ready','1')
-            ->where('templates.metadata_ready','0')
+            // ->where('templates.translation_ready','1')
+            // ->where('templates.thumbnail_ready','1')
+            // ->where('templates.metadata_ready','0')
             ->offset($offset)
             ->limit($per_page)
             ->get();
@@ -2317,6 +2345,12 @@ class AdminController extends Controller
                     ->select('keywords.word')
                     ->where('image_id','=', $img_id )
                     ->get();
+
+        $comma_keywords = array();
+        foreach ($existing_keywords as $keyword) {
+            array_push($comma_keywords, ucfirst($keyword->word) );
+        }
+        $comma_keywords = implode(',',$comma_keywords);
         
         return view('admin.assign_keywords', [
             'unique_keywords' => $unique_keywords,
@@ -2333,6 +2367,7 @@ class AdminController extends Controller
             'title' => $db_image->title,
             'img_id' => $img_id,
             'image_keywords' => $existing_keywords,
+            'comma_keywords' => $comma_keywords,
         ]);
     }
 
@@ -2356,12 +2391,13 @@ class AdminController extends Controller
         
         $templates = DB::table('images')
             ->select('id','template_id','thumb_path','file_type','filename','status','original_path')
-            // ->where('source','=','corjl')
+            ->where('source','=','corjl')
             // ->where('source','=','crello')
     		// ->where('source','=','green')
             // ->where('source','=','templett')
-            ->where('source','!=','placeit')
+            // ->where('source','!=','placeit')
             ->where('file_type','!=','svg')
+            // ->where('status','=','1')
             // ->whereNull('status')
             ->offset( ($current_page-1) *$itemsPerPage)
             ->limit($itemsPerPage)
@@ -2369,15 +2405,16 @@ class AdminController extends Controller
             ->get();
 
         $total_templates = DB::table('images')
-                            ->where('source','!=','placeit')
+                            ->where('source','=','corjl')
                             ->where('file_type','!=','svg')
+                            // ->where('status','=','1')
                             // ->whereNull('status')
                             ->count();
 
         // $templates = DB::select( DB::raw(
         //     "SELECT id,template_id, thumb_path, file_type, filename, status, original_path
         //         FROM images
-        //     WHERE 
+        //     WHERE
         //         -- `status` IS NULL AND 
         //         template_id IN(
         //             SELECT 
@@ -2389,9 +2426,9 @@ class AdminController extends Controller
         //                 LEFT JOIN tmp_etsy_product ON tmp_etsy_product.id = tmp_etsy_metadata.fk_product_id
                     
         //             WHERE 
-        //                 tmp_etsy_product.title LIKE '%sunflower%'
-        //                 OR tmp_etsy_metadata.title LIKE '%sunflower%'
-        //                 OR thumbnails.title LIKE '%sunflower%'
+        //                 tmp_etsy_product.title LIKE '%Balloon%'
+        //                 OR tmp_etsy_metadata.title LIKE '%Balloon%'
+        //                 OR thumbnails.title LIKE '%Balloon%'
         //             GROUP BY templates.template_id
         //         )
         //     "
@@ -2675,6 +2712,12 @@ class AdminController extends Controller
         @mkdir($path, 0777, true);
         $template_id_path = $path.$template_id.'.pdf';
         file_put_contents( $template_id_path, $output);
+        
+        return redirect()->action(
+            [AdminController::class,'getTemplateDashboard'], [
+                
+            ]
+        );
     }
 
     function etsyGallery(Request $request){
@@ -2789,6 +2832,11 @@ class AdminController extends Controller
         array_push($preview_images, self::processMockup($template_info,31) );
         array_push($preview_images, self::processMockup($template_info,10) );
         array_push($preview_images, self::processMockup($template_info,6) );
+        array_push($preview_images, self::processMockup($template_info,5) );
+        array_push($preview_images, self::processMockup($template_info,12) );
+        array_push($preview_images, self::processMockup($template_info,14) );
+        array_push($preview_images, self::processMockup($template_info,15) );
+        array_push($preview_images, self::processMockup($template_info,16) );
         
         // DB::table('templates')
         // 		->where('template_id','=', $template_key)
@@ -2991,6 +3039,22 @@ class AdminController extends Controller
         } else {
             echo "Template Does not Exists";
         }
+        
+    }
+
+    function updateAssetStatus(Request $request){
+
+        if( isset($request->img_id) ){
+            DB::table('images')
+                ->where('id','=', $request->img_id)
+                ->update([
+                    'status' => 1
+                ]);
+        }
+
+        echo "<pre>";
+        print_r( $request->all() );
+        exit;
         
     }
 
@@ -3352,7 +3416,17 @@ class AdminController extends Controller
         });
 
         $mockup_img->insert($overlay_img, 'top-left', 445, 230);
-        $mockup_img->save( public_path('mockups/final_thumbs.jpg') );
+        // $mockup_img->save( public_path('mockups/final_thumbs.jpg') );
+        
+        $mercadolibre_preview_path = public_path( 'product/preview-images/'. $product_info['key'] .'/');
+        $filename = 'preview_4_'.rand(111111,999999).'.jpg';
+        $preview_path = $mercadolibre_preview_path.$filename;
+        @mkdir($mercadolibre_preview_path, 0777, true);
+        $mockup_img->save( $preview_path );
+        $url_path = asset( 'product/preview-images/'. $product_info['key'] .'/'.$filename);
+
+        // echo '<img src="'.asset( 'product/preview-images/'. $product_info['key'] .'/'.$filename ).'">';
+        // exit;
         
         return asset('mockups/final_thumbs.jpg');
         
@@ -3447,7 +3521,12 @@ class AdminController extends Controller
 
         $mockup_img->insert($overlay_img, 'top-left', 542, 180);
 
-        $mockup_img->save( public_path('mockups/final_thumbs.jpg') );
+        // $mockup_img->save( public_path('mockups/final_thumbs.jpg') );
+        $mercadolibre_preview_path = public_path( 'product/preview-images/'. $product_info['key'] .'/');
+        $filename = 'preview_3_'.rand(111111,999999).'.jpg';
+        $preview_path = $mercadolibre_preview_path.$filename;
+        @mkdir($mercadolibre_preview_path, 0777, true);
+        $mockup_img->save( $preview_path );
         
         return asset('mockups/final_thumbs.jpg');
     }
@@ -3614,7 +3693,12 @@ class AdminController extends Controller
 
         $mockup_img->insert($overlay_img, 'top-left', 300, 307);
 
-        $mockup_img->save( public_path('mockups/final_thumbs.jpg') );
+        // $mockup_img->save( public_path('mockups/final_thumbs.jpg') );
+        $mercadolibre_preview_path = public_path( 'product/preview-images/'. $product_info['key'] .'/');
+        $filename = 'preview_3_'.rand(111111,999999).'.jpg';
+        $preview_path = $mercadolibre_preview_path.$filename;
+        @mkdir($mercadolibre_preview_path, 0777, true);
+        $mockup_img->save( $preview_path );
         
         return asset('mockups/final_thumbs.jpg');
     }
@@ -3658,7 +3742,12 @@ class AdminController extends Controller
 
         $mockup_img->insert($overlay_img, 'top-left', 332, 210);
 
-        $mockup_img->save( public_path('mockups/final_thumbs.jpg') );
+        // $mockup_img->save( public_path('mockups/final_thumbs.jpg') );
+        $mercadolibre_preview_path = public_path( 'product/preview-images/'. $product_info['key'] .'/');
+        $filename = 'preview_3_'.rand(111111,999999).'.jpg';
+        $preview_path = $mercadolibre_preview_path.$filename;
+        @mkdir($mercadolibre_preview_path, 0777, true);
+        $mockup_img->save( $preview_path );
         
         return asset('mockups/final_thumbs.jpg');
     }
@@ -3678,7 +3767,12 @@ class AdminController extends Controller
 
         $mockup_img->insert($overlay_img, 'top-left', 392, 350);
 
-        $mockup_img->save( public_path('mockups/final_thumbs.jpg') );
+        // $mockup_img->save( public_path('mockups/final_thumbs.jpg') );
+        $mercadolibre_preview_path = public_path( 'product/preview-images/'. $product_info['key'] .'/');
+        $filename = 'preview_3_'.rand(111111,999999).'.jpg';
+        $preview_path = $mercadolibre_preview_path.$filename;
+        @mkdir($mercadolibre_preview_path, 0777, true);
+        $mockup_img->save( $preview_path );
         
         return asset('mockups/final_thumbs.jpg');
     }
@@ -3700,7 +3794,12 @@ class AdminController extends Controller
 
         $mockup_img->insert($overlay_img, 'top-left', 458, 455);
         $mockup_img->encode('jpg', 10);
-        $mockup_img->save( public_path('mockups/final_thumbs.jpg') );
+        // $mockup_img->save( public_path('mockups/final_thumbs.jpg') );
+        $mercadolibre_preview_path = public_path( 'product/preview-images/'. $product_info['key'] .'/');
+        $filename = 'preview_3_'.rand(111111,999999).'.jpg';
+        $preview_path = $mercadolibre_preview_path.$filename;
+        @mkdir($mercadolibre_preview_path, 0777, true);
+        $mockup_img->save( $preview_path );
         
         return asset('mockups/final_thumbs.jpg');
     }

@@ -20,8 +20,15 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\EtsyScrapperController;
 use App\Http\Controllers\TemplettScrapperController;
 use App\Http\Controllers\LinkedInController;
+use App\Http\Controllers\IPDPController;
 
 Route::get('/api/demo-url', [AdminController::class, 'getTemplateObjects']);
+
+Route::get('/ipdp', [IPDPController::class, 'index'])->name('ipdp.home');
+Route::get('/ipdp/login', [IPDPController::class, 'login'])->name('ipdp.login');
+Route::get('/ipdp/recupera-contrasena', [IPDPController::class, 'recuperaContrasena'])->name('ipdp.recupera_contrasena');
+Route::get('/ipdp/consulta-indigena', [IPDPController::class, 'consultaIndigena'])->name('ipdp.consulta_indigena');
+Route::get('/ipdp/registra-cedula', [IPDPController::class, 'registraCedula'])->name('ipdp.registra_cedula');
 
 // SCRAPPER
     // Linkedin
@@ -135,6 +142,7 @@ Route::get('/api/demo-url', [AdminController::class, 'getTemplateObjects']);
         
     // Assets Gallery
         Route::get('/admin/assets-gallery/static', [AdminController::class, 'staticGallery'])->name('admin.staticGallery');
+        Route::post('/admin/assets-gallery/update-status', [AdminController::class, 'updateAssetStatus'])->name('admin.assets.register_download');
         Route::get('/admin/assets-gallery/static/set-keywords/{img_id}', [AdminController::class, 'setIMGKeywords'])->name('admin.setIMGKeywords');
         Route::post('/admin/assets-gallery/static/set-keywords/{img_id}', [AdminController::class, 'setIMGKeywords'])->name('admin.saveKeywords');
         

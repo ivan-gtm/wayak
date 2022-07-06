@@ -43,11 +43,12 @@ class EditorController extends Controller
 		// exit;
 		if( $country == 'mx'){
 			$language_code = 'es';
+		} else {
+			$language_code = 'en';
 		}
 
-		$template_key = Redis::get('wayak:mercadopago:modelo:'.$modelo_mercado_pago);
-		
-		// echo 'es:'.$template_key;
+		// $template = Redis::get('wayak:mercadopago:modelo:'.$modelo_mercado_pago);
+		// print_r($template);
 		// exit;
 		
 		$demo_as_id = Rand(100000,999999);
@@ -55,7 +56,7 @@ class EditorController extends Controller
 		$purchase_code = 0;
 
 		return view('editor',[ 
-			'templates' => $template_key, 
+			'templates' => $template, 
 			'purchase_code' => $purchase_code,
 			'demo_as_id' => $demo_as_id,
 			'user_role' => $user_role,
