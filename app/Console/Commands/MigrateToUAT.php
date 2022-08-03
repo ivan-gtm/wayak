@@ -45,14 +45,16 @@ class MigrateToUAT extends Command
     }
 
     function migrateRedisKeys(){
-        self::migrateTemplates();
-        self::migrateCarousels();
-        self::migrateMenu();
-        self::migrateCategories();
-        self::migrateWayakConfig();
+        // self::migrateTemplates();
+        // self::migrateCarousels();
+        // self::migrateMenu();
+        // self::migrateCategories();
+        // self::migrateWayakConfig();
         
         // self::migrateTemplatesFromProdToDev();
         // self::migratePSDurls();
+        
+        self::migrateLegacyKeys();
     }
     
     function migrateTemplates(){
@@ -96,6 +98,32 @@ class MigrateToUAT extends Command
         $templates = $redis_src->keys('instagram:*');
         // $templates = $redis_src->keys('gfxcosy:*');
 
+        foreach($templates as $template_key) {
+
+            if( $redis_dest->exists($template_key) == false ){
+                $redis_dest->set($template_key, $redis_src->get($template_key) );
+                $redis_src->del($template_key);
+                print_r("Migrated key >> \n");
+                print_r($template_key);
+                usleep(500000);
+                // exit;
+            }
+        }
+
+    }
+    
+    function migrateLegacyKeys(){
+        
+        $redis_src = Redis::connection('default');
+        $redis_dest = Redis::connection('redisuat');
+
+        $templates = $redis_src->keys('canva:*');
+        // $templates = $redis_src->keys('placeit:*');
+        // $templates = $redis_src->keys('over:*');
+        // $templates = $redis_src->keys('*green:*');
+        // $templates = $redis_src->keys('desygner:*');
+        // $templates = $redis_src->keys('crello:*');
+        
         foreach($templates as $template_key) {
 
             if( $redis_dest->exists($template_key) == false ){
