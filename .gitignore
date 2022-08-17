@@ -36,3 +36,4 @@ public/packtpub/*
 /public/psd/*
 /public/product/preview-images/*
 /public/etsy_store/*
+composer.lock
