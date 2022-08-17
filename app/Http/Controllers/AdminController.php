@@ -2032,6 +2032,7 @@ class AdminController extends Controller
     }
 
     function refactor(){
+        
         // $language_code = 'es';
         // $format_ready_templates = Redis::keys('template:'.$language_code.':*:jsondata');
         // // echo "<pre>";
