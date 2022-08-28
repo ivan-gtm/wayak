@@ -159,7 +159,11 @@ class EditorController extends Controller
 			return $template;
 			
 		} else {
-			return str_replace('http://localhost','https:\/\/codepipeline-us-west-wyk.s3.us-west-2.amazonaws.com', Redis::get($template_key) );
+			$template = str_replace('http://localhost', 'https:\/\/wayak-templates.s3.us-west-1.amazonaws.com', Redis::get($template_key) );
+			$template = str_replace('http:\/\/localhost:8001', 'https:\/\/wayak-templates.s3.us-west-1.amazonaws.com', $template );
+			$template = str_replace('http:\/\/localhost', 'https:\/\/wayak-templates.s3.us-west-1.amazonaws.com', $template );
+
+			return $template;
 		}
 	}
 
