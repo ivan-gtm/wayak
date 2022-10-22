@@ -82,7 +82,6 @@ Route::get('/api/demo-url', [AdminController::class, 'getTemplateObjects']);
     // CATEGORIES
         Route::get('/admin/categories', [CategoryController::class, 'manage'])->name('admin.category.manage');
         Route::get('/admin/categories/translate/{from}/{to}', [CategoryController::class, 'translateCategory'])->name('admin.category.translate');
-
         
     // TEMPORAL
         Route::get('/admin/refactor', [AdminController::class, 'refactor'])->name('admin.keyrefactor');
@@ -167,9 +166,6 @@ Route::get('/api/demo-url', [AdminController::class, 'getTemplateObjects']);
 // DESIGNER
     // Route::get('/open',  [EditorController::class,'open']);
     // Route::get('/explore',  [EditorController::class,'explore']);
-    
-    // SCRAPPER
-    
 
 //EDITOR
     Route::get('/editor/get-thumbnails', [EditorController::class,'getTemplateThumbnails']);
@@ -205,11 +201,16 @@ Route::get('/api/demo-url', [AdminController::class, 'getTemplateObjects']);
 // FRONTEND
     Route::get('/', [ContentController::class, 'showHome']);
     
-    Route::get('/{country}', [ContentController::class, 'showCountryHomepage'])->name('user.homepage');
+    Route::get('/{country}', [ContentController::class, 'showHomePerPage'])->name('user.homepage');
     Route::get('/{country}/code', [EditorController::class, 'validateCode'])->name('code.validate.form');
     Route::post('/{country}/code', [EditorController::class,'validatePurchaseCode'])->name('code.validate');
 
     Route::get('/{country}/search', [ContentController::class, 'showSearchPage'])->name('user.search');
+    
+    // New frontend
+    Route::get('/{country}/buscar', [ContentController::class, 'search'])->name('product.search');
+    Route::get('/{country}/p/{slug}', [ContentController::class, 'getTemplate'])->name('product.template');
+    Route::get('/{country}/demo/{product_id}', [ContentController::class, 'demo'])->name('product.demo');
 
     Route::get('/{country}/templates/{cat_lvl_1}', [ContentController::class, 'showCategoryPage'])->name('showCategoryLevel1');
     Route::get('/{country}/templates/{cat_lvl_1}/{cat_lvl_2}', [ContentController::class, 'showCategoryPage'])->name('showCategoryLevel2');
@@ -218,9 +219,6 @@ Route::get('/api/demo-url', [AdminController::class, 'getTemplateObjects']);
     
     Route::get('/{country}/template/{slug}', [ContentController::class, 'showTemplatePage'])->name('template.productDetail');
 
-    // Route::get('/{country}/create/{category}', [ContentController::class, 'showCreatePerCategoryPage']);
-    // Route::get('/{country}/create', [ContentController::class, 'showCreatePage']);
-    
     Route::get('/{country}/plantillas/{category}', [ContentController::class, 'showCategoryPage']);
     Route::get('/{country}/plantilla/{template_id}/{slug}', [ContentController::class, 'showTemplatePage']);
     Route::get('/{country}/crear/{category}', [ContentController::class, 'showCreatePerCategoryPage']);
@@ -232,13 +230,5 @@ Route::get('/api/demo-url', [AdminController::class, 'getTemplateObjects']);
     Route::get('/{country}/demo/{modelo_mercado_pago}', [EditorController::class, 'demoTemplateEditor'])->name('plantilla.demo');
     Route::get('/{country}/editar/plantilla/{template_key}', [EditorController::class, 'customerTemplate'])->name('plantilla.editar');
 
-// Checkout ( Klarna )
-    // Route::get('/{country}/checkout/{template_key}', [OrderController::class, 'checkout'])->name('template.checkout');
-    // Route::get('/{country}/order/{order_id}/confirmation', [OrderController::class, 'confirmation'])->name('order.confirmation');
-
-// Klarna Payments
-    // Route::get('/{country}/klarna-demo', [OrderController::class, 'klarnaDemo'])->name('order.klarnaDemo');
-    // Route::post('/{country}/klarna/place-order', [OrderController::class, 'klarnaPlaceOrder'])->name('order.klarnaPlaceOrder');
-    
 // SITEMAPS
     Route::get('/{country}/sitemap.xml', [ContentController::class, 'sitemap']);

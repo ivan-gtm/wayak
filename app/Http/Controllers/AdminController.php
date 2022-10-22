@@ -2392,12 +2392,12 @@ class AdminController extends Controller
         
         $templates = DB::table('images')
             ->select('id','template_id','thumb_path','file_type','filename','status','original_path')
-            ->where('source','=','corjl')
+            // ->where('source','=','corjl')
             // ->where('source','=','crello')
     		// ->where('source','=','green')
-            // ->where('source','=','templett')
+            ->where('source','=','templett')
             // ->where('source','!=','placeit')
-            ->where('file_type','!=','svg')
+            // ->where('file_type','!=','svg')
             // ->where('status','=','1')
             // ->whereNull('status')
             ->offset( ($current_page-1) *$itemsPerPage)
@@ -2406,11 +2406,14 @@ class AdminController extends Controller
             ->get();
 
         $total_templates = DB::table('images')
-                            ->where('source','=','corjl')
-                            ->where('file_type','!=','svg')
+                            ->where('source','=','templett')
+                            // ->where('file_type','!=','svg')
                             // ->where('status','=','1')
                             // ->whereNull('status')
                             ->count();
+
+        // echo $total_templates;
+        // exit;
 
         // $templates = DB::select( DB::raw(
         //     "SELECT id,template_id, thumb_path, file_type, filename, status, original_path

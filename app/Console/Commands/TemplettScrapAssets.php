@@ -13,7 +13,7 @@ class TemplettScrapAssets extends Command
      *
      * @var string
      */
-    protected $signature = 'wayak:templett:scrapassets';
+    protected $signature = 'wayak:templett:download-assets';
 
     /**
      * The console command description.
@@ -47,7 +47,7 @@ class TemplettScrapAssets extends Command
 
         // Check if font/template relationship already exist
         $assets_to_download = DB::table('images')
-                    ->select('id', 'template_id','tmp_path', 'filename','status')
+                    ->select('id', 'template_id','img_path', 'filename','status')
                     ->where('status', '=', '0')
                     // ->where('template_id', '=', 799782)
                     ->limit(10000)
@@ -74,6 +74,7 @@ class TemplettScrapAssets extends Command
 
                 // Verify if an image is already donwloaded for another template
                 if( $existing_asset != null && isset($existing_asset->id) ){
+
                     $old_path = public_path('design/template/'.$existing_asset->template_id.'/assets/'.$existing_asset->filename);
                     $new_path = public_path('design/template/'.$asset->template_id.'/assets/'.$asset->filename);
                     
@@ -85,9 +86,18 @@ class TemplettScrapAssets extends Command
                     // print_r("\n");
                     // exit;
 
-                    
-                    echo "Se va a copiar <br>".$old_path.' hacia '.$new_path."\n";
-                    $this->copyImage($old_path, $new_path);
+                    if( file_exists( $old_path ) ) {
+
+                        echo "Se va a copiar <br>".$old_path.' hacia '.$new_path."\n";
+                        $this->copyImage( $old_path, $new_path );
+                        
+                    } else {
+
+                        DB::table('images')
+                            ->where('id', $existing_asset->id)
+                            ->update(['status' => 0]);
+
+                    }
 
                 } else {
                     $url = 'https://dbzkr7khx0kap.cloudfront.net/'.$asset->filename;

@@ -20,7 +20,6 @@ services:
       - MYSQL_DATABASE=wayak
     volumes:
       - db-data:/var/lib/mysql:cached
-
   nginx:
     image: nginx:alpine
     ports:
@@ -39,40 +38,40 @@ services:
         - "6379"
     volumes:
       - .cloud/redis/data/dev:/data
-  redis_uat:
-    image: redis:alpine
-    ports:
-      - "6380:6380"
-    command: --port 6380
-    expose:
-        - "6380"
-    volumes:
-      - .cloud/redis/data/uat:/data
-  redis_pro:
-    image: redis:alpine
-    ports:
-      - "6381:6381"
-    command: --port 6381
-    expose:
-        - "6381"
-    volumes:
-      - .cloud/redis/data/pro:/data
+  # redis_uat:
+  #   image: redis:alpine
+  #   ports:
+  #     - "6380:6380"
+  #   command: --port 6380
+  #   expose:
+  #       - "6380"
+  #   volumes:
+  #     - .cloud/redis/data/uat:/data
+  # redis_pro:
+  #   image: redis:alpine
+  #   ports:
+  #     - "6381:6381"
+  #   command: --port 6381
+  #   expose:
+  #       - "6381"
+  #   volumes:
+  #     - .cloud/redis/data/pro:/data
   mongo:
     image: mongo
     volumes:
       - .cloud/mongodb/data:/data/db
     ports:
       - "27017:27017"
-  nodejs:
-    build:
-      context: ./.cloud/nodejs
-    ports:
-      - 8080:8080
-    environment:
-      - SERVER_PORT=8080
-    volumes:
-      - ./.cloud/nodejs:/usr/src/app
-    # command: npm run debug
+  # nodejs:
+  #   build:
+  #     context: ./.cloud/nodejs
+  #   ports:
+  #     - 8080:8080
+  #   environment:
+  #     - SERVER_PORT=8080
+  #   volumes:
+  #     - ./.cloud/nodejs:/usr/src/app
+  #   # command: npm run debug
   # elastic:
   #   image: docker.elastic.co/elasticsearch/elasticsearch:7.9.3
   #   # container_name: es01
