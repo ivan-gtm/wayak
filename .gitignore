@@ -36,4 +36,5 @@ public/packtpub/*
 /public/psd/*
 /public/product/preview-images/*
 /public/etsy_store/*
+/public/template-assets/thumbs/*
 composer.lock
