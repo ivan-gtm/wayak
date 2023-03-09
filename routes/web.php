@@ -15,9 +15,7 @@ use App\Http\Controllers\PlaceitController;
 use App\Http\Controllers\CorjlController;
 use App\Http\Controllers\FocoController;
 use App\Http\Controllers\PacktController;
-use App\Http\Controllers\OrderController;
-
-use App\Http\Controllers\EtsyScrapperController;
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\TemplettScrapperController;
 use App\Http\Controllers\LinkedInController;
 
@@ -60,7 +58,7 @@ Route::get('/api/demo-url', [AdminController::class, 'getTemplateObjects']);
     // PLACEIT
         Route::get('/admin/placeit', [PlaceitController::class, 'index']);
 
-// Route::get( '/scrapper/etsy', [ EtsyScrapperController::class, 'extractMetaData' ]);
+
 // Route::get('/scrap-from-templett', [TemplettScrapperController::class, 'scrapURL']);
 
 // https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes#UNI2
@@ -114,6 +112,7 @@ Route::get('/api/demo-url', [AdminController::class, 'getTemplateObjects']);
         Route::get('/admin/{country}/create/code/{code}', [AdminController::class, 'createCode'])->name('code.create');
         Route::post('/admin/{country}/generate-code', [AdminController::class, 'generateCode'])->name('code.generate');
 
+
 // MARKETPLACE SELLING PRODUCTS
     // PRODUCT
         Route::get('/admin/create-product/{template_key}', [AdminController::class, 'createProduct'])->name('admin.createProduct');
@@ -137,6 +136,8 @@ Route::get('/api/demo-url', [AdminController::class, 'getTemplateObjects']);
         Route::post('/admin/assets-gallery/update-status', [AdminController::class, 'updateAssetStatus'])->name('admin.assets.register_download');
         Route::get('/admin/assets-gallery/static/set-keywords/{img_id}', [AdminController::class, 'setIMGKeywords'])->name('admin.setIMGKeywords');
         Route::post('/admin/assets-gallery/static/set-keywords/{img_id}', [AdminController::class, 'setIMGKeywords'])->name('admin.saveKeywords');
+        Route::get('/admin/assets-gallery/keywords/{search_param}', [AdminController::class, 'getKeywordRecomendations'])->name('admin.getKeywordRecomendations');
+        Route::post('/admin/assets-gallery/multiple-keywords', [AdminController::class, 'saveMultipleKeywords'])->name('admin.saveMultipleKeywords');
         
     
     // MERCADO LIBRE
@@ -161,11 +162,14 @@ Route::get('/api/demo-url', [AdminController::class, 'getTemplateObjects']);
         
         Route::get('/admin/ml/update-url', [AdminController::class, 'updateURL']);
 
-    
-
 // DESIGNER
     // Route::get('/open',  [EditorController::class,'open']);
     // Route::get('/explore',  [EditorController::class,'explore']);
+
+// CHECKOUT
+    Route::get('/cart', [CheckoutController::class,'cart']);
+    Route::get('/orders/create', [CheckoutController::class,'createOrder']);
+    Route::get('/orders/capture', [CheckoutController::class,'capturePayment']);
 
 //EDITOR
     Route::get('/editor/get-thumbnails', [EditorController::class,'getTemplateThumbnails']);
@@ -199,6 +203,11 @@ Route::get('/api/demo-url', [AdminController::class, 'getTemplateObjects']);
     
     
 // FRONTEND
+    // New frontend
+    Route::get('/{country}/buscar', [ContentController::class, 'search'])->name('product.search');
+    Route::get('/{country}/p/{slug}', [ContentController::class, 'getTemplate'])->name('product.template');
+    Route::get('/{country}/demo/{product_id}', [ContentController::class, 'demo'])->name('product.demo');
+        
     Route::get('/', [ContentController::class, 'showHome']);
     
     Route::get('/{country}', [ContentController::class, 'showHomePerPage'])->name('user.homepage');
@@ -207,11 +216,6 @@ Route::get('/api/demo-url', [AdminController::class, 'getTemplateObjects']);
 
     Route::get('/{country}/search', [ContentController::class, 'showSearchPage'])->name('user.search');
     
-    // New frontend
-    Route::get('/{country}/buscar', [ContentController::class, 'search'])->name('product.search');
-    Route::get('/{country}/p/{slug}', [ContentController::class, 'getTemplate'])->name('product.template');
-    Route::get('/{country}/demo/{product_id}', [ContentController::class, 'demo'])->name('product.demo');
-
     Route::get('/{country}/templates/{cat_lvl_1}', [ContentController::class, 'showCategoryPage'])->name('showCategoryLevel1');
     Route::get('/{country}/templates/{cat_lvl_1}/{cat_lvl_2}', [ContentController::class, 'showCategoryPage'])->name('showCategoryLevel2');
     Route::get('/{country}/templates/{cat_lvl_1}/{cat_lvl_2}/{cat_lvl_3}', [ContentController::class, 'showCategoryPage'])->name('showCategoryLevel3');

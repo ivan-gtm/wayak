@@ -369,10 +369,10 @@ class AdminController extends Controller
                     // ->where('template_id','=', $template_key )
                     ->where('thumbnails.language_code','=', $language_code )
                     // ->where('thumbnails.dimentions','=', '5 x 7 in' )
-                    ->where('templates.status','=', 5 )
-                    ->where('templates.format_ready','1')
-                    ->where('templates.translation_ready','1')
-                    ->where('templates.thumbnail_ready','1')
+                    // ->where('templates.status','=', 5 )
+                    // ->where('templates.format_ready','1')
+                    // ->where('templates.translation_ready','1')
+                    // ->where('templates.thumbnail_ready','1')
                     ->count();
                     
         $total_pages = ceil( $total_templates/$per_page );
@@ -383,10 +383,10 @@ class AdminController extends Controller
                     // ->where('template_id','=', $template_key )
                     ->where('thumbnails.language_code','=', $language_code )
                     // ->where('thumbnails.dimentions','=', '5 x 7 in' )
-                    ->where('templates.status','=', 5 )
+                    // ->where('templates.status','=', 5 )
                     // ->where('thumbnails.format_ready','1')
                     // ->where('thumbnails.translation_ready','1')
-                    ->where('thumbnails.thumbnail_ready','1')
+                    // ->where('thumbnails.thumbnail_ready','1')
                     ->offset($offset)
                     ->limit($per_page)
                     ->get();
@@ -2183,7 +2183,7 @@ class AdminController extends Controller
 			->where('id','=', $request->img_id)
             ->update([
                 'title' => $request->title,
-                'status' => 1
+                'status' => 2
             ]);
 
             echo 0;
@@ -2395,11 +2395,12 @@ class AdminController extends Controller
             // ->where('source','=','corjl')
             // ->where('source','=','crello')
     		// ->where('source','=','green')
-            ->where('source','=','templett')
             // ->where('source','!=','placeit')
             // ->where('file_type','!=','svg')
-            // ->where('status','=','1')
             // ->whereNull('status')
+            ->where('source','=','templett')
+            // ->where('status','=','1')
+            ->whereNotNull('thumb_path')
             ->offset( ($current_page-1) *$itemsPerPage)
             ->limit($itemsPerPage)
             ->orderBy('id', 'desc')
@@ -2407,6 +2408,8 @@ class AdminController extends Controller
 
         $total_templates = DB::table('images')
                             ->where('source','=','templett')
+                            // ->where('status','=','1')
+                            ->whereNotNull('thumb_path')
                             // ->where('file_type','!=','svg')
                             // ->where('status','=','1')
                             // ->whereNull('status')
@@ -2630,6 +2633,60 @@ class AdminController extends Controller
         return response()->json([]);
     }
 
+    function getKeywordRecomendations( $search_param ){
+        $keyword_recomendations = DB::select( DB::raw(
+                "SELECT
+                    keywords.word,
+                    COUNT(keywords.word) total  
+                FROM
+                    images,
+                    image_keywords,
+                    keywords 
+                WHERE
+                    images.title LIKE '%".$search_param."%' 
+                    AND image_keywords.image_id = images.id 
+                    AND keywords.id = image_keywords.keyword_id 
+                GROUP BY
+                    word
+            UNION
+                SELECT
+                    keywords.word,
+                    COUNT(keywords.word) total  
+                FROM
+                    images,
+                    image_keywords,
+                    keywords 
+                WHERE
+                    images.id IN( SELECT id FROM (SELECT
+                    images.id
+                FROM
+                    keywords,
+                    image_keywords,
+                    images
+                WHERE
+                    keywords.word LIKE '%".$search_param."%'
+                    AND images.id = image_keywords.image_id
+                    AND image_keywords.keyword_id = keywords.id
+                ) ss )
+                    AND image_keywords.image_id = images.id 
+                    AND keywords.id = image_keywords.keyword_id 
+                GROUP BY
+                    word
+                ORDER BY total DESC
+                LIMIT 20"
+        ));
+
+        foreach ($keyword_recomendations as $recomendation) {
+            $tmp_recomendations[] = ucwords($recomendation->word);
+            // $tmp_titles[] = ucwords($recomendation->title);
+        }
+
+        return response()->json([
+            'keywords' => array_unique($tmp_recomendations)
+            // 'title' => array_unique($tmp_titles)
+        ]);
+    }
+
     function createEtsyPDF( $template_id ){
         $canva_url = 'lasdlakdlaksdlaskd';
         
@@ -2730,6 +2787,7 @@ class AdminController extends Controller
         $current_page = isset($request->page) ? $request->page : 1;
         $vendor = isset($request->vendor) ? $request->vendor : 'green';
         $imgs = [];
+        $pages = [];
 
         $destination_lang = 'en';
         $template_metadata = DB::table('templates')
@@ -3052,13 +3110,13 @@ class AdminController extends Controller
             DB::table('images')
                 ->where('id','=', $request->img_id)
                 ->update([
-                    'status' => 1
+                    'status' => 2
                 ]);
         }
 
-        echo "<pre>";
+        // echo "<pre>";
         print_r( $request->all() );
-        exit;
+        // exit;
         
     }
 
@@ -3996,5 +4054,55 @@ class AdminController extends Controller
             'slug' => trim($slug)
         ]);
             // print_r($db_word);
+    }
+
+    function saveMultipleKeywords(Request $request){
+        if( isset( $request->img_ids ) 
+            && isset( $request->keywords )
+        ){
+            echo "<pre>";
+            print_r( $request->all() );
+            exit;
+
+            foreach ($request->keywords as $keyword) {
+                $db_keyword = DB::table('keywords')
+                    ->select('id')
+                    ->where('word', '=', trim(strtolower($keyword)) )
+                    ->first();
+
+                if( isset($db_keyword->id) == false ){
+                    $keyword_id = DB::table('keywords')->insertGetId([
+                        'id' => null,
+                        'word' => trim(strtolower($keyword)),
+                        'language_code' => 'en',
+                    ]);
+                } else {
+                    $keyword_id = $db_keyword->id;
+                }
+
+                $db_image_has_keyword = DB::table('image_keywords')
+                    ->select('id')
+                    ->where('image_id', '=', $request->img_id)
+                    ->where('keyword_id', '=', $keyword_id)
+                    ->first();
+                
+                if( isset($db_image_has_keyword->id) == false ){
+                    DB::table('image_keywords')->insert([
+                        'id' => null,
+                        'image_id' => $request->img_id,
+                        'keyword_id' => $keyword_id,
+                    ]);
+                }
+            }
+
+            DB::table('images')
+			->where('id','=', $request->img_id)
+            ->update([
+                'title' => $request->title,
+                'status' => 2
+            ]);
+
+            echo 0;
+        }
     }
 }

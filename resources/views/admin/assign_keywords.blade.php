@@ -19,18 +19,22 @@
 ">
     <div class="container">
       <div class="row">
+        <div class="col-12">
+          <a class="btn btn-primary" href="{{ $img_path }}">OPEN IMAGE</a>
+          <a class="btn btn-primary" href="{{ $img_path }}" download>DOWNLOAD</a>
+        </div>
         <div class="col-6">
           <img class="img-fluid" src="{{ $img_src }}">
-          <a href="{{ $img_path }}">OPEN</a>
         </div>
           <div class="col-6">
-            <label class="btn btn-outline-primary">{{ $file_type }}</label>
-            <label class="btn btn btn-outline-warning">{{ $source }}</label>
+            <label class="badge badge-primary">{{ $file_type }}</label>
+            <label class="badge badge-primary">{{ $source }}</label>
             <br>
 
             <label for="basic-url" class="form-label">Product Title</label>
             <div class="input-group mb-3">
               <input name="title" type="text" class="form-control" id="title" value="{{ $title }}">
+              <button class="btn btn-primary" onclick="copyToClipboard('title')">COPY TITLE</button>
             </div>
             
             <label for="basic-url" class="form-label">Keywords</label>
@@ -41,10 +45,22 @@
                   <option value="{{ $keyword->word }}">{{ $keyword->word }}</option>
                 @endforeach
               </select>
-              <input class="form-control" value="{{ $comma_keywords }}">
+              <button class="btn btn-primary" onclick="copyToClipboard('comma_keywords')">COPY KEYWORDS</button>
+              <input id="comma_keywords" class="form-control d-none" value="{{ $comma_keywords }}">
             </div>
+            
+            <button type="button" onclick="insertKeyWords()" class="btn btn-primary d-grid gap-2 col-6 mx-auto">SAVE CHANGES</button>
 
-            <button type="button" onclick="insertKeyWords()" class="d-grid gap-2 col-6 mx-auto">SAVE CHANGES</button>
+            <label for="basic-url" class="form-label">Separado por comas</label>
+            <input id="comma_separated_keywords" name="comma_separated_keywords"  type="text" class="form-control">
+            <button type="button" onclick="insertCommaSeparatedKeywords()" class="btn btn-primary">INSERT</button>
+
+            <hr>
+            
+            <input name="search_keywords" type="text" class="form-control" id="search_keywords" placeholder="Search Keywords">
+            <button id="searchKeywordsBtn" class="btn btn-primary" onclick="searchTerms()">BUSCAR</button>
+            
+            <hr>
 
             <label for="basic-url" class="form-label">Recomendations</label>
             <div class="input-group mb-3">
@@ -124,6 +140,56 @@
         elt.tagsinput('add', tagValue);
 
       }
+
+      function copyToClipboard(element_id) {
+        // Get the text field
+        var copyText = document.getElementById(element_id);
+
+        // Select the text field
+        copyText.select();
+        copyText.setSelectionRange(0, 99999); // For mobile devices
+
+        // Copy the text inside the text field
+        navigator.clipboard.writeText(copyText.value);
+
+        // Alert the copied text
+        // alert("Copied the text: " + copyText.value);
+      }
+
+      function insertCommaSeparatedKeywords(){
+        var keywords_element = document.getElementById("comma_separated_keywords");
+        var commm = keywords_element.value.split(",");
+        commm.forEach(element => {
+            elt.tagsinput('add', element);
+        });
+        
+        keywords_element.value = '';
+
+      }
+
+      function searchTerms(){
+        var search_term = document.getElementById("search_keywords");
+        
+        $.ajax({
+          method: "GET",
+          url: "{{ URL::to('/admin/assets-gallery/keywords/') }}" +"/"+ search_term.value
+        })
+        .done(function( msg ) {
+            console.log(msg.keywords);
+            // if( msg.keywords.size > 0 ){
+              msg.keywords.forEach(element => {
+                  elt.tagsinput('add', element);
+              });
+              $("#search_keywords").val("");
+            // }
+        });
+      }
+
+      $("#search_keywords").keyup(function(event) {
+          if (event.keyCode === 13) {
+              $("#searchKeywordsBtn").click();
+          }
+      });
 
     </script>
   </body>
