@@ -20,7 +20,7 @@ class TemplettScrapAssets extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Download original images from templates';
 
     /**
      * Create a new command instance.
@@ -49,8 +49,9 @@ class TemplettScrapAssets extends Command
         $assets_to_download = DB::table('images')
                     ->select('id', 'template_id','img_path', 'filename','status')
                     ->where('status', '=', '0')
-                    // ->where('template_id', '=', 799782)
-                    ->limit(10000)
+                    ->where('source', '=', 'corjl')
+                    ->orderBy('id','DESC')
+                    // ->limit(10000)
                     ->get();
 
         // echo "<pre>";
@@ -100,10 +101,16 @@ class TemplettScrapAssets extends Command
                     }
 
                 } else {
-                    $url = 'https://dbzkr7khx0kap.cloudfront.net/'.$asset->filename;
+                    echo "\n<< DESCARGANDO >> $asset->template_id -> $asset->filename\n";
+                    // $url = 'https://dbzkr7khx0kap.cloudfront.net/'.$asset->filename;
+                    $url = 'https://cdn.corjl.com/designer/elements/'.$asset->filename;
                     // print_r($url);
                     // exit;
-                    $this->downloadImage( $asset->template_id, $asset->filename, $url );
+
+                    $path = public_path('design/template/'.$asset->template_id.'/assets');
+                    if (!file_exists($path . '/'.$asset->filename)) {
+                        $this->downloadImage( $asset->template_id, $asset->filename, $url );
+                    }
                 }
 
                 // $mysqli->query("UPDATE images SET status = 1 WHERE id =".$font_row['id']);
@@ -134,7 +141,8 @@ class TemplettScrapAssets extends Command
         
         if (!file_exists($path['dirname'])) {
             @mkdir($path['dirname'], 0777, true);
-        }   
+        }
+
         if (!copy($old_path,$new_path)) {
             echo "copy failed \n";
         }

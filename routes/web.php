@@ -228,7 +228,6 @@ Route::get('/api/demo-url', [AdminController::class, 'getTemplateObjects']);
     Route::get('/{country}/buscar', [ContentController::class, 'search'])->name('product.search');
     Route::get('/{country}/p/{slug}', [ContentController::class, 'getTemplate'])->name('product.template');
     Route::get('/{country}/demo/{product_id}', [ContentController::class, 'demo'])->name('product.demo');
-
     Route::get('/', [ContentController::class, 'showHome']);
     
     Route::get('/{country}', [ContentController::class, 'showHomePerPage'])->name('user.homepage');
