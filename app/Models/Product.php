@@ -7,9 +7,9 @@ namespace App\Models;
 use Jenssegers\Mongodb\Eloquent\Model;
 
 
-class Template extends Model
+class Product extends Model
 {
     // use HasFactory;
     protected $connection = 'mongodb';
-    protected $fillable = ['prices','sales','stars','in_sale'];
+
 }

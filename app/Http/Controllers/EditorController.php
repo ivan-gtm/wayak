@@ -1306,10 +1306,12 @@ class EditorController extends Controller
         }
 
 		$menu = json_decode(Redis::get('wayak:'.$country.':menu'));
+		$sale = Redis::hgetall('wayak:'.$country.':config:sales');
 
 		return view('validate_code', [
 			'country' => $country,
 			'menu' => $menu,
+			'sale' => $sale,
 			'search_query' => $search_query,
 			'templates' => $templates
 		]);

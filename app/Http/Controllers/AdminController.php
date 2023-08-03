@@ -27,6 +27,7 @@ use Image;
 use PhpOffice\PhpSpreadsheet\Helper\Sample;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use Illuminate\Support\Facades\App;
 
 use App\Models\Template;
 
@@ -369,10 +370,10 @@ class AdminController extends Controller
                     // ->where('template_id','=', $template_key )
                     ->where('thumbnails.language_code','=', $language_code )
                     // ->where('thumbnails.dimentions','=', '5 x 7 in' )
-                    ->where('templates.status','=', 5 )
-                    ->where('templates.format_ready','1')
-                    ->where('templates.translation_ready','1')
-                    ->where('templates.thumbnail_ready','1')
+                    // ->where('templates.status','=', 5 )
+                    // ->where('templates.format_ready','1')
+                    // ->where('templates.translation_ready','1')
+                    // ->where('templates.thumbnail_ready','1')
                     ->count();
                     
         $total_pages = ceil( $total_templates/$per_page );
@@ -383,10 +384,10 @@ class AdminController extends Controller
                     // ->where('template_id','=', $template_key )
                     ->where('thumbnails.language_code','=', $language_code )
                     // ->where('thumbnails.dimentions','=', '5 x 7 in' )
-                    ->where('templates.status','=', 5 )
+                    // ->where('templates.status','=', 5 )
                     // ->where('thumbnails.format_ready','1')
                     // ->where('thumbnails.translation_ready','1')
-                    ->where('thumbnails.thumbnail_ready','1')
+                    // ->where('thumbnails.thumbnail_ready','1')
                     ->offset($offset)
                     ->limit($per_page)
                     ->get();
@@ -413,12 +414,70 @@ class AdminController extends Controller
         // print_r($templates);
         // exit;
 
-        return view('admin.templates', [
-            'templates' => $templates,
-            'current_page' => $current_page,
-            'total_pages' => $total_pages,
+        return view('admin.sales_manager', [
+            // 'templates' => $templates,
+            // 'current_page' => $current_page,
+            // 'total_pages' => $total_pages,
             'language_code' => $language_code,
             'country' => $country
+        ]);
+    }
+
+    function remaining_seconds_until_utc_date($date) {
+        date_default_timezone_set("America/Mexico_City");
+        
+        $timestamp = \strtotime($date);
+        $now = \time();
+        $remaining_seconds = $timestamp-$now;
+        
+        // echo '<br>'; 
+        // echo $timestamp;
+        // echo '<br>'; 
+        // echo $now;
+        // echo '<br>'; 
+        // echo $remaining_seconds.'<br>';
+        // echo '<br>';
+        // echo date('d.m.Y H:i:s', $timestamp)  .  "\n\n";
+        // echo '<br>';
+        // echo date('d.m.Y H:i:s', $now)  .  "\n\n";
+        // exit;
+        return $remaining_seconds;
+        // $date1 = new \DateTime($date);
+        // $date2 = new \DateTime("now");
+        // $interval = $date1->diff($date2);
+        // echo $date.'<br>'; 
+        // echo "difference " . $interval->y . " years, " . $interval->m." months, ".$interval->d." days "; 
+    }
+      
+
+    function salesManager(Request $request){
+        $country = 'us';
+        $language_code = self::getCountryLanguage($country);
+        
+        $redis_key = 'wayak:'.$country.':config:sales';
+        $active_campaign = Redis::hgetall($redis_key);
+
+        if( isset( $request->delete_campaign ) ) {
+            Redis::del($redis_key);
+        } elseif( isset( $request->discount_percentage ) ) {
+            
+            Redis::hset($redis_key, 'site_banner_txt',$request->site_banner_txt);
+            Redis::hset($redis_key, 'site_banner_btn',$request->site_banner_btn);
+            Redis::hset($redis_key, 'discount_percentage',$request->discount_percentage);
+            // Redis::hset($redis_key, 'sale_starts_at',$request->sale_starts_at);
+            Redis::hset($redis_key, 'sale_ends_at',$request->sale_ends_at);
+            
+            $date = $request->sale_ends_at;
+            $remaining_seconds = self::remaining_seconds_until_utc_date($date);
+            
+            Redis::expire($redis_key, $remaining_seconds );
+
+        } 
+
+        return view('admin.sales_manager', [
+            'language_code' => $language_code,
+            'country' => $country,
+            'active_campaign' => $active_campaign
         ]);
     }
     
@@ -2183,7 +2242,7 @@ class AdminController extends Controller
 			->where('id','=', $request->img_id)
             ->update([
                 'title' => $request->title,
-                'status' => 1
+                'status' => 2
             ]);
 
             echo 0;
@@ -2392,23 +2451,27 @@ class AdminController extends Controller
         
         $templates = DB::table('images')
             ->select('id','template_id','thumb_path','file_type','filename','status','original_path')
-            // ->where('source','=','corjl')
             // ->where('source','=','crello')
     		// ->where('source','=','green')
-            ->where('source','=','templett')
             // ->where('source','!=','placeit')
             // ->where('file_type','!=','svg')
-            // ->where('status','=','1')
             // ->whereNull('status')
+            // ->where('source','=','templett')
+            ->where('source','=','corjl')
+            ->where('status','=','2')
+            ->whereNotNull('thumb_path')
             ->offset( ($current_page-1) *$itemsPerPage)
             ->limit($itemsPerPage)
             ->orderBy('id', 'desc')
             ->get();
 
         $total_templates = DB::table('images')
-                            ->where('source','=','templett')
-                            // ->where('file_type','!=','svg')
+                            // ->where('source','=','templett')
                             // ->where('status','=','1')
+                            ->where('source','=','corjl')
+                            ->where('status','=','2')
+                            ->whereNotNull('thumb_path')
+                            // ->where('file_type','!=','svg')
                             // ->whereNull('status')
                             ->count();
 
@@ -2630,6 +2693,60 @@ class AdminController extends Controller
         return response()->json([]);
     }
 
+    function getKeywordRecomendations( $search_param ){
+        $keyword_recomendations = DB::select( DB::raw(
+                "SELECT
+                    keywords.word,
+                    COUNT(keywords.word) total  
+                FROM
+                    images,
+                    image_keywords,
+                    keywords 
+                WHERE
+                    images.title LIKE '%".$search_param."%' 
+                    AND image_keywords.image_id = images.id 
+                    AND keywords.id = image_keywords.keyword_id 
+                GROUP BY
+                    word
+            UNION
+                SELECT
+                    keywords.word,
+                    COUNT(keywords.word) total  
+                FROM
+                    images,
+                    image_keywords,
+                    keywords 
+                WHERE
+                    images.id IN( SELECT id FROM (SELECT
+                    images.id
+                FROM
+                    keywords,
+                    image_keywords,
+                    images
+                WHERE
+                    keywords.word LIKE '%".$search_param."%'
+                    AND images.id = image_keywords.image_id
+                    AND image_keywords.keyword_id = keywords.id
+                ) ss )
+                    AND image_keywords.image_id = images.id 
+                    AND keywords.id = image_keywords.keyword_id 
+                GROUP BY
+                    word
+                ORDER BY total DESC
+                LIMIT 20"
+        ));
+
+        foreach ($keyword_recomendations as $recomendation) {
+            $tmp_recomendations[] = ucwords($recomendation->word);
+            // $tmp_titles[] = ucwords($recomendation->title);
+        }
+
+        return response()->json([
+            'keywords' => array_unique($tmp_recomendations)
+            // 'title' => array_unique($tmp_titles)
+        ]);
+    }
+
     function createEtsyPDF( $template_id ){
         $canva_url = 'lasdlakdlaksdlaskd';
         
@@ -2730,6 +2847,7 @@ class AdminController extends Controller
         $current_page = isset($request->page) ? $request->page : 1;
         $vendor = isset($request->vendor) ? $request->vendor : 'green';
         $imgs = [];
+        $pages = [];
 
         $destination_lang = 'en';
         $template_metadata = DB::table('templates')
@@ -3052,13 +3170,13 @@ class AdminController extends Controller
             DB::table('images')
                 ->where('id','=', $request->img_id)
                 ->update([
-                    'status' => 1
+                    'status' => 2
                 ]);
         }
 
-        echo "<pre>";
+        // echo "<pre>";
         print_r( $request->all() );
-        exit;
+        // exit;
         
     }
 
@@ -3997,4 +4115,462 @@ class AdminController extends Controller
         ]);
             // print_r($db_word);
     }
+
+    function saveMultipleKeywords(Request $request){
+        if( isset( $request->img_ids ) 
+            && isset( $request->keywords )
+        ){
+            echo "<pre>";
+            print_r( $request->all() );
+            exit;
+
+            foreach ($request->keywords as $keyword) {
+                $db_keyword = DB::table('keywords')
+                    ->select('id')
+                    ->where('word', '=', trim(strtolower($keyword)) )
+                    ->first();
+
+                if( isset($db_keyword->id) == false ){
+                    $keyword_id = DB::table('keywords')->insertGetId([
+                        'id' => null,
+                        'word' => trim(strtolower($keyword)),
+                        'language_code' => 'en',
+                    ]);
+                } else {
+                    $keyword_id = $db_keyword->id;
+                }
+
+                $db_image_has_keyword = DB::table('image_keywords')
+                    ->select('id')
+                    ->where('image_id', '=', $request->img_id)
+                    ->where('keyword_id', '=', $keyword_id)
+                    ->first();
+                
+                if( isset($db_image_has_keyword->id) == false ){
+                    DB::table('image_keywords')->insert([
+                        'id' => null,
+                        'image_id' => $request->img_id,
+                        'keyword_id' => $keyword_id,
+                    ]);
+                }
+            }
+
+            DB::table('images')
+			->where('id','=', $request->img_id)
+            ->update([
+                'title' => $request->title,
+                'status' => 2
+            ]);
+
+            echo 0;
+        }
+    }
+
+    function sortArrayDescending($array) {
+        arsort($array);
+        return $array;
+    }
+
+    function analyticsCategories(Request $request){
+        $country = 'us';
+        $language_code = self::getCountryLanguage($country);
+        
+        // $redis_key = 'wayak:'.$country.':config:sales';
+        $redis_key = 'wayak:'.$country.':analytics:categories';
+        $categories = Redis::hgetall($redis_key);
+        
+        $sortedArray = self::sortArrayDescending($categories);
+        
+        print_r( "<pre>" );
+        $ranked_categories = [];
+        foreach ($sortedArray as $key => $value) {
+            
+            $cat_metadata = json_decode(Redis::get('wayak:en:categories:'.$key));
+            $ranked_categories['categories'][] = [
+                'name' => $cat_metadata->name,
+                'url' => url($country."/templates/".$key),
+                'hits' => $value
+            ];
+        }
+
+        Redis::set( 'wayak:en:categories:top', json_encode($ranked_categories) );
+    
+        print_r($sortedArray);
+        print_r($categories);
+        print_r($ranked_categories);
+        exit;
+
+    }
+   
+    function analyticsTemplates(Request $request) {
+        $country = 'us';
+        $language_code = self::getCountryLanguage($country);
+        
+        $redis_key = 'analytics:template:views';
+        $categories = Redis::hgetall($redis_key);
+        
+        $sortedArray = self::sortArrayDescending($categories);
+        
+        $template_ids = array('gmnftcCJWK','yrysql8YyT','OFyIDlIvkG','aTtcHnvaBr','tsQbtkgxLr','cDk6PoOeo8','4S37KjHURz','aztfeXdCEt','4Ai3Ak2JVf','uoRsAPqteB','3C3J5ujdjf','uR70SeIPYB','XQS65WJjap','BBdK85daDU','gfCq5C9Gyx','J9Fb7PlM3x','MtcWrJRC4D','1zTtpb9DsY','CN0otBDwk8','4thbJHAgi7','PA4SzDDJNx','YRFIR0baDi','1hHGmielw4');
+        
+        $search_result = Template::whereIn('_id', $template_ids)
+            // ->take($total_items_per_carousel)
+            ->get([
+                'title',
+                'slug',
+                'previewImageUrls',
+                'width',
+                'height',
+                'forSubscribers',
+                'previewImageUrls'
+            ]);
+        
+        $templates = array();
+        foreach ($search_result as $template) {
+            
+            if( App::environment() == 'local' ){
+                $template->preview_image_url = asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls['product_preview'] );
+            } else {
+                $template->preview_image_url = Storage::disk('s3')->url( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls['product_preview'] );
+            }
+            $templates[] = $template;
+        }
+
+        // print_r( "<pre>" );
+        // $ranked_categories = [];
+        // foreach ($sortedArray as $key => $value) {
+        //     $cat_metadata = json_decode(Redis::get('wayak:en:categories:'.$key));
+        //     $ranked_categories['categories'][] = [
+        //         'name' => $cat_metadata->name,
+        //         'url' => url($country."/templates/".$key),
+        //         'hits' => $value
+        //     ];
+        // }
+    
+        echo "<pre>";
+        // print_r(array_keys($sortedArray));
+        // print_r($sortedArray);
+        print_r($templates);
+        // print_r($categories);
+        // print_r($ranked_categories);
+        exit;
+
+    }
+
+    function getCarouselItemsPreview(Request $request){
+        $language_code = 'en';
+        $search_result = Template::whereIn('_id', explode(",",str_replace(' ','',$request->ids)) )
+                            ->get([
+                                'title',
+                                'prices',
+                                'slug',
+                                'in_sale',
+                                'studioName',
+                                'previewImageUrls'
+                            ]);
+
+        foreach ($search_result as $template) {
+            if( App::environment() == 'local' ){
+                $template->preview_image = asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["carousel"] );
+            } else {
+                $template->preview_image = Storage::disk('s3')->url( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["carousel"] );
+            }
+            $templates[] = $template;
+        }
+
+        // print_r( $request->ids );
+        // print_r( "<br>" );
+        print_r( json_encode($templates) );
+    }
+
+    function carouselItemsCreate(){
+        $country = 'us';
+        $language_code = 'en';
+        
+        $json_request = '{
+            "idQueue":[
+               "u4CyigMzGe",
+               "j7TmTKLpx8",
+               "Gex24O3Ser",
+               "BObLhn7pRe",
+               "fOBBmZ2YeQ",
+               "FTjYUsQxKr",
+               "NDqdF6wBT7",
+               "Eo3BmSfnS9",
+               "FOKYdu6hjY",
+               "DUuSaSCQqR",
+               "GFLOdtafFt",
+               "YntHIu2NOJ",
+               "QchpgDZVEQ",
+               "9ms0IqL2hZ",
+               "RpUeUNHgrt",
+               "LpZrKzaJxl",
+               "VVsEOKd396",
+               "x3B3mJhSa2",
+               "9dydZQozYU",
+               "eRiXOTqsZc",
+               "oOmZB1xKp7",
+               "GGr4KWS22K",
+               "EsY4bSMEV5",
+               "Tkv6BpMfYm",
+               "0qTaQ8HgR5",
+               "hEZmfouklj",
+               "SU6rcVWXem",
+               "9syiwP3tty",
+               "aTtcHnvaBr",
+               "CI5j1h1hoB",
+               "l2Lo1tB3V6",
+               "DGTcbWLq33",
+               "3PctckCySG",
+               "voReKAnIwj",
+               "PbNeybdIhQ",
+               "4CvASVoCGS",
+               "k2bGXfjGl4",
+               "GjAxrc9jnx",
+               "3ua2sK6ntc",
+               "E74WGP4p8R",
+               "JCYKhD9lvM",
+               "gmnftcCJWK",
+               "tQphXryIyq",
+               "VDWfZcNz7b",
+               "aztfeXdCEt"
+            ],
+            "carouselTitle":"mensaje",
+            "searchQuery":"cow"
+         }';
+
+        $json_carousel_info = json_decode($json_request);
+        $search_result = Template::whereIn('_id', $json_carousel_info->idQueue )
+                            ->get([
+                                'title',
+                                'slug',
+                                'previewImageUrls',
+                                'width',
+                                'height',
+                                'forSubscribers',
+                                'previewImageUrls'
+                            ]);
+
+        foreach ($search_result as $tmp_item) {
+            if( App::environment() == 'local' ){
+                $tmp_item->preview_image_url = asset( 'design/template/'.$tmp_item->_id.'/thumbnails/'.$language_code.'/'.$tmp_item->previewImageUrls['product_preview'] );
+            } else {
+                $tmp_item->preview_image_url = Storage::disk('s3')->url( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$tmp_item->previewImageUrls['product_preview'] );
+            }
+            $carousel_items[] = $tmp_item;
+        }
+        
+        $carousels = json_decode( Redis::get('wayak:'.$country.':home:carousels') );
+        $carousels[] = [
+            'slider_id' => Str::random(5),
+            'title' => $json_carousel_info->carouselTitle,
+            'search_term' => $json_carousel_info->searchQuery,
+            'items' => $carousel_items
+        ];
+
+        $carousels = json_encode($carousels);
+
+        Redis::set('wayak:'.$country.':home:carousels', $carousels);
+        
+        // echo "<pre>";
+        // print_r( $carousels );
+        print_r( $carousels );
+        // exit;
+
+    }
+
+    public function carouselsSelectItems($country, Request $request){
+        // echo "<pre>";
+        // print_r( json_decode( Redis::get('wayak:us:home:carousels') ) );
+        // print_r( $request->all() );
+        // exit;
+        
+        $language_code = 'en';
+        $carousel_title = null;
+        $search_query = '';
+        
+        $page = 1;
+        $per_page = 100;
+        $skip = 0;
+        
+        if( isset($request->carouselTitle) && isset($request->searchQuery) ) {
+            $carousel_title = $request->carouselTitle;
+            $search_query = $request->searchQuery;
+        } else {
+            abort(404);
+        }
+
+        if( isset($request->page) ) {
+            $page = $request->page;
+            $skip = $per_page*($page-1);
+        }
+                
+        // $search_query = str_replace(' ','%',$search_query);
+        $search_result = Template::whereRaw(array('$text'=>array('$search'=> $search_query)))
+        // $search_result = Template::where('title', 'like', '%'.$search_query.'%')
+            ->skip($skip)
+            ->take($per_page)
+            ->get([
+                'title',
+                'prices',
+                'slug',
+                'in_sale',
+                'studioName',
+                'previewImageUrls'
+            ]);
+        
+        $total_documents = Template::whereRaw(array('$text'=>array('$search'=> $search_query)))
+                                    ->count();
+        $from_document = $skip + 1;
+        $to_document = $skip + $per_page;
+        $last_page = ceil( $total_documents / $per_page );
+        
+        // echo "<br>";
+        // print_r( $request->carouselTitle );
+        // echo "<br>";
+        // print_r( $search_query );
+        // echo "<br>";
+        // print_r( $total_documents );
+        // echo "<br>";
+        // print_r( $from_document );
+        // echo "<br>";
+        // print_r( $to_document );
+        // exit;
+
+        $templates = [];
+        foreach ($search_result as $template) {
+            if( App::environment() == 'local' ){
+                $template->preview_image = asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["carousel"] );
+            } else {
+                $template->preview_image = Storage::disk('s3')->url( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["carousel"] );
+            }
+            $templates[] = $template;
+        }
+
+        $full_search_results = Template::whereRaw(['$text' => ['$search' => $search_query]])->get([
+            'id'
+        ]);
+
+        // Number of items to select randomly
+        $numberOfItemsToSelect = 30;
+
+        // Select 'n' items randomly and get the _id values
+        $default_template_ids = self::selectRandomIdsFromArray($full_search_results, $numberOfItemsToSelect);
+
+        
+        // echo "<pre>";
+        // print_r($default_template_ids);
+        // // print_r($full_search_results);
+        // // print_r( $templates );
+        // exit;
+
+        $sale = Redis::hgetall('wayak:'.$country.':config:sales');
+        
+        return view('admin.carousel_items',[
+            'country' => $country,
+            'language_code' => $language_code,
+            'carousel_title' => $carousel_title,
+            'sale' => $sale,
+            'search_query' => $search_query,
+            'current_page' => $page,
+            'first_page' => 1,
+            'pagination_begin' => (($page - 4) > 0) ? $page-4 : 1,
+            'pagination_end' => (($page + 4) < $last_page) ? $page+4 : $last_page,
+            'last_page' => $last_page,
+            'from_document' => $from_document,
+            'to_document' => $to_document,
+            'total_documents' => $total_documents,
+            'templates' => $templates,
+            'default_template_ids' => json_encode($default_template_ids)
+        ]);
+    }
+
+    function selectRandomIdsFromArray($inputArray, $n): array {
+        // Convert the Collection to a regular PHP array
+        $regularArray = $inputArray->toArray();
+    
+        // Check if the number of items to select is greater than the array size
+        if ($n >= count($regularArray)) {
+            return array_column($regularArray, '_id');
+        }
+    
+        // Randomly select 'n' keys from the array
+        $randomKeys = array_rand($regularArray, $n);
+    
+        // If 'n' is 1, array_rand returns just a single key, so we need to convert it into an array
+        if (!is_array($randomKeys)) {
+            $randomKeys = [$randomKeys];
+        }
+    
+        // Retrieve the _id values using the selected keys
+        $randomIds = [];
+        foreach ($randomKeys as $key) {
+            $randomIds[] = $regularArray[$key]['_id'];
+        }
+    
+        return $randomIds;
+    }
+    
+    
+    public function carouselsSetName($country, Request $request){
+        
+        $language_code = 'en';
+        $search_query = '';
+        $category = '';
+        
+        if( isset($request->searchQuery) ) {
+            $search_query = $request->searchQuery;
+        // } else {
+        //     abort(404);
+        }
+        
+        $menu = json_decode(Redis::get('wayak:'.$country.':menu'));
+        $sale = Redis::hgetall('wayak:'.$country.':config:sales');
+        $current_title = '';
+
+        return view('admin.carousel_name',[
+            'country' => $country,
+            'language_code' => $language_code,
+            'menu' => $menu,
+            'current_title' => $current_title,
+            'search_query' => $search_query
+        ]);
+    }
+    
+    public function updateHomeCarousel($country, Request $request){
+        $carousels = json_encode( $request->all() );
+        Redis::set('wayak:'.$country.':home:carousels', $carousels);
+        // print_r( json_encode($request->all()) );
+        print_r( 'wayak:'.$country.':home:carousels' );
+    }
+
+    public function carouselsManage($country, Request $request){
+        
+        $language_code = 'en';
+        $carousels = Redis::get('wayak:'.$country.':home:carousels');
+
+        return view('admin.carousel_manage',[
+            'country' => $country,
+            'language_code' => $language_code,
+            'carousels' => $carousels
+        ]);
+    }
+
+    function deleteItem(Request $request) {
+        return response()->json([]);
+    }
+    
+    function generateIdentifier($searchTerm) {
+        $searchTerm = str_replace(' ','-',$searchTerm);
+
+        // Remove all non-alphanumeric characters from the search term
+        $cleanSearchTerm = preg_replace("/[^A-Za-z0-9-]/", "", $searchTerm);
+        
+        // Convert the cleaned search term to all lowercase
+        $identifier = strtolower($cleanSearchTerm);
+
+        return $identifier;
+    }
 }
+
+

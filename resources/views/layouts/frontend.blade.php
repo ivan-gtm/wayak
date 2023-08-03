@@ -7,12 +7,13 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         @yield('meta')
         
-        <link type="text/css" rel="stylesheet" href="{{ asset('assets/css/menu.css') }}">
-        <link type="text/css" rel="stylesheet" href="{{ asset('assets/css/home.css') }}">
         <link rel="preconnect" href="https://fonts.gstatic.com">
         <link href="https://fonts.googleapis.com/css2?family=PT+Sans+Caption&display=swap" rel="stylesheet">
-
+        <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous"> -->
+        <link type="text/css" rel="stylesheet" href="{{ asset('assets/css/menu.css') }}">
+        <link type="text/css" rel="stylesheet" href="{{ asset('assets/css/home.css') }}">
         @yield('css')
+
         <!-- Global site tag (gtag.js) - Google Analytics -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-FQVV2SLQED"></script>
             <script>
@@ -22,30 +23,64 @@
 
                 gtag('config', 'G-FQVV2SLQED');
         </script>
+        
 	</head>
-	<body class="page-template-default page page-id-5380 lang-en page-menus webp wpb-js-composer js-comp-ver-6.1 vc_responsive loaded">
+	<body>
         <header>
-
+            @if( \Route::currentRouteName() != "user.search" && $sale != null)
+            <div class="site-banner" data-v-f3f1b72a="" data-v-9440fe54="">
+                <p class="site-banner__content" data-v-f3f1b72a="">
+                    <span class="site-banner__text" data-v-f3f1b72a="">
+                        {{ $sale['site_banner_txt'] }}
+                    </span> 
+                    <a href="{{ route('user.search',['country'=>$country,'sale'=> 1, 'sort'=>'popular','utm_source'=>'banner']) }}"
+                        class="site-banner__link large-screen-hidden u-type-label-small" data-v-f3f1b72a="">
+                        {{ $sale['site_banner_btn'] }}
+                    </a> 
+                    <a href="{{ route('user.search',['country'=>$country,'sale'=> 1, 'sort'=>'popular','utm_source'=>'banner']) }}"
+                    class="mobile-hidden btn btn--secondary btn--small btn--animated" data-v-5e31f9cb=""
+                    data-v-f3f1b72a="">
+                        <span class="btn__inner" data-v-5e31f9cb="">
+                                    {{ $sale['site_banner_btn'] }}
+                        </span>
+                    </a>
+                </p> 
+                <a data-test-close="" class="site-banner__close-button" data-v-f3f1b72a="">
+                    <span data-v-f3f1b72a="">
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"
+                            xmlns="http://www.w3.org/2000/svg" svg-inline="" role="presentation" focusable="false"
+                            tabindex="-1">
+                            <path d="M1.563 10.688l9.374-9.376M10.938 10.688L1.562 1.312" stroke="currentColor"
+                                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                        </svg>
+                    </span>
+                </a>
+            </div>
+            @endif
             <nav class="navbar -nomargin" id="nav">
                 <div class="logo-container">
-                    <a id="logo" href="{{ url('/'.$country) }}" title="{{ __('home.logo_alt_title') }}" class="embedded-remove-url">
+                    <a id="logo" href="{{ url('/'.$country.'?source=logo') }}" title="{{ __('home.logo_alt_title') }}" class="embedded-remove-url">
                         <div class="logo-wrapper">
-                            <img class="logo-img" src="{{ url('assets/img/logo.png') }}" alt="Wayak Logo" /> 
+                            <img class="logo-img" src="{{ url('assets/img/logo.svg') }}" alt="Wayak Logo" /> 
                         </div>
                     </a>
                 </div>
                 <div class="primary-nav visible-small-laptop visible-desktop" id="nav-primary-items">
                     <div class="nav-item-container hide-for-student">
-                        <a class="nav-item" href="{{ url('/'.$country) }}">{{ __('menu.home') }}</a>
+                        <a class="nav-item {{ (\Route::current()->getName() == 'showHome' || \Route::current()->getName() == 'user.homepage') ? 'active' : null }}" href="{{ url('/'.$country).'?source=menu'  }}">
+                            {{ __('menu.home') }}
+                        </a>
                     </div>
                     <div class="nav-item-container hide-for-student"> 
-                        <a class="nav-item" href="javascript:void(0);">{{ __('menu.templates') }} <i class="nav-item-icon icon-caret-down"></i></a>
+                        <a class="nav-item {{ (request()->is($country.'/templates/*')) ? 'active' : null }}" href="javascript:void(0);">
+                            {{ __('menu.templates') }}
+                        </a>
                         <div class="dropdown-list">
                             <div class="list-container">
                                 <ul class="list" id="nav-sizes-list">
                                     @for($i = 0; $i < sizeof($menu->templates) / 3; $i++)
                                         <li class="list-item ">
-                                            <a class="item" href="{{ $menu->templates[$i]->url }}">
+                                            <a class="item" href="{{ $menu->templates[$i]->url.'?source=menu' }}">
                                                 {{ $menu->templates[$i]->name }}
                                             </a>
                                         </li>
@@ -59,7 +94,7 @@
                                 <ul class="list">
                                     @for($i = (sizeof($menu->templates) / 3)+1; $i < ((sizeof($menu->templates) / 3) * 2)+1; $i++)
                                         <li class="list-item ">
-                                            <a class="item" href="{{ $menu->templates[$i]->url }}">
+                                            <a class="item" href="{{ $menu->templates[$i]->url.'?source=menu' }}">
                                                 {{ $menu->templates[$i]->name }}
                                             </a>
                                         </li>
@@ -69,7 +104,7 @@
                                 <ul class="list">
                                     @for($i = ((sizeof($menu->templates) / 3)*2)+1; $i < sizeof($menu->templates); $i++)
                                         <li class="list-item ">
-                                            <a class="item" href="{{ $menu->templates[$i]->url }}">
+                                            <a class="item" href="{{ $menu->templates[$i]->url.'?source=menu' }}">
                                                 {{ $menu->templates[$i]->name }}
                                             </a>
                                         </li>
@@ -79,23 +114,14 @@
                             </div>
                         </div>
                     </div>
-                    {{---
-                    <div class="nav-item-container" id="marketing-nav-item"> <a class="nav-item" href="javascript:void(0);" title="Promote">By Industry <i class="nav-item-icon icon-caret-down"></i></a>
-                        <div class="dropdown-list">
-                            <div class="list-container">
-                                <ul class="list">
-                                    <li class="list-item"><a class="item" href="https://wayak.app/index.php/m/events?utm_source=nav&utm_content=m/events&utm_medium=link&utm_campaign=marketingnav">Event</a> </li>
-                                    <li class="list-item"><a class="item" href="https://wayak.app/index.php/m/small-business?utm_source=nav&utm_content=m/small-business&utm_medium=link&utm_campaign=marketingnav">Small business</a> </li>
-                                    <li class="list-item"><a class="item" href="https://wayak.app/index.php/m/church?utm_source=nav&utm_content=m/church&utm_medium=link&utm_campaign=marketingnav">Church</a> </li>
-                                    <li class="list-item"><a class="item" href="https://wayak.app/index.php/m/restaurants?utm_source=nav&utm_content=m/restaurants&utm_medium=link&utm_campaign=marketingnav">Restaurant</a> </li>
-                                    <li class="list-item"><a class="item" href="https://wayak.app/index.php/m/schools?utm_source=nav&utm_content=m/schools&utm_medium=link&utm_campaign=marketingnav">School</a> </li>
-                                    <li class="list-item"><a class="item" href="https://wayak.app/index.php/m/bands?utm_source=nav&utm_content=m/bands&utm_medium=link&utm_campaign=marketingnav">Band</a> </li>
-                                    <li class="list-item"><a class="item" href="https://wayak.app/index.php/m/real-estate?utm_source=nav&utm_content=m/real-estate&utm_medium=link&utm_campaign=marketingnav">Real Estate</a> </li>
-                                </ul>
-                            </div>
-                        </div>
+                    @if($sale != null)
+                    <div class="nav-item-container" id="marketing-nav-item"> 
+                        <a class="nav-item sale" href="{{ route('user.search',['country'=>$country,'sale'=> 1, 'sort'=>'popular','utm_source'=>'banner']) }}" title="Sales">
+                            <svg width="17" height="17" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 7 7" svg-inline="" role="presentation" focusable="false" tabindex="-1"><path fill="currentColor" fill-rule="evenodd" d="M6.814 3.673l-1.741.822c-.15.048-.299.193-.448.435L3.78 6.62c-.15.194-.497.194-.597 0L2.338 4.93c-.05-.145-.2-.29-.448-.435L.15 3.673c-.2-.145-.2-.483 0-.58l1.74-.821c.15-.049.299-.194.448-.436l.845-1.69c.15-.194.498-.194.597 0l.845 1.69c.05.146.2.29.448.436l1.74.821c.25.145.25.484 0 .58"></path></svg>
+                            Sale 
+                        </a>
                     </div>
-                    ---}}
+                    @endif
                 </div>
                 <div class="user-options">
                     <form action="{{ route('user.search',['country' => $country]) }}" class="inline-search-form" 

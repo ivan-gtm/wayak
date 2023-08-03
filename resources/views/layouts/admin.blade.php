@@ -58,6 +58,19 @@
                            <ul class="metismenu side-nav mm-show">
                               <li class="side-nav-title side-nav-item">Navigation</li>
                               <li class="side-nav-item mm-active">
+                                 <a href="/admin/sales" class="side-nav-link active">
+                                    <i class="uil-home-alt"></i>
+                                    <!-- <span class="badge badge-success float-right">4</span> -->
+                                    <span>Global Sale</span>
+                                 </a>
+                              </li>
+                              <li class="side-nav-item mm-active">
+                                 <a href="{{ route('admin.carousels.step1', ['country' => 'us']) }}" class="side-nav-link active">
+                                    <i class="uil-home-alt"></i>
+                                    <span>Carousels</span>
+                                 </a>
+                              </li>
+                              <li class="side-nav-item mm-active">
                                  <a href="/admin/categories" class="side-nav-link active">
                                     <i class="uil-home-alt"></i>
                                     <!-- <span class="badge badge-success float-right">4</span> -->

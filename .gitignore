@@ -38,3 +38,4 @@ public/packtpub/*
 /public/etsy_store/*
 /public/template-assets/thumbs/*
 composer.lock
+._*

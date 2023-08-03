@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\App;
 
-// use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Str;
 
@@ -30,26 +30,29 @@ class ContentController extends Controller
 {
     
     public function showHome() {
+        
         $country = 'us';
         $locale = 'en';
-        
+
         App::setLocale($locale);
 
         $carousels = json_decode(Redis::get('wayak:'.$country.':home:carousels'));
         $menu = json_decode(Redis::get('wayak:'.$country.':menu'));
-        
+        $sale = Redis::hgetall('wayak:'.$country.':config:sales');
+
         return view('content.home',[
             'search_term' => '',
             'language_code' => $locale,
             'country' => $country,
             'menu' => $menu,
+            'sale' => $sale,
             'search_query' => '',
             'carousels' => $carousels
         ]);
 
     }
    
-    public function showCountryHomepage( $country ) {
+    public function showHomePerPage( $country ) {
         if( in_array($country, ['us', 'ca']) ){
             $locale = 'en';
         } elseif( in_array($country, ['es','mx','co','ar','bo','ch','cu','do','sv','hn','ni', 'pe', 'uy', 've','py','pa','gt','pr','gq']) ){
@@ -65,16 +68,24 @@ class ContentController extends Controller
         App::setLocale($locale);
 
         if( Redis::exists('wayak:'.$country.':home:carousels') ){
+            
             $carousels = json_decode(Redis::get('wayak:'.$country.':home:carousels'));
             $menu = json_decode(Redis::get('wayak:'.$country.':menu'));
+            $sale = Redis::hgetall('wayak:'.$country.':config:sales');
+            
+            // echo "<pre>";
+            // print_r(json_encode($menu));
+            // exit;
             
             return view('content.home',[
                 'language_code' => $locale,
                 'country' => $country,
                 'menu' => $menu,
+                'sale' => $sale,
                 'search_query' => '',
                 'carousels' => $carousels
             ]);
+            
         } else {
             abort(404);
         }
@@ -82,13 +93,6 @@ class ContentController extends Controller
 
     public function showCategoryPage($country, $cat_lvl_1_slug = null, $cat_lvl_2_slug = null, $cat_lvl_3_slug = null, Request $request){
         
-        // $template_key = 'template:en:'.'682087'.':jsondata';
-        // $pages = Redis::get($template_key);
-        // $pages = json_decode($pages);
-        // echo "<pre>";
-        // print_r($pages);
-        // exit;
-
         if( in_array($country, ['us', 'ca']) ){
             $locale = 'en';
         } elseif( in_array($country, ['es','mx','co','ar','bo','ch','cu','do','sv','hn','ni', 'pe', 'uy', 've','py','pa','gt','pr','gq']) ){
@@ -103,12 +107,6 @@ class ContentController extends Controller
         
         App::setLocale($locale);
 
-        $search_query = '';
-        if( isset($request->searchQuery) ) {
-            $search_query = $request->searchQuery;
-        }
-
-        
         $slug = '/'.$cat_lvl_1_slug;
         
         if( $cat_lvl_2_slug != null ){
@@ -119,59 +117,45 @@ class ContentController extends Controller
             $slug .=  '/'.$cat_lvl_3_slug;
         }
 
-        $category_redis_key = 'wayak:en:categories:'. substr($slug, 1,strlen($slug));
+        $category_redis_key = 'wayak:'.$locale.':categories:'. substr($slug, 1,strlen($slug));
+        $category_slug_id = substr($slug, 1,strlen($slug));
+        
         if(Redis::exists( $category_redis_key ) == false){
             echo "CATEGORY DOES NOT EXISTS.";
             exit;
         }
 
+        if( Redis::hexists('wayak:'.$country.':analytics:categories',$category_slug_id) ){
+            Redis::hincrby('wayak:'.$country.':analytics:categories',$category_slug_id,1);
+        } else {
+            Redis::hset('wayak:'.$country.':analytics:categories',$category_slug_id,1);
+        }
+
         $category_obj = json_decode( Redis::get($category_redis_key) );
         
-        // echo "<pre>";
-        // print_r($category_obj);
-        // exit;
+        // $category_name = $category_obj->slug;
+        $breadcrumbs_str = Redis::get($category_redis_key);
+        $breadcrumbs_obj = json_decode($breadcrumbs_str);
+
+        self::getBreadCrumbs( $breadcrumbs_obj ) ;
+        
+        $url = "";
+        $total_breads = sizeof($this->bread_array);
+        for ($i=0; $i < $total_breads; $i++) { 
+            $url .= '/'.$this->bread_array[$i]->slug;
+            $this->bread_array[$i]->url = url($country.'/templates'.$url);
+        }
 
         $language_code = 'en';
         $page = 1;
-        $per_page = 30;
+        $per_page = 100;
         $skip = 0;
 
         if( isset($request->page) ) {
+            // print_r($page);
+            // exit;
             $page = $request->page;
             $skip = $per_page*($page-1);
-
-            $category_products = Template::whereIn('categories', [$slug])
-            ->skip($skip)
-            ->take($per_page)
-            ->get([
-                '_id',
-                'title',
-                'slug',
-                'forSubscribers',
-                'categoryCaption',
-                // 'category',
-                'previewImageUrls'
-            ]);
-
-            // echo $page;
-            $response = '';
-            foreach ($category_products as $template) {
-                
-                $template->preview_image = Storage::disk('s3')->url( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["carousel"] );
-
-                $response .= '<div class="grid__item template">
-                        <a href="'.route( 'template.productDetail', [
-                            'country' => $country,
-                            'slug' => $template->slug
-                        ] ).'">
-                            <img class="img-fluid" loading="lazy" 
-                                    src="'.$template->preview_image.'" 
-                                    alt="'.$template->title.'">
-                        </a>
-                    </div>';
-            }
-            echo $response;
-            exit;
         }
 
         $category_products = Template::whereIn('categories', [$slug])
@@ -181,63 +165,53 @@ class ContentController extends Controller
                 '_id',
                 'title',
                 'slug',
-                'forSubscribers',
-                'categoryCaption',
-                'previewImageUrls'
+                'previewImageUrls',
+                'studioName',
+                'prices'
             ]);
         
         $templates = [];
         foreach ($category_products as $template) {
-            $template->preview_image = Storage::disk('s3')->url( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["carousel"] );
+            if( App::environment() == 'local' ){
+                // $preview_image = asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["product_preview"] );
+                $template->preview_image = asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["carousel"] );
+            } else {
+                $template->preview_image = Storage::disk('s3')->url( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["carousel"] );
+            }
             $templates[] = $template;
         }
-        // echo "jasdasd";
-        // exit;
         
         $total_documents = Template::whereIn('categories', [$slug])->count();
+        $last_page = ceil( $total_documents / $per_page );
 
         $from_document = $skip + 1;
         $to_document = $skip + $per_page;
 
         $menu = json_decode(Redis::get('wayak:'.$country.':menu'));
-        
-        // echo $total_documents;
-        // echo "<pre>";
-        // print_r($menu);
-        // exit;
-        $url_params = [];
-        $url_params['slugs']['country'] = $country;
-
-        if( strlen($cat_lvl_1_slug) > 0 ){
-            $url_params['slugs']['cat_lvl_1'] = $cat_lvl_1_slug;
-        }
-
-        if( strlen($cat_lvl_2_slug) > 0 ){
-            $url_params['slugs']['cat_lvl_2'] = $cat_lvl_2_slug;
-        }
-
-        if( strlen($cat_lvl_3_slug) > 0 ){
-            $url_params['slugs']['cat_lvl_3'] = $cat_lvl_3_slug;
-        }
-        
-        $url_params['cat_lvl'] = sizeof($url_params['slugs']) - 1;
+        $sale = Redis::hgetall('wayak:'.$country.':config:sales');
         
         // echo "<pre>";
-        // print_r($url_params);
+        // print_r($category_obj);
         // exit;
         
         return view('content.category',[
             'country' => $country,
             'language_code' => $language_code,
             'menu' => $menu,
-            'search_query' => $search_query,
+            'sale' => $sale,
+            'search_query' => '',
             'category_obj' => $category_obj,
-            'page' => $page,
-            'from_document' => $from_document,
-            'to_document' => $to_document,
-            'total_documents' => $total_documents,
+            'breadcrumbs' => $this->bread_array,
+            'current_page' => $page,
+            'pagination_begin' => (($page - 4) > 0) ? $page-4 : 1,
+            'pagination_end' => (($page + 4) < $last_page) ? $page+4 : $last_page,
+            'first_page' => 1,
+            'last_page' => $last_page,
+            // 'from_document' => $from_document,
+            // 'to_document' => $to_document,
+            // 'total_documents' => $total_documents,
             'templates' => $templates,
-            'url_params' => $url_params
+            'current_url' => url()->current()
         ]);
     }
 
@@ -271,23 +245,27 @@ class ContentController extends Controller
         $template_id = substr($slug, strrpos($slug, '-')+1, strlen($slug)  );
         $search_query = '';
 
+        
+        if( isset($request->searchQuery) ) {
+            $search_query = $request->searchQuery;
+        }
+        
+        $template = self::getTemplateMetadata($template_id);
+        
+        // Template not found
+        if( isset($template->_id) == false ){
+            abort(404);
+        }
+        
+        $related_templates = self::getRelatedTemplates( $template->mainCategory, $language_code );
+        // $related_templates = [];
+        
         if( Redis::hexists('analytics:template:views',$template_id) ){
             Redis::hincrby('analytics:template:views',$template_id,1);
         } else {
             Redis::hset('analytics:template:views',$template_id,1);
         }
 
-        if( isset($request->searchQuery) ) {
-            $search_query = $request->searchQuery;
-        }
-
-        $template = self::getTemplateMetadata($template_id);
-        $related_templates = self::getRelatedTemplates( $template->mainCategory, $language_code );
-        
-        // Template not found
-        if( isset($template->_id) == false ){
-            abort(404);
-        }
         if( App::environment() == 'local' ){
             $preview_image = asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["product_preview"] );
             // print_r($preview_image);
@@ -297,11 +275,13 @@ class ContentController extends Controller
             $preview_image = Storage::disk('s3')->url( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["product_preview"] );
         }
 
-        // $template->price = rand(35,1000);
         $category_name = $template->mainCategory;
         $category_name = substr( $template->mainCategory,1, strlen($category_name) );
         $breadcrumbs_str = Redis::get('wayak:en:categories:'.$category_name);
         $breadcrumbs_obj = json_decode($breadcrumbs_str);
+
+        // echo $category_name;
+        // exit;
 
         self::getBreadCrumbs( $breadcrumbs_obj ) ;
         
@@ -327,6 +307,11 @@ class ContentController extends Controller
         }
 
         $menu = json_decode(Redis::get('wayak:'.$country.':menu'));
+        $sale = Redis::hgetall('wayak:'.$country.':config:sales');
+
+        // echo "<pre>";
+        // print_r($sale);
+        // exit;
 
         return view('content.product-detail',[
             'country' => $country,
@@ -334,6 +319,7 @@ class ContentController extends Controller
             'language_code' => $language_code,
             'search_query' => $search_query,
             'menu' => $menu,
+            'sale' => $sale,
             'breadcrumbs' => $this->bread_array,
             'breadcrumb' => $breadcrumbs_obj,
             'template' => $template,
@@ -345,17 +331,21 @@ class ContentController extends Controller
     function getTemplateMetadata($template_id){
         $template = Template::where('_id','=',$template_id)
             ->first([
-                'title',
-                'preview_image',
-                'format',
                 'categories',
-                'mainCategory',
-                'previewImageUrls',
-                'width',
-                'height',
-                'forSubscribers',
-                'measureUnits',
                 'createdAt',
+                'format',
+                'forSubscribers',
+                'height',
+                'preview_image',
+                'mainCategory',
+                'measureUnits',
+                'prices',
+                'previewImageUrls',
+                'sales',
+                'stars',
+                'studioName',
+                'title',
+                'width',
                 'updatedAt'
             ]);
         return $template;
@@ -422,76 +412,119 @@ class ContentController extends Controller
         // return  $bread_array;
     }
 
+    function generateIdentifier($searchTerm) {
+        $searchTerm = str_replace(' ','-',$searchTerm);
+
+        // Remove all non-alphanumeric characters from the search term
+        $cleanSearchTerm = preg_replace("/[^A-Za-z0-9-]/", "", $searchTerm);
+        
+        // Convert the cleaned search term to all lowercase
+        $identifier = strtolower($cleanSearchTerm);
+
+        return $identifier;
+    }
+
     public function showSearchPage($country, Request $request){
+        
         $language_code = 'en';
         $search_query = '';
         $category = '';
         
         $page = 1;
-        $per_page = 200;
+        $per_page = 100;
         $skip = 0;
 
+        
         if( isset($request->searchQuery) ) {
             $search_query = $request->searchQuery;
+        // } else {
+        //     abort(404);
         }
         
+        $search_id = self::generateIdentifier($request->searchQuery);
+        
+        if( Redis::hexists('wayak:'.$country.':analytics:search:results', $search_id) ){
+            Redis::hincrby('wayak:'.$country.':analytics:search:results',$search_id,1);
+        } else {
+            Redis::hset('wayak:'.$country.':analytics:search:terms',$search_id,$request->searchQuery);
+            Redis::hset('wayak:'.$country.':analytics:search:results',$search_id,1);
+        }
+
         if( isset($request->page) ) {
-            // print_r($page);
-            // exit;
             $page = $request->page;
             $skip = $per_page*($page-1);
         }
-
         
-        
-        if( isset($request->category) ) {
-            $category = $request->category;
-            if( $search_query == '' ){
-                $search_result = Template::where('mainCategory', '=', $request->category)
-                    ->skip($skip)
-                    ->take($per_page)
-                    ->get([
-                        'title',
-                        'forSubscribers',
-                        'slug',
-                        // 'category',
-                        // 'categoryCaption',
-                        'previewImageUrls'
-                    ]);
+        // if( isset($request->category) ) {
+        //     $category = $request->category;
+        //     if( $search_query == '' ){
+        //         $search_result = Template::where('mainCategory', '=', $request->category)
+        //             ->skip($skip)
+        //             ->take($per_page)
+        //             ->get([
+        //                 'title',
+        //                 'slug',
+        //                 'prices',
+        //                 'slug',
+        //                 // 'category',
+        //                 // 'categoryCaption',
+        //                 'previewImageUrls'
+        //             ]);
                 
-                $total_documents = Template::where('mainCategory', '=', $request->category)->count();
-                $from_document = $skip + 1;
-                $to_document = $skip + $per_page;
-            } else {
-                $search_result = Template::where('mainCategory', '=', $request->category)
-                    ->where('title', 'like', '%'.$search_query.'%')
-                    ->skip($skip)
-                    ->take($per_page)
-                    ->get([
-                        'title',
-                        'forSubscribers',
-                        'slug',
-                        // 'category',
-                        // 'categoryCaption',
-                        'previewImageUrls'
-                    ]);
+        //         $total_documents = Template::where('mainCategory', '=', $request->category)->count();
+        //         $from_document = $skip + 1;
+        //         $to_document = $skip + $per_page;
+        //     } else {
+        //         $search_result = Template::where('mainCategory', '=', $request->category)
+        //             ->where('title', 'like', '%'.$search_query.'%')
+        //             ->skip($skip)
+        //             ->take($per_page)
+        //             ->get([
+        //                 'title',
+        //                 'slug',
+        //                 'prices',
+        //                 'in_sale',
+        //                 // 'category',
+        //                 // 'categoryCaption',
+        //                 'previewImageUrls'
+        //             ]);
                 
-                $total_documents = Template::where('mainCategory', '=', $request->category)
-                                        ->where('title', 'like', '%'.$search_query.'%')
-                                        ->count();
-                $from_document = $skip + 1;
-                $to_document = $skip + $per_page;
-            }
-        } else {
-            $search_result = Template::where('title', 'like', '%'.$search_query.'%')
+        //         $total_documents = Template::where('mainCategory', '=', $request->category)
+        //                                 ->where('title', 'like', '%'.$search_query.'%')
+        //                                 ->count();
+        //         $from_document = $skip + 1;
+        //         $to_document = $skip + $per_page;
+        //     }
+        // } else
+        if( isset($request->sale) ) {
+            // exit;
+            $search_result = Template::where('in_sale', '=', 1)
                 ->skip($skip)
                 ->take($per_page)
                 ->get([
                     'title',
-                    'forSubscribers',
+                    'prices',
                     'slug',
-                    // 'category',
-                    // 'categoryCaption',
+                    'in_sale',
+                    'studioName',
+                    'previewImageUrls'
+                ]);
+            
+            $total_documents = Template::where('in_sale', '=', 1)->count();
+            $from_document = $skip + 1;
+            $to_document = $skip + $per_page;
+        } else {
+            // $search_query = str_replace(' ','%',$search_query);
+            $search_result = Template::whereRaw(array('$text'=>array('$search'=> $search_query)))
+            // $search_result = Template::where('title', 'like', '%'.$search_query.'%')
+                ->skip($skip)
+                ->take($per_page)
+                ->get([
+                    'title',
+                    'prices',
+                    'slug',
+                    'in_sale',
+                    'studioName',
                     'previewImageUrls'
                 ]);
             
@@ -503,19 +536,12 @@ class ContentController extends Controller
 
         $last_page = ceil( $total_documents / $per_page );
 
-
         // Style
         // Theme / categories
         // labels
         // color
         // Price
         
-        // echo "<pre>";
-        // // print_r( $request->category );
-        // // print_r( $request->all() );
-        // print_r($cats);
-        // exit;
-
         $templates = [];
         foreach ($search_result as $template) {
             if( App::environment() == 'local' ){
@@ -526,17 +552,24 @@ class ContentController extends Controller
             $templates[] = $template;
         }
         
-        // echo $total_documents;
+        // echo "<pre>";
+        // print_r( $templates );
         // exit;
+
         $menu = json_decode(Redis::get('wayak:'.$country.':menu'));
+        $sale = Redis::hgetall('wayak:'.$country.':config:sales');
         
         return view('content.search',[
             'country' => $country,
             'language_code' => $language_code,
             'menu' => $menu,
+            'sale' => $sale,
             'search_query' => $search_query,
             'category' => $category,
-            'page' => $page,
+            'current_page' => $page,
+            'first_page' => 1,
+            'pagination_begin' => (($page - 4) > 0) ? $page-4 : 1,
+            'pagination_end' => (($page + 4) < $last_page) ? $page+4 : $last_page,
             'last_page' => $last_page,
             'from_document' => $from_document,
             'to_document' => $to_document,
@@ -627,5 +660,138 @@ class ContentController extends Controller
         echo $output;
 
         // Redis::set('wayak:sitemap:us', $output);
+    }
+
+    function search(){
+        
+        $products = DB::select( DB::raw(
+            'SELECT * FROM `wayak`.`tmp_etsy_metadata`
+            WHERE templett_url LIKE \'https://www.corjl.com/%\'
+            ORDER BY id DESC 
+            LIMIT 100')
+        );
+
+        // foreach ($ready_for_title as $word) {
+        //     $tmp_title[] = ucwords($word->word);
+        // }
+
+        return view('front.search',[
+            'products' => $products
+        ]);
+    }
+
+    public function getTemplate($country, $slug){
+
+        // $language_code = 'en';
+        // $locale = self::getLocale($country);
+        
+        // if( !in_array($locale, ['en', 'es']) ){
+        //     abort(400);
+        // }
+        
+        // App::setLocale($locale);
+        
+        // $template_id = substr($slug, strrpos($slug, '-')+1, strlen($slug)  );
+        // $search_query = '';
+
+        // if( Redis::hexists('analytics:template:views',$template_id) ){
+        //     Redis::hincrby('analytics:template:views',$template_id,1);
+        // } else {
+        //     Redis::hset('analytics:template:views',$template_id,1);
+        // }
+
+        // if( isset($request->searchQuery) ) {
+        //     $search_query = $request->searchQuery;
+        // }
+
+        // $template = self::getTemplateMetadata($template_id);
+        // $related_templates = self::getRelatedTemplates( $template->mainCategory, $language_code );
+        
+        // // Template not found
+        // if( isset($template->_id) == false ){
+        //     abort(404);
+        // }
+        // if( App::environment() == 'local' ){
+        //     $preview_image = asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["product_preview"] );
+        //     // print_r($preview_image);
+        //     // echo App::environment();
+        //     // exit;
+        // } else {
+        //     $preview_image = Storage::disk('s3')->url( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["product_preview"] );
+        // }
+
+        // // $template->price = rand(35,1000);
+        // $category_name = $template->mainCategory;
+        // $category_name = substr( $template->mainCategory,1, strlen($category_name) );
+        // $breadcrumbs_str = Redis::get('wayak:en:categories:'.$category_name);
+        // $breadcrumbs_obj = json_decode($breadcrumbs_str);
+
+        // self::getBreadCrumbs( $breadcrumbs_obj ) ;
+        
+        // $url = "";
+        // $total_breads = sizeof($this->bread_array);
+        // for ($i=0; $i < $total_breads; $i++) { 
+        //     $url .= '/'.$this->bread_array[$i]->slug;
+        //     $this->bread_array[$i]->url = url($country.'/templates'.$url);
+        // }
+        
+        // if( App::environment() == 'local' ){
+        //     $thumb_path = public_path( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["product_preview"] );
+        // } else {
+        //     $thumb_path = $preview_image;
+        // }
+        
+        // $palette = Palette::fromFilename( $thumb_path );
+        // $extractor = new ColorExtractor($palette);
+        // $colors = $extractor->extract(10);
+
+        // for ($i=0; $i < sizeof($colors); $i++) { 
+        //     $colors[$i] = Color::fromIntToHex($colors[$i]);
+        // }
+
+        // $menu = json_decode(Redis::get('wayak:'.$country.':menu'));
+
+        // return view('content.product-detail',[
+        //     'country' => $country,
+        //     'preview_image' => $preview_image,
+        //     'language_code' => $language_code,
+        //     'search_query' => $search_query,
+        //     'menu' => $menu,
+        //     'breadcrumbs' => $this->bread_array,
+        //     'breadcrumb' => $breadcrumbs_obj,
+        //     'template' => $template,
+        //     'colors' => $colors,
+        //     'related_templates' => $related_templates
+        // ]);
+
+        /* 
+        SELECT * FROM `wayak`.`tmp_etsy_metadata`
+        WHERE templett_url LIKE 'https://www.corjl.com/%'
+        ORDER BY id DESC 
+        LIMIT 0,1000
+        */
+
+        $product = DB::table('tmp_etsy_metadata')->where('id', 196334)->first();
+        $product->product_imgs = json_decode($product->product_imgs);
+
+        // echo "<pre>";
+        // print_r( $product );
+        // // print_r( json_decode($product->product_imgs) );
+        // exit;
+
+        return view('front.product',[
+            'country' => $country,
+            'product' => $product
+        ]);
+    }
+
+    function demo($country,$product_id){
+        // $product = DB::table('tmp_etsy_metadata')->where('id', $product_id)->first();
+        
+        return view('front.demo',[
+            // 'demo_url' => $product->templett_url
+            'demo_url' => "https://www.corjl.com/d/HN9KB"
+        ]);
+
     }
 }

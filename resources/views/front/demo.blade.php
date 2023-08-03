@@ -5,20 +5,17 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>BUY DEMO</title>
-    <meta name="description"
-        content="&amp;lt;a href=&amp;quot;https://the4.gitbook.io/kalles-4.0/change-log&amp;quot;&amp;gt;-&amp;gt; ChangeLog (Importan...">
+    <meta name="description" content="&amp;lt;a href=&amp;quot;https://the4.gitbook.io/kalles-4.0/change-log&amp;quot;&amp;gt;-&amp;gt; ChangeLog (Importan...">
     <meta name="robots" content="noindex, nofollow">
     <meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1">
     <meta name="turbo-visit-control" content="reload">
-    <meta http-equiv="origin-trial"
-        content="A7bG5hJ4XpMV5a3V1wwAR0PalkFSxLOZeL9D/YBYdupYUIgUgGhfVJ1zBFOqGybb7gRhswfJ+AmO7S2rNK2IOwkAAAB7eyJvcmlnaW4iOiJodHRwczovL3d3dy5nb29nbGV0YWdtYW5hZ2VyLmNvbTo0NDMiLCJmZWF0dXJlIjoiUHJpdmFjeVNhbmRib3hBZHNBUElzIiwiZXhwaXJ5IjoxNjY5NzY2Mzk5LCJpc1RoaXJkUGFydHkiOnRydWV9">
-    <meta http-equiv="origin-trial"
-        content="A6tVmVPNv7ei4ErCylDEwnE6N9RJTv0xr0vkb/AAsDo1pT2LYjQVGXq5JSDAHLx7TB8jjHfD2e8qlu3dZMP+ew8AAABveyJvcmlnaW4iOiJodHRwczovL3MucGluaW1nLmNvbTo0NDMiLCJmZWF0dXJlIjoiUHJpdmFjeVNhbmRib3hBZHNBUElzIiwiZXhwaXJ5IjoxNjY5NzY2Mzk5LCJpc1RoaXJkUGFydHkiOnRydWV9">
+    <meta http-equiv="origin-trial" content="A7bG5hJ4XpMV5a3V1wwAR0PalkFSxLOZeL9D/YBYdupYUIgUgGhfVJ1zBFOqGybb7gRhswfJ+AmO7S2rNK2IOwkAAAB7eyJvcmlnaW4iOiJodHRwczovL3d3dy5nb29nbGV0YWdtYW5hZ2VyLmNvbTo0NDMiLCJmZWF0dXJlIjoiUHJpdmFjeVNhbmRib3hBZHNBUElzIiwiZXhwaXJ5IjoxNjY5NzY2Mzk5LCJpc1RoaXJkUGFydHkiOnRydWV9">
+    <meta http-equiv="origin-trial" content="A6tVmVPNv7ei4ErCylDEwnE6N9RJTv0xr0vkb/AAsDo1pT2LYjQVGXq5JSDAHLx7TB8jjHfD2e8qlu3dZMP+ew8AAABveyJvcmlnaW4iOiJodHRwczovL3MucGluaW1nLmNvbTo0NDMiLCJmZWF0dXJlIjoiUHJpdmFjeVNhbmRib3hBZHNBUElzIiwiZXhwaXJ5IjoxNjY5NzY2Mzk5LCJpc1RoaXJkUGFydHkiOnRydWV9">
     <style>
         body {
             font-size: 16px;
         }
-    
+
         /*! CSS Used from: https://public-assets.envato-static.com/assets/market/core/index-0e54391d923eaea8b5ecd33130f29db50e8594c1b719fc47d16af408901ecb23.css ; media=all */
         @media all {
             html {
@@ -51,14 +48,14 @@
             }
 
             .back-to-product-icon {
-    border-color: #0000 #9cc8f5 #0000 #0000;
-    border-style: solid;
-    border-width: 5px 5px 5px 0;
-    display: inline-block;
-    height: 0;
-    margin-right: 10px;
-    width: 0;
-}
+                border-color: #0000 #9cc8f5 #0000 #0000;
+                border-style: solid;
+                border-width: 5px 5px 5px 0;
+                display: inline-block;
+                height: 0;
+                margin-right: 10px;
+                width: 0;
+            }
 
             *,
             *:before,
@@ -131,13 +128,14 @@
             }
 
             .-color-primary.e-btn--3d {
-                background-color: #82b440;
+                background-color: #f3683e;
+                font-weight: 500;
             }
 
             .-color-primary.e-btn--3d:hover,
             .-color-primary.e-btn--3d:focus,
             .-color-primary.e-btn--3d:active {
-                background-color: #7aa93c;
+                background-color: #d10a0a;
             }
 
             .e-btn--3d {
@@ -159,8 +157,8 @@
             }
 
             .e-btn--3d.-color-primary {
-                -webkit-box-shadow: 0 2px 0 #31af36;
-                box-shadow: 0 2px 0 #31af36;
+                -webkit-box-shadow: 0 2px 0 #ba431e;
+                box-shadow: #ba431e;
                 position: relative;
             }
 
@@ -186,14 +184,14 @@
             }
 
             .preview__header {
-    font-size: 12px;
-    height: 54px;
-    background-color: white;
-    z-index: 100;
-    line-height: 54px;
-    margin-bottom: -65px;
-    position: relative;
-}
+                font-size: 12px;
+                height: 54px;
+                background-color: white;
+                z-index: 100;
+                line-height: 54px;
+                margin-bottom: -65px;
+                position: relative;
+            }
 
             .preview__envato-logo {
                 float: left;
@@ -213,7 +211,7 @@
 
             .back-to-product {
                 align-items: baseline;
-                color: #9cc9f5;
+                color: #3a71d0;
                 /* display: inline-block; */
                 font-size: 14px;
                 line-height: 28px;
@@ -259,52 +257,54 @@
                 background-color: black;
             }
         }
+
         .full-screen-preview__frame {
-    width: 100%;
-    background-color: white;
-    position: fixed;
-}
-.overlay {
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    position: fixed;
-    background: #222;
-}
+            width: 100%;
+            background-color: white;
+            position: fixed;
+        }
 
-.overlay__inner {
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    position: absolute;
-}
+        .overlay {
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            position: fixed;
+            background: #222;
+        }
 
-.overlay__content {
-    left: 50%;
-    position: absolute;
-    top: 50%;
-    transform: translate(-50%, -50%);
-}
+        .overlay__inner {
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+        }
 
-.spinner {
-    width: 75px;
-    height: 75px;
-    display: inline-block;
-    border-width: 2px;
-    border-color: rgba(255, 255, 255, 0.05);
-    border-top-color: #fff;
-    animation: spin 1s infinite linear;
-    border-radius: 100%;
-    border-style: solid;
-}
+        .overlay__content {
+            left: 50%;
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
 
-@keyframes spin {
-  100% {
-    transform: rotate(360deg);
-  }
-}
+        .spinner {
+            width: 75px;
+            height: 75px;
+            display: inline-block;
+            border-width: 2px;
+            border-color: rgba(255, 255, 255, 0.05);
+            border-top-color: #fff;
+            animation: spin 1s infinite linear;
+            border-radius: 100%;
+            border-style: solid;
+        }
+
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
     </style>
 </head>
 
@@ -317,38 +317,34 @@
 
     <div class="preview__header" data-view="ctaHeader" data-item-id="26320622">
         <div class="preview__envato-logo">
-            <a class="header-envato_market"
-                href="https://themeforest.net/item/kalles-clean-versatile-shopify-theme/26320622">Envato Market</a>
+            <a class="header-envato_market" href="https://themeforest.net/item/kalles-clean-versatile-shopify-theme/26320622">Envato Market</a>
         </div>
 
-        
+
         <div id="js-preview__actions" class="preview__actions">
             <a href="https://www.templatemonster.com/shopify-themes/storego-electronic-shopify-theme-90638.html" class="back-to-product">
                 <span class="back-to-product-icon"></span>
-                StoreGo - Multipurpose Premium Electronic Shopify 2.0 Theme  
+                StoreGo - Multipurpose Premium Electronic Shopify 2.0 Theme
             </a>
             <div class="preview__action--buy">
-                <a class="header-buy-now e-btn--3d -color-primary"
-                    onclick="removeToolbar()">Buy
+                <a class="header-buy-now e-btn--3d -color-primary" onclick="removeToolbar()">Buy
                     now</a>
             </div>
         </div>
     </div>
-    <iframe class="full-screen-preview__frame" src="{{ $demo_url }}" name="preview-frame" id="jejejeje"
-        frameborder="0" noresize="noresize" data-view="fullScreenPreview" allow="geolocation 'self'; autoplay 'self'"
-        style="height: 291px;display: none;" onload="hola()">
+    <iframe class="full-screen-preview__frame" src="{{ $demo_url }}" name="preview-frame" id="jejejeje" frameborder="0" noresize="noresize" data-view="fullScreenPreview" allow="geolocation 'self'; autoplay 'self'" style="height: 291px;display: none;" onload="hola()">
     </iframe>
 
     <script>
-        function hola(){
+        function hola() {
             document.getElementById("jejejeje").style.display = 'block';
-            document.getElementById("jejejeje").style.height = window.innerHeight+"px";
-            
+            document.getElementById("jejejeje").style.height = window.innerHeight + "px";
+
             console.log("sdasd");
         }
 
         window.addEventListener('resize', function(event) {
-            document.getElementById("jejejeje").style.height = window.innerHeight+"px";
+            document.getElementById("jejejeje").style.height = window.innerHeight + "px";
         }, true);
     </script>
 </body>

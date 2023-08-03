@@ -5,26 +5,19 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta http-equiv="content-language" content="en-MX">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="pinterest" content="nosearch">
-
     <meta name="csrf_nonce"
         content="3:1663903622:pQAUsu80fltKfyfJhnkFMVxU0fZ6:231dc79d94180a2effbc251e0aa1d2cd53b29d45638d21a7c58b07bf563d9f4a">
     <meta name="uaid_nonce"
         content="3:1663903622:8cWq4BVEQGb9-ynu8EYHdND2IG5f:87b242c807dbc11a3da20eb5315d0981a5f81244454c3fde33a6a0c7b9aa43d9">
-
     <meta property="fb:app_id" content="89186614300">
-
     <meta name="css_dist_path" content="/ac/primary/css/">
     <meta name="dist" content="202209221663885782">
-
-
 
     <title>Rainbow Birthday Invitation Party Invite Girl Colorful - Etsy Mexico</title>
     <meta name="description"
         content="This Invitations item by HelloPaperBug has 988 favorites from Etsy shoppers. Ships from United States. Listed on Sep 21, 2022">
-
     <meta name="twitter:site" content="@Etsy" value="">
     <meta name="twitter:card" content="summary_large_image" value="">
     <meta name="twitter:app:name:iphone" content="Etsy" value="">
@@ -53,20 +46,6 @@
     <meta property="al:android:url" content="etsy://listing/1041797070?ref=applinks_android">
     <meta property="al:android:package" content="com.etsy.android">
     <meta property="al:android:app_name" content="Etsy">
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     <meta name="apple-mobile-web-app-title" content="Etsy">
     <meta name="application-name" content="Etsy">
     <meta name="msapplication-TileColor" content="#F1641E">

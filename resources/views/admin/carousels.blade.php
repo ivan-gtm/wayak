@@ -1,8 +1,8 @@
-@extends('layouts.frontend')
+@extends('layouts.admin')
 
 @section('title', 'Results for: "'.$search_query.'" | Online Template Editor | Wayak')
 
-@section('meta')
+@section('css')
 <link rel="stylesheet" href="{{ asset('assets/css/search.css') }}">
 <link rel="preconnect" href="https://fonts.gstatic.com">
 <link href="https://fonts.googleapis.com/css2?family=PT+Sans+Caption&display=swap" rel="stylesheet">
@@ -19,7 +19,22 @@
 @endsection
 
 @section('content')
-
+<div class="col-12">
+        <form class="form___1I3Xs" novalidate="" method="GET" action="{{ route('admin.carousels',['country' => $country]) }}">
+            @csrf
+            <div class="sc-dmlrTW guKkvw">
+                <input type="text" autocomplete="off" name="searchQuery" class="sc-kfzAmx sc-fKFyDc fTLfYv zomHz proxima-regular___3FDdY" placeholder="{{ __('home.search_placeholder') }}" value="" style="padding-left: 20px;" autofocus>
+            </div>
+            <div class="inputControls___BVQJr left___1UDlV"></div>
+            <div class="inputControls___BVQJr right___3zI72">
+                <button type="submit" class="sc-gsTCUz bhdLno sc-dlfnbm llxIqU searchBtn___3JEWS" data-categ="homeSearchForm" data-value="submit">
+                    <svg viewBox="0 0 24 24" width="24" height="24" class="sc-fubCfw hxbxfY">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M17.4138 15.8368L21.8574 20.2857C22.0558 20.5064 22.046 20.8443 21.8352 21.0532L21.0575 21.8317C20.9532 21.937 20.8113 21.9962 20.6632 21.9962C20.5151 21.9962 20.3731 21.937 20.2688 21.8317L15.8252 17.3828C15.7023 17.2596 15.5907 17.1256 15.4919 16.9824L14.6587 15.8701C13.2802 16.9723 11.5682 17.5724 9.80409 17.5719C6.16878 17.5845 3.00983 15.0738 2.19744 11.5261C1.38504 7.97844 3.13601 4.34066 6.41372 2.76643C9.69143 1.1922 13.6211 2.10166 15.8763 4.95639C18.1314 7.81111 18.1102 11.8492 15.8252 14.68L16.9361 15.4475C17.1096 15.5586 17.2698 15.6892 17.4138 15.8368ZM4.24951 9.78627C4.24951 12.8576 6.73635 15.3475 9.80402 15.3475C11.2772 15.3475 12.69 14.7616 13.7317 13.7186C14.7733 12.6757 15.3585 11.2612 15.3585 9.78627C15.3585 6.7149 12.8717 4.22507 9.80402 4.22507C6.73635 4.22507 4.24951 6.7149 4.24951 9.78627Z"></path>
+                    </svg>
+                </button>
+            </div>
+        </form>
+</div>
 <main class="content">
     <div id="app" class="appReady">
         <div class="Pwa91aRM">
@@ -33,7 +48,7 @@
                             <div class="">
                                 <div class="grid-container">
                                     @foreach($templates as $template)
-                                    <a href="{{ route( 'template.productDetail', [ 'country' => $country, 'slug' => $template->slug ] ) }}">
+                                    <a onclick="addTemplate(this)" id="template{{ $template->_id }}" data-template-id="{{ $template->_id }}">
                                         <figure>
                                             <img alt="{{ $template->title }}" crossorigin="anonymous" loading="lazy" data-categ="invitations" data-value="{{ $template->_id }}" src="{{ str_replace('_carousel','_product_preview',$template->preview_image) }}" class="itemImg">
                                             <figcaption>
@@ -176,4 +191,51 @@
         </div>
     </div>
 </main>
+
+<script>
+    function addTemplate(element){
+        
+        console.log("element");
+        console.log(element);
+        console.log(element.id);
+        console.log(element.dataset.templateId);
+
+
+        storeTemplateIDLocally(element.dataset.templateId);
+        getTemplates();
+    }
+
+    function getTemplates() {
+        let idQueue = JSON.parse(localStorage.getItem("idQueue")) || [];
+        console.log(`Stored IDs: ${idQueue.join(", ")}`);
+    }
+
+    function storeTemplateIDLocally(id) {
+        if (typeof(Storage) !== "undefined") {
+            // Retrieve the existing queue from local storage
+            let queue = JSON.parse(localStorage.getItem("idQueue")) || [];
+
+            // Add the new ID to the end of the queue if it doesn't already exist
+            if (!queue.includes(id)) {
+                queue.push(id);
+            }
+
+            // Keep only the last 10 IDs in the queue
+            queue = queue.slice(-10);
+
+            // Store the updated queue in local storage
+            localStorage.setItem("idQueue", JSON.stringify(queue));
+
+            console.log(`ID ${id} stored locally.`);
+        } else {
+            console.log("Local storage is not supported by this browser.");
+        }
+    }
+
+    function clearLocalStorage() {
+        localStorage.clear();
+    }
+
+
+</script>
 @endsection

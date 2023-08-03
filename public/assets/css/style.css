@@ -8116,19 +8116,21 @@ button:focus {
 .am-animate .am-top-header {
   transition: all 0.35s ease;
 }
+.am-top-header .navbar-header .navbar-brand img{
+  min-width: 120px;
+  max-width: 130px;
+  padding-top: 3px;
+  vertical-align: middle;
+}
 .am-top-header .navbar-header .navbar-brand {
   background-color: #fff;
     color: #000;
-    padding-top: 0;
+    padding-top: 10px;
     padding-bottom: 0;
     line-height: 60px;
-    height: 60px;
-    width: 120px;
-    background-image: url(../img/logo.png?v=3010201701);
     background-repeat: no-repeat;
     background-position: center center;
     margin-right: 20px;
-    border-bottom: 1px solid #474646;
     margin-left: 0px;
 }
 @media (max-width: 767px) {

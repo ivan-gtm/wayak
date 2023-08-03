@@ -60,16 +60,43 @@ class BotCreateAppMenu extends Command
 
                 $cat_metadata = json_decode( Redis::get( $category ) );
                 $url = route( 'showCategoryLevel'.$categorie_levels_size, $cat_params );
+                
+                array_shift($cat_params);  
+                
+                
+                $hits = 0;
+                if( Redis::exists('wayak:'.$country.':analytics:categories') ){
+                    $hits = Redis::hget('wayak:'.$country.':analytics:categories',implode('/', $cat_params));
+                }
+
                 $menu['templates'][] = [
                     'name' => $cat_metadata->name,
-                    'url' => $url
+                    'url' => $url,
+                    'hits' => $hits,
+                    'img' => $categorie_levels[$categorie_levels_size-1].'.png'
                 ];
             }
         }
 
         foreach (['es','mx','co','ar','bo','ch','cu','do','sv','hn','ni', 'pe', 'uy', 've','py','pa','gt','pr','gq','us','ca','gb','gh','ke','lr','ng'] as $country) {
-            Redis::set('wayak:'.$country.':menu', str_replace('\\/us\\/','\\/'.$country.'\\/',json_encode($menu)) );
+            $menu['templates'] = self::sortByHits( $menu['templates'] );
+            // print_r( $menu );
+            // exit;
+            Redis::set('wayak:'.$country.':menu', str_replace('\\/us\\/','\\/'.$country.'\\/',json_encode( $menu )) );
         }
 
     }
+
+    function sortByHits($array) {
+        // create a temporary array to hold the hits values
+        $hitsArray = array();
+        foreach ($array as $key => $value) {
+            $hitsArray[$key] = $value['hits'];
+        }
+    
+        // sort the array by hits
+        array_multisort($hitsArray, SORT_DESC, $array);
+    
+        return $array;
+    }    
 }

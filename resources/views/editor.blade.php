@@ -86,6 +86,7 @@
                             </span>
                         </a>
                         <a class="navbar-brand" href="{{ url('/') }}">
+                            <img src="{{ asset('assets/img/logo.svg') }}" loading="lazy"/>
                         </a>
                     </div>
                     <a class="am-toggle-top-header-menu collapsed" data-target="#am-navbar-collapse" data-toggle="collapse" href="#">
