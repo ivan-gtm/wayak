@@ -65,9 +65,9 @@ class CreateHomeCarousels extends Command
         foreach ($search_result as $template) {
             
             if( App::environment() == 'local' ){
-                $template->preview_image_url = asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls['carousel'] );
+                $template->preview_image_url = asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls['product_preview'] );
             } else {
-                $template->preview_image_url = Storage::disk('s3')->url( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls['carousel'] );
+                $template->preview_image_url = Storage::disk('s3')->url( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls['product_preview'] );
             }
             $templates[] = $template;
         }
@@ -97,9 +97,9 @@ class CreateHomeCarousels extends Command
         foreach ($search_result as $template) {
             
             if( App::environment() == 'local' ){
-                $template->preview_image_url = asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls['carousel'] );
+                $template->preview_image_url = asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls['product_preview'] );
             } else {
-                $template->preview_image_url = Storage::disk('s3')->url( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls['carousel'] );
+                $template->preview_image_url = Storage::disk('s3')->url( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls['product_preview'] );
             }
             $templates[] = $template;
         }
@@ -129,9 +129,9 @@ class CreateHomeCarousels extends Command
         foreach ($search_result as $template) {
             
             if( App::environment() == 'local' ){
-                $template->preview_image_url = asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls['carousel'] );
+                $template->preview_image_url = asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls['product_preview'] );
             } else {
-                $template->preview_image_url = Storage::disk('s3')->url( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls['carousel'] );
+                $template->preview_image_url = Storage::disk('s3')->url( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls['product_preview'] );
             }
             $templates[] = $template;
         }
@@ -161,9 +161,9 @@ class CreateHomeCarousels extends Command
         foreach ($search_result as $template) {
             
             if( App::environment() == 'local' ){
-                $template->preview_image_url = asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls['carousel'] );
+                $template->preview_image_url = asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls['product_preview'] );
             } else {
-                $template->preview_image_url = Storage::disk('s3')->url( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls['carousel'] );
+                $template->preview_image_url = Storage::disk('s3')->url( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls['product_preview'] );
             }
             $templates[] = $template;
         }
@@ -193,9 +193,9 @@ class CreateHomeCarousels extends Command
         foreach ($search_result as $template) {
             
             if( App::environment() == 'local' ){
-                $template->preview_image_url = asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls['carousel'] );
+                $template->preview_image_url = asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls['product_preview'] );
             } else {
-                $template->preview_image_url = Storage::disk('s3')->url( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls['carousel'] );
+                $template->preview_image_url = Storage::disk('s3')->url( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls['product_preview'] );
             }
             $templates[] = $template;
         }
@@ -225,9 +225,9 @@ class CreateHomeCarousels extends Command
         foreach ($search_result as $template) {
             
             if( App::environment() == 'local' ){
-                $template->preview_image_url = asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls['carousel'] );
+                $template->preview_image_url = asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls['product_preview'] );
             } else {
-                $template->preview_image_url = Storage::disk('s3')->url( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls['carousel'] );
+                $template->preview_image_url = Storage::disk('s3')->url( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls['product_preview'] );
             }
             $templates[] = $template;
         }
@@ -257,9 +257,9 @@ class CreateHomeCarousels extends Command
         foreach ($search_result as $template) {
             
             if( App::environment() == 'local' ){
-                $template->preview_image_url = asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls['carousel'] );
+                $template->preview_image_url = asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls['product_preview'] );
             } else {
-                $template->preview_image_url = Storage::disk('s3')->url( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls['carousel'] );
+                $template->preview_image_url = Storage::disk('s3')->url( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls['product_preview'] );
             }
             $templates[] = $template;
         }

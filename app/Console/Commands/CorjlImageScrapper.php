@@ -47,88 +47,113 @@ class CorjlImageScrapper extends Command
     function generateWayakTemplate()
     {
 
-        // $product = Redis::keys('corjl:MO2BOM');
-        $product = Redis::keys('corjl:11F0OP');
+        $templates = DB::table('corjl_template')
+                            ->select('id', 'template_id')
+                            ->where('status','=', '1')
+                            ->orderBy('id','ASC')
+							->limit(10000)
+							->get();
 
-        foreach ($product as $product_key) {
+        foreach( $templates as $current_template ) {
+            print_r("TEMPLATE >> ");
+            echo $current_template->template_id;
+            print_r("\n");
+            
+            $corjl_template_key = str_replace('corjl:', null, $current_template->template_id);
 
-            $template_svg_path = public_path('/corjl/design/template/' . str_replace('corjl:', null, $product_key) . '/svg_template_0_page_1.svg');
-
-            if (file_exists($template_svg_path) && filesize($template_svg_path) > 0) {
-                $template_svg_path = public_path('/corjl/design/template/' . str_replace('corjl:', null, $product_key) . '/');
-                $scan = scandir($template_svg_path);
-                foreach ($scan as $file_name) {
-
-                    $file_path_info = pathinfo($file_name);
-
-                    if (isset($file_path_info['extension']) && $file_path_info['extension'] != '') {
-
-                        print_r("\n<< PAGE >> " . $file_name);
-
-                        $file_content = self::openSVGTemplate($template_svg_path.$file_name);
-
-                        preg_match_all('/((https?):\/\/)?[-A-Za-z0-9+&@#\/\%?=~_|!:,.;]+[-A-Za-z0-9+&@#\/\\%=~_|](\.jpg|\.png|\.jpeg|\.svg)/', $file_content, $assets);
-
-                        if (isset($assets[0]) == false) {
-                            echo "\n<< FIN >>";
-                            exit;
-                        } elseif (isset($assets[0]) && sizeof($assets[0]) > 0) {
-                            print_r("\nIMAGES >>");
-                            $images_arr = $assets[0];
-                            foreach ($images_arr as $img) {
-
+            $tmp_etsy_metadata = DB::table('tmp_etsy_metadata')
+                                    ->select('id','templett_url')
+                                    ->where('templett_url', 'like', '%'.$corjl_template_key)
+                                    ->first();
+ 
+            $template_metadata_id = (isset( $tmp_etsy_metadata->id ) ? $tmp_etsy_metadata->id : 99999);
+            
+            $content = Redis::get($current_template->template_id);
+            $content_obj = json_decode($content);
+            // print_r($content_obj);
+            // exit;
+            if( isset($content_obj->templates) ){
+                foreach ($content_obj->templates as $template) {
+                    
+                    $template_id = Str::random(10);
+                    
+                    print_r("\n\n<< TEMPLATE >> " . $template_id);
+                    
+                    print_r("\n\t TEMPLATE ID >> $template_id");
+                    print_r("\n\t ORIGINAL TEMPLATE ID >> $corjl_template_key");
+                    print_r("\n\t NAME >>".$template->name);
+                    print_r("\n\t FK_ETSY_TEMPLATE_ID >>".$template_metadata_id);
+                    
+                    $dimentions = explode('x',str_replace('in',null, $template->dimentions));
+                    print_r("\n\t DIMENTIONS WIDTH >>".$dimentions[0] );
+                    print_r("\n\t DIMENTIONS HEIGHT >>".$dimentions[1] );
+    
+                    self::registerTemplateOnDB($template_id, $corjl_template_key, $template->name, $template_metadata_id, null, $dimentions[0], $dimentions[1], 'in');
+                    
+                    if(isset($template->pages) && is_array($template->pages) && sizeof($template->pages) > 0 ){
+                        foreach ($template->pages as $template_page) {
+                            print_r("\n\t\t>> PAGE >>" );
+        
+                            foreach ($template_page->images as $image_url) {
                                 
+                                $path = pathinfo($image_url); // dirname, filename, extension
+                                // print_r($path);
+                                $template_path = '/application/public/design/template/'.$template_id.'/assets/'.$path['filename'];
+        
                                 print_r("\n");
-                                print_r("\n\tIMAGE >> " . $img);
+                                print_r("\n\t\t\tIMAGE >> " . $image_url );
+                                print_r("\n\t\t\tTEMPLATE ID >> " . $template_id);
+                                print_r("\n\t\t\tFILENAME >> " . $path['basename'] );
+                                print_r("\n\t\t\tPATH >>" . str_replace('http://localhost/', null, $image_url));
+                                print_r("\n\t\t\tIMG PATH >>" . $template_path);
                                 
-                                $template_id = Str::random(10);
-                                $path = pathinfo($img); // dirname, filename, extension
-                                $template_path = str_replace('http://localhost/', null, $img);
-
-                                // $path[dirname] => http://localhost/design/template/nmr5IBZCfa/assets
-                                // $path[basename] => 47821_1525751719.jpg
-                                // $path[extension] => jpg
-                                // $path[filename] => 47821_1525751719
-
-                                print_r("\n\t\tTEMPLATE ID >> " . $template_id);
-                                print_r("\n\t\tFILENAME >> " . $path['basename'] );
-                                print_r("\n\t\tPATH >>" . str_replace('http://localhost/', null, $img));
-                                print_r("\n\t\tIMG PATH >>" . '/application/public/design/template/'.$template_id.'/assets/'.$path['filename']);
-                                // exit;
-
-                                // $db_images = DB::table('images')
-                                //     ->where('template_id', $template_id)
-                                //     ->where('filename', $path['basename'])
-                                //     ->count();
-
-                                // if ($db_images == 0) {
-                                //     // print_r($path);
-                                //     // exit;
-                                //     DB::table('images')->insert([
-                                //         'id' => null,
-                                //         'source' => 'corjl',
-                                //         'template_id' => $template_id,
-                                //         'img_path' => $template_path,
-                                //         'original_path' => '/application/public/' . $template_path,
-                                //         'file_type' => $path['extension'],
-                                //         'filename' => $path['basename'],
-                                //         'status' => 0 // Estado inicial, metadatos extraidos de etsy
-                                //     ]);
-                                // }
+                                // $local_img_path = public_path( '/design/template/' . $template_id . '/assets/');
+                                // $file_name = self::downloadImage($image_url, $local_img_path, $template_id);
+        
+                                $db_images = DB::table('images')
+                                    // ->where('template_id', $template_id)
+                                    ->where('filename', $path['basename'])
+                                    ->count();
+        
+                                if ($db_images == 0) {
+                                    // print_r($path);
+                                    // exit;
+                                    DB::table('images')->insert([
+                                        'id' => null,
+                                        'source' => 'corjl',
+                                        'template_id' => $template_id,
+                                        'img_path' => $template_path,
+                                        'original_path' => str_replace('http://localhost/', null, $image_url),
+                                        'file_type' => (isset($path['extension'])) ? $path['extension'] : 'none',
+                                        'filename' => $path['basename'],
+                                        'status' => 0 // Estado inicial, metadatos extraidos de etsy
+                                    ]);
+                                }
                             }
                         }
                     }
+                    
                 }
+
+                DB::table('corjl_template')
+                    ->where('id', $current_template->id )
+                    ->update([ 'status' => 2 ]);
+
             } else {
-                echo "\n" . 'DOES NOT EXISTS >>' . $template_svg_path;
-                // Redis::del($product_key);
+                
+                DB::table('corjl_template')
+                ->where('id', $current_template->id )
+                ->update([ 'status' => -1 ]);
+
+                // Redis::del($current_template->template_id);
             }
+
+
+            // }            
         }
 
-        print_r("\n\n");
+        print_r("\n\nTERMINE");
     }
-
-
 
     function openSVGTemplate($svg_file_path)
     {
@@ -150,45 +175,45 @@ class CorjlImageScrapper extends Command
         return substr(str_shuffle($permitted_chars), 0, $length);
     }
 
-    function parseTemplatePages($pages, $template_id)
-    {
-        foreach ($pages as $page) {
-            // if( isset($page->thumbnail) ){
-            //     $local_img_path = public_path().'/design/template/'.$template_id.'/thumbnails/en/';
-            //     $file_name = self::downloadImage( $template->thumb_url,$local_img_path, $template_id);
-            //     // self::registerThumbOnDB($template_id, $template->name, $file_name, $template->dimentions);
-            // }
-
-            foreach ($page->images as $image_url) {
-                // echo $image_url;
-                // exit;
-                $local_img_path = public_path() . '/design/template/' . $template_id . '/assets/';
-                $file_name = self::downloadImage($image_url, $local_img_path, $template_id);
-            }
-        }
-    }
-
     function registerTemplateOnDB($template_id, $original_template_id, $name, $fk_etsy_template_id, $parent_template_id, $width, $height, $measureUnits)
     {
 
         $thumbnail_rows = DB::table('templates')
-            ->where('template_id', '=', $template_id)
-            ->count();
+            ->where('source', '=', 'corjl')
+            ->where('original_template_id', '=', $original_template_id)
+            ->first();
 
-        if ($thumbnail_rows == 0) {
+        if (!isset($thumbnail_rows->id)) {
             DB::table('templates')->insert([
                 'id' => null,
                 'source' => 'corjl',
                 'template_id' => $template_id,
                 'original_template_id' => $original_template_id,
-                // 'name' => htmlspecialchars_decode( $name ),
-                'fk_etsy_template_id' => $fk_etsy_template_id->id,
+                'fk_etsy_template_id' => $fk_etsy_template_id,
                 'status' => 0,
                 'parent_template_id' => $parent_template_id,
                 'width' => $width,
                 'height' => $height,
                 'metrics' => $measureUnits
             ]);
+
+            return $template_id;
+        } else {
+            DB::table('templates')
+                // ->where('template_id', $template_id )
+                ->where('original_template_id', $original_template_id )
+                ->update([ 
+                    'source' => 'corjl',
+                    // 'template_id' => $template_id,
+                    // 'original_template_id' => $original_template_id,
+                    'fk_etsy_template_id' => $fk_etsy_template_id,
+                    'status' => 0,
+                    'parent_template_id' => $parent_template_id,
+                    'width' => $width,
+                    'height' => $height,
+                    'metrics' => $measureUnits
+                ]);
+            return $thumbnail_rows->template_id;
         }
     }
 
@@ -222,26 +247,26 @@ class CorjlImageScrapper extends Command
         $path = $path_info['dirname'];
         $file_name = $path_info['basename'];
 
-        if (file_exists($full_local_img_path) == false) {
+        // if (file_exists($full_local_img_path) == false) {
 
 
-            @mkdir($path, 0777, true);
+        //     @mkdir($path, 0777, true);
 
-            set_time_limit(0);
+        //     set_time_limit(0);
 
-            //This is the file where we save the    information
-            $fp = fopen($path . '/' . $file_name, 'w+');
-            //Here is the file we are downloading, replace spaces with %20
-            $ch = curl_init(str_replace(" ", "%20", $img_url));
-            curl_setopt($ch, CURLOPT_TIMEOUT, 50);
-            // write curl response to file
-            curl_setopt($ch, CURLOPT_FILE, $fp);
-            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-            // get curl response
-            curl_exec($ch);
-            curl_close($ch);
-            fclose($fp);
-        }
+        //     //This is the file where we save the    information
+        //     $fp = fopen($path . '/' . $file_name, 'w+');
+        //     //Here is the file we are downloading, replace spaces with %20
+        //     $ch = curl_init(str_replace(" ", "%20", $img_url));
+        //     curl_setopt($ch, CURLOPT_TIMEOUT, 50);
+        //     // write curl response to file
+        //     curl_setopt($ch, CURLOPT_FILE, $fp);
+        //     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        //     // get curl response
+        //     curl_exec($ch);
+        //     curl_close($ch);
+        //     fclose($fp);
+        // }
 
         return $file_name;
     }
@@ -271,5 +296,26 @@ class CorjlImageScrapper extends Command
         curl_close($curl);
 
         return $response;
+    }
+
+    function registerTemplate($template_id, $name, $fk_metadata,$parent_template_id){
+        $id = 0;
+        $thumbnail_rows = DB::table('templates')
+                            ->where('template_id','=',$template_id)
+                            ->count();
+    
+        if( $thumbnail_rows == 0 ){
+            $id = DB::table('templates')->insertGetId([
+                'id' => null,
+                'template_id' => $template_id,
+                'name' => htmlspecialchars_decode( $name ),
+                'slug' => null,
+                'fk_etsy_template_id' => $fk_metadata,
+                'parent_template_id' => $parent_template_id,
+                'status' => 1
+            ]);
+        }
+        
+        return $id;
     }
 }

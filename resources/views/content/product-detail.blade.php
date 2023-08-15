@@ -297,7 +297,7 @@
                                                 
                                         </div>
                                             
-                                        <div class="purchase-form__button">
+                                            <div class="purchase-form__button">
                                                 <a class="js-item-header__cart-button e-btn--3d -color-primary -size-m" rel="nofollow" title="Add to Cart" href="{{ 
                                                             route('editor.openTemplate',[
                                                             'country' => $country,
@@ -305,17 +305,28 @@
                                                         ] )
                                                     }}">
                                                     <span class="t-heading -size-m -color-light -margin-none">
-                                                        Live Preview
+                                                        Try Demo
                                                     </span>
                                                 </a>
                                             </div>
+                                            <hr>
                                             <div class="purchase-form__button">
-                                                Buy Now With
+                                                Buy it Now:
                                                 <div id="smart-button-container">
                                                     <div style="text-align: center;">
                                                         <div id="paypal-button-container"></div>
                                                     </div>
                                                 </div>
+                                                <a class="js-item-header__cart-button e-btn--3d -color-primary -size-m" rel="nofollow" title="Add to Cart" href="{{ 
+                                                            route('code.validate.form',[
+                                                            'country' => $country,
+                                                            'template_key' => $template->_id
+                                                        ] )
+                                                    }}">
+                                                    <span class="t-heading -size-m -color-light -margin-none">
+                                                        Enter Code & Customize
+                                                    </span>
+                                                </a>
                                             </div>
                                             <p class="t-body -size-s" itemprop="description">
                                                 <!-- The size of this template is {{ $template->width }}x{{ $template->height }}{{ $template->measureUnits }}. Click “Use This Template“, start your own design. Then you can change the text and images as you wish. After that, preview and save your work, your design will be ready to print, share or download. -->

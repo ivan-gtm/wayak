@@ -8,10 +8,9 @@
     @section('css')
         <link rel="stylesheet" href="{{ asset('assets/css/menu.css') }}">
         <style>
-            /*! CSS Used from: https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/css/bootstrap.min.css */
-            :root{--bs-blue:#0d6efd;--bs-indigo:#6610f2;--bs-purple:#6f42c1;--bs-pink:#d63384;--bs-red:#dc3545;--bs-orange:#fd7e14;--bs-yellow:#ffc107;--bs-green:#198754;--bs-teal:#20c997;--bs-cyan:#0dcaf0;--bs-white:#fff;--bs-gray:#6c757d;--bs-gray-dark:#343a40;--bs-primary:#0d6efd;--bs-secondary:#6c757d;--bs-success:#198754;--bs-info:#0dcaf0;--bs-warning:#ffc107;--bs-danger:#dc3545;--bs-light:#f8f9fa;--bs-dark:#343a40;--bs-font-sans-serif:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";--bs-font-monospace:SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;--bs-gradient:linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));}
-            *,::after,::before{box-sizing:border-box;}
-            body{margin:0;font-family:var(--bs-font-sans-serif);font-size:1rem;font-weight:400;line-height:1.5;color:#212529;background-color:#fff;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent;}
+            /* :root{--bs-blue:#0d6efd;--bs-indigo:#6610f2;--bs-purple:#6f42c1;--bs-pink:#d63384;--bs-red:#dc3545;--bs-orange:#fd7e14;--bs-yellow:#ffc107;--bs-green:#198754;--bs-teal:#20c997;--bs-cyan:#0dcaf0;--bs-white:#fff;--bs-gray:#6c757d;--bs-gray-dark:#343a40;--bs-primary:#0d6efd;--bs-secondary:#6c757d;--bs-success:#198754;--bs-info:#0dcaf0;--bs-warning:#ffc107;--bs-danger:#dc3545;--bs-light:#f8f9fa;--bs-dark:#343a40;--bs-font-sans-serif:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";--bs-font-monospace:SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;--bs-gradient:linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));}
+            *,::after,::before{box-sizing:border-box;} */
+            body{margin:0;font-size:1rem;font-weight:400;line-height:1.5;color:#212529;background-color:#fff;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent;}
             h1,h3{margin-top:0;margin-bottom:.5rem;font-weight:500;line-height:1.2;}
             h1{font-size:calc(1.375rem + 1.5vw);}
             @media (min-width:1200px){
@@ -25,7 +24,7 @@
             a:hover{color:#024dbc;}
             button{border-radius:0;}
             button:focus{outline:1px dotted;outline:5px auto -webkit-focus-ring-color;}
-            button,input{margin:0;font-family:inherit;font-size:inherit;line-height:inherit;}
+            button,input{margin:0;font-size:inherit;line-height:inherit;}
             button,input{overflow:visible;}
             button{text-transform:none;}
             [type=submit],button{-webkit-appearance:button;}
@@ -46,7 +45,7 @@
             /*! CSS Used from: Embedded */
             #wrapper{font-size:1.5rem;text-align:center;box-sizing:border-box;color:#333;}
             #wrapper #dialog{margin:10px auto;padding:20px 30px;display:inline-block;overflow:hidden;position:relative;max-width:600px;}
-            #wrapper #dialog h3{margin:0 0 10px;padding:0;line-height:1.25;font-size:19px;line-height:1.47059;font-weight:400;letter-spacing:-.022em;font-family:SF Pro Text,SF Pro Icons,Helvetica Neue,Helvetica,Arial,sans-serif;}
+            #wrapper #dialog h3{margin:0 0 10px;padding:0;line-height:1.25;font-size:19px;line-height:1.47059;font-weight:400;letter-spacing:-.022em;}
             #wrapper #dialog #form{max-width:300px;margin:25px auto 0;}
             #wrapper #dialog #form input{margin:0 5px;text-align:center;line-height:80px;font-size:50px;border:solid 1px #a7a7a7;box-shadow:0 0 5px #d6d6d6 inset;outline:none;width:20%;-webkit-transition:all 0.2s ease-in-out;transition:all 0.2s ease-in-out;border-radius:3px;}
             #wrapper #dialog #form input:focus{border-color:#d8d8d8;box-shadow:0 0 5px #969696 inset;}
@@ -71,6 +70,7 @@
                         <!-- CROSS Site Request Forgery Protection -->
                         @csrf    
                         <input name="templates" type="hidden" value="{{ $templates }}" />
+                        <input name="template_key" type="hidden" value="{{ $template_key }}" />
                         <input class="digit" name="digit1" type="text" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}" autofocus />
                         <input class="digit" name="digit2" type="text" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}" />
                         <input class="digit" name="digit3" type="text" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}" />
@@ -93,8 +93,6 @@
             </div>
         </div>
     @endsection
-
-    <!-- Optional JavaScript; choose one of the two! -->
 
     <!-- Option 1: Bootstrap Bundle with Popper.js -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/js/bootstrap.bundle.min.js" integrity="sha384-BOsAfwzjNJHrJ8cZidOg56tcQWfp6y72vEJ8xQ9w6Quywb24iOsW913URv1IS4GD" crossorigin="anonymous"></script>

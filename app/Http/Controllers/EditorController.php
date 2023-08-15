@@ -1304,6 +1304,11 @@ class EditorController extends Controller
         if( isset($request->searchQuery) ) {
             $search_query = $request->searchQuery;
         }
+		
+		$template_key = '';
+        if( isset($request->template_key) ) {
+            $template_key = $request->template_key;
+        }
 
 		$menu = json_decode(Redis::get('wayak:'.$country.':menu'));
 		$sale = Redis::hgetall('wayak:'.$country.':config:sales');
@@ -1313,12 +1318,24 @@ class EditorController extends Controller
 			'menu' => $menu,
 			'sale' => $sale,
 			'search_query' => $search_query,
+			'template_key' => $template_key,
 			'templates' => $templates
 		]);
 	}
 	
 	function validatePurchaseCode($country, Request $request){
 		
+		$template_key = null;
+
+		if( isset($request->template_key) ){
+			$referer = request()->headers->get('referer');
+			$template_key = $request->template_key;
+			// echo $request->template_key;
+			// echo "<br>";
+			// echo $referer;
+			// exit;
+		}
+
 		$purchase_code = $request->digit1.$request->digit2.$request->digit3.$request->digit4;
 
 		if( isset($request->templates) ){
@@ -1326,8 +1343,24 @@ class EditorController extends Controller
 		}
 		
 		if( Redis::exists('code:'.$purchase_code) == true ){
+			// Certain template
+				// REDIS KEY:: us:code:template:AYbHxMOHqE
+			// By category
+				// REDIS CATEGORY:: us:code:category:recipe-cards
+			// Any template
+				// REDIS CATEGORY:: us:code:product
 			
-			$template_key = Redis::get('code:'.$purchase_code);
+			// CHECKOUT
+				// First purchase
+				// Pay with certain payment method
+				// 100$ de descuento comprando 300$ (vendidos y enviados por Amazon mexico) [usuarios seleccionados]
+				// 10% de descuento en cada producto de la oferta al gastar $300 o más
+				
+			if( isset($template_key) && $template_key != null ){
+				$template_key = $template_key;
+			} else {
+				$template_key = Redis::get('code:'.$purchase_code);
+			}
 			
 			$source_template_key = "template:en:".$template_key.":jsondata";
 			
