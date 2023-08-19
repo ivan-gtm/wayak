@@ -1330,10 +1330,10 @@ class EditorController extends Controller
 		if( isset($request->template_key) ){
 			$referer = request()->headers->get('referer');
 			$template_key = $request->template_key;
-			// echo $request->template_key;
-			// echo "<br>";
-			// echo $referer;
-			// exit;
+			echo $request->template_key;
+			echo "<br>";
+			echo $referer;
+			exit;
 		}
 
 		$purchase_code = $request->digit1.$request->digit2.$request->digit3.$request->digit4;

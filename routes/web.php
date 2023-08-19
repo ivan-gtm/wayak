@@ -19,6 +19,7 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\TemplettScrapperController;
 use App\Http\Controllers\LinkedInController;
 use App\Http\Controllers\AdminSaleController;
+use App\Http\Controllers\ProductHistoryController;
 
 Route::get('/api/demo-url', [AdminController::class, 'getTemplateObjects']);
 
@@ -188,6 +189,11 @@ Route::get('/api/demo-url', [AdminController::class, 'getTemplateObjects']);
 // DESIGNER
     // Route::get('/open',  [EditorController::class,'open']);
     // Route::get('/explore',  [EditorController::class,'explore']);
+
+// PRODUCT HISTORY
+    Route::post('/syncProductHistory', [ProductHistoryController::class,'syncProductHistory']);
+    Route::post('/removeProductFromHistory', [ProductHistoryController::class,'removeProductFromHistory']);
+    Route::get('/getProductHistory', [ProductHistoryController::class,'getProductHistory']);
 
 // CHECKOUT
     Route::get('/cart', [CheckoutController::class,'cart']);
