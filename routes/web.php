@@ -244,7 +244,13 @@ Route::get('/api/demo-url', [AdminController::class, 'getTemplateObjects']);
     Route::post('/{country}/code', [EditorController::class,'validatePurchaseCode'])->name('code.validate');
 
     Route::get('/{country}/search', [ContentController::class, 'showSearchPage'])->name('user.search');
-    
+
+    // Search
+    Route::get('/{country}/search/search-by-title', [ContentController::class,'searchByTitle']);
+    Route::get('/{country}/search/search-by-title-and-category', [ContentController::class,'searchByTitleAndCategory']);
+    Route::get('/{country}/search/count-by-format', [ContentController::class,'getFormatsTotals']);
+    Route::get('/{country}/search/filter-by-search-term-and-price', [ContentController::class,'filterBySearchTermAndPrice']);
+
     Route::get('/{country}/templates/{cat_lvl_1}', [ContentController::class, 'showCategoryPage'])->name('showCategoryLevel1');
     Route::get('/{country}/templates/{cat_lvl_1}/{cat_lvl_2}', [ContentController::class, 'showCategoryPage'])->name('showCategoryLevel2');
     Route::get('/{country}/templates/{cat_lvl_1}/{cat_lvl_2}/{cat_lvl_3}', [ContentController::class, 'showCategoryPage'])->name('showCategoryLevel3');

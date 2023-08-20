@@ -268,7 +268,7 @@
                                                         ] )
                                                     }}">
                                                 <span class="t-heading -size-m -color-light -margin-none">
-                                                    Enter Code & Customize
+                                                    Use Code
                                                 </span>
                                             </a>
                                         </div>

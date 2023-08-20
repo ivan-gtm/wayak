@@ -91,6 +91,17 @@ class ContentController extends Controller
         }
     }
 
+    public function filterBySearchTermAndPrice(Request $request)
+    {
+        $searchTerm = $request->input('searchTerm');
+        $minPrice = $request->input('minPrice');
+        $maxPrice = $request->input('maxPrice');
+
+        $documents = (new Document())->filterBySearchTermAndPrice($searchTerm, $minPrice, $maxPrice);
+
+        return response()->json($documents);
+    }
+
     public function showCategoryPage($country, $cat_lvl_1_slug = null, $cat_lvl_2_slug = null, $cat_lvl_3_slug = null, Request $request){
         
         if( in_array($country, ['us', 'ca']) ){
@@ -424,138 +435,82 @@ class ContentController extends Controller
         return $identifier;
     }
 
-    public function showSearchPage($country, Request $request){
-        
-        $language_code = 'en';
-        $search_query = '';
-        $category = '';
-        
-        $page = 1;
-        $per_page = 100;
-        $skip = 0;
+    public function searchByTitle(Request $request)
+    {
+        $searchTerm = $request->input('searchTerm');
+        $documents = (new Template())->searchByTitle($searchTerm);
+        return response()->json($documents);
+    }
 
-        
-        if( isset($request->searchQuery) ) {
-            $search_query = $request->searchQuery;
-        // } else {
-        //     abort(404);
-        }
-        
-        $search_id = self::generateIdentifier($request->searchQuery);
-        
-        if( Redis::hexists('wayak:'.$country.':analytics:search:results', $search_id) ){
-            Redis::hincrby('wayak:'.$country.':analytics:search:results',$search_id,1);
-        } else {
-            Redis::hset('wayak:'.$country.':analytics:search:terms',$search_id,$request->searchQuery);
-            Redis::hset('wayak:'.$country.':analytics:search:results',$search_id,1);
-        }
+    public function searchByTitleAndCategory(Request $request)
+    {
+        $searchTerm = $request->input('searchTerm');
+        $category = $request->input('category');
+        $documents = (new Template())->searchByTitleAndCategory($searchTerm, $category);
+        return response()->json($documents);
+    }
 
-        if( isset($request->page) ) {
-            $page = $request->page;
-            $skip = $per_page*($page-1);
-        }
-        
-        // if( isset($request->category) ) {
-        //     $category = $request->category;
-        //     if( $search_query == '' ){
-        //         $search_result = Template::where('mainCategory', '=', $request->category)
-        //             ->skip($skip)
-        //             ->take($per_page)
-        //             ->get([
-        //                 'title',
-        //                 'slug',
-        //                 'prices',
-        //                 'slug',
-        //                 // 'category',
-        //                 // 'categoryCaption',
-        //                 'previewImageUrls'
-        //             ]);
-                
-        //         $total_documents = Template::where('mainCategory', '=', $request->category)->count();
-        //         $from_document = $skip + 1;
-        //         $to_document = $skip + $per_page;
-        //     } else {
-        //         $search_result = Template::where('mainCategory', '=', $request->category)
-        //             ->where('title', 'like', '%'.$search_query.'%')
-        //             ->skip($skip)
-        //             ->take($per_page)
-        //             ->get([
-        //                 'title',
-        //                 'slug',
-        //                 'prices',
-        //                 'in_sale',
-        //                 // 'category',
-        //                 // 'categoryCaption',
-        //                 'previewImageUrls'
-        //             ]);
-                
-        //         $total_documents = Template::where('mainCategory', '=', $request->category)
-        //                                 ->where('title', 'like', '%'.$search_query.'%')
-        //                                 ->count();
-        //         $from_document = $skip + 1;
-        //         $to_document = $skip + $per_page;
-        //     }
-        // } else
-        if( isset($request->sale) ) {
-            // exit;
-            $search_result = Template::where('in_sale', '=', 1)
-                ->skip($skip)
-                ->take($per_page)
-                ->get([
-                    'title',
-                    'prices',
-                    'slug',
-                    'in_sale',
-                    'studioName',
-                    'previewImageUrls'
-                ]);
-            
-            $total_documents = Template::where('in_sale', '=', 1)->count();
-            $from_document = $skip + 1;
-            $to_document = $skip + $per_page;
-        } else {
-            // $search_query = str_replace(' ','%',$search_query);
-            $search_result = Template::whereRaw(array('$text'=>array('$search'=> $search_query)))
-            // $search_result = Template::where('title', 'like', '%'.$search_query.'%')
-                ->skip($skip)
-                ->take($per_page)
-                ->get([
-                    'title',
-                    'prices',
-                    'slug',
-                    'in_sale',
-                    'studioName',
-                    'previewImageUrls'
-                ]);
-            
-            $total_documents = Template::where('title', 'like', '%'.$search_query.'%')
-                                        ->count();
-            $from_document = $skip + 1;
-            $to_document = $skip + $per_page;
-        }
+    public function getTotalDocumentsByCategory()
+    {
+        // Group by category and count the total number of documents in each category
+        $categoryCounts = Template::raw(function($collection) {
+            return $collection->aggregate([
+                [
+                    '$group' => [
+                        '_id' => '$category', // Group by category field
+                        'total' => ['$sum' => 1] // Count the total number of documents
+                    ]
+                ],
+                [
+                    '$project' => [
+                        'category' => '$_id',
+                        'total' => 1,
+                        '_id' => 0
+                    ]
+                ]
+            ]);
+        });
 
-        $last_page = ceil( $total_documents / $per_page );
+        // return $categoryCounts;
+        // return response()->json($categoryCounts);
+        echo "<pre>";
+        print_r(json_encode($categoryCounts));
+        exit;
+    }
 
-        // Style
-        // Theme / categories
-        // labels
-        // color
-        // Price
-        
-        $templates = [];
-        foreach ($search_result as $template) {
-            if( App::environment() == 'local' ){
-                $template->preview_image = asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["carousel"] );
-            } else {
-                $template->preview_image = Storage::disk('s3')->url( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["carousel"] );
-            }
-            $templates[] = $template;
-        }
-        
+    public function getFormatsTotals()
+    {
+        $formatCounts = (new Template())->getTotalDocumentsByFormat();
+        return response()->json($formatCounts);
         // echo "<pre>";
-        // print_r( $templates );
+        // print_r(json_encode($formatCounts));
         // exit;
+    }
 
+    public function showSearchPage($country, Request $request){
+        $language_code = 'en';
+        $search_query = $request->searchQuery ?? '';
+        $category = '';
+        $page = $request->page ?? 1;
+        $per_page = 100;
+        $skip = $per_page * ($page - 1);
+        
+        $search_id = $this->generateSearchId($request->searchQuery);
+        $this->recordSearchAnalytics($country, $search_id, $request->searchQuery);
+        
+        $category = null;
+        $minPrice = null;
+        $maxPrice = null;
+        
+        $result = (new Template())->filterDocuments($request->searchQuery, $category, $minPrice, $maxPrice,$request->sale, $skip, $per_page);
+        $total_documents = $result['total'];
+        $search_result = $result['documents'];
+    
+        $last_page = ceil($total_documents / $per_page);
+        $from_document = $skip + 1;
+        $to_document = $skip + $per_page;
+        $templates = $this->prepareTemplates($search_result, $language_code);
+    
         $menu = json_decode(Redis::get('wayak:'.$country.':menu'));
         $sale = Redis::hgetall('wayak:'.$country.':config:sales');
         
@@ -568,8 +523,8 @@ class ContentController extends Controller
             'category' => $category,
             'current_page' => $page,
             'first_page' => 1,
-            'pagination_begin' => (($page - 4) > 0) ? $page-4 : 1,
-            'pagination_end' => (($page + 4) < $last_page) ? $page+4 : $last_page,
+            'pagination_begin' => max($page-4, 1),
+            'pagination_end' => min($page+4, $last_page),
             'last_page' => $last_page,
             'from_document' => $from_document,
             'to_document' => $to_document,
@@ -577,6 +532,31 @@ class ContentController extends Controller
             'templates' => $templates
         ]);
     }
+    
+    private function generateSearchId($searchQuery) {
+        return self::generateIdentifier($searchQuery);
+    }
+    
+    private function recordSearchAnalytics($country, $search_id, $searchQuery) {
+        if (Redis::hexists('wayak:'.$country.':analytics:search:results', $search_id)) {
+            Redis::hincrby('wayak:'.$country.':analytics:search:results', $search_id, 1);
+        } else {
+            Redis::hset('wayak:'.$country.':analytics:search:terms', $search_id, $searchQuery);
+            Redis::hset('wayak:'.$country.':analytics:search:results', $search_id, 1);
+        }
+    }
+    
+    private function prepareTemplates($search_result, $language_code) {
+        $templates = [];
+        foreach ($search_result as $template) {
+            $template->preview_image = App::environment() == 'local'
+                ? asset('design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["carousel"])
+                : Storage::disk('s3')->url('design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["carousel"]);
+            $templates[] = $template;
+        }
+        return $templates;
+    }
+    
 
     public function sitemap($country){
         
