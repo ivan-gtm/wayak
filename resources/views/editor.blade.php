@@ -115,7 +115,7 @@
                                 @if( $user_role == 'administrator' )
                                     <li>
                                         <a href="#" id="newtemplate" title="newtemplate">
-                                            Nuevo
+                                            New
                                         </a>
                                     </li>
                                     <li>
@@ -252,7 +252,7 @@
                         @if( $demo_as_id > 0 )
                             <ul class="nav navbar-nav navbar-right am-icons-nav">
                                 <li style="top:20px; color:#333;font-weight: bold;">
-                                    Estas en una version demo. No seras capaz de guardar los cambios o descargar la imagen.
+                                    You are in a demo version. You will not be able to save the changes or download the image.
                                 </li>
                             </ul>
                         @endif

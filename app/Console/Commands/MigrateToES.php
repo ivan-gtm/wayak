@@ -41,11 +41,46 @@ class MigrateToES extends Command
      */
     public function handle()
     {
-        echo "Hola";
-        $response = self::searchAll();
-        print_r( json_decode($response) );
-        exit;
+        // echo "Hola";
+        // $response = self::searchAll();
+        // print_r( json_decode($response) );
+        // exit;
+        self::addMetadata();
+        return 0;
+    }
 
+    function addMetadata(){
+        $templates = Template::all();
+        foreach($templates as $mongo_template) {
+
+            print_r( "\n" );
+            print_r( "\n" );
+            // print_r( "\n" );
+            print_r( $mongo_template->_id);
+            
+            // $template_id = $mongo_template->_id;
+            // $template_body = json_decode( $mongo_template ) ;
+            // unset($template_body->_id);
+            // $json_body = json_encode($template_body);
+            // self::createProduct($template_id, $json_body);
+            
+            // $template = Template::find( $template_id );
+            
+            $mongo_template->update(
+                [
+                    'prices' => [
+                        'original_price' => 100,
+                        'price' => 10,
+                        'discount_percent' => 90
+                    ],
+                    'sales' => rand(1000,3000),
+                    'stars' => rand(3,5),
+                    'in_sale' => 1
+                ]);
+        }
+    }
+    
+    function migrateAllProductsToES(){
         $templates = Template::all();
         foreach($templates as $mongo_template) {
 
@@ -61,15 +96,13 @@ class MigrateToES extends Command
             $json_body = json_encode($template_body);
             self::createProduct($template_id, $json_body);
         }
-        
-        return 0;
     }
 
     function createProduct($template_id, $template_body){
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-        CURLOPT_URL => 'https://search-ccp-prod-ut5vyvxnhpwlss6p3yft3okcrm.us-west-2.es.amazonaws.com/wy/_doc/'.$template_id,
+        CURLOPT_URL => 'https://search-ccp-prod-ut5vyvxnhpwlss6p3yft3okcrm.us-west-2.es.amazonaws.com/wayak_templates/_doc/'.$template_id,
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_ENCODING => '',
         CURLOPT_MAXREDIRS => 10,
@@ -93,7 +126,7 @@ class MigrateToES extends Command
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-        CURLOPT_URL => 'https://search-ccp-prod-ut5vyvxnhpwlss6p3yft3okcrm.us-west-2.es.amazonaws.com/wy/_search',
+        CURLOPT_URL => 'https://search-ccp-prod-ut5vyvxnhpwlss6p3yft3okcrm.us-west-2.es.amazonaws.com/wayak_templates/_search',
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_ENCODING => '',
         CURLOPT_MAXREDIRS => 10,

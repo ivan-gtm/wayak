@@ -352,6 +352,9 @@ class AdminController extends Controller
 
         $language_code = self::getCountryLanguage($country);
         $current_page = 1;
+        
+        $redis_key = 'wayak:'.$country.':config:sales';
+        $active_campaign = Redis::hgetall($redis_key);
 
         if( isset($request->page) ) {
             $current_page = $request->page;
@@ -414,10 +417,14 @@ class AdminController extends Controller
         // print_r($templates);
         // exit;
 
-        return view('admin.sales_manager', [
+        return view('admin.templates', [
+            'templates' => $templates,
+            'current_page' => $current_page,
+            'total_pages' => $total_pages,
             // 'templates' => $templates,
             // 'current_page' => $current_page,
             // 'total_pages' => $total_pages,
+            'active_campaign' => $active_campaign,
             'language_code' => $language_code,
             'country' => $country
         ]);
@@ -649,7 +656,7 @@ class AdminController extends Controller
             // echo "<pre>";
             // print_r( $query_title_recommendations );
             // exit;
-
+            $tmp_titles = [];
             foreach ($title_recommendations as $titles) {
                 $tmp_titles[] = ucwords($titles->title);
                 $tmp_titles[] = ucwords($titles->title_2);
@@ -2925,28 +2932,35 @@ class AdminController extends Controller
 
     function createEtsyProductThumbs( $template_id ){
         
-        $template = DB::table('thumbnails')
-                    ->select('template_id','filename','original_template_id')
-                    ->where('template_id','=', $template_id )
-                    ->where('language_code','=', 'en' )
-                    ->first();
+        // $template = DB::table('thumbnails')
+        //             ->select('template_id','filename','original_template_id')
+        //             ->where('template_id','=', $template_id )
+        //             ->where('language_code','=', 'en' )
+        //             ->first();
 
-        // $template_key = $template_id;
-        $app = 'green';
+        // // $template_key = $template_id;
+        // $app = 'green';
+        // $template_info['key'] = $template_id;
+        
+        // if( $app == 'crello' ){
+        //     $template_info['thumbnail']  = public_path( 'design/template/'.$template->template_id.'/thumbnails/'.$template->filename );
+        // } else if( $app == 'templett' ){
+        //     $template_info['thumbnail']  = public_path( 'design/template/'.$template->original_template_id.'/thumbnails/en/'.$template->filename );
+        // } else if( $app == 'placeit' OR $app == 'corjl' OR $app == 'green' ){
+        //     $template_info['thumbnail']  = public_path( 'design/template/'.$template->template_id.'/thumbnails/en/'.$template->filename );
+        // } else {
+        //     $template_info['thumbnail']  = public_path( 'design/template/'.$template->template_id.'/thumbnails/'.$template->filename );
+        // }
+
         $template_info['key'] = $template_id;
+        $template_info['thumbnail'] = public_path( 'product/new/preview.jpg' );
         
-        if( $app == 'crello' ){
-            $template_info['thumbnail']  = public_path( 'design/template/'.$template->template_id.'/thumbnails/'.$template->filename );
-        } else if( $app == 'templett' ){
-            $template_info['thumbnail']  = public_path( 'design/template/'.$template->original_template_id.'/thumbnails/en/'.$template->filename );
-        } else if( $app == 'placeit' OR $app == 'corjl' OR $app == 'green' ){
-            $template_info['thumbnail']  = public_path( 'design/template/'.$template->template_id.'/thumbnails/en/'.$template->filename );
-        } else {
-            $template_info['thumbnail']  = public_path( 'design/template/'.$template->template_id.'/thumbnails/'.$template->filename );
-        }
+        // echo "<pre>";
+        // print_r($template_info);
+        // exit;
+        // echo public_path( 'design/template/xxx/thumbnails/' );
         
-        
-        self::emptyFolder($template_id);
+        // self::emptyFolder($template_id);
 
         $preview_images = [];
         // 'etsy_store/canva_pdf/'
@@ -3375,11 +3389,21 @@ class AdminController extends Controller
 
             $preview_images = [];
             
+            // array_push($preview_images, self::processMockup($template_info,2) );
+            // array_push($preview_images, self::processMockup($template_info,31) );
+            // array_push($preview_images, self::processMockup($template_info,10) );
+            // array_push($preview_images, self::processMockup($template_info,6) );
+            // array_push($preview_images, self::processMockup($template_info,18) );
+
             array_push($preview_images, self::processMockup($template_info,2) );
             array_push($preview_images, self::processMockup($template_info,31) );
             array_push($preview_images, self::processMockup($template_info,10) );
             array_push($preview_images, self::processMockup($template_info,6) );
-            // array_push($preview_images, self::processMockup($template_info,18) );
+            array_push($preview_images, self::processMockup($template_info,5) );
+            array_push($preview_images, self::processMockup($template_info,12) );
+            array_push($preview_images, self::processMockup($template_info,14) );
+            array_push($preview_images, self::processMockup($template_info,15) );
+            array_push($preview_images, self::processMockup($template_info,16) );
             
             // echo "<pre>";
             // print_r($preview_images);
@@ -3575,9 +3599,9 @@ class AdminController extends Controller
         $overlay_img->rotate(0);
         $mockup_img->insert($overlay_img, 'top-left', 410, 357);
 
-        $mockup_img->resize(null, 547, function ($constraint) {
-            $constraint->aspectRatio();
-        });
+        // $mockup_img->resize(null, 547, function ($constraint) {
+        //     $constraint->aspectRatio();
+        // });
         
         $mercadolibre_preview_path = public_path( 'product/preview-images/'. $product_info['key'] .'/');
         $filename = 'preview_3_'.rand(111111,999999).'.jpg';
@@ -3587,7 +3611,7 @@ class AdminController extends Controller
 
         $url_path = asset( 'product/preview-images/'. $product_info['key'] .'/'.$filename);
 
-        // echo '<img src="'.asset( 'product/preview-images/'. $product_info['key'] .'/'.$filename ).'">';
+        echo '<img src="'.asset( 'product/preview-images/'. $product_info['key'] .'/'.$filename ).'">';
         // exit;
         return $url_path;
     }
@@ -3650,6 +3674,8 @@ class AdminController extends Controller
         @mkdir($mercadolibre_preview_path, 0777, true);
         $mockup_img->save( $preview_path );
         
+        echo '<img src="'.asset( 'product/preview-images/'. $product_info['key'] .'/'.$filename ).'">';
+
         return asset('mockups/final_thumbs.jpg');
     }
     
@@ -3672,9 +3698,9 @@ class AdminController extends Controller
         $mockup_img->insert($overlay_img, 'top-left', 122, 283);
         $mockup_img->insert($overlay_2_img, 'top-left', 990, 520);
 
-        $mockup_img->resize(null, 547, function ($constraint) {
-            $constraint->aspectRatio();
-        });
+        // $mockup_img->resize(null, 547, function ($constraint) {
+        //     $constraint->aspectRatio();
+        // });
 
         $filename = 'preview_2_'.rand(111111,999999).'.jpg';
         $mercadolibre_preview_path = public_path( 'product/preview-images/'. $product_info['key'] .'/');
@@ -3682,6 +3708,8 @@ class AdminController extends Controller
         $url_path = asset( 'product/preview-images/'. $product_info['key'] .'/'.$filename);
         @mkdir($mercadolibre_preview_path, 0777, true);
         $mockup_img->save( $preview_path );
+
+        echo '<img src="'.asset( 'product/preview-images/'. $product_info['key'] .'/'.$filename ).'">';
 
         return $url_path;
     }
@@ -3762,9 +3790,9 @@ class AdminController extends Controller
 
         $mockup_img->insert($overlay_img, 'top-left', 349, 303);
 
-        $mockup_img->resize(null, 547, function ($constraint) {
-            $constraint->aspectRatio();
-        });
+        // $mockup_img->resize(null, 547, function ($constraint) {
+        //     $constraint->aspectRatio();
+        // });
 
         $filename = 'preview_1_'.rand(111111,999999).'.jpg';
         $mercadolibre_preview_path = public_path( 'product/preview-images/'. $product_info['key'] .'/');
@@ -3772,6 +3800,8 @@ class AdminController extends Controller
         @mkdir($mercadolibre_preview_path, 0777, true);
         $mockup_img->save( $preview_path );
         $url_path = asset( 'product/preview-images/'. $product_info['key'] .'/'.$filename);
+        
+        echo '<img src="'.asset( 'product/preview-images/'. $product_info['key'] .'/'.$filename ).'">';
 
         return $url_path;
     }
@@ -3821,6 +3851,8 @@ class AdminController extends Controller
         $preview_path = $mercadolibre_preview_path.$filename;
         @mkdir($mercadolibre_preview_path, 0777, true);
         $mockup_img->save( $preview_path );
+
+        echo '<img src="'.asset( 'product/preview-images/'. $product_info['key'] .'/'.$filename ).'">';
         
         return asset('mockups/final_thumbs.jpg');
     }
@@ -3870,6 +3902,8 @@ class AdminController extends Controller
         $preview_path = $mercadolibre_preview_path.$filename;
         @mkdir($mercadolibre_preview_path, 0777, true);
         $mockup_img->save( $preview_path );
+
+        echo '<img src="'.asset( 'product/preview-images/'. $product_info['key'] .'/'.$filename ).'">';
         
         return asset('mockups/final_thumbs.jpg');
     }
@@ -3895,6 +3929,8 @@ class AdminController extends Controller
         $preview_path = $mercadolibre_preview_path.$filename;
         @mkdir($mercadolibre_preview_path, 0777, true);
         $mockup_img->save( $preview_path );
+
+        echo '<img src="'.asset( 'product/preview-images/'. $product_info['key'] .'/'.$filename ).'">';
         
         return asset('mockups/final_thumbs.jpg');
     }
@@ -3922,6 +3958,8 @@ class AdminController extends Controller
         $preview_path = $mercadolibre_preview_path.$filename;
         @mkdir($mercadolibre_preview_path, 0777, true);
         $mockup_img->save( $preview_path );
+
+        echo '<img src="'.asset( 'product/preview-images/'. $product_info['key'] .'/'.$filename ).'">';
         
         return asset('mockups/final_thumbs.jpg');
     }
@@ -3981,6 +4019,8 @@ class AdminController extends Controller
         @mkdir($mercadolibre_preview_path, 0777, true);
         $mockup_img->save( $preview_path );
         $url_path = asset( 'product/preview-images/'. $product_info['key'] .'/'.$filename);
+
+        echo '<img src="'.asset( 'product/preview-images/'. $product_info['key'] .'/'.$filename ).'">';
 
         return $url_path;
     }
