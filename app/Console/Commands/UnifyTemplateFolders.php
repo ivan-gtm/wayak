@@ -3,8 +3,9 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-// use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Redis;
 use Image;
 
 class UnifyTemplateFolders extends Command
@@ -44,223 +45,267 @@ class UnifyTemplateFolders extends Command
     }
 
 
-    function fixTemplateFolders(){
-        $templates = DB::select( DB::raw(
-            'SELECT
-                thumbnails.template_id,
-                thumbnails.filename
-            FROM
-                templates,
-                thumbnails 
-            WHERE
-                templates.template_id = thumbnails.template_id
-                AND templates.source = \'green\'
-                AND templates.template_id = \'x3ftnGC5YSu01dc\'
-            ORDER BY templates.id DESC
-            LIMIT 10') 
-            );
-
-        foreach ($templates as $template) {
-            $thumbnail_path = public_path('design/template/'.$template->template_id.'/thumbnails/en/'.$template->filename);
-            
-            print_r("\n\nPARSING >>".$template->template_id.' ->    '.$thumbnail_path."\n");
-            
-            if( !file_exists($thumbnail_path) ){
-                print_r("\n\nDOES NOT EXISTS\n");
-            }
-            
-            // $scan = scandir( $template_paths );
-            // foreach($scan as $folder) {
-            // }
-        }
-        exit;
-
-        $template_paths = public_path('design/template/');
-        $scan = scandir( $template_paths );
+    function fixTemplateFolders()
+    {
+        $local_path = public_path('assets-gallery');
+        $templates = Redis::keys('template:*:jsondata');
+        // $language = ;
         
-        foreach($scan as $folder) {
-            print_r("\n\nPARSING >>".$folder."\n");
-            exit;
-            
-            if( strlen($file_name) > 3 
-                && $file_name != '.DS_Store' 
-                && (
-                    strpos($file_name, ".png") > 0 
-                    OR strpos($file_name, ".jpg") > 0 
-                    OR strpos($file_name, ".jpeg") > 0 
-                    OR strpos($file_name, ".svg") > 0 
-                ) ) {
-
-                print_r("\t\t\n     ".$file_name);
-
-                $path_info = pathinfo($file_name); // dirname, filename, extension
-                $db_image = DB::table('images')
-                                ->select('id')
-                                ->where('template_id','=',$template->template_id)
-                                ->where('source', '=', $template->source)
-                                ->where('filename','=',$file_name)
-                                ->first();
+        $menu = [];
+        foreach($templates as $template_key) {
+            $template_key_components = [];
+            preg_match_all('/template:([0-9]+):jsondata+/', $template_key, $template_key_components);
+            if( isset($template_key_components[1][0]) ){
+                $original_product_key = $template_key_components[0][0];
+                $template_id = $template_key_components[1][0];
                 
-                if( isset( $db_image->id ) == false ){
+                $new_template_id = Str::random(10);
+
+                echo "\n";
+                echo "\n";
+                echo "\n";
+                print_r("original_product_key");
+                echo "\n";
+                print_r($original_product_key);
+                echo "\n";
+                echo "\n";
+                print_r("template_id");
+                echo "\n";
+                print_r($template_id);
+                
+                
+                $db_thumb_row = DB::table('thumbnails')
+                                        ->select('template_id','status')
+                                        ->where( 'original_template_id', '=', $template_id )
+                                        ->count();
+                
+                if( $db_thumb_row > 0 ){
+                    // $db_thumb = DB::table('thumbnails')
+                    //                     ->select('template_id','status')
+                    //                     ->where( 'original_template_id', '=', $template_id )
+                    //                     ->first();
+
+                    // $new_template_id = $db_thumb->template_id;
+                    // echo "\nSE VA QUEDAR";
+                    // echo "\n";
+                    // echo $new_template_id;
                     
-                    $canva_asset_id = self::generateRandString();
-                    $new_img_path = public_path('/instagram/assets/'.$canva_asset_id.'.'.$path_info['extension']);
-                    $new_thumb_path = public_path('/instagram/thumbs/'.$canva_asset_id.'.'.$path_info['extension']);
-                    $template_row = [
-                        'id' => null,
-                        'source' => $template->source,
-                        'template_id' => $template->template_id,
-                        'filename' => $file_name,
-                        'original_path' => $local_path.$file_name,
-                        'img_path' => $new_img_path,
-                        'thumb_path' => $new_thumb_path,
-                        'file_type' => $path_info['extension']
-                    ];
+                    self::updateTemplateIDOnDB($template_id, $new_template_id);
 
-                    // self::copyImage( $local_path.$file_name , $new_img_path);
-                    if( $path_info['extension'] == 'png' OR $path_info['extension'] == 'jpg' ){
-                        try {
-                            self::createThumb( $local_path.$file_name, $new_thumb_path);
-                        } catch (\Throwable $th) {
-                            // throw $th;
-                            $template_row['status'] = -1;
-                            // $imagePath = $local_path.$file_name;
-                            // $saveToDir = public_path('/instagram/thumbs/');
-                            // $imageName = $canva_asset_id.'.'.$path_info['extension'];
-                            
-                            // list($width_orig, $height_orig) = getimagesize( $imagePath );
-                            // $max_w = 500;
-                            // $max_h = (round((100*500)/$width_orig)/100)*$height_orig;
-                            
-                            // echo "\n";
-                            // echo "\n";
-                            // print_r( $saveToDir );
-                            // echo "\n";
-                            // print_r( $max_h );
-                            // echo "\n";
-                            // print_r($width_orig);
-                            // echo "\n";
-                            // print_r($height_orig);
-                            // echo "\n";
-                            // echo "\n";
+                } else {
+                    echo "\nSE VA INSERTAR NUEVO ROW";
+                    
+                    $parent_template_id = null;
+                    $template_info['template_id'] = $new_template_id;
+                    $template_info['title'] = 'Template '.$new_template_id;
+                    $template_info['filename'] = $new_template_id.'_thumbnail.png';
+                    $template_info['dimentions'] = null;
+                    $file_name = null;
+                    $dimentions = null;
+                    $templates_name = null;
+                    $fk_etsy_template_id = null;
 
-                            // try {
-                            //     self::saveThumbnail( $saveToDir, $imagePath, $imageName, $max_w, $max_h);
-                            // } catch (\Throwable $th) {
-                            //     print_r($th);
-                            //     exit;
-                            // }
-                            // exit;
-                        }
-                    }
+                    $width = null;
+                    $height = null;
+                    $measureUnits = null;
+                    $fk_etsy_template = DB::table('tmp_etsy_metadata')
+                                                    ->select('id','templett_url')
+                                                    ->where('templett_url', 'like', '%'.$template_id.'%')
+                                                    ->first();
+                    if( isset($fk_etsy_template->id) ){
+                        $fk_etsy_template_id = $fk_etsy_template->id;
+                    } 
+                    $parent_template_id = ( $parent_template_id == null ) ? $new_template_id : $parent_template_id;
 
-                    DB::table('images')->insert($template_row);
+                    self::registerThumbOnDB($new_template_id, $templates_name, $file_name, $dimentions, $template_id);
+                    self::registerTemplateOnDB($new_template_id, $template_id, $templates_name, $fk_etsy_template_id, $parent_template_id, $width, $height, $measureUnits);
                 }
+
+                self::updateREDISKeyname($template_id, $new_template_id);
+                // self::updateAssetsFolder($template_id, $new_template_id);
+
             }
+            
+        }
+        
+    }
+    
+
+    function updateTemplateIDOnDB($template_id, $new_template_id){
+        // $db_templates = DB::table('thumbnails')
+        //                                 ->select('template_id','status')
+        //                                 ->where( 'template_id', '=', $new_template_id )
+        //                                 ->first();
+        // $db_thumbnails = DB::table('thumbnails')
+        //                                 ->select('template_id','status')
+        //                                 ->where( 'template_id', '=', $new_template_id )
+        //                                 ->first();
+                                        
+        // if( !isset($db_templates->template_id) ){
+            DB::table('templates')
+                    ->where('template_id', $template_id)
+                    ->update(['template_id' => $new_template_id]);
+        // }
+        
+        // if( !isset($db_thumbnails->template_id) ){
+            DB::table('thumbnails')
+                    ->where('template_id', $template_id)
+                    ->update(['template_id' => $new_template_id]);
+        // }
+    }
+
+    function updateAssetsFolder($template_id, $new_template_id){
+
+        $source = public_path('design/template/'.$template_id);
+        $destination = public_path('design/template/'.$new_template_id);
+        // $production = public_path('design/production/template/'.$new_template_id);
+        // $backup = public_path('design/backup/template/'.$template_id);
+        
+        print_r("\n");
+        print_r($source);
+        print_r("\n");
+        print_r($destination);
+        print_r("\n");
+        
+
+        // Backup
+        // self::recurseCopy($source, $backup);
+        // // Production
+        // self::recurseCopy($destination, $production);
+
+        // Assets rename folder
+        self::recurseCopy($source, $destination);
+        
+
+        self::deleteFiles($source);
+                    
+    }
+
+    function recurseCopy($src,$dst, $childFolder='') {
+
+        if(@opendir($src)){
+
+            $dir = opendir($src); 
+            @mkdir($dst);
+            if ($childFolder!='') {
+                @mkdir($dst.'/'.$childFolder);
+        
+                while(false !== ( $file = readdir($dir)) ) { 
+                    if (( $file != '.' ) && ( $file != '..' )) { 
+                        if ( is_dir($src . '/' . $file) ) { 
+                            $this->recurseCopy($src . '/' . $file,$dst.'/'.$childFolder . '/' . $file); 
+                        } 
+                        else { 
+                            copy($src . '/' . $file, $dst.'/'.$childFolder . '/' . $file); 
+                        }  
+                    } 
+                }
+            }else{
+                    // return $cc; 
+                while(false !== ( $file = readdir($dir)) ) { 
+                    if (( $file != '.' ) && ( $file != '..' )) { 
+                        if ( is_dir($src . '/' . $file) ) { 
+                            $this->recurseCopy($src . '/' . $file,$dst . '/' . $file); 
+                        } 
+                        else { 
+                            copy($src . '/' . $file, $dst . '/' . $file); 
+                        }  
+                    } 
+                } 
+            }
+            
+            closedir($dir); 
         }
     }
     
-    function saveThumbnail($saveToDir, $imagePath, $imageName, $max_x, $max_y) {
-        preg_match("'^(.*)\.(gif|jpe?g|png)$'i", $imageName, $ext);
-        switch (strtolower($ext[2])) {
-            case 'jpg' :
-            case 'jpeg': $im   = imagecreatefromjpeg ($imagePath);
-                         break;
-            case 'gif' : $im   = imagecreatefromgif  ($imagePath);
-                         break;
-            case 'png' : $im   = imagecreatefrompng  ($imagePath);
-                         break;
-            default    : $stop = true;
-                         break;
-        }
-       
-        if (!isset($stop)) {
-            $x = imagesx($im);
-            $y = imagesy($im);
-       
-            if (($max_x/$max_y) < ($x/$y)) {
-                $save = imagecreatetruecolor($x/($x/$max_x), $y/($x/$max_x));
+    function deleteFiles($dirname) { 
+        
+        if (is_dir($dirname)){
+            $dir_handle = opendir($dirname);
+            if (!$dir_handle)
+                return false;
+            while($file = readdir($dir_handle)) {
+                if ($file != "." && $file != "..") {
+                        if (!is_dir($dirname."/".$file))
+                            unlink($dirname."/".$file);
+                        else
+                            self::deleteFiles($dirname.'/'.$file);
+                }
             }
-            else {
-                $save = imagecreatetruecolor($x/($y/$max_y), $y/($y/$max_y));
-            }
-            imagecopyresized($save, $im, 0, 0, 0, 0, imagesx($save), imagesy($save), $x, $y);
-           
-            imagegif($save, "{$saveToDir}{$ext[1]}.gif");
-            imagedestroy($im);
-            imagedestroy($save);
+            closedir($dir_handle);
+            rmdir($dirname);
+            return true;
         }
-    }
-
-    function generateRandString( $length = 15 ) {
-		$permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-		return substr(str_shuffle($permitted_chars), 0, $length);
-	}
-
-    function createThumb($old_path, $new_path){
-        // print_r();
-
-        $path = pathinfo($new_path); // dirname, filename, extension
-        
-        if (!file_exists($path['dirname'])) {
-            @mkdir($path['dirname'], 0777, true);
-        }
-
-        $mockup_img_path = $old_path;
-        
-        // create new Intervention Image
-        $mockup_img = Image::make($mockup_img_path);
-        $mockup_img->resize(500, null, function ($constraint) {
-            $constraint->aspectRatio();
-        });
-
-        $mockup_img->save( $new_path );
+        return false;
 
     }
 
-    function copyImage($old_path, $new_path){
-        $path = pathinfo($new_path); // dirname, filename, extension
+    function updateREDISKeyname($template_id, $new_template_id){
         
-        if (!file_exists($path['dirname'])) {
-            @mkdir($path['dirname'], 0777, true);
-        }   
-        if (!copy($old_path,$new_path)) {
-            echo "copy failed \n";
+        $template_key = 'template:'.$template_id.':jsondata';
+        $new_template_key = 'template:en:'.$new_template_id.':jsondata';
+
+        if( Redis::exists($template_key)) {
+            // print_r('RENAMING REDIS KEY...');
+            // print_r("\n");
+            // print_r('OLD KEY >>'. $template_key);
+            // print_r("\n");
+            // print_r('NEW KEY >>'. $new_template_key);
+            // print_r("\n");
+            
+            Redis::rename( $template_key, $new_template_key);
+            Redis::set( $new_template_key, str_replace($template_id, $new_template_id, Redis::get( $new_template_key ) ) );
+            
+        }
+
+    }
+    
+    function registerTemplateOnDB($template_id, $original_template_id, $name, $fk_etsy_template_id,$parent_template_id, $width, $height, $measureUnits){
+        
+        $thumbnail_rows = DB::table('templates')
+                            ->where('original_template_id','=',$template_id)
+                            ->count();
+    
+        if( $thumbnail_rows == 0 ){
+            // echo "template_id";
+            // echo $template_id;
+            // exit;
+            // echo "\n\n\n\noriginal_template_id";
+            // exit;
+            DB::table('templates')->insert([
+                'id' => null,
+                'source' => 'templett',
+                'template_id' => $template_id,
+                'original_template_id' => $original_template_id,
+                // 'name' => htmlspecialchars_decode( $name ),
+                'fk_etsy_template_id' => $fk_etsy_template_id,
+                'status' => 0,
+                'parent_template_id' => $parent_template_id,
+                'width' => $width,
+                'height' => $height,
+                'metrics' => $measureUnits
+            ]);
         }
     }
 
-    function downloadImage($template_id, $file_name, $url){
-        $path = public_path('design/template/'.$template_id.'/assets');
-
-        @mkdir($path, 0777, true);
-
-        set_time_limit(0);
-
-        //This is the file where we save the    information
-        $fp = fopen ($path . '/'.$file_name, 'w+');
-
-        //Here is the file we are downloading, replace spaces with %20
-        $ch = curl_init(str_replace(" ","%20",$url));
-        curl_setopt($ch, CURLOPT_TIMEOUT, 50);
+    function registerThumbOnDB($template_id, $title, $filename,$dimentions, $product_key){
         
-        // write curl response to file
-        curl_setopt($ch, CURLOPT_FILE, $fp); 
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        
-        // get curl response
-        curl_exec($ch); 
-        curl_close($ch);
-        fclose($fp);
-    }
-
-    function getDirectorySize($path){
-        $bytestotal = 0;
-        $path = realpath($path);
-        if($path!==false && $path!='' && file_exists($path)){
-            foreach(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS)) as $object){
-                $bytestotal += $object->getSize();
-            }
+        $thumbnail_rows = DB::table('thumbnails')
+                            ->where('original_template_id','=',$template_id)
+                            ->count();
+    
+        if( $thumbnail_rows == 0 ){
+            DB::table('thumbnails')->insert([
+                'id' => null,
+                'template_id' => $template_id,
+                'title' => htmlspecialchars_decode( $title ),
+                'filename' => $filename,
+                'dimentions' => $dimentions,
+                'tmp_templates' => $template_id,
+                'language_code' => 'en',
+                'status' => 1,
+                'original_template_id' => $product_key
+            ]);
         }
-        return $bytestotal;
     }
 }
