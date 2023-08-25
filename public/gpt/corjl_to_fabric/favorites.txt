@@ -1,0 +1,17 @@
+Act as an expert in web development. You are creating a new functionalities for an ecom store to make users able to add products to a favorite list. Your boss stablish this requirements for your assigment:
+
+* For backend, code must be written using laravel as framework.
+* For frontend, JS code, must be written using native JS.
+* Consider you are persiting data using redis and "predis" library for backend and localstorage for frontend.
+
+* When users clicks over element with css selector "#favorite-items-content > div > button", current product will be added to their favorite list. Product will be identified by data attribute "template-id" on clicked element.
+* If user is not logged and adds a product to the list, product id will be stored on local storage. Once user logins, favorite list will be synchronized to backend sending clientId as parameter.
+* "clientId" is stored on localstorage.
+* If user is not logged and adds a product to the list, a popup alert will be displayed on the center botton of the page with following text "This favorite won't last! Sign in or register to save items for more than 7 days.", if user clicks on "Sing in" word, will be redirected to login page. Once is logged in, product will be added to the list on backend and user will be redirected to original page.
+* Favorite list must containg "last updated date". This info will not be shown to end user, its only for testing purposes.
+* For anonymous users that never logins, "favorite list" could only be stored for a maximum of 7 days.
+* User should be able to remove products from their favorites list. And changes will be applied on local and backend.
+* Products that compose list, must be unique.
+* If user is logged in, favorite list will be retrived from server and sync with local storage.
+
+Ensure, all requeriments are met. Write all code into a single file for frontend and another file for backend, no matter how big they are.

@@ -1,0 +1,41 @@
+Act as an expert in web development. You are creating a new functionalities for an ecom store to:
+* User registration
+* Login
+* Record the history of products visited by each customer. 
+
+To create this functionality, your boss establishes the following requirements:
+
+Frontend requirements:
+* Only native JavaScript is allowed.
+* You must create a function called "saveProductHistory" that saves the history of all the products that the customer has visited.
+* The "id" of each product will be stored in a "meta" type element within the "head" section of the product's HTML code.
+* The function must use "localstorage" to store the information.
+* Only unique product id's will be allowed.
+* Before user leaves web browser tab, an ajax call will be executed to save the history, AJAX call must be executed using the post method.
+* Every call must include "clientId" as request parameter. This id will be gotten from "getClientId" function.
+* Create a function to delete id's from user history, this function will persist results on localStorage and replicate data on serverside using an ajax call to backend.
+* "productId" will be stored once page is fully loaded.
+
+Backend requirements:
+* Code must be written using laravel as framework.  
+* Consider you are persiting data using redis and "predis" library.
+* Create a function to store user history, persisting data on redis from ajax request. You are free to propose data structure for redis keys that will handle user history.
+* Create a function to delete id's from user history, this function will receive "id" as parameter and persist updated user history on redis.
+* Create a function to retrive products from user history, using "clientId" to extract user data.
+
+Users registration and login requirements:
+* Create a function to identify users by unique ids.
+* User id's must be unique by client, composed by 6 alpha numeric charecters.
+* If user is new visitor, a new "clientId" will be assigned once page is fully loaded. "clientId" will be remainded every time user vists website.
+* If user register on website, existing "clientId" on localstorage will be used on backend to make user unique.
+* Registered users must persist using elasticsearch.
+* Create form for users registration.
+* Create form for users login.
+* Create code for email verification.
+* Sessions will be handled by laravel.
+* If user logins, product history must be syncronized to have same items on local and backend.
+* If user is recurring visitor as anonym user, "clientId" and product history must be remainded on local storage.
+* If user is recurring visitor as logged user, "clientId" and product history must be the same on local and backend.
+
+Ensure you meet all requirements, it's important, you specify all functions for front and backend.
+

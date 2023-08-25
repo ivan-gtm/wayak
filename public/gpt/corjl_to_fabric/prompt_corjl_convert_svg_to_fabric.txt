@@ -24,8 +24,8 @@ For example, this [collection] folder contains follwing files:
     svg_template_1_page_1.svg
     svg_template_1_page_2.svg
     svg_template_1_page_3.svg
-As result we expect 2 template redis keys, first [template] will contain 2 pages and second one will contain 3 pages.
-
+As result we expect 2 template redis keys, first [template] will contain 2 pages and second [template] will contain 3 pages.
+* Each [template] page must be parsed and included on final json.
 * Each new [template] redis key generated, will be stored on a redis key called "corj:converted_templates" its important to store collection name that belongs each template.
 
     

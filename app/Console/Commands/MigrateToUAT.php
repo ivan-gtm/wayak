@@ -13,7 +13,7 @@ class MigrateToUAT extends Command
      *
      * @var string
      */
-    protected $signature = 'wayak:db:redis-dev-to-uat';
+    protected $signature = 'wayak:redis:dev-to-uat';
 
     /**
      * The console command description.
@@ -51,11 +51,11 @@ class MigrateToUAT extends Command
         // self::migrateCategories();
         // self::migrateWayakConfig();
         
-        // self::migrateTemplatesFromProdToDev();
+        self::migrateTemplatesFromProdToDev();
         // self::migratePSDurls();
         
         // self::migrateLegacyKeys();
-        self::migrateCorjl();
+        // self::migrateCorjl();
         // self::corjlKeys();
     }
 
@@ -87,7 +87,7 @@ class MigrateToUAT extends Command
     }
 
     function migrateCorjl(){
-        $redis_src = Redis::connection('redispro');
+        $redis_src = Redis::connection('redisuat');
         $redis_dest = Redis::connection('default');
 
         $carousels = $redis_src->keys('green:template*');
@@ -244,26 +244,28 @@ class MigrateToUAT extends Command
     
     function migrateTemplatesFromProdToDev(){
         
-        $redis_src = Redis::connection('redispro');
+        $redis_src = Redis::connection('redisuat');
         $redis_dest = Redis::connection('default');
 
-        $templates = $redis_src->keys('template:en:*:jsondata');
+        $templates = $redis_src->keys('*corjl*');
 
         foreach ($templates as $template_key) {
             // print_r( $template );
             // print_r( $template_key );
             // exit;
-            if( $redis_dest->exists($template_key) == false ){
+
+            // if( $redis_dest->exists($template_key) == false ){
                 
                 // print_r( $template_key );
                 // print_r( $redis_src->get($template_key) );
                 // exit;
                 $redis_dest->set($template_key, $redis_src->get($template_key) );
-                print_r("Migrated key >> \n");
+                print_r("\nMigrated key >> ");
                 print_r($template_key);
-                usleep(500000);
+                $redis_src->del($template_key);
+                // usleep(500000);
                 // exit;
-            }
+            // }
         }
 
     }

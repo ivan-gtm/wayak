@@ -1,0 +1,93 @@
+# Act as php senior developer,using laravel,jenssegers/laravel-mongodb, predis and elasticsearch.
+
+Design and algorithm on laravel to get total documents by each category from mongodb using "laravel-mongodb", considering following JSON as document structure
+
+
+Design and algorithm to recommend categories user should like, based visited products.
+
+
+curl request for elasticsearch communication.
+
+Act as PHP developer. 
+
+
+
+
+
+Improve Search, filter by color. By Category, by format, by content type ( free, premium ).
+
+##### Acts as php senior developer. Design and algorithm to extract most visited categories
+You are using laravel, 
+{
+  "title": "Invitation Wedding Minimal Invite Invitations Rehearsal Dinner Minimalist Set Handwritten Night",
+  "slug": "invitation-modern-wedding-minimal-invite-invitations-rehearsal-dinner-minimalist-bhHGTdbRkZ",
+  "category": "partyInvitations",
+  "status": "completed",
+  "format": "Invitation",
+  "templateType": "regular",
+  "measureUnits": "in",
+  "width": "5",
+  "height": "7",
+  "group": null,
+  "language": "en",
+  "forSubscribers": false,
+  "hasAnimatedPreview": false,
+  "hasAnimatedScreenPreview": false,
+  "downloadUrl": null,
+  "name": null,
+  "folder": null,
+  "pixelWidth": null,
+  "pixelHeight": null,
+  "hash": null,
+  "studioName": "UnmeasuredEvent",
+  "template": [],
+  "driveFileIds": [],
+  "previewImageUrls": {
+    "carousel": "tfUde6_qGh7OV2l6p_carousel.jpg",
+    "large": "tfUde6_qGh7OV2l6p_large.jpg",
+    "product_preview": "tfUde6_qGh7OV2l6p_product_preview.jpg",
+    "thumbnail": "tfUde6_qGh7OV2l6p_thumbnail.jpg"
+  },
+  "mainCategory": "/invitations",
+  "categories": [
+    "/invitations",
+    "/invitations/dinner-party"
+  ],
+  "keywords": {
+    "en": [
+      "invitation"
+    ]
+  },
+  "industries": [],
+  "languages": [
+    "en"
+  ],
+  "localizedTitle": {
+    "en": "Invitation Wedding Minimal Invite Invitations Rehearsal Dinner Minimalist Set Handwritten Night"
+  },
+  "userState": {
+    "purchased": false,
+    "collected": false
+  },
+  "updated_at": {
+    "$date": "2023-03-30T18:20:18.343Z"
+  },
+  "created_at": {
+    "$date": "2021-04-23T14:30:17.914Z"
+  },
+  "price": 10.32,
+  "prices": {
+    "original_price": 100,
+    "price": 10,
+    "discount_percent": 90
+  },
+  "author": "wayak.app",
+  "sales": 1774,
+  "stars": 3,
+  "in_sale": 1
+}
+
+
+Acts as php senior developer. Design and algorithm to recommend categories based on products user has viewed using laravel, predis and elasticsearch. For elasticsearch communication you can only use curl requests.
+
+

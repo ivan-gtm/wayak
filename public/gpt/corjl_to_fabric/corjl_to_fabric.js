@@ -148,7 +148,7 @@ async function processCollections() {
             const templateKey = `template:${templateNum}:jsondata`;
             await setAsync(templateKey, JSON.stringify(pages));
             // Storing the collection name for each template in a hash map
-            await hsetAsync('corj:converted_templates', templateKey, collectionId);
+            await hsetAsync('corj:collections:converted_templates', templateKey, collectionId);
         }
     }
 
