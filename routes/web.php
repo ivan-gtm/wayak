@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminCodeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ContentController;
 use App\Http\Controllers\EditorController;
@@ -19,6 +20,7 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\TemplettScrapperController;
 use App\Http\Controllers\LinkedInController;
 use App\Http\Controllers\AdminSaleController;
+use App\Http\Controllers\CodeController;
 use App\Http\Controllers\ProductHistoryController;
 
 Route::get('/api/demo-url', [AdminController::class, 'getTemplateObjects']);
@@ -128,10 +130,10 @@ Route::get('/api/demo-url', [AdminController::class, 'getTemplateObjects']);
         Route::post('/admin/metadata/product', [AdminController::class, 'editProductName'])->name('admin.metadata.product');
 
     // CODES ADMINISTRATION
-        Route::get('/admin/{country}/manage-codes', [AdminController::class, 'manageCodes'])->name('admin.manageCodes');
-        Route::get('/admin/{country}/delete/code/{code}', [AdminController::class, 'deleteCode'])->name('code.delete');
-        Route::get('/admin/{country}/create/code/{code}', [AdminController::class, 'createCode'])->name('code.create');
-        Route::post('/admin/{country}/generate-code', [AdminController::class, 'generateCode'])->name('code.generate');
+        Route::get('/admin/{country}/codes/manage', [AdminCodeController::class, 'manageCodes'])->name('admin.code.manage');
+        Route::get('/admin/{country}/codes/create', [AdminCodeController::class, 'createCode'])->name('admin.code.create');
+        Route::get('/admin/{country}/codes/delete/{code}', [AdminCodeController::class, 'deleteCode'])->name('code.delete');
+        // Route::post('/admin/{country}/generate-code', [AdminController::class, 'generateCode'])->name('code.generate');
 
 
 // MARKETPLACE SELLING PRODUCTS
@@ -240,8 +242,9 @@ Route::get('/api/demo-url', [AdminController::class, 'getTemplateObjects']);
     Route::get('/', [ContentController::class, 'showHome']);
     
     Route::get('/{country}', [ContentController::class, 'showHomePerPage'])->name('user.homepage');
-    Route::get('/{country}/code', [EditorController::class, 'validateCode'])->name('code.validate.form');
-    Route::post('/{country}/code', [EditorController::class,'validatePurchaseCode'])->name('code.validate');
+    
+    Route::get('/{country}/code', [CodeController::class, 'validateCode'])->name('code.validate.form');
+    Route::post('/{country}/code', [CodeController::class,'redeemCode'])->name('code.validate');
 
     Route::get('/{country}/search', [ContentController::class, 'showSearchPage'])->name('user.search');
 

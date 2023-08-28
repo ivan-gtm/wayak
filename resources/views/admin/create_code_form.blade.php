@@ -11,8 +11,16 @@
     <title>Codigos</title>
   </head>
   <body>
-    
-    
+  
+
+    <h2 class="mb-4">Create Promotional Code</h2>
+
+    @if(session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
+
     <div class="container">
         <div class="row">
             <div class="col-12">
@@ -39,7 +47,7 @@
             
             @foreach ($codes as $item)
                 <div class="col-3">
-                    @if($item['value'])
+                    @if($item['code'])
                         <div class="card text-white bg-success mb-3">
                     @else
                         <div class="card bg-light mb-3">
@@ -47,7 +55,7 @@
                         <!-- <div class="card-header">Header</div> -->
                         <div class="card-body">
                             <h5 class="card-title text-center">
-                                @if($item['value'])
+                                @if( $item['code'] )
                                     Codigo Usado
                                 @else
                                     Codigo sin usar
@@ -57,10 +65,13 @@
                                 Some quick example text to build on the card title and make up the bulk of the card's content.
                             </p> -->
                             <h1 class="card-text text-center">{{ $item['code'] }}</h1>
-                            <h3 class="card-text text-center" style="font-size:15px">{{ $item['value'] }}</h3>
+                            <h3 class="card-text text-center" style="font-size:15px">{{ $item['code'] }}</h3>
+                            <h4 class="card-text text-center" style="font-size:15px">{{ $item['type'] }}</h4>
                             <img class="img-fluid" src="{{ $item['template_img'] }}">
                             <br>
-                            <a href="{{ route('code.delete', [ 'country' => $country, 'code' => $item['code'] ]) }}">Eliminar</a>
+                            <a href="{{ route('code.delete', [ 'country' => $country, 'code' => $item['code'] ]) }}">
+                                Eliminar
+                            </a>
                         </div>
                     </div>
                 </div>

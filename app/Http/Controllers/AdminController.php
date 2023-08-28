@@ -230,114 +230,6 @@ class AdminController extends Controller
         // $read
     }
 
-    function createCode($country, $template_key){
-        // echo $country;
-        // exit;
-        if( $country == 'mx' ){
-            $language_code = 'es';
-        } else {
-            $language_code = 'en';
-        }
-        
-        // Create a template replica, for final user.
-        
-        // echo "<pre>";
-        // print_r($template_key);
-        // print_r($template_temp_key);
-        
-        $purchase_code = rand(1111, 9999);
-
-        $original_template_key = $template_key;
-        $temporal_customer_key = 'temp:'.$purchase_code;
-        
-        Redis::set('temp:template:relation:temp:'.$purchase_code, $original_template_key);
-        Redis::expire('temp:template:relation:temp:'.$purchase_code, 2592000); // Codigo valido por 30 dias - 60*60*24*30 = 2592000
-        
-        Redis::set('template:'.$language_code.':'.$temporal_customer_key.':jsondata' ,Redis::get('template:'.$language_code.':'.$original_template_key.':jsondata'));
-        Redis::expire('template:'.$temporal_customer_key.':jsondata', 2592000); // Codigo valido por 30 dias - 60*60*24*30 = 2592000
-		
-        Redis::set('code:'.$purchase_code, $temporal_customer_key);
-        Redis::expire('code:'.$purchase_code, 2592000); // Codigo valido por 30 dias - 60*60*24*30 = 2592000
-
-		// return str_replace('http://localhost/design/','http://localhost:8000/design/', Redis::get($template_key) );
-        // exit;
-        // return view('generate_code');
-        // Redis::keys()
-
-        // return back()->with('success', 'Nuevo codigo generado con exito');
-        return redirect()->action(
-            [AdminController::class,'manageCodes'], [
-                'country' => $country
-            ]
-        );
-    }
-    
-    function manageCodes($country){
-
-        // $codes = Redis::keys('*crello*');
-        // $templates_to_delete = Redis::keys('*crello*');
-        // foreach ($templates_to_delete as $template_key) {
-            //     Redis::del( $template_key );
-            // }
-            
-            // echo "<pre>";
-            // print_r($templates_to_delete);
-            // exit;
-            
-            
-        $codes = Redis::keys('code:*');
-        $ejemplo = [];
-        $size_of_code = sizeof($codes);
-        
-        for ($i=0; $i < $size_of_code; $i++) { 
-            $ejemplo[ $i ]['code'] = str_replace('code:', null ,$codes[$i]);
-            $ejemplo[ $i ]['value'] = Redis::get( $codes[$i] );
-            
-            $template_key = Redis::get('temp:template:relation:temp:'.$ejemplo[ $i ]['code']);
-            $template_key = str_replace('template:',null, $template_key);
-            $template_key = str_replace(':jsondata',null, $template_key);
-            
-            // echo $template_key;
-            // exit;
-            // $purchase_code
-            
-            $thumb_info = DB::table('thumbnails')
-                    ->where('template_id','=', $template_key )
-                    ->first();
-
-            // echo "<pre>";
-            // print_r($template_key);
-            // print_r($thumb_info);
-            // exit;
-
-            if($thumb_info){
-                $thumb_img_url = asset( 'design/template/'. $template_key.'/thumbnails/'.$thumb_info->filename);
-            } else {
-                $thumb_img_url = null;
-            }
-            
-            $ejemplo[ $i ]['template_img'] = $thumb_img_url;
-        }
-
-        // echo "<pre>";
-        // print_r($ejemplo);
-        // exit;
-
-		return view('admin.generate_code', [
-            'country' => $country,
-            'codes' => $ejemplo
-        ]);
-    }
-    
-    function deleteCode($country, $code){
-        
-        Redis::del('code:'.$code);
-        
-        return redirect()->action(
-            [AdminController::class,'manageCodes'], ['country' => $country]
-        );
-    }
-
     function getCountryLanguage($country){
         if( $country == 'mx' ){
             $language_code = 'es';
@@ -455,8 +347,7 @@ class AdminController extends Controller
         // echo $date.'<br>'; 
         // echo "difference " . $interval->y . " years, " . $interval->m." months, ".$interval->d." days "; 
     }
-      
-
+    
     function salesManager(Request $request){
         $country = 'us';
         $language_code = self::getCountryLanguage($country);

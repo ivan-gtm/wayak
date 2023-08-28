@@ -40,8 +40,9 @@ class BotCreateAppMenu extends Command
      */
     public function handle()
     {
-        $categories = Redis::keys('wayak:en:categories:*');
         $country = 'us';
+        $language = 'en';
+        $categories = Redis::keys('wayak:en:categories:*');
         
         $menu = [];
         foreach($categories as $category) {

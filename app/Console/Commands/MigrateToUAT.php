@@ -244,10 +244,10 @@ class MigrateToUAT extends Command
     
     function migrateTemplatesFromProdToDev(){
         
-        $redis_src = Redis::connection('redisuat');
+        $redis_src = Redis::connection('redispro');
         $redis_dest = Redis::connection('default');
 
-        $templates = $redis_src->keys('*corjl*');
+        $templates = $redis_src->keys('*over*');
 
         foreach ($templates as $template_key) {
             // print_r( $template );

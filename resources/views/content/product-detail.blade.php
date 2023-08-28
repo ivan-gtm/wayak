@@ -136,20 +136,22 @@
                                                 <div data-action="follow-shop-listing-header" class=" wt-mb-xs-1">
                                                     <div class="wt-display-flex-xs wt-align-items-center">
                                                         <p class="wt-text-body-01">
-                                                            <a class="wt-text-link-no-underline" href="https://www.etsy.com/shop/paperandinkdesignco?ref=simple-shop-header-name&amp;listing_id=1199031261" aria-label="View more products from store owner {{ $template->studioName }}">
+                                                            <a class="wt-text-link-no-underline" aria-label="View more products from store owner {{ $template->studioName }}">
                                                                 <span aria-hidden="true">
                                                                     {{ $template->studioName }}
                                                                 </span>
                                                             </a>
                                                         </p>
 
-                                                        <div data-action="follow-shop-button-container" class="wt-display-flex-xs wt-align-items-center">
-                                                            <input type="hidden" class="id" name="user_id" value="16374284">
-                                                            <a href="https://www.etsy.com/signin?workflow=ZmF2b3JpdGVfdXNlcl9pZDoxNjM3NDI4NDoxNjc3NDQ0OTg2OjExN2I0MjY0MmNiNTMxMDUzN2ExYWUxZTM1MGEwMmI5&amp;use_follow_text=1&amp;from_page=https%3A%2F%2Fwww.etsy.com%2Flisting%2F1199031261%2Fmermaid-birthday-invitation-template%3Fga_order%3Dmost_relevant%26ga_search_type%3Dall%26ga_view_type%3Dgallery%26ga_search_query%3Dwatercolor%26ref%3Dsc_gallery-1-4%26sts%3D1%26plkey%3D9934cad6cf0b948daaa1e643ff8a63600ce14767%253A1199031261" rel="16374284" data-downtime-overlay-type="favorite" data-supplemental-state--use_follow_text="true" class="inline-overlay-trigger favorite-shop-action wt-btn wt-btn--small wt-btn--transparent follow-shop-button-listing-header-v3" aria-label="Follow shop" data-action="follow-shop-button" data-shop-id="9116151" data-source-name="listing_header" data-module-name="">
-                                                                <span class="etsy-icon wt-icon--smaller" data-not-following-icon=""><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                                        <div data-action="follow-shop-button-container" class="wt-display-flex-xs wt-align-items-center" data-template-id="{{ $template->_id }}">
+                                                            <!-- <input type="hidden" class="id" name="user_id" value="16374284"> -->
+                                                            <a rel="16374284" data-downtime-overlay-type="favorite" data-supplemental-state--use_follow_text="true" class="inline-overlay-trigger favorite-shop-action wt-btn wt-btn--small wt-btn--transparent follow-shop-button-listing-header-v3" aria-label="Follow shop" data-action="follow-shop-button" data-template-id="{{ $template->_id }}" data-shop-id="9116151" data-source-name="listing_header" data-module-name="">
+                                                                <span class="etsy-icon wt-icon--smaller" data-not-following-icon="" data-template-id="{{ $template->_id }}">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                                                                         <path d="M12,21C10.349,21,2,14.688,2,9,2,5.579,4.364,3,7.5,3A6.912,6.912,0,0,1,12,5.051,6.953,6.953,0,0,1,16.5,3C19.636,3,22,5.579,22,9,22,14.688,13.651,21,12,21ZM7.5,5C5.472,5,4,6.683,4,9c0,4.108,6.432,9.325,8,10,1.564-.657,8-5.832,8-10,0-2.317-1.472-4-3.5-4-1.979,0-3.7,2.105-3.721,2.127L11.991,8.1,11.216,7.12C11.186,7.083,9.5,5,7.5,5Z">
                                                                         </path>
-                                                                    </svg></span>
+                                                                    </svg>
+                                                                </span>
                                                                 <span class="etsy-icon wt-icon--smaller wt-display-none wt-text-brick" data-following-icon=""><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                                                                         <path d="M16.5,3A6.953,6.953,0,0,0,12,5.051,6.912,6.912,0,0,0,7.5,3C4.364,3,2,5.579,2,9c0,5.688,8.349,12,10,12S22,14.688,22,9C22,5.579,19.636,3,16.5,3Z">
                                                                         </path>
@@ -264,7 +266,8 @@
                                             <a class="js-item-header__cart-button e-btn--3d -color-primary -size-m" rel="nofollow" title="Add to Cart" href="{{ 
                                                             route('code.validate.form',[
                                                             'country' => $country,
-                                                            'template_key' => $template->_id
+                                                            'template_key' => $template->_id,
+                                                            'ref' => url()->full()
                                                         ] )
                                                     }}">
                                                 <span class="t-heading -size-m -color-light -margin-none">
@@ -519,6 +522,116 @@ document.addEventListener("DOMContentLoaded", function() {
 
     saveProductHistory();
 });
+
+</script>
+<script>
+    document.querySelector("#listing-page-cart > div:nth-child(4) > div > div.wt-display-flex-xs.wt-align-items-center > div > a").addEventListener('click', function(event) {
+        
+        console.log("#favorite-items-content > div > button");
+
+        const templateId = event.target.getAttribute('data-template-id');
+        const clientId = localStorage.getItem('clientId');
+        const loggedIn = (clientId && clientId !== "");
+
+        if (!loggedIn) {
+            const confirm = window.confirm("This favorite won't last! Sign in or register to save items for more than 7 days. Do you want to Sign in?");
+            if (confirm) {
+                localStorage.setItem('redirectTo', window.location.href);
+                localStorage.setItem('pendingFavorite', templateId);
+                window.location.href = "/login"; // Assuming the login route
+                return;
+            }
+        }
+
+        let favorites = JSON.parse(localStorage.getItem('favorites')) || {};
+        if (!favorites[templateId]) {
+            favorites[templateId] = new Date().toISOString();
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+
+            // Send to backend if user is logged in
+            if (loggedIn) {
+                fetch("/favorite/add", {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        "template-id": templateId,
+                        "clientId": clientId,
+                        "collectionName": "default" // TODO: Implement collection selection
+                    })
+                });
+            }
+        }
+    });
+
+    // Check for pending favorites after login
+    if (localStorage.getItem('redirectTo') && localStorage.getItem('pendingFavorite')) {
+        const templateId = localStorage.getItem('pendingFavorite');
+        const clientId = localStorage.getItem('clientId');
+        fetch("/favorite/add", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                "template-id": templateId,
+                "clientId": clientId,
+                "collectionName": "default"
+            })
+        }).then(() => {
+            window.location.href = localStorage.getItem('redirectTo');
+            localStorage.removeItem('redirectTo');
+            localStorage.removeItem('pendingFavorite');
+        });
+    }
+
+    // Assuming each favorite product is displayed in a div with a class 'favorite-item'
+    // and each 'remove' button within this div has a class 'remove-favorite-btn'
+    document.querySelectorAll(".favorite-item .remove-favorite-btn").forEach(function(btn) {
+        btn.addEventListener('click', function(event) {
+            const templateId = event.target.closest('.favorite-item').getAttribute('data-template-id');
+            const clientId = localStorage.getItem('clientId');
+            const loggedIn = (clientId && clientId !== "");
+
+            // Remove from local storage
+            let favorites = JSON.parse(localStorage.getItem('favorites')) || {};
+            if (favorites[templateId]) {
+                delete favorites[templateId];
+                localStorage.setItem('favorites', JSON.stringify(favorites));
+            }
+
+            // Send removal request to backend if user is logged in
+            if (loggedIn) {
+                fetch("/favorite/remove", {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        "template-id": templateId,
+                        "clientId": clientId,
+                        "collectionName": "default" // Assuming default collection for this example
+                    })
+                }).then(response => {
+                    if (response.status === 200) {
+                        // Successfully removed from backend
+                        // Remove the product from the display
+                        event.target.closest('.favorite-item').remove();
+                    } else {
+                        // Handle error, maybe show an alert or a message to the user
+                        alert("There was an issue removing the product from favorites.");
+                    }
+                });
+            } else {
+                // Remove the product from the display for non-logged in users
+                event.target.closest('.favorite-item').remove();
+            }
+        });
+    });
+
+
+// TODO: Implement other functionalities like managing collections, syncing with backend, etc.
 
 </script>
 <script src="https://www.paypal.com/sdk/js?client-id=sb&enable-funding=venmo&currency=USD" data-sdk-integration-source="button-factory"></script>

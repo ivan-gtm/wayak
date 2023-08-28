@@ -80,9 +80,10 @@
                       </div>
                       <div class="col-12">
                         <a href="{{ 
-                          route('code.create',[
+                          route('admin.code.create',[
                             'country' => $country,
-                            'code' => $product_info['key']
+                            'product_id' => $product_info['key'],
+                            'type' => 'product'
                           ])
                         }}">
                           GENERATE CODE

@@ -148,7 +148,7 @@
                                  </a>
                               </li>
                               <li class="side-nav-item mm-active">
-                                 <a href="{{ route('admin.manageCodes', ['country'=>'us']) }}" class="side-nav-link active">
+                                 <a href="{{ route('admin.code.create', ['country'=>'us']) }}" class="side-nav-link active">
                                     <i class="uil-home-alt"></i>
                                     <span> Promocode </span>
                                  </a>

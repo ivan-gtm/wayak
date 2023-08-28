@@ -8,56 +8,6 @@
 @section('css')
 <link rel="stylesheet" href="{{ asset('assets/css/menu.css') }}">
 <style>
-    /* :root{--bs-blue:#0d6efd;--bs-indigo:#6610f2;--bs-purple:#6f42c1;--bs-pink:#d63384;--bs-red:#dc3545;--bs-orange:#fd7e14;--bs-yellow:#ffc107;--bs-green:#198754;--bs-teal:#20c997;--bs-cyan:#0dcaf0;--bs-white:#fff;--bs-gray:#6c757d;--bs-gray-dark:#343a40;--bs-primary:#0d6efd;--bs-secondary:#6c757d;--bs-success:#198754;--bs-info:#0dcaf0;--bs-warning:#ffc107;--bs-danger:#dc3545;--bs-light:#f8f9fa;--bs-dark:#343a40;--bs-font-sans-serif:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";--bs-font-monospace:SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;--bs-gradient:linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));}
-            *,::after,::before{box-sizing:border-box;} */
-    body {
-        margin: 0;
-        font-size: 1rem;
-        font-weight: 400;
-        line-height: 1.5;
-        color: #212529;
-        background-color: #fff;
-        -webkit-text-size-adjust: 100%;
-        -webkit-tap-highlight-color: transparent;
-    }
-
-    h1,
-    h3 {
-        margin-top: 0;
-        margin-bottom: .5rem;
-        font-weight: 500;
-        line-height: 1.2;
-    }
-
-    h1 {
-        font-size: calc(1.375rem + 1.5vw);
-    }
-
-    @media (min-width:1200px) {
-        h1 {
-            font-size: 2.5rem;
-        }
-    }
-
-    h3 {
-        font-size: calc(1.3rem + .6vw);
-    }
-
-    @media (min-width:1200px) {
-        h3 {
-            font-size: 1.75rem;
-        }
-    }
-
-    a {
-        color: #0d6efd;
-        text-decoration: underline;
-    }
-
-    a:hover {
-        color: #024dbc;
-    }
-
     button {
         border-radius: 0;
     }
@@ -241,6 +191,21 @@
         position: relative;
         z-index: 1;
     }
+
+    #goBackBtn {
+        padding: 10px 20px;
+        background-color: #3498db;
+        color: #ffffff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    #goBackBtn:hover {
+        background-color: #2980b9;
+    }
+
 </style>
 @endsection
 
@@ -252,22 +217,26 @@
 
         <div id="form">
             <form method="post" action="{{ route('code.validate', [
-                        'country' => $country
+                        'country' => $country,
+                        'ref' => request('ref')
                     ]) }}">
                 <!-- CROSS Site Request Forgery Protection -->
                 @csrf
-                <input name="templates" type="hidden" value="{{ $templates }}" />
-                <input name="template_key" type="hidden" value="{{ $template_key }}" />
+                <input name="product_id" type="hidden" value="{{ $product_id }}" />
                 <input class="digit" name="digit1" type="text" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}" autofocus />
                 <input class="digit" name="digit2" type="text" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}" />
                 <input class="digit" name="digit3" type="text" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}" />
                 <input class="digit" name="digit4" type="text" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}" />
-
+                @if (isset($error) && strlen($error) > 0 )
+                    <div class="alert alert-danger">
+                        {{ $error }}
+                    </div>
+                @endif
                 <button type="submit" class="btn btn-primary btn-embossed">{{ __('code.verify_btn') }}</button>
-                <button type="button" class="btn btn-primary btn-embossed" onclick="resetForm()" style="margin-top: 8px;background-color: #d2d2d2;color: black;">{{ __('code.reset_btn') }}</button>
-                <!-- <a href="#" style="color: #b1b1b1;text-decoration: none;font-size: 15px;">
-                            Usar versión demo
-                        </a> -->
+                <button id="resetButton" type="button" class="btn btn-primary btn-embossed" style="margin-top: 8px;background-color: #d2d2d2;color: black;">{{ __('code.reset_btn') }}</button>
+                @if(request('ref') != '') 
+                    <a class="btn btn-primary btn-embossed" style="margin-top: 8px;background-color: #d2d2d2;color: black;" href="{{ request('ref') }}">Go Back</a>
+                @endif
             </form>
         </div>
 
@@ -276,96 +245,90 @@
                 <a href="#">Send code again</a><br />
                 <a href="#">Change phone number</a>
                 </div> -->
-        <!-- <img src="http://jira.moovooz.com/secure/attachment/10424/VmVyaWZpY2F0aW9uLnN2Zw==" alt="test" /> -->
     </div>
 </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-    'use strict';
+    document.addEventListener("DOMContentLoaded", () => {
+        'use strict';
 
-    var body = document.body;
+        const digitInputs = document.querySelectorAll('input.digit');
 
-    function resetForm(){
-        console.log("sdas");
-        var digitInputs = document.querySelectorAll('input.digit');
-        for (var i = 0; i < digitInputs.length; i++) {
-            digitInputs[i].value = "";
+        function resetForm() {
+            digitInputs.forEach(input => input.value = "");
+            document.querySelector('#form > form > input:nth-child(3)').focus();
         }
-        document.querySelector('#form > form > input:nth-child(3)').focus();
-    }
 
-    function goToNextInput(e) {
-        var key = e.which || e.keyCode,
-            t = e.target,
-            sib = t.nextElementSibling;
+        const resetButton = document.querySelector('#resetButton');
+        if (resetButton) {
+            resetButton.addEventListener('click', resetForm);
+        }
 
-        if (key != 9 && (key < 48 || key > 57)) {
+
+        function goToNextInput(e) {
+            const key = e.which || e.keyCode;
+            let target = e.target;
+            let sib = target.nextElementSibling;
+
+            // Handle backspace
+            if (key === 8 && target.value === '') {
+                let prevSib = target.previousElementSibling;
+                if (prevSib) {
+                    prevSib.value = '';
+                    prevSib.focus();
+                }
+                return;
+            }
+
+            if (key != 9 && (key < 48 || key > 57)) {
+                e.preventDefault();
+                return;
+            }
+
+            if (!sib) {
+                sib = document.querySelector('#form > form > button:nth-child(7)');
+                sib.focus();
+                sib.click();
+            } else {
+                sib.focus();
+            }
+        }
+
+        function onKeyDown(e) {
+            const key = e.which || e.keyCode;
+
+            if (key === 9 || (key >= 48 && key <= 57) || key === 8) {
+                return true;
+            }
+
             e.preventDefault();
             return false;
         }
 
-        if (key === 9) {
-            return true;
+        function onFocus(e) {
+            e.target.select();
         }
 
-        if (!sib) {
-            sib = document.querySelector('#form > form > button:nth-child(7)');
-            console.log("hello");
-            console.log(sib);
-            sib.focus();
-            sib.click();
-        } else {
-            sib.focus();
-        }
-    }
+        function checkAndSubmit() {
+            const allNumeric = Array.from(digitInputs).every(input => !isNaN(input.value) && input.value !== '');
 
-    function onKeyDown(e) {
-        var key = e.which || e.keyCode;
-
-        if (key === 9 || (key >= 48 && key <= 57)) {
-            return true;
+            if (allNumeric) {
+                document.querySelector('#form > form').submit();
+            }
         }
 
-        e.preventDefault();
-        return false;
-    }
-    
-    function onFocus(e) {
-        e.target.select();
-    }
-
-    function checkAndSubmit() {
-        var digitInputs = document.querySelectorAll('input.digit');
-        var allNumeric = Array.from(digitInputs).every(function(input) {
-            return !isNaN(input.value) && input.value !== '';
+        digitInputs.forEach(input => {
+            input.addEventListener('keyup', goToNextInput);
+            input.addEventListener('keyup', checkAndSubmit);
+            input.addEventListener('keydown', onKeyDown);
+            input.addEventListener('click', onFocus);
         });
 
-        if (allNumeric) {
-            document.querySelector('#form > form').submit();
-        }
-    }
+    });
 
-    body.addEventListener('keyup', function(e) {
-        if (e.target.tagName === 'INPUT') {
-            goToNextInput(e);
-            checkAndSubmit();
-        }
+    document.getElementById('goBackBtn').addEventListener('click', function() {
+        window.history.back();
     });
-    
-    body.addEventListener('keydown', function(e) {
-        if (e.target.tagName === 'INPUT') {
-            onKeyDown(e);
-        }
-    });
-    
-    body.addEventListener('click', function(e) {
-        if (e.target.tagName === 'INPUT') {
-            onFocus(e);
-        }
-    });
-});
-
 </script>
 @endsection
 
