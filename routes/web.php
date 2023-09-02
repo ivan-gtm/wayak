@@ -132,7 +132,7 @@ Route::get('/api/demo-url', [AdminController::class, 'getTemplateObjects']);
     // CODES ADMINISTRATION
         Route::get('/admin/{country}/codes/manage', [AdminCodeController::class, 'manageCodes'])->name('admin.code.manage');
         Route::get('/admin/{country}/codes/create', [AdminCodeController::class, 'createCode'])->name('admin.code.create');
-        Route::get('/admin/{country}/codes/delete/{code}', [AdminCodeController::class, 'deleteCode'])->name('code.delete');
+        Route::get('/admin/{country}/codes/delete/{code}', [AdminCodeController::class, 'deleteCode'])->name('admin.code.delete');
         // Route::post('/admin/{country}/generate-code', [AdminController::class, 'generateCode'])->name('code.generate');
 
 

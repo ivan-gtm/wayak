@@ -266,7 +266,7 @@
                                             <a class="js-item-header__cart-button e-btn--3d -color-primary -size-m" rel="nofollow" title="Add to Cart" href="{{ 
                                                             route('code.validate.form',[
                                                             'country' => $country,
-                                                            'template_key' => $template->_id,
+                                                            'product_id' => $template->_id,
                                                             'ref' => url()->full()
                                                         ] )
                                                     }}">

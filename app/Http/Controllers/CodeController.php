@@ -57,12 +57,11 @@ class CodeController extends Controller
         $menu = json_decode(Redis::get('wayak:' . $country . ':menu'));
         $four_digit_code = $request->digit1 . $request->digit2 . $request->digit3 . $request->digit4;
         $search_query = $request->input('searchQuery', '');
-        $product_id = $request->input('product_id', null);
         $user_id = $request->input('user_id', 123);;  // hardcoded for now
 
-        if (!$user_id) {
-            return $this->renderValidationCodeView($country, $sale, $menu, $search_query, 'User does not exist', $product_id);
-        }
+        $product_id = $request->input('product_id', null);
+        // echo $four_digit_code;
+        // exit;
 
         if (!Redis::exists('wayak:admin:template:code:' . $four_digit_code)) {
             return $this->renderValidationCodeView($country, $sale, $menu, $search_query, 'Code does not exist', $product_id);
@@ -71,16 +70,43 @@ class CodeController extends Controller
         if (Redis::exists('wayak:user:' . $user_id . ':code:' . $four_digit_code)) {
             return $this->renderValidationCodeView($country, $sale, $menu, $search_query, 'Code already redeemed', $product_id);
         }
-        
+
         $code_details = Redis::hgetall('wayak:admin:template:code:' . $four_digit_code);
-        
+
+        // if (!$user_id) {
+        //     return $this->renderValidationCodeView($country, $sale, $menu, $search_query, 'User does not exist', $product_id);
+        // }
+
+        if ($code_details['user_requirement'] == 'logged_id' && !Redis::exists('wayak:user:' . $user_id)) {
+            return $this->renderValidationCodeView($country, $sale, $menu, $search_query, 'User does not exist', $product_id);
+        }
+
+        if ($code_details['number_of_redeemers'] != '' && $code_details['number_of_redeemers'] == 0) {
+            return $this->renderValidationCodeView($country, $sale, $menu, $search_query, 'Code expired.', $product_id);
+        }
+
+        if ($code_details['expires_at'] != '' && \Carbon\Carbon::now()->gt(\Carbon\Carbon::createFromFormat('Y-m-d\TH:i', $code_details['expires_at']))) {
+            return $this->renderValidationCodeView($country, $sale, $menu, $search_query, 'Code expired.', $product_id);
+        }
+
         if ($code_details['type'] == 'product' && $product_id != null && $code_details['product_id'] != $product_id) {
             return $this->renderValidationCodeView($country, $sale, $menu, $search_query, 'Code for this product does not exists.', $product_id);
         }
 
-        if ($this->processTemplate($code_details['type'], $code_details['product_id'], $user_id, $four_digit_code, $country)) {
+        if ($code_details['type'] == 'category' && !Redis::exists('wayak:en:categories:' . $code_details['category_id'])) {
+            return $this->renderValidationCodeView($country, $sale, $menu, $search_query, 'Code for this product does not exists.', $product_id);
+        }
+
+        if ($code_details['type'] == 'product') {
+            $product_id = $code_details['product_id'];
+        }
+
+        // echo $product_id;
+        // exit;
+
+        if ($product_id != '' && $this->processTemplate($code_details['type'], $product_id, $user_id, $four_digit_code, $country)) {
             return view('editor', [
-                'templates' => $code_details['product_id'],
+                'templates' => $product_id,
                 'purchase_code' => $four_digit_code,
                 'language_code' => 'en',
                 'demo_as_id' => 0,
@@ -107,6 +133,7 @@ class CodeController extends Controller
     private function processTemplate($type, $product_id, $user_id, $four_digit_code, $country)
     {
         $templateTypes = ['product', 'category', 'any_product'];
+
         if (in_array($type, $templateTypes) && Template::where('_id', '=', $product_id)->exists()) {
             $temporal_template_key = $this->createTemporalUserCode($user_id, $four_digit_code);
 
@@ -116,8 +143,6 @@ class CodeController extends Controller
             $template->downloads++;
             $template->save();
 
-            // echo "true";
-            // exit;
             return true;
         }
 

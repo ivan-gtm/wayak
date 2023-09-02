@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 // use App\Models\Template;
+
+use App\Models\Template;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\DB;
@@ -28,87 +30,49 @@ class AdminCodeController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function createCode(Request $request)
+    public function createCode($country, Request $request)
     {
         $four_digit_code = rand(1000, 9999);
         $type = $request->input('type');
         $product_id = $request->input('product_id');
-        $category_id = ($type == 'product' || $type == 'any_product') ? null : $request->input('category_id');
+        $category_id = ($type == 'product' || $type == 'any_type') ? null : $request->input('category');
+        $number_of_redeemers = $request->input('numberOfRedeemers',null);
+        $user_requirement = $request->input('userRequirement',null);
+        $expires_at = $request->input('expiresAt',null);
 
         // Store the promotional code in Redis
         $promoKey = 'wayak:admin:template:code:' . $four_digit_code;
         Redis::hmset($promoKey, [
             'type' => $type,
             'product_id' => $product_id,
-            'category_id' => $category_id
+            'category_id' => $category_id, 
+            'number_of_redeemers' => $number_of_redeemers,
+            'user_requirement' => $user_requirement,
+            'expires_at' => $expires_at
         ]);
         Redis::expire($promoKey, self::EXPIRATION_TIME);  // Set an expiration for the promo code
 
-        // Optionally, send a response to the user, e.g., redirecting back with a success message
-        return redirect()->back()->with('success', 'Promotional code created successfully!');
+        // // Optionally, send a response to the user, e.g., redirecting back with a success message
+        // return redirect()->back()->with('success', 'Promotional code created successfully!');
+        $redis_codes = Redis::keys('wayak:admin:template:code:*');
+        $details = [];
+        $codes = [];
+        
+        if(sizeof($redis_codes) > 0){
+            foreach ($redis_codes as $redis_key_code) {
+    
+                $details = Redis::hgetall($redis_key_code);
+                $details['code'] = $this->getCode($redis_key_code);
+    
+                if ($details['type'] == 'product') {
+                    $details['template_img'] = $this->getThumbnailUrl($details['product_id']);
+                }
+                $codes[] = $details;
+            }
+        }
+        
+        return redirect()->route('admin.code.manage', ['country' => $country])->with('success', 'Code created successfully!');
     }
-
-
-    // function createCode($country, $template_key){
-
-    //     if( $country == 'mx' ){
-    //         $language_code = 'es';
-    //     } else {
-    //         $language_code = 'en';
-    //     }
-
-    //     // Create a template replica, for final user.
-
-    //     // echo "<pre>";
-    //     // print_r($template_key);
-    //     // print_r($template_temp_key);
-
-    //     // Access to certain product
-    //     // Access to any product on category
-    //     // Access to any product
-
-    //     // wayak:template:code:2344
-    //     // type:[product|category|any_product]
-    //     // product_id
-    //     // category_id
-    //     // user_id
-    //     // expires_at
-
-
-
-    //     // Creates user code
-    //     // Valida condiciones del codigo
-    //         // Si es de tipo producto, valida que el template sea el valido
-    //         // Si es de tipo category, valida que el template sea de la categoria valida.
-    //         // SI es de tipo da acceso a la plataforma
-    //     // wayak:user:{{user_id}}:code:2344
-
-    //     $purchase_code = rand(1111, 9999);
-
-    //     $original_template_key = $template_key;
-    //     $temporal_customer_key = 'temp:'.$purchase_code;
-
-    //     Redis::set('temp:template:relation:temp:'.$purchase_code, $original_template_key);
-    //     Redis::expire('temp:template:relation:temp:'.$purchase_code, 2592000); // Codigo valido por 30 dias - 60*60*24*30 = 2592000
-
-    //     Redis::set('template:'.$language_code.':'.$temporal_customer_key.':jsondata' ,Redis::get('template:'.$language_code.':'.$original_template_key.':jsondata'));
-    //     Redis::expire('template:'.$temporal_customer_key.':jsondata', 2592000); // Codigo valido por 30 dias - 60*60*24*30 = 2592000
-
-    //     Redis::set('code:'.$purchase_code, $temporal_customer_key);
-    //     Redis::expire('code:'.$purchase_code, 2592000); // Codigo valido por 30 dias - 60*60*24*30 = 2592000
-
-    // 	// return str_replace('http://localhost/design/','http://localhost:8000/design/', Redis::get($template_key) );
-    //     // exit;
-    //     // return view('generate_code');
-    //     // Redis::keys()
-
-    //     // return back()->with('success', 'Nuevo codigo generado con exito');
-    //     return redirect()->action(
-    //         [AdminController::class,'manageCodes'], [
-    //             'country' => $country
-    //         ]
-    //     );
-    // }
 
     function getCode($redis_key_code)
     {
@@ -126,26 +90,25 @@ class AdminCodeController extends Controller
 
         $redis_codes = Redis::keys('wayak:admin:template:code:*');
         $details = [];
+        $codes = [];
         
-        foreach ($redis_codes as $redis_key_code) {
-
-            $details = Redis::hgetall($redis_key_code);
-            $details['code'] = $this->getCode($redis_key_code);
-
-            if ($details['type'] == 'product') {
-                $details['template_img'] = $this->getThumbnailUrl($details['product_id']);
+        if(sizeof($redis_codes) > 0){
+            foreach ($redis_codes as $redis_key_code) {
+    
+                $details = Redis::hgetall($redis_key_code);
+                $details['code'] = $this->getCode($redis_key_code);
+    
+                if ($details['type'] == 'product') {
+                    $details['template_img'] = $this->getThumbnailUrl($details['product_id']);
+                }
+                $codes[] = $details;
             }
-            $codes[] = $details;
         }
-
-        /// debug $codes
-        // echo "<pre>";
-        // print_r($codes);
-        // exit;
 
         return view('admin.create_code_form', [
             'country' => $country,
-            'codes' => $codes
+            'codes' => $codes,
+            'categories' => $this->getTotalDocumentsByCategory()
         ]);
     }
 
@@ -159,6 +122,43 @@ class AdminCodeController extends Controller
             ? asset('design/template/' . $template_key . '/thumbnails/en/' . $thumbnail_info->filename)
             : null;
     }
+
+    function getTotalDocumentsByCategory()
+    {
+        // Group by category and count the total number of documents in each category
+        $categoryCounts = Template::raw(function($collection) {
+            return $collection->aggregate([
+                [
+                    '$group' => [
+                        '_id' => '$mainCategory', // Group by category field
+                        'total' => ['$sum' => 1] // Count the total number of documents
+                    ]
+                ],
+                [
+                    '$project' => [
+                        'category' => '$_id',
+                        'total' => 1,
+                        '_id' => 0
+                    ]
+                ]
+            ]);
+        });
+        $categories = [];
+        foreach ($categoryCounts as $category) {
+            // echo "<pre>";
+            // print_r(json_decode(Redis::get('wayak:en:categories:' . substr($category->category, 1))));
+            $category_obj = json_decode(Redis::get('wayak:en:categories:' . substr($category->category, 1)));
+            
+            $category{'name'} = $category_obj->name;
+            $category{'total'} = $category->total;
+            $category{'id'} = substr($category->category, 1);
+            $categories[] = $category;
+
+        }
+
+        return $categories;
+    }
+
 
     public function deleteCode($country, $four_digit_code)
     {

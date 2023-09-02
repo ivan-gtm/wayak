@@ -191,21 +191,6 @@
         position: relative;
         z-index: 1;
     }
-
-    #goBackBtn {
-        padding: 10px 20px;
-        background-color: #3498db;
-        color: #ffffff;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s;
-    }
-
-    #goBackBtn:hover {
-        background-color: #2980b9;
-    }
-
 </style>
 @endsection
 
@@ -240,11 +225,6 @@
             </form>
         </div>
 
-        <!-- <div>
-                Didn't receive the code?<br />
-                <a href="#">Send code again</a><br />
-                <a href="#">Change phone number</a>
-                </div> -->
     </div>
 </div>
 
@@ -326,9 +306,6 @@
 
     });
 
-    document.getElementById('goBackBtn').addEventListener('click', function() {
-        window.history.back();
-    });
 </script>
 @endsection
 

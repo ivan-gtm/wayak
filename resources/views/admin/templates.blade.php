@@ -54,7 +54,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
-                <h1 class="text-center">PLANTILLAS A LA VENTA</h1>
+                <h1 class="text-center">Templates</h1>
             </div>
             @foreach ($templates as $product_info )
                 <div class="col-6 col-sm-2 box">
@@ -76,14 +76,14 @@
                         <a href="{{ route('admin.edit.template', [
                             'language_code' => $language_code,
                             'template_key' => $product_info['key']
-                        ]) }}">EDITAR PLANTILLA</a>
+                        ]) }}">Edit Template</a>
                       </div>
                       <div class="col-12">
                         <a href="{{ 
-                          route('admin.code.create',[
+                          route('admin.code.manage',[
+                            'type' => 'product',
                             'country' => $country,
-                            'product_id' => $product_info['key'],
-                            'type' => 'product'
+                            'product_id' => $product_info['key']
                           ])
                         }}">
                           GENERATE CODE
