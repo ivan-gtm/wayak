@@ -8,36 +8,79 @@ use Illuminate\Support\Facades\Redis;
 
 class ProductHistoryController extends Controller
 {
-    // private $redis;
-
-    // public function __construct()
-    // {
-    //     $this->redis = new Redis();
-    // }
 
     public function syncProductHistory(Request $request)
     {
-        $clientId = $request->input('clientId');
-        $productHistory = $request->input('productHistory');
-        Redis::set('wayak:user:'.$clientId.':productHistory', json_encode($productHistory));
+        // Validate incoming request
+        $request->validate([
+            'customerId' => 'required|string',
+            'productHistory' => 'required|json'
+        ]);
+
+        $customerId = $request->input('customerId');
+        $incomingProductHistory = json_decode($request->input('productHistory'), true);
+
+        // Define the Redis key for storing the product history of this customer
+        $key = "product_history:{$customerId}";
+
+        // Update the existing product history
+        foreach ($incomingProductHistory as $productId => $data) {
+            $field = $productId;
+            $existingDataJSON = Redis::hget($key, $field);
+            $existingData = $existingDataJSON ? json_decode($existingDataJSON, true) : [];
+
+            if (!$existingData) {
+                // Store the updated product history in hash field
+                Redis::hset($key, $field, json_encode($data));
+            } elseif ($existingData && $existingData['lastVisited'] < $data['lastVisited']) {
+                // Increment the counter
+                $existingData['count'] += $data['count'];
+                Redis::hset($key, $field, json_encode($existingData));
+            }
+        }
+
+        return response()->json(['message' => 'Product history synced successfully']);
     }
 
     public function removeProductFromHistory(Request $request)
     {
-        $clientId = $request->input('clientId');
+        // Validate incoming request
+        $request->validate([
+            'customerId' => 'required|string',
+            'productId' => 'required|string'
+        ]);
+
+        $customerId = $request->input('customerId');
         $productId = $request->input('productId');
-        $productHistory = json_decode(Redis::get($clientId), true);
-        if ($productHistory) {
-            unset($productHistory[$productId]);
-            Redis::set('wayak:user:'.$clientId.':productHistory', json_encode($productHistory));
-        }
+
+        // Define the Redis key for storing the product history of this customer
+        $key = "product_history:{$customerId}";
+
+        // Remove the product from the hash
+        Redis::hdel($key, $productId);
+
+        return response()->json(['message' => 'Product removed from history successfully']);
     }
+
 
     public function getProductHistory(Request $request)
     {
-        $clientId = $request->input('clientId');
-        return response()->json([
-            'productHistory' => json_decode(Redis::get($clientId), true)
+        // Validate incoming request
+        $request->validate([
+            'customerId' => 'required|string',
         ]);
+
+        $customerId = $request->input('customerId');
+        $key = "product_history:{$customerId}";
+
+        // Retrieve all fields of the Redis hash as an associative array
+        $productHistory = Redis::hgetall($key);
+
+        // Decode each JSON string into an array
+        foreach ($productHistory as $productId => &$data) {
+            $data = json_decode($data, true);
+        }
+
+        return response()->json(['productHistory' => $productHistory]);
     }
 }

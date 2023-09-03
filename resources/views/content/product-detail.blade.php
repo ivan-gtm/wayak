@@ -7,12 +7,14 @@
     <meta name="description" content="{{ $template->width }}x{{ $template->height }}{{ $template->measureUnits }}. Customize this template, change the text and images as you wish. After that, preview and save your work, your design will be ready to print, share or download." />
     <meta name="title" content="{{ $template->title }} | Template | Design Online | WAYAK" />
     <meta name="keywords" content="{{ $template->title }}" />
-    <meta name="product-id" content="{{ $template->_id }}">
     <meta property="og:url" content="{{  URL::current() }}" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="{{ $template->title }} | Template | Design Online | WAYAK" />
     <meta property="og:description" content="Template ready for customization, get ready to download in minutes. Edit Online, choose between thousands of free design templates." />
     <meta property="og:image" content="{{ asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["product_preview"] ) }}" />
+    
+    <meta name="product-id" content="{{ $template->_id }}">
+    <meta name="customer-id" content="">
     <meta name="csrf-token" content="{{ csrf_token() }}" />
 @endsection
 
@@ -245,7 +247,7 @@
 
                                         <div class="purchase-form__button">
                                             <a class="js-item-header__cart-button e-btn--3d -color-primary -size-m" rel="nofollow" title="Add to Cart" href="{{ 
-                                                            route('editor.openTemplate',[
+                                                            route('editor.demoTemplate',[
                                                             'country' => $country,
                                                             'template_key' => $template->_id
                                                         ] )
@@ -450,77 +452,138 @@
 </div>
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-    const clientId = getClientId();
+    const customerId = getCustomerId();
     const metaElement = document.querySelector('meta[name="product-id"]');
     const productId = metaElement.getAttribute('content');
     const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
     const csrfToken = csrfTokenMeta ? csrfTokenMeta.getAttribute("content") : null;
 
-    function getClientId() {
-        let clientId = localStorage.getItem('clientId');
-        if (!clientId) {
-            clientId = Math.random().toString(36).substr(2, 6);
-            localStorage.setItem('clientId', clientId);
+    function getCustomerId() {
+        // Try to get customerId from the meta tag
+        let metaTag = document.querySelector('meta[name="customer-id"]');
+        let customerId = metaTag ? metaTag.getAttribute('content') : null;
+
+        // If meta tag is empty, try to get customerId from localStorage
+        if (!customerId) {
+            customerId = localStorage.getItem('customerId');
         }
-        return clientId;
+
+        // If customerId is still not found, generate a new one and store it in localStorage
+        if (!customerId) {
+            customerId = Math.random().toString(36).substr(2, 10);
+            localStorage.setItem('customerId', customerId);
+        }
+
+        return customerId;
     }
 
     function saveProductHistory() {
         let productHistory = localStorage.getItem('productHistory');
+        const currentTime = Date.now();
+        
         if (productHistory) {
             productHistory = JSON.parse(productHistory);
             if (productHistory[productId]) {
-                productHistory[productId]++;
+                productHistory[productId].count++;
+                productHistory[productId].lastVisited = currentTime;
             } else {
-                productHistory[productId] = 1;
+                productHistory[productId] = { count: 1, lastVisited: currentTime };
             }
         } else {
             productHistory = {};
-            productHistory[productId] = 1;
+            productHistory[productId] = { count: 1, lastVisited: currentTime };
         }
+        
         localStorage.setItem('productHistory', JSON.stringify(productHistory));
-        syncProductHistory(clientId, productHistory);
+        syncProductHistory(customerId, productHistory);
     }
 
-    function syncProductHistory(clientId, productHistory) {
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', '/syncProductHistory', true);
-        if (csrfToken) {
-            xhr.setRequestHeader("X-CSRF-TOKEN", csrfToken);
-        }
-        const formData = new FormData();
-        formData.append('clientId', clientId);
-        formData.append('productHistory', JSON.stringify(productHistory));
-        xhr.send(formData);
-    }
+    function shouldRunSyncProductHistory() {
+        const lastSynced = localStorage.getItem('lastSynced');
+        const currentTime = Date.now();
+        const timeSinceLastSync = currentTime - lastSynced; // Time in milliseconds
+        // 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+        const timeToNextSync = 600000 - timeSinceLastSync; // 600,000 milliseconds (10 minutes)
 
-    function deleteProductFromHistory(productId) {
-        let productHistory = localStorage.getItem('productHistory');
-        if (productHistory) {
-            productHistory = JSON.parse(productHistory);
-            delete productHistory[productId];
-            localStorage.setItem('productHistory', JSON.stringify(productHistory));
-            removeProductFromServer(clientId, productId);
+        if (!lastSynced || timeSinceLastSync > 600000) { // 600,000 milliseconds (10 minutes)
+            console.debug("Time for the next update.");
+            return true;
+        } else {
+            const remainingMinutes = Math.ceil(timeToNextSync / 60000); // Convert to minutes
+            console.debug(`Next update in ${remainingMinutes} minute(s).`);
+            return false;
         }
     }
 
-    function removeProductFromServer(clientId, productId) {
+    function syncProductHistory(customerId, productHistory) {
+        if (shouldRunSyncProductHistory()) {
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '/syncProductHistory', true);
+            if (csrfToken) {
+                xhr.setRequestHeader("X-CSRF-TOKEN", csrfToken);
+            }
+            const formData = new FormData();
+            formData.append('customerId', customerId);
+            formData.append('productHistory', JSON.stringify(productHistory));
+            
+            // Add an event listener for the 'load' event on the XMLHttpRequest object
+            xhr.addEventListener('load', function() {
+                if (xhr.status >= 200 && xhr.status < 400) {
+                    // Success: Clear the product history in localStorage
+                    localStorage.setItem('productHistory', JSON.stringify({}));
+                    // Upon successful sync, update 'lastSynced' in localStorage
+                    localStorage.setItem('lastSynced', Date.now());
+                } else {
+                    // Error: Handle it if necessary
+                    console.error('Sync failed');
+                }
+            });
+    
+            // Send the request
+            xhr.send(formData);
+        }
+    }
+
+    function removeProductFromServer(customerId, productId) {
         const xhr = new XMLHttpRequest();
         xhr.open('POST', '/removeProductFromHistory', true);
         if (csrfToken) {
             xhr.setRequestHeader("X-CSRF-TOKEN", csrfToken);
         }
         const formData = new FormData();
-        formData.append('clientId', clientId);
+        formData.append('customerId', customerId);
         formData.append('productId', productId);
+
+        // Add an event listener for the 'load' event on the XMLHttpRequest object
+        xhr.addEventListener('load', function() {
+            if (xhr.status >= 200 && xhr.status < 400) {
+                // Success: Remove the product from local storage
+                let productHistory = localStorage.getItem('productHistory');
+                if (productHistory) {
+                    productHistory = JSON.parse(productHistory);
+                    delete productHistory[productId];
+                    localStorage.setItem('productHistory', JSON.stringify(productHistory));
+                }
+            } else {
+                // Error: Handle it if necessary
+                console.error('Failed to remove product from server');
+            }
+        });
+
+        // Send the request
         xhr.send(formData);
+    }
+
+    function deleteProductFromHistory(productId) {
+        // Attempt to remove the product from the server first
+        removeProductFromServer(customerId, productId);
     }
 
     window.addEventListener('beforeunload', function() {
         saveProductHistory();
     });
 
-    saveProductHistory();
+    // saveProductHistory();
 });
 
 </script>
@@ -723,13 +786,13 @@ document.addEventListener("DOMContentLoaded", function() {
 
     @if($sale != null)
 
-    var date = '{{ $sale['sale_ends_at'] }}';
-    var remainingSeconds = remainingSecondsUntilUtcDate(date);
-    console.log('Remaining seconds until ' + date + ': ' + remainingSeconds);
+        var date = '{{ $sale['sale_ends_at'] }}';
+        var remainingSeconds = remainingSecondsUntilUtcDate(date);
+        console.log('Remaining seconds until ' + date + ': ' + remainingSeconds);
 
-    // const secondsRemaining = 3600; // 1 hour
-    const elementToUpdate = document.getElementById("countdown");
-    countdown(remainingSeconds, elementToUpdate);
+        // const secondsRemaining = 3600; // 1 hour
+        const elementToUpdate = document.getElementById("countdown");
+        countdown(remainingSeconds, elementToUpdate);
 
     @endif
 </script>

@@ -78,7 +78,6 @@ Route::get('/api/demo-url', [AdminController::class, 'getTemplateObjects']);
 // ADMIN
     // HOME
         Route::get('/admin', [AdminController::class, 'adminHome'])->name('admin.home');
-        
         // Route::get('/admin/orders', [AdminController::class, 'orders'])->name('admin.orders');
 
     // CATEGORIES
@@ -134,7 +133,6 @@ Route::get('/api/demo-url', [AdminController::class, 'getTemplateObjects']);
         Route::get('/admin/{country}/codes/create', [AdminCodeController::class, 'createCode'])->name('admin.code.create');
         Route::get('/admin/{country}/codes/delete/{code}', [AdminCodeController::class, 'deleteCode'])->name('admin.code.delete');
         // Route::post('/admin/{country}/generate-code', [AdminController::class, 'generateCode'])->name('code.generate');
-
 
 // MARKETPLACE SELLING PRODUCTS
     // PRODUCT
@@ -208,6 +206,7 @@ Route::get('/api/demo-url', [AdminController::class, 'getTemplateObjects']);
 
     Route::get('/{country}/editor/template/{template_key}', [EditorController::class, 'editTemplate'])->name('editor.editTemplate');
     Route::get('/{country}/template/open/{template_key}', [EditorController::class, 'openTemplate'])->name('editor.openTemplate');
+    Route::get('/{country}/template/demo/{template_key}', [EditorController::class, 'demoTemplate'])->name('editor.demoTemplate');
 
     Route::post('/editor/template/update', [EditorController::class, 'update']);
     Route::post('/editor/template/save-as', [EditorController::class, 'saveAs']);
@@ -269,8 +268,8 @@ Route::get('/api/demo-url', [AdminController::class, 'getTemplateObjects']);
     Route::get('/{country}/criar/{category}', [ContentController::class, 'showCategoryPage']);
     Route::get('/{country}/modelos/{category}', [ContentController::class, 'showCreatePage']);
 
-    Route::get('/{country}/demo/{modelo_mercado_pago}', [EditorController::class, 'demoTemplateEditor'])->name('plantilla.demo');
-    Route::get('/{country}/editar/plantilla/{template_key}', [EditorController::class, 'customerTemplate'])->name('plantilla.editar');
+    // Route::get('/{country}/demo/{modelo_mercado_pago}', [EditorController::class, 'demoTemplateEditor'])->name('plantilla.demo');
+    
 
 // SITEMAPS
     Route::get('/{country}/sitemap.xml', [ContentController::class, 'sitemap']);

@@ -41,26 +41,21 @@ class EditorController extends Controller
 		);
 	}
 
-	function demoTemplateEditor($country, $modelo_mercado_pago)
+	function demoTemplate($country, $template_key)
 	{
-		// echo $country;
-		// exit;
+		
 		if ($country == 'mx') {
 			$language_code = 'es';
 		} else {
 			$language_code = 'en';
 		}
 
-		// $template = Redis::get('wayak:mercadopago:modelo:'.$modelo_mercado_pago);
-		// print_r($template);
-		// exit;
-
 		$demo_as_id = Rand(100000, 999999);
 		$user_role = 'customer';
 		$purchase_code = 0;
 
 		return view('editor', [
-			'templates' => $template,
+			'templates' => $template_key,
 			'purchase_code' => $purchase_code,
 			'demo_as_id' => $demo_as_id,
 			'user_role' => $user_role,
