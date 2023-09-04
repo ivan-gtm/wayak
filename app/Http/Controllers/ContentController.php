@@ -91,17 +91,6 @@ class ContentController extends Controller
         }
     }
 
-    public function filterBySearchTermAndPrice(Request $request)
-    {
-        $searchTerm = $request->input('searchTerm');
-        $minPrice = $request->input('minPrice');
-        $maxPrice = $request->input('maxPrice');
-
-        $documents = (new Document())->filterBySearchTermAndPrice($searchTerm, $minPrice, $maxPrice);
-
-        return response()->json($documents);
-    }
-
     public function showCategoryPage($country, $cat_lvl_1_slug = null, $cat_lvl_2_slug = null, $cat_lvl_3_slug = null, Request $request){
         
         if( in_array($country, ['us', 'ca']) ){
@@ -423,33 +412,6 @@ class ContentController extends Controller
         // return  $bread_array;
     }
 
-    function generateIdentifier($searchTerm) {
-        $searchTerm = str_replace(' ','-',$searchTerm);
-
-        // Remove all non-alphanumeric characters from the search term
-        $cleanSearchTerm = preg_replace("/[^A-Za-z0-9-]/", "", $searchTerm);
-        
-        // Convert the cleaned search term to all lowercase
-        $identifier = strtolower($cleanSearchTerm);
-
-        return $identifier;
-    }
-
-    public function searchByTitle(Request $request)
-    {
-        $searchTerm = $request->input('searchTerm');
-        $documents = (new Template())->searchByTitle($searchTerm);
-        return response()->json($documents);
-    }
-
-    public function searchByTitleAndCategory(Request $request)
-    {
-        $searchTerm = $request->input('searchTerm');
-        $category = $request->input('category');
-        $documents = (new Template())->searchByTitleAndCategory($searchTerm, $category);
-        return response()->json($documents);
-    }
-
     public function getTotalDocumentsByCategory()
     {
         // Group by category and count the total number of documents in each category
@@ -477,86 +439,6 @@ class ContentController extends Controller
         print_r(json_encode($categoryCounts));
         exit;
     }
-
-    public function getFormatsTotals()
-    {
-        $formatCounts = (new Template())->getTotalDocumentsByFormat();
-        return response()->json($formatCounts);
-        // echo "<pre>";
-        // print_r(json_encode($formatCounts));
-        // exit;
-    }
-
-    public function showSearchPage($country, Request $request){
-        $language_code = 'en';
-        $search_query = $request->searchQuery ?? '';
-        $category = '';
-        $page = $request->page ?? 1;
-        $per_page = 100;
-        $skip = $per_page * ($page - 1);
-        
-        $search_id = $this->generateSearchId($request->searchQuery);
-        $this->recordSearchAnalytics($country, $search_id, $request->searchQuery);
-        
-        $category = null;
-        $minPrice = null;
-        $maxPrice = null;
-        
-        $result = (new Template())->filterDocuments($request->searchQuery, $category, $minPrice, $maxPrice,$request->sale, $skip, $per_page);
-        $total_documents = $result['total'];
-        $search_result = $result['documents'];
-    
-        $last_page = ceil($total_documents / $per_page);
-        $from_document = $skip + 1;
-        $to_document = $skip + $per_page;
-        $templates = $this->prepareTemplates($search_result, $language_code);
-    
-        $menu = json_decode(Redis::get('wayak:'.$country.':menu'));
-        $sale = Redis::hgetall('wayak:'.$country.':config:sales');
-        
-        return view('content.search',[
-            'country' => $country,
-            'language_code' => $language_code,
-            'menu' => $menu,
-            'sale' => $sale,
-            'search_query' => $search_query,
-            'category' => $category,
-            'current_page' => $page,
-            'first_page' => 1,
-            'pagination_begin' => max($page-4, 1),
-            'pagination_end' => min($page+4, $last_page),
-            'last_page' => $last_page,
-            'from_document' => $from_document,
-            'to_document' => $to_document,
-            'total_documents' => $total_documents,
-            'templates' => $templates
-        ]);
-    }
-    
-    private function generateSearchId($searchQuery) {
-        return self::generateIdentifier($searchQuery);
-    }
-    
-    private function recordSearchAnalytics($country, $search_id, $searchQuery) {
-        if (Redis::hexists('wayak:'.$country.':analytics:search:results', $search_id)) {
-            Redis::hincrby('wayak:'.$country.':analytics:search:results', $search_id, 1);
-        } else {
-            Redis::hset('wayak:'.$country.':analytics:search:terms', $search_id, $searchQuery);
-            Redis::hset('wayak:'.$country.':analytics:search:results', $search_id, 1);
-        }
-    }
-    
-    private function prepareTemplates($search_result, $language_code) {
-        $templates = [];
-        foreach ($search_result as $template) {
-            $template->preview_image = App::environment() == 'local'
-                ? asset('design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["carousel"])
-                : Storage::disk('s3')->url('design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["carousel"]);
-            $templates[] = $template;
-        }
-        return $templates;
-    }
-    
 
     public function sitemap($country){
         

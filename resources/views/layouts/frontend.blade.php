@@ -28,34 +28,34 @@
 	<body>
         <header>
             @if( \Route::currentRouteName() != "user.search" && $sale != null)
-            <div class="site-banner" data-v-f3f1b72a="" data-v-9440fe54="">
-                <p class="site-banner__content" data-v-f3f1b72a="">
-                    <span class="site-banner__text" data-v-f3f1b72a="">
-                        {{ $sale['site_banner_txt'] }}
-                    </span> 
-                    <a href="{{ route('user.search',['country'=>$country,'sale'=> 1, 'sort'=>'popular','utm_source'=>'banner']) }}"
-                        class="site-banner__link large-screen-hidden u-type-label-small" data-v-f3f1b72a="">
-                        {{ $sale['site_banner_btn'] }}
-                    </a> 
-                    <a href="{{ route('user.search',['country'=>$country,'sale'=> 1, 'sort'=>'popular','utm_source'=>'banner']) }}"
-                    class="mobile-hidden btn btn--secondary btn--small btn--animated" data-v-5e31f9cb=""
-                    data-v-f3f1b72a="">
-                        <span class="btn__inner" data-v-5e31f9cb="">
-                                    {{ $sale['site_banner_btn'] }}
+                <div class="site-banner" data-v-f3f1b72a="" data-v-9440fe54="">
+                    <p class="site-banner__content" data-v-f3f1b72a="">
+                        <span class="site-banner__text" data-v-f3f1b72a="">
+                            {{ $sale['site_banner_txt'] }}
+                        </span>
+                        <a href="{{ route('user.search',['country'=>$country,'sale'=> 1, 'sort'=>'popular','utm_source'=>'banner']) }}"
+                            class="site-banner__link large-screen-hidden u-type-label-small" data-v-f3f1b72a="">
+                            {{ $sale['site_banner_btn'] }}
+                        </a>
+                        <a href="{{ route('user.search',['country'=>$country,'sale'=> 1, 'sort'=>'popular','utm_source'=>'banner']) }}"
+                        class="mobile-hidden btn btn--secondary btn--small btn--animated" data-v-5e31f9cb=""
+                        data-v-f3f1b72a="">
+                            <span class="btn__inner" data-v-5e31f9cb="">
+                                {{ $sale['site_banner_btn'] }}
+                            </span>
+                        </a>
+                    </p> 
+                    <a data-test-close="" class="site-banner__close-button" data-v-f3f1b72a="">
+                        <span data-v-f3f1b72a="">
+                            <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"
+                                xmlns="http://www.w3.org/2000/svg" svg-inline="" role="presentation" focusable="false"
+                                tabindex="-1">
+                                <path d="M1.563 10.688l9.374-9.376M10.938 10.688L1.562 1.312" stroke="currentColor"
+                                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                            </svg>
                         </span>
                     </a>
-                </p> 
-                <a data-test-close="" class="site-banner__close-button" data-v-f3f1b72a="">
-                    <span data-v-f3f1b72a="">
-                        <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"
-                            xmlns="http://www.w3.org/2000/svg" svg-inline="" role="presentation" focusable="false"
-                            tabindex="-1">
-                            <path d="M1.563 10.688l9.374-9.376M10.938 10.688L1.562 1.312" stroke="currentColor"
-                                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                        </svg>
-                    </span>
-                </a>
-            </div>
+                </div>
             @endif
             <nav class="navbar -nomargin" id="nav">
                 <div class="logo-container">
@@ -128,6 +128,7 @@
                         name="nav-search-form" id="nav-search-form" method="GET" 
                         onclick="document.getElementById('nav-search-input').focus();" accept-charset="utf-8">
                         @csrf
+                        <input type="hidden" id="search-customer-id" name="customerId">
                         <label for="nav-search-input" class="_hidden">{{ __('menu.search_btn_label') }}</label>
                         <input class="search-input" name="searchQuery" type="text" id="nav-search-input" aria-label="{{ __('menu.search_btn_label') }}" placeholder="{{ __('menu.mobile_search_placeholder') }}" value="{{ $search_query }}" />
                         <i class="search-submit icon-search" onclick="document.forms['nav-search-form'].submit();">

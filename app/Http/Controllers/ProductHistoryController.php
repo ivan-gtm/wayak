@@ -21,7 +21,7 @@ class ProductHistoryController extends Controller
         $incomingProductHistory = json_decode($request->input('productHistory'), true);
 
         // Define the Redis key for storing the product history of this customer
-        $key = "product_history:{$customerId}";
+        $key = "wayak:user:{$customerId}:history:navigation";
 
         // Update the existing product history
         foreach ($incomingProductHistory as $productId => $data) {
@@ -54,7 +54,7 @@ class ProductHistoryController extends Controller
         $productId = $request->input('productId');
 
         // Define the Redis key for storing the product history of this customer
-        $key = "product_history:{$customerId}";
+        $key = "wayak:user:{$customerId}:history:navigation";
 
         // Remove the product from the hash
         Redis::hdel($key, $productId);
@@ -71,7 +71,7 @@ class ProductHistoryController extends Controller
         ]);
 
         $customerId = $request->input('customerId');
-        $key = "product_history:{$customerId}";
+        $key = "wayak:user:{$customerId}:history:navigation";
 
         // Retrieve all fields of the Redis hash as an associative array
         $productHistory = Redis::hgetall($key);

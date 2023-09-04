@@ -4,8 +4,13 @@ use App\Http\Controllers\AdminCodeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ContentController;
 use App\Http\Controllers\EditorController;
-use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CodeController;
+use App\Http\Controllers\ProductHistoryController;
+use App\Http\Controllers\SearchController;
+
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AdminSaleController;
 
 use App\Http\Controllers\greenController;
 use App\Http\Controllers\DesygnerController;
@@ -19,9 +24,6 @@ use App\Http\Controllers\PacktController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\TemplettScrapperController;
 use App\Http\Controllers\LinkedInController;
-use App\Http\Controllers\AdminSaleController;
-use App\Http\Controllers\CodeController;
-use App\Http\Controllers\ProductHistoryController;
 
 Route::get('/api/demo-url', [AdminController::class, 'getTemplateObjects']);
 
@@ -245,14 +247,15 @@ Route::get('/api/demo-url', [AdminController::class, 'getTemplateObjects']);
     Route::get('/{country}/code', [CodeController::class, 'validateCode'])->name('code.validate.form');
     Route::post('/{country}/code', [CodeController::class,'redeemCode'])->name('code.validate');
 
-    Route::get('/{country}/search', [ContentController::class, 'showSearchPage'])->name('user.search');
-
+    
     // Search
-    Route::get('/{country}/search/search-by-title', [ContentController::class,'searchByTitle']);
-    Route::get('/{country}/search/search-by-title-and-category', [ContentController::class,'searchByTitleAndCategory']);
-    Route::get('/{country}/search/count-by-format', [ContentController::class,'getFormatsTotals']);
-    Route::get('/{country}/search/filter-by-search-term-and-price', [ContentController::class,'filterBySearchTermAndPrice']);
+    Route::get('/{country}/search', [SearchController::class, 'showSearchPage'])->name('user.search');
+    Route::get('/{country}/search/search-by-title', [SearchController::class,'searchByTitle']);
+    Route::get('/{country}/search/search-by-title-and-category', [SearchController::class,'searchByTitleAndCategory']);
+    Route::get('/{country}/search/count-by-format', [SearchController::class,'getFormatsTotals']);
+    Route::get('/{country}/search/filter-by-search-term-and-price', [SearchController::class,'filterBySearchTermAndPrice']);
 
+    // Navigation by category
     Route::get('/{country}/templates/{cat_lvl_1}', [ContentController::class, 'showCategoryPage'])->name('showCategoryLevel1');
     Route::get('/{country}/templates/{cat_lvl_1}/{cat_lvl_2}', [ContentController::class, 'showCategoryPage'])->name('showCategoryLevel2');
     Route::get('/{country}/templates/{cat_lvl_1}/{cat_lvl_2}/{cat_lvl_3}', [ContentController::class, 'showCategoryPage'])->name('showCategoryLevel3');

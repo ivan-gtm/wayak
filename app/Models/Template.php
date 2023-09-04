@@ -53,7 +53,7 @@ class Template extends Model
 
     public function filterBySearchTermAndPrice($searchTerm, $minPrice, $maxPrice)
     {
-        $documents = Document::where('title', 'regex', new \MongoDB\BSON\Regex($searchTerm, 'i'))
+        $documents = Template::where('title', 'regex', new \MongoDB\BSON\Regex($searchTerm, 'i'))
             ->where('price', '>=', $minPrice)
             ->where('price', '<=', $maxPrice)
             ->get();
