@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Template;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\App;
+use phpDocumentor\Reflection\PseudoTypes\LowercaseString;
 
 class SearchController extends Controller
 {
@@ -27,19 +28,14 @@ class SearchController extends Controller
         $per_page = 100;
         $skip = $per_page * ($page - 1);
 
-        $search_id = $this->generateSearchId($searchTerm);
-        $this->saveGlobalSearchHistory($country, $search_id, $searchTerm);
-        $this->updateUserSearchHistory($customer_id, $search_id);
-
-        $result = (new Template())->filterDocuments($searchTerm, $category, $minPrice, $maxPrice, $productsInSale, $skip, $per_page);
+        $searchSlug = $this->generateSearchSlug($searchTerm);
+        $this->saveGlobalSearchHistory($country, $searchSlug, $searchTerm);
+        $this->updateUserSearchHistory($customer_id, $searchSlug);
+ 
+        $result = (new Template())->filterDocuments(strtolower($searchTerm), $category, $minPrice, $maxPrice, $productsInSale, $skip, $per_page);
         $total_documents = $result['total'];
         $search_result = $result['documents'];
-
-        // echo "<pre>";
-        // // print_r(json_encode($result));
-        // print_r($this->getRecommendedSearches($customer_id));
-        // exit;
-
+        
         $last_page = ceil($total_documents / $per_page);
         $from_document = $skip + 1;
         $to_document = $skip + $per_page;
@@ -108,8 +104,6 @@ class SearchController extends Controller
 
         return response()->json(['recommended_keywords' => array_keys($relatedKeywords)]);
     }
-
-
 
     public function updateUserSearchHistory($customerId, $searchTermId)
     {
@@ -181,17 +175,17 @@ class SearchController extends Controller
         return response()->json($documents);
     }
 
-    private function saveGlobalSearchHistory($country, $search_id, $searchQuery)
+    private function saveGlobalSearchHistory($country, $searchSlug, $searchQuery)
     {
-        if (Redis::hexists('wayak:' . $country . ':analytics:search:results', $search_id)) {
-            Redis::hincrby('wayak:' . $country . ':analytics:search:results', $search_id, 1);
+        if (Redis::hexists('wayak:' . $country . ':analytics:search:results', $searchSlug)) {
+            Redis::hincrby('wayak:' . $country . ':analytics:search:results', $searchSlug, 1);
         } else {
-            Redis::hset('wayak:' . $country . ':analytics:search:terms', $search_id, $searchQuery);
-            Redis::hset('wayak:' . $country . ':analytics:search:results', $search_id, 1);
+            Redis::hset('wayak:' . $country . ':analytics:search:terms', $searchSlug, $searchQuery);
+            Redis::hset('wayak:' . $country . ':analytics:search:results', $searchSlug, 1);
         }
     }
 
-    private function generateSearchId($searchQuery)
+    private function generateSearchSlug($searchQuery)
     {
         return self::generateIdentifier($searchQuery);
     }

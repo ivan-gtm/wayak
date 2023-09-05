@@ -63,36 +63,79 @@ class Template extends Model
 
     public function filterDocuments($searchTerm = null, $category = null, $minPrice = null, $maxPrice = null, $productsInSale = null, $skip = 0, $per_page = 100)
     {
-        $query = Template::query();
+        $tokens = $searchTerm !== null ? explode(' ', strtolower($searchTerm)) : [];
 
-        if ($searchTerm !== null) {
-            $tokens = explode(' ', $searchTerm);
-            $regexOrArray = [];
-            foreach ($tokens as $token) {
-                $regexOrArray[] = ['title' => ['$regex' => new \MongoDB\BSON\Regex($token, 'i')]];
-            }
-            $query->whereRaw(['$or' => $regexOrArray]);
-        }
+        $query = Template::raw(function ($collection) use ($tokens, $category, $minPrice, $maxPrice, $productsInSale, $skip, $per_page) {
     
+            $matchStage = [];
+    
+            if (!empty($tokens)) {
+                $regexOrArray = [];
+                foreach ($tokens as $token) {
+                    $regexOrArray[] = ['title' => ['$regex' => new \MongoDB\BSON\Regex(preg_quote($token), 'i')]];
+                }
+                $matchStage['$or'] = $regexOrArray;
+            }
+
+            if ($category !== null) {
+                $matchStage['category'] = $category;
+            }
+
+            if ($minPrice !== null) {
+                $matchStage['price']['$gte'] = $minPrice;
+            }
+
+            if ($maxPrice !== null) {
+                $matchStage['price']['$lte'] = $maxPrice;
+            }
+
+            if ($productsInSale !== null) {
+                $matchStage['in_sale'] = 1;
+            }
+
+            $pipeline = [
+                ['$match' => $matchStage],
+                ['$addFields' => [
+                    'matchCount' => [
+                        '$size' => [
+                            '$setIntersection' => [
+                                $tokens,
+                                ['$split' => [['$toLower' => '$title'], ' ']]
+                            ]
+                        ]
+                    ]
+                ]],
+                ['$sort' => ['matchCount' => -1, '_id' => 1]],
+                ['$skip' => $skip],
+                ['$limit' => $per_page]
+            ];
+    
+            return $collection->aggregate($pipeline)->toArray();
+        });
+
+        // Get the total count
+        $totalCountQuery = Template::query();
+        if (!empty($tokens)) {
+            foreach ($tokens as $token) {
+                $regex = new \MongoDB\BSON\Regex(preg_quote($token), 'i');
+                $totalCountQuery->orWhere('title', 'regex', $regex);
+            }
+        }
         if ($category !== null) {
-            $query->where('category', $category);
+            $totalCountQuery->where('category', $category);
         }
-
         if ($minPrice !== null) {
-            $query->where('price', '>=', $minPrice);
+            $totalCountQuery->where('price', '>=', $minPrice);
         }
-
         if ($maxPrice !== null) {
-            $query->where('price', '<=', $maxPrice);
+            $totalCountQuery->where('price', '<=', $maxPrice);
         }
-
         if ($productsInSale !== null) {
-            $query->where('in_sale', '=', 1);
+            $totalCountQuery->where('in_sale', '=', 1);
         }
+        $total = $totalCountQuery->count();
 
-        $total = $query->count();
-        $documents = $query->skip($skip)->take($per_page)->get(['title', 'prices', 'slug', 'in_sale', 'studioName', 'previewImageUrls']);
-
+        // Aggregation Query for top_keywords
         $aggregationQuery = [];
 
         if ($searchTerm !== null) {
@@ -120,11 +163,11 @@ class Template extends Model
         $aggregationQuery[] = ['$unwind' => '$keywords.en'];
         $aggregationQuery[] = ['$group' => ['_id' => '$keywords.en', 'count' => ['$sum' => 1]]];
         $aggregationQuery[] = ['$sort' => ['count' => -1]];
-    
+
         $keywords = Template::raw(function ($collection) use ($aggregationQuery) {
             return $collection->aggregate($aggregationQuery);
         });
-    
-        return ['total' => $total, 'documents' => $documents, 'top_keywords' => $keywords];
+
+        return ['total' => $total, 'documents' => $query, 'top_keywords' => $keywords];
     }
 }
