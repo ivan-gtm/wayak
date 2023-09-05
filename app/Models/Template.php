@@ -61,15 +61,19 @@ class Template extends Model
         return $documents;
     }
 
-    public function filterDocuments($searchTerm = null, $category = null, $minPrice = null, $maxPrice = null, $sale = null, $skip = 0, $per_page = 100)
+    public function filterDocuments($searchTerm = null, $category = null, $minPrice = null, $maxPrice = null, $productsInSale = null, $skip = 0, $per_page = 100)
     {
         $query = Template::query();
 
         if ($searchTerm !== null) {
-            // $query->where('title', 'regex', new \MongoDB\BSON\Regex($searchTerm, 'i'));
-            $query->whereRaw(array('$text' => array('$search' => $searchTerm)));
+            $tokens = explode(' ', $searchTerm);
+            $regexOrArray = [];
+            foreach ($tokens as $token) {
+                $regexOrArray[] = ['title' => ['$regex' => new \MongoDB\BSON\Regex($token, 'i')]];
+            }
+            $query->whereRaw(['$or' => $regexOrArray]);
         }
-
+    
         if ($category !== null) {
             $query->where('category', $category);
         }
@@ -81,14 +85,46 @@ class Template extends Model
         if ($maxPrice !== null) {
             $query->where('price', '<=', $maxPrice);
         }
-        
-        if ($sale !== null) {
+
+        if ($productsInSale !== null) {
             $query->where('in_sale', '=', 1);
         }
 
         $total = $query->count();
         $documents = $query->skip($skip)->take($per_page)->get(['title', 'prices', 'slug', 'in_sale', 'studioName', 'previewImageUrls']);
 
-        return ['total' => $total, 'documents' => $documents];            
+        $aggregationQuery = [];
+
+        if ($searchTerm !== null) {
+            foreach ($tokens as $token) {
+                $aggregationQuery[] = ['$match' => ['title' => ['$regex' => new \MongoDB\BSON\Regex($token, 'i')]]];
+            }
+        }
+
+        if ($category !== null) {
+            $aggregationQuery[] = ['$match' => ['category' => $category]];
+        }
+
+        if ($minPrice !== null) {
+            $aggregationQuery[] = ['$match' => ['price' => ['$gte' => $minPrice]]];
+        }
+
+        if ($maxPrice !== null) {
+            $aggregationQuery[] = ['$match' => ['price' => ['$lte' => $maxPrice]]];
+        }
+
+        if ($productsInSale !== null) {
+            $aggregationQuery[] = ['$match' => ['in_sale' => 1]];
+        }
+
+        $aggregationQuery[] = ['$unwind' => '$keywords.en'];
+        $aggregationQuery[] = ['$group' => ['_id' => '$keywords.en', 'count' => ['$sum' => 1]]];
+        $aggregationQuery[] = ['$sort' => ['count' => -1]];
+    
+        $keywords = Template::raw(function ($collection) use ($aggregationQuery) {
+            return $collection->aggregate($aggregationQuery);
+        });
+    
+        return ['total' => $total, 'documents' => $documents, 'top_keywords' => $keywords];
     }
 }
