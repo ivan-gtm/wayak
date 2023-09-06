@@ -122,6 +122,15 @@
                         </a>
                     </div>
                     @endif
+                    <a class="action-btn-container side-btn for-anon" 
+                        id="nav-login-signup-cta" 
+                        href="{{ route('code.validate.form', [
+                            'country' => $country
+                        ]) }}" title="Claim Code">
+                        <span class="action-btn-text login-btn-text">
+                        {{ __('menu.claim_code') }}
+                        </span>
+                    </a>
                 </div>
                 <div class="user-options">
                     <form action="{{ route('user.search',['country' => $country]) }}" class="inline-search-form" 
@@ -150,15 +159,7 @@
                         </div>
                     </div>
                     
-                    <a class="action-btn-container side-btn for-anon" 
-                        id="nav-login-signup-cta" 
-                        href="{{ route('code.validate.form', [
-                            'country' => $country
-                        ]) }}" title="Claim Code">
-                        <span class="action-btn-text login-btn-text">
-                        {{ __('menu.claim_code') }}
-                        </span>
-                    </a>
+                    
                     {{---
                     <div class="nav-item-container -to-right for-mobile" id="nav-hamburger-container"> 
                         <input type="checkbox" class="nav-dropdown-btn" value="1" id="nav-hamburger-menu" /> 

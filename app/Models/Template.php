@@ -66,9 +66,9 @@ class Template extends Model
         $tokens = $searchTerm !== null ? explode(' ', strtolower($searchTerm)) : [];
 
         $query = Template::raw(function ($collection) use ($tokens, $category, $minPrice, $maxPrice, $productsInSale, $skip, $per_page) {
-    
+
             $matchStage = [];
-    
+
             if (!empty($tokens)) {
                 $regexOrArray = [];
                 foreach ($tokens as $token) {
@@ -78,7 +78,7 @@ class Template extends Model
             }
 
             if ($category !== null) {
-                $matchStage['category'] = $category;
+                $matchStage['mainCategory'] = $category;
             }
 
             if ($minPrice !== null) {
@@ -109,7 +109,7 @@ class Template extends Model
                 ['$skip' => $skip],
                 ['$limit' => $per_page]
             ];
-    
+
             return $collection->aggregate($pipeline)->toArray();
         });
 
@@ -122,7 +122,7 @@ class Template extends Model
             }
         }
         if ($category !== null) {
-            $totalCountQuery->where('category', $category);
+            $totalCountQuery->where('mainCategory', $category);
         }
         if ($minPrice !== null) {
             $totalCountQuery->where('price', '>=', $minPrice);
@@ -145,7 +145,7 @@ class Template extends Model
         }
 
         if ($category !== null) {
-            $aggregationQuery[] = ['$match' => ['category' => $category]];
+            $aggregationQuery[] = ['$match' => ['mainCategory' => $category]];
         }
 
         if ($minPrice !== null) {
@@ -168,6 +168,34 @@ class Template extends Model
             return $collection->aggregate($aggregationQuery);
         });
 
-        return ['total' => $total, 'documents' => $query, 'top_keywords' => $keywords];
+        // Aggregation Query for category_totals
+        $categoryAggregationQuery = [];
+
+        if ($searchTerm !== null) {
+            foreach ($tokens as $token) {
+                $categoryAggregationQuery[] = ['$match' => ['title' => ['$regex' => new \MongoDB\BSON\Regex($token, 'i')]]];
+            }
+        }
+
+        if ($minPrice !== null) {
+            $categoryAggregationQuery[] = ['$match' => ['price' => ['$gte' => $minPrice]]];
+        }
+
+        if ($maxPrice !== null) {
+            $categoryAggregationQuery[] = ['$match' => ['price' => ['$lte' => $maxPrice]]];
+        }
+
+        if ($productsInSale !== null) {
+            $categoryAggregationQuery[] = ['$match' => ['in_sale' => 1]];
+        }
+
+        $categoryAggregationQuery[] = ['$group' => ['_id' => '$mainCategory', 'count' => ['$sum' => 1]]];
+        $categoryAggregationQuery[] = ['$sort' => ['count' => -1]];
+
+        $categoryTotals = Template::raw(function ($collection) use ($categoryAggregationQuery) {
+            return $collection->aggregate($categoryAggregationQuery);
+        });
+
+        return ['total' => $total, 'documents' => $query, 'top_keywords' => $keywords, 'category_totals' => $categoryTotals];
     }
 }

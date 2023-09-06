@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use App\Models\Template;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\App;
-use phpDocumentor\Reflection\PseudoTypes\LowercaseString;
 
 class SearchController extends Controller
 {
@@ -31,11 +30,11 @@ class SearchController extends Controller
         $searchSlug = $this->generateSearchSlug($searchTerm);
         $this->saveGlobalSearchHistory($country, $searchSlug, $searchTerm);
         $this->updateUserSearchHistory($customer_id, $searchSlug);
- 
+
         $result = (new Template())->filterDocuments(strtolower($searchTerm), $category, $minPrice, $maxPrice, $productsInSale, $skip, $per_page);
         $total_documents = $result['total'];
         $search_result = $result['documents'];
-        
+
         $last_page = ceil($total_documents / $per_page);
         $from_document = $skip + 1;
         $to_document = $skip + $per_page;
@@ -58,51 +57,6 @@ class SearchController extends Controller
             'total_documents' => $total_documents,
             'templates' => $templates
         ]);
-    }
-
-    public function getRecommendedSearches($customerId)
-    {
-        // $customerId = $request->customerId ?? null;
-        $country = 'us';
-
-        if (!$customerId) {
-            return response()->json(['message' => 'customerId is required'], 400);
-        }
-
-        $key = "wayak:user:{$customerId}:history:search";
-
-        // Get user's search history from Redis
-        $userSearchHistory = Redis::hgetall($key);
-
-        // Decode JSON data and sort by counter
-        $searchData = [];
-        foreach ($userSearchHistory as $searchTermId => $data) {
-            $decodedData = json_decode($data, true);
-            $searchData[$searchTermId] = $decodedData['counter'];
-        }
-        arsort($searchData);  // Sort by counter, maintaining index association
-
-        // Take top 5 most frequent searches
-        $topSearches = array_slice(array_keys($searchData), 0, 5, true);
-
-        // Find related keywords for each top search
-        $relatedKeywords = [];
-        foreach ($topSearches as $searchTermId) {
-            $searchTerm = Redis::hget('wayak:' . $country . ':analytics:search:terms', $searchTermId);
-            $related = (new Template())->filterDocuments($searchTerm, null, null, null, null, 0, 10);
-            foreach ($related['top_keywords'] as $keywordData) {
-                $keyword = $keywordData['_id'];
-                if (!isset($relatedKeywords[$keyword])) {
-                    $relatedKeywords[$keyword] = 0;
-                }
-                $relatedKeywords[$keyword] += $keywordData['count'];
-            }
-        }
-
-        // Sort by frequency
-        arsort($relatedKeywords);
-
-        return response()->json(['recommended_keywords' => array_keys($relatedKeywords)]);
     }
 
     public function updateUserSearchHistory($customerId, $searchTermId)
@@ -140,41 +94,6 @@ class SearchController extends Controller
         return response()->json(['message' => 'User search history updated successfully']);
     }
 
-    public function searchByTitle(Request $request)
-    {
-        $searchTerm = $request->input('searchTerm');
-        $documents = (new Template())->searchByTitle($searchTerm);
-        return response()->json($documents);
-    }
-
-    public function searchByTitleAndCategory(Request $request)
-    {
-        $searchTerm = $request->input('searchTerm');
-        $category = $request->input('category');
-        $documents = (new Template())->searchByTitleAndCategory($searchTerm, $category);
-        return response()->json($documents);
-    }
-
-    public function getFormatsTotals()
-    {
-        $formatCounts = (new Template())->getTotalDocumentsByFormat();
-        return response()->json($formatCounts);
-        // echo "<pre>";
-        // print_r(json_encode($formatCounts));
-        // exit;
-    }
-
-    public function filterBySearchTermAndPrice(Request $request)
-    {
-        $searchTerm = $request->input('searchTerm');
-        $minPrice = $request->input('minPrice');
-        $maxPrice = $request->input('maxPrice');
-
-        $documents = (new Template())->filterBySearchTermAndPrice($searchTerm, $minPrice, $maxPrice);
-
-        return response()->json($documents);
-    }
-
     private function saveGlobalSearchHistory($country, $searchSlug, $searchQuery)
     {
         if (Redis::hexists('wayak:' . $country . ':analytics:search:results', $searchSlug)) {
@@ -183,11 +102,6 @@ class SearchController extends Controller
             Redis::hset('wayak:' . $country . ':analytics:search:terms', $searchSlug, $searchQuery);
             Redis::hset('wayak:' . $country . ':analytics:search:results', $searchSlug, 1);
         }
-    }
-
-    private function generateSearchSlug($searchQuery)
-    {
-        return self::generateIdentifier($searchQuery);
     }
 
     private function prepareTemplates($search_result, $language_code)
@@ -202,7 +116,13 @@ class SearchController extends Controller
         return $templates;
     }
 
-    function generateIdentifier($searchTerm)
+    function getSerachTermBasedOnSlug($country, $searchSlug){
+        if (Redis::hexists('wayak:' . $country . ':analytics:search:terms', $searchSlug)) {
+            return Redis::hget('wayak:' . $country . ':analytics:search:terms', $searchSlug);
+        }
+    }
+
+    function generateSearchSlug($searchTerm)
     {
         $searchTerm = str_replace(' ', '-', $searchTerm);
 
@@ -213,5 +133,128 @@ class SearchController extends Controller
         $identifier = strtolower($cleanSearchTerm);
 
         return $identifier;
+    }
+
+    public function recommendSearches($customerId, $searchTerm)
+    {
+        // Fetch the user's search history from Redis
+        $key = "wayak:user:{$customerId}:history:search";
+        $userSearchHistory = Redis::hgetall($key);
+
+        // Preprocess the user's recent search term and vectorize it
+        $recentSearchVector = $this->vectorizeText($searchTerm);
+
+        $recommendations = [];
+
+        // Calculate similarity scores with previous searches
+        foreach ($userSearchHistory as $searchTermSlug => $searchDataJSON) {
+            // $searchData = json_decode($searchDataJSON, true);
+            $searchTermId = $this->getSerachTermBasedOnSlug('us', $searchTermSlug);
+            $previousSearchVector = $this->vectorizeText($searchTermId);
+
+            // Calculate cosine similarity (you may use another similarity metric)
+            $similarity = $this->calculateCosineSimilarity($recentSearchVector, $previousSearchVector);
+
+            // Store similarity score and search term
+            $recommendations[] = [
+                'searchTerm' => $searchTermId,
+                'similarity' => $similarity,
+            ];
+        }
+
+        // Sort recommendations by similarity score in descending order
+        usort($recommendations, function ($a, $b) {
+            return $b['similarity'] <=> $a['similarity'];
+        });
+
+        // Filter out searches the user has already conducted
+        $filteredRecommendations = array_filter($recommendations, function ($recommendation) use ($searchTerm) {
+            return $recommendation['searchTerm'] !== $searchTerm;
+        });
+
+        // Return the top N recommendations
+        $N = 10;
+        $topRecommendations = array_slice($filteredRecommendations, 0, $N);
+
+        return $topRecommendations;
+    }
+
+    function vectorizeText($text)
+    {
+        // Tokenize the text (split it into words)
+        $words = str_word_count($text, 1);
+
+        // Create a dictionary of unique words and their counts
+        $wordCounts = array_count_values($words);
+
+        // Calculate the TF-IDF vector
+        $vector = [];
+        $totalWords = count($words);
+
+        foreach ($wordCounts as $word => $count) {
+            // Calculate TF (Term Frequency)
+            $tf = $count / $totalWords;
+
+            // Assume you have a precomputed IDF value for each word
+            // Replace 'idf' with your actual IDF calculation
+            $idf = $this->calculateIDF($word);
+
+            // Calculate TF-IDF for the word
+            $tfidf = $tf * $idf;
+
+            // Store the TF-IDF value in the vector
+            $vector[$word] = $tfidf;
+        }
+
+        return $vector;
+    }
+
+    function calculateCosineSimilarity($vector1, $vector2)
+    {
+        // Calculate the dot product of the two vectors
+        $dotProduct = 0;
+
+        foreach ($vector1 as $word => $tfidf1) {
+            if (isset($vector2[$word])) {
+                $tfidf2 = $vector2[$word];
+                $dotProduct += $tfidf1 * $tfidf2;
+            }
+        }
+
+         // Calculate the magnitude (Euclidean norm) of each vector
+        $magnitude1 = sqrt(array_sum(array_map(fn ($tfidf) => $tfidf ** 2, $vector1)));
+        $magnitude2 = sqrt(array_sum(array_map(fn ($tfidf) => $tfidf ** 2, $vector2)));
+
+
+        // Calculate the cosine similarity
+        if ($magnitude1 > 0 && $magnitude2 > 0) {
+            $similarity = $dotProduct / ($magnitude1 * $magnitude2);
+        } else {
+            $similarity = 0; // Handle division by zero
+        }
+
+        return $similarity;
+    }
+
+    function calculateIDF($word)
+    {
+        // Implement your IDF calculation logic here
+        // You might use a precomputed IDF dictionary or calculate it from your corpus
+        // For simplicity, assume we have a static IDF dictionary
+        // $idfDictionary = [
+        //     'word1' => 1.2,
+        //     'word2' => 0.8,
+        //     // Add more words and their IDF values as needed
+        // ];
+
+        
+
+        // Return the IDF value for the word if it exists, or a default value
+        if(Redis::hget('wayak:idf:dictionary', $word)){
+            return Redis::hget('wayak:idf:dictionary', $word);
+        }else{
+            return 1.0;
+        }
+        // return $idfDictionary[$word] ?? 1.0; // Default IDF value
     }
 }
