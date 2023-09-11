@@ -7,31 +7,34 @@
 <meta name="title" content="{{ __('home.meta_title') }}" />
 <meta name="keywords" content="{{ __('home.meta_keywords') }}" />
 <style>
-            .category.slider .sliderMask .sliderContent .slider-item{
-                color: #303538;
-                text-align: center;
-                /* max-width: none; */
-                padding: 0;
-                margin: 0;
-                padding-top: 15px;
-            }
-            .category.slider .sliderMask .sliderContent .slider-item  h3{
-                color:#303538;
-                text-align: center;
-                max-width:none;
-            }
-            .category.slider .sliderMask .sliderContent .slider-item  img{
-                /* width:120px; */
-                /* display:block; */
-                margin:auto;
-                height:auto;
-            }
-            @media screen and (min-width:1000px){
-                .category.slider .sliderMask .sliderContent .slider-item  img{
-                    width:70%;
-                }
-            }
-        </style>
+    .category.slider .sliderMask .sliderContent .slider-item {
+        color: #303538;
+        text-align: center;
+        /* max-width: none; */
+        padding: 0;
+        margin: 0;
+        padding-top: 15px;
+    }
+
+    .category.slider .sliderMask .sliderContent .slider-item h3 {
+        color: #303538;
+        text-align: center;
+        max-width: none;
+    }
+
+    .category.slider .sliderMask .sliderContent .slider-item img {
+        /* width:120px; */
+        /* display:block; */
+        margin: auto;
+        height: auto;
+    }
+
+    @media screen and (min-width:1000px) {
+        .category.slider .sliderMask .sliderContent .slider-item img {
+            width: 70%;
+        }
+    }
+</style>
 @endsection
 
 @section('content')
@@ -54,6 +57,7 @@
                                         <div class="searchFormWrapper___2LC5i">
                                             <form class="form___1I3Xs" novalidate="" method="GET" action="{{ route('user.search',['country' => $country]) }}">
                                                 @csrf
+                                                <input type="hidden" id="heroCustomerId" name="customerId">
                                                 <div class="sc-dmlrTW guKkvw">
                                                     <input type="text" autocomplete="off" name="searchQuery" class="sc-kfzAmx sc-fKFyDc fTLfYv zomHz proxima-regular___3FDdY" placeholder="{{ __('home.search_placeholder') }}" value="" style="padding-left: 20px;">
                                                 </div>
@@ -93,7 +97,7 @@
                                                 <div class="dotClass"></div>
                                                 <div class="sliderMask showPeek">
                                                     <div class="sliderContent row-with-x-columns" data-slider-id="k9Qvisdas">
-                                                        @for($i = 0; $i < sizeof($menu->templates); $i++)    
+                                                        @for($i = 0; $i < sizeof($menu->templates); $i++)
                                                             <div class="slider-item slider-item-">
                                                                 <div class="title-card-container ltr-0">
                                                                     <div class="slider-refocus title-card">
@@ -114,7 +118,7 @@
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                        @endfor
+                                                            @endfor
                                                     </div>
                                                 </div>
                                                 <span class="handle handleNext active" tabindex="0" role="button" aria-label="See more titles">

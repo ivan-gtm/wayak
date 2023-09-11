@@ -8,6 +8,9 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CodeController;
 use App\Http\Controllers\ProductHistoryController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\LoginController;
+use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\LogoutController;
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminSaleController;
@@ -187,6 +190,29 @@ Route::get('/api/demo-url', [AdminController::class, 'getTemplateObjects']);
         Route::get('/admin/ml/templates/missing-metadata', [AdminController::class, 'getMissingMetadataTemplates'])->name('admin.ml.getMissingMetadataTemplates');
         
         Route::get('/admin/ml/update-url', [AdminController::class, 'updateURL']);
+
+// USER
+Route::group(['middleware' => ['guest']], function() {
+    /**
+     * Register Routes
+     */
+    Route::get('/register', [RegisterController::class,'show'])->name('register.show');
+    Route::post('/register', [RegisterController::class,'register'])->name('register.perform');
+
+    /**
+     * Login Routes
+     */
+    Route::get('/login', [LoginController::class,'show'])->name('login.show');
+    Route::post('/login', [LoginController::class,'login'])->name('login.perform');
+
+});
+
+Route::group(['middleware' => ['auth']], function() {
+    /**
+     * Logout Routes
+     */
+    Route::get('/logout', [LogoutController::class,'perform'])->name('logout.perform');
+});
 
 // DESIGNER
     // Route::get('/open',  [EditorController::class,'open']);

@@ -9,10 +9,10 @@
     "license": "MIT",
     "require": {
         "php": "^7.3|^8.0",
+        "aws/aws-sdk-php": "^3.281",
         "dompdf/dompdf": "^1.0",
         "elasticsearch/elasticsearch": "^7.16",
         "fideloper/proxy": "^4.4",
-        "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
         "intervention/image": "^2.5",
         "jenssegers/mongodb": "^3.8",

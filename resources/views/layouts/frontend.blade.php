@@ -159,7 +159,20 @@
                         </div>
                     </div>
                     
-                    
+                    @auth
+                        {{auth()->user()->name}}
+                        <div class="text-end">
+                        <a style="color: black;" href="{{ route('logout.perform') }}" class="btn btn-outline-light me-2">Logout</a>
+                        </div>
+                    @endauth
+
+                    @guest
+                        <div class="text-end">
+                        <a style="color: black;" href="{{ route('login.perform') }}" class="btn btn-outline-light me-2">Login</a>
+                        <a style="color: black;" href="{{ route('register.perform') }}" class="btn btn-warning">Sign-up</a>
+                        </div>
+                    @endguest
+
                     {{---
                     <div class="nav-item-container -to-right for-mobile" id="nav-hamburger-container"> 
                         <input type="checkbox" class="nav-dropdown-btn" value="1" id="nav-hamburger-menu" /> 
@@ -228,7 +241,35 @@
         </header>
 
         @yield('content')
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                const customerId = getCustomerId();
+                function getCustomerId() {
+                    // Try to get customerId from the meta tag
+                    let metaTag = document.querySelector('meta[name="customer-id"]');
+                    let customerId = metaTag ? metaTag.getAttribute('content') : null;
 
+                    // If meta tag is empty, try to get customerId from localStorage
+                    if (!customerId) {
+                        customerId = localStorage.getItem('customerId');
+                    }
+
+                    // If customerId is still not found, generate a new one and store it in localStorage
+                    if (!customerId) {
+                        customerId = Math.random().toString(36).substr(2, 10);
+                        localStorage.setItem('customerId', customerId);
+                    }
+
+                    // Update any input elements with name="customer-id" to have the value of customerId
+                    const customerInputs = document.querySelectorAll('input[name="customerId"]');
+                    customerInputs.forEach(input => {
+                        input.value = customerId;
+                    });
+
+                    return customerId;
+                }
+            });
+        </script>
         <div id="footer" class="site-footer js-site-footer" role="contentinfo">
             <div class="container-large">
                 <div class="footer-lower-content">

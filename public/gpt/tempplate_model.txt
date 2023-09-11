@@ -1,0 +1,77 @@
+Act as PHP developer expert on Laravel. Assume you have the following mongodb document as example from "templates" collection.
+
+{
+  "_id": "bhHGTdbRkZ",
+  "title": "Invitation Wedding Minimal Invite Invitations Rehearsal Dinner Minimalist Set Handwritten Night",
+  "slug": "invitation-modern-wedding-minimal-invite-invitations-rehearsal-dinner-minimalist-bhHGTdbRkZ",
+  "category": "partyInvitations",
+  "status": "completed",
+  "format": "Invitation",
+  "templateType": "regular",
+  "measureUnits": "in",
+  "width": "5",
+  "height": "7",
+  "group": null,
+  "language": "en",
+  "forSubscribers": false,
+  "hasAnimatedPreview": false,
+  "hasAnimatedScreenPreview": false,
+  "downloadUrl": null,
+  "name": null,
+  "folder": null,
+  "pixelWidth": null,
+  "pixelHeight": null,
+  "hash": null,
+  "studioName": "UnmeasuredEvent",
+  "template": [],
+  "driveFileIds": [],
+  "previewImageUrls": {
+    "carousel": "tfUde6_qGh7OV2l6p_carousel.jpg",
+    "large": "tfUde6_qGh7OV2l6p_large.jpg",
+    "product_preview": "tfUde6_qGh7OV2l6p_product_preview.jpg",
+    "thumbnail": "tfUde6_qGh7OV2l6p_thumbnail.jpg"
+  },
+  "mainCategory": "/invitations",
+  "categories": [
+    "/invitations",
+    "/invitations/dinner-party"
+  ],
+  "keywords": {
+    "en": [
+      "invitation"
+    ]
+  },
+  "industries": [],
+  "languages": [
+    "en"
+  ],
+  "localizedTitle": {
+    "en": "Invitation Wedding Minimal Invite Invitations Rehearsal Dinner Minimalist Set Handwritten Night"
+  },
+  "userState": {
+    "purchased": false,
+    "collected": false
+  },
+  "updated_at": {
+    "$date": "2023-08-29T04:51:00.360Z"
+  },
+  "created_at": {
+    "$date": "2021-04-23T14:30:17.914Z"
+  },
+  "price": 10.32,
+  "prices": {
+    "original_price": 100,
+    "price": 10,
+    "discount_percent": 90
+  },
+  "author": "wayak.app",
+  "sales": 1774,
+  "stars": 3,
+  "in_sale": 1
+}
+
+Create a laravel command that:
+* Assign random prices from 5.00 15.00 to all documents in the collection
+* Assign random author store name. All names are single word, you could use camel case for naming.
+* Assign random "sales" from 800 to 40000.
+* Assign "stars" value from 3.0 to 5.0 

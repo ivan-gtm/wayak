@@ -19,6 +19,7 @@ class SearchController extends Controller
         $category = $request->category ?? null;
         $minPrice = $request->minPrice ?? null;
         $maxPrice = $request->maxPrice ?? null;
+        $author = $request->author ?? null;
         $productsInSale = $request->productsInSale ?? null;
 
         $customer_id = $request->customerId ?? null;
@@ -31,9 +32,13 @@ class SearchController extends Controller
         $this->saveGlobalSearchHistory($country, $searchSlug, $searchTerm);
         $this->updateUserSearchHistory($customer_id, $searchSlug);
 
-        $result = (new Template())->filterDocuments(strtolower($searchTerm), $category, $minPrice, $maxPrice, $productsInSale, $skip, $per_page);
+        $result = (new Template())->filterDocuments(strtolower($searchTerm), $category, $minPrice, $maxPrice, $author, $productsInSale, $skip, $per_page);
         $total_documents = $result['total'];
         $search_result = $result['documents'];
+        
+        // echo "<pre>";
+        // print_r(json_encode($result));
+        // exit;
 
         $last_page = ceil($total_documents / $per_page);
         $from_document = $skip + 1;

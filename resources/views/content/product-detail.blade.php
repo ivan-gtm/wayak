@@ -474,12 +474,6 @@ document.addEventListener("DOMContentLoaded", function() {
             localStorage.setItem('customerId', customerId);
         }
 
-        // Update any input elements with name="customer-id" to have the value of customerId
-        const customerInputs = document.querySelectorAll('input[name="customerId"]');
-        customerInputs.forEach(input => {
-            input.value = customerId;
-        });
-
         return customerId;
     }
 
