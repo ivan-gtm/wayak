@@ -3,23 +3,71 @@
 @section('title', $template->title.' | Template | Designer Online | WAYAK')
 
 @section('meta')
-    <meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
-    <meta name="description" content="{{ $template->width }}x{{ $template->height }}{{ $template->measureUnits }}. Customize this template, change the text and images as you wish. After that, preview and save your work, your design will be ready to print, share or download." />
-    <meta name="title" content="{{ $template->title }} | Template | Design Online | WAYAK" />
-    <meta name="keywords" content="{{ $template->title }}" />
-    <meta property="og:url" content="{{  URL::current() }}" />
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content="{{ $template->title }} | Template | Design Online | WAYAK" />
-    <meta property="og:description" content="Template ready for customization, get ready to download in minutes. Edit Online, choose between thousands of free design templates." />
-    <meta property="og:image" content="{{ asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["product_preview"] ) }}" />
-    
-    <meta name="product-id" content="{{ $template->_id }}">
-    <meta name="customer-id" content="">
-    <meta name="csrf-token" content="{{ csrf_token() }}" />
+<meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
+<meta name="description" content="{{ $template->width }}x{{ $template->height }}{{ $template->measureUnits }}. Customize this template, change the text and images as you wish. After that, preview and save your work, your design will be ready to print, share or download." />
+<meta name="title" content="{{ $template->title }} | Template | Design Online | WAYAK" />
+<meta name="keywords" content="{{ $template->title }}" />
+<meta property="og:url" content="{{  URL::current() }}" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="{{ $template->title }} | Template | Design Online | WAYAK" />
+<meta property="og:description" content="Template ready for customization, get ready to download in minutes. Edit Online, choose between thousands of free design templates." />
+<meta property="og:image" content="{{ asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["product_preview"] ) }}" />
+
+<meta name="product-id" content="{{ $template->_id }}">
+<meta name="customer-id" content="">
+<meta name="csrf-token" content="{{ csrf_token() }}" />
 @endsection
 
 @section('css')
 <link rel="stylesheet" href="{{ asset('assets/css/product.css') }}">
+<style>
+    /* Style for notifications */
+    /* body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+    } */
+
+    .notification {
+        position: fixed;
+        bottom: 10px;
+        right: 10px;
+        background-color: #444;
+        color: #fff;
+        border-radius: 5px;
+        padding: 10px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 320px;
+        opacity: 0;
+        transform: translateY(50px);
+        transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+
+    .notification-content {
+        flex: 1;
+    }
+
+    .notification-content a {
+        color: #FFD700;
+        text-decoration: none;
+    }
+
+    .notification-close {
+        background: none;
+        border: none;
+        color: #fff;
+        cursor: pointer;
+        font-size: 18px;
+        margin-left: 10px;
+    }
+
+    .notification-close:focus {
+        outline: none;
+    }
+</style>
+
 @endsection
 
 @section('content')
@@ -47,7 +95,7 @@
                         <nav class="breadcrumbs h-text-truncate ">
                             <a href="{{ url('') }}">{{ __('product.home') }}</a>
                             @foreach ($breadcrumbs as $breadcrumb)
-                            <a class="js-breadcrumb-category" href="{{ $breadcrumb->url.'?source=breadcrumbs' }}">{{ $breadcrumb->name }}</a>
+                                <a class="js-breadcrumb-category" href="{{ $breadcrumb->url.'?source=breadcrumbs' }}">{{ $breadcrumb->name }}</a>
                             @endforeach
                         </nav>
                     </div>
@@ -82,9 +130,9 @@
 
                                             <div data-buy-box-region="price">
                                                 @if(isset($sale) && $sale != null )
-                                                <p class="wt-text-title-01 sale-ending-soon wt-mb-xs-1">
-                                                    Sale ends in <span id="countdown"></span>
-                                                </p>
+                                                    <p class="wt-text-title-01 sale-ending-soon wt-mb-xs-1">
+                                                        Sale ends in <span id="countdown"></span>
+                                                    </p>
                                                 @endif
                                                 <div class="wt-display-flex-xs wt-align-items-center wt-justify-content-space-between">
                                                     <div class="wt-display-flex-xs wt-align-items-center wt-flex-wrap">
@@ -450,161 +498,214 @@
         </div>
     </div>
 </div>
+<div id="notification" class="notification">
+        <div class="notification-content">
+            This favorite won't last! Sign in or register to save items for more than 7 days. Do you want to <a href="https://www.ups.com/track?loc=en_US&requester=ST/" target="_blank">Sign in</a>?
+        </div>
+        <button class="notification-close" onclick="closeNotification()">✕</button>
+</div>
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    const customerId = getCustomerId();
-    const metaElement = document.querySelector('meta[name="product-id"]');
-    const productId = metaElement.getAttribute('content');
-    const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
-    const csrfToken = csrfTokenMeta ? csrfTokenMeta.getAttribute("content") : null;
+    document.addEventListener("DOMContentLoaded", function() {
+        const customerId = getCustomerId();
+        const metaElement = document.querySelector('meta[name="product-id"]');
+        const productId = metaElement.getAttribute('content');
+        const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
+        const csrfToken = csrfTokenMeta ? csrfTokenMeta.getAttribute("content") : null;
 
-    function getCustomerId() {
-        // Try to get customerId from the meta tag
-        let metaTag = document.querySelector('meta[name="customer-id"]');
-        let customerId = metaTag ? metaTag.getAttribute('content') : null;
+        function getCustomerId() {
+            // Try to get customerId from the meta tag
+            let metaTag = document.querySelector('meta[name="customer-id"]');
+            let customerId = metaTag ? metaTag.getAttribute('content') : null;
 
-        // If meta tag is empty, try to get customerId from localStorage
-        if (!customerId) {
-            customerId = localStorage.getItem('customerId');
-        }
-
-        // If customerId is still not found, generate a new one and store it in localStorage
-        if (!customerId) {
-            customerId = Math.random().toString(36).substr(2, 10);
-            localStorage.setItem('customerId', customerId);
-        }
-
-        return customerId;
-    }
-
-    function saveProductHistory() {
-        let productHistory = localStorage.getItem('productHistory');
-        const currentTime = Date.now();
-        
-        if (productHistory) {
-            productHistory = JSON.parse(productHistory);
-            if (productHistory[productId]) {
-                productHistory[productId].count++;
-                productHistory[productId].lastVisited = currentTime;
-            } else {
-                productHistory[productId] = { count: 1, lastVisited: currentTime };
+            // If meta tag is empty, try to get customerId from localStorage
+            if (!customerId) {
+                customerId = localStorage.getItem('customerId');
             }
-        } else {
-            productHistory = {};
-            productHistory[productId] = { count: 1, lastVisited: currentTime };
+
+            // If customerId is still not found, generate a new one and store it in localStorage
+            if (!customerId) {
+                customerId = Math.random().toString(36).substr(2, 10);
+                localStorage.setItem('customerId', customerId);
+            }
+
+            return customerId;
         }
-        
-        localStorage.setItem('productHistory', JSON.stringify(productHistory));
-        syncProductHistory(customerId, productHistory);
-    }
 
-    function shouldRunSyncProductHistory() {
-        const lastSynced = localStorage.getItem('lastSynced');
-        const currentTime = Date.now();
-        const timeSinceLastSync = currentTime - lastSynced; // Time in milliseconds
-        // 24 * 60 * 60 * 1000; // 24 hours in milliseconds
-        const timeToNextSync = 600000 - timeSinceLastSync; // 600,000 milliseconds (10 minutes)
+        function saveProductHistory() {
+            let productHistory = localStorage.getItem('productHistory');
+            const currentTime = Date.now();
 
-        if (!lastSynced || timeSinceLastSync > 600000) { // 600,000 milliseconds (10 minutes)
-            console.debug("Time for the next update.");
-            return true;
-        } else {
-            const remainingMinutes = Math.ceil(timeToNextSync / 60000); // Convert to minutes
-            console.debug(`Next update in ${remainingMinutes} minute(s).`);
-            return false;
+            if (productHistory) {
+                productHistory = JSON.parse(productHistory);
+                if (productHistory[productId]) {
+                    productHistory[productId].count++;
+                    productHistory[productId].lastVisited = currentTime;
+                } else {
+                    productHistory[productId] = {
+                        count: 1,
+                        lastVisited: currentTime
+                    };
+                }
+            } else {
+                productHistory = {};
+                productHistory[productId] = {
+                    count: 1,
+                    lastVisited: currentTime
+                };
+            }
+
+            localStorage.setItem('productHistory', JSON.stringify(productHistory));
+            syncProductHistory(customerId, productHistory);
         }
-    }
 
-    function syncProductHistory(customerId, productHistory) {
-        if (shouldRunSyncProductHistory()) {
+        function shouldRunSyncProductHistory() {
+            const lastSynced = localStorage.getItem('lastSynced');
+            const currentTime = Date.now();
+            const timeSinceLastSync = currentTime - lastSynced; // Time in milliseconds
+            // 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+            const timeToNextSync = 600000 - timeSinceLastSync; // 600,000 milliseconds (10 minutes)
+
+            if (!lastSynced || timeSinceLastSync > 600000) { // 600,000 milliseconds (10 minutes)
+                console.debug("Time for the next update.");
+                return true;
+            } else {
+                const remainingMinutes = Math.ceil(timeToNextSync / 60000); // Convert to minutes
+                console.debug(`Next update in ${remainingMinutes} minute(s).`);
+                return false;
+            }
+        }
+
+        function syncProductHistory(customerId, productHistory) {
+            if (shouldRunSyncProductHistory()) {
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', '/syncProductHistory', true);
+                if (csrfToken) {
+                    xhr.setRequestHeader("X-CSRF-TOKEN", csrfToken);
+                }
+                const formData = new FormData();
+                formData.append('customerId', customerId);
+                formData.append('productHistory', JSON.stringify(productHistory));
+
+                // Add an event listener for the 'load' event on the XMLHttpRequest object
+                xhr.addEventListener('load', function() {
+                    if (xhr.status >= 200 && xhr.status < 400) {
+                        // Success: Clear the product history in localStorage
+                        localStorage.setItem('productHistory', JSON.stringify({}));
+                        // Upon successful sync, update 'lastSynced' in localStorage
+                        localStorage.setItem('lastSynced', Date.now());
+                    } else {
+                        // Error: Handle it if necessary
+                        console.error('Sync failed');
+                    }
+                });
+
+                // Send the request
+                xhr.send(formData);
+            }
+        }
+
+        function removeProductFromServer(customerId, productId) {
             const xhr = new XMLHttpRequest();
-            xhr.open('POST', '/syncProductHistory', true);
+            xhr.open('POST', '/removeProductFromHistory', true);
             if (csrfToken) {
                 xhr.setRequestHeader("X-CSRF-TOKEN", csrfToken);
             }
             const formData = new FormData();
             formData.append('customerId', customerId);
-            formData.append('productHistory', JSON.stringify(productHistory));
-            
+            formData.append('productId', productId);
+
             // Add an event listener for the 'load' event on the XMLHttpRequest object
             xhr.addEventListener('load', function() {
                 if (xhr.status >= 200 && xhr.status < 400) {
-                    // Success: Clear the product history in localStorage
-                    localStorage.setItem('productHistory', JSON.stringify({}));
-                    // Upon successful sync, update 'lastSynced' in localStorage
-                    localStorage.setItem('lastSynced', Date.now());
+                    // Success: Remove the product from local storage
+                    let productHistory = localStorage.getItem('productHistory');
+                    if (productHistory) {
+                        productHistory = JSON.parse(productHistory);
+                        delete productHistory[productId];
+                        localStorage.setItem('productHistory', JSON.stringify(productHistory));
+                    }
                 } else {
                     // Error: Handle it if necessary
-                    console.error('Sync failed');
+                    console.error('Failed to remove product from server');
                 }
             });
-    
+
             // Send the request
             xhr.send(formData);
         }
-    }
 
-    function removeProductFromServer(customerId, productId) {
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', '/removeProductFromHistory', true);
-        if (csrfToken) {
-            xhr.setRequestHeader("X-CSRF-TOKEN", csrfToken);
+        function deleteProductFromHistory(productId) {
+            // Attempt to remove the product from the server first
+            removeProductFromServer(customerId, productId);
         }
-        const formData = new FormData();
-        formData.append('customerId', customerId);
-        formData.append('productId', productId);
 
-        // Add an event listener for the 'load' event on the XMLHttpRequest object
-        xhr.addEventListener('load', function() {
-            if (xhr.status >= 200 && xhr.status < 400) {
-                // Success: Remove the product from local storage
-                let productHistory = localStorage.getItem('productHistory');
-                if (productHistory) {
-                    productHistory = JSON.parse(productHistory);
-                    delete productHistory[productId];
-                    localStorage.setItem('productHistory', JSON.stringify(productHistory));
-                }
-            } else {
-                // Error: Handle it if necessary
-                console.error('Failed to remove product from server');
-            }
+        window.addEventListener('beforeunload', function() {
+            saveProductHistory();
         });
 
-        // Send the request
-        xhr.send(formData);
-    }
+        // saveProductHistory();
+    });
+</script>
 
-    function deleteProductFromHistory(productId) {
-        // Attempt to remove the product from the server first
-        removeProductFromServer(customerId, productId);
-    }
 
-    window.addEventListener('beforeunload', function() {
-        saveProductHistory();
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const notificationText = "This favorite won't last! Sign in or register to save items for more than 7 days. Do you want to";
+        const actionButtonText = "Sign in";
+        const actionURL = "https://www.ups.com/track?loc=en_US&requester=ST/";
+        const displayDuration = 10; // Display for 10 seconds
+        displayNotification(notificationText, actionButtonText, actionURL, displayDuration);
     });
 
-    // saveProductHistory();
-});
+    function displayNotification(contentText, actionText, actionURL, durationInSeconds) {
+        const notification = document.getElementById("notification");
+        const notificationContent = document.querySelector(".notification-content");
 
+        // Update notification content
+        notificationContent.innerHTML = `${contentText} <a href="${actionURL}" target="_blank">${actionText}</a>?`;
+
+        // Display the notification with animation
+        notification.style.opacity = "1";
+        notification.style.transform = "translateY(0)";
+
+        // Remove notification after the specified duration if there's no user interaction
+        setTimeout(function() {
+            if (notification.style.opacity !== "0") {
+                closeNotification();
+            }
+        }, durationInSeconds * 1000);
+    }
+
+    function closeNotification() {
+        const notification = document.getElementById("notification");
+        notification.style.opacity = "0";
+        notification.style.transform = "translateY(50px)";
+    }
 </script>
 <script>
+    // Add to favorites
     document.querySelector("#listing-page-cart > div:nth-child(4) > div > div.wt-display-flex-xs.wt-align-items-center > div > a").addEventListener('click', function(event) {
-        
-        console.log("#favorite-items-content > div > button");
 
-        const templateId = event.target.getAttribute('data-template-id');
-        const clientId = localStorage.getItem('clientId');
-        const loggedIn = (clientId && clientId !== "");
+        console.log("OPIPIPIP");
 
-        if (!loggedIn) {
-            const confirm = window.confirm("This favorite won't last! Sign in or register to save items for more than 7 days. Do you want to Sign in?");
-            if (confirm) {
-                localStorage.setItem('redirectTo', window.location.href);
-                localStorage.setItem('pendingFavorite', templateId);
-                window.location.href = "/login"; // Assuming the login route
-                return;
-            }
-        }
+        // const templateId = event.target.getAttribute('data-template-id');
+        // Try to get customerId from the meta tag
+        let templateIdTag = document.querySelector('meta[name="product-id"]');
+        let templateId = templateIdTag ? templateIdTag.getAttribute('content') : null;
+
+        const customerId = localStorage.getItem('customerId');
+        const loggedIn = (customerId && customerId !== "");
+        // const loggedIn = (customerId && customerId !== "");
+
+        // if (!loggedIn) {
+        //     const confirm = window.confirm("This favorite won't last! Sign in or register to save items for more than 7 days. Do you want to Sign in?");
+        //     if (confirm) {
+        //         localStorage.setItem('redirectTo', window.location.href);
+        //         localStorage.setItem('pendingFavorite', templateId);
+        //         window.location.href = "/login"; // Assuming the login route
+        //         return;
+        //     }
+        // }
 
         let favorites = JSON.parse(localStorage.getItem('favorites')) || {};
         if (!favorites[templateId]) {
@@ -620,7 +721,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     },
                     body: JSON.stringify({
                         "template-id": templateId,
-                        "clientId": clientId,
+                        "customerId": customerId,
                         "collectionName": "default" // TODO: Implement collection selection
                     })
                 });
@@ -631,7 +732,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // Check for pending favorites after login
     if (localStorage.getItem('redirectTo') && localStorage.getItem('pendingFavorite')) {
         const templateId = localStorage.getItem('pendingFavorite');
-        const clientId = localStorage.getItem('clientId');
+        const customerId = localStorage.getItem('customerId');
         fetch("/favorite/add", {
             method: "POST",
             headers: {
@@ -639,7 +740,7 @@ document.addEventListener("DOMContentLoaded", function() {
             },
             body: JSON.stringify({
                 "template-id": templateId,
-                "clientId": clientId,
+                "customerId": customerId,
                 "collectionName": "default"
             })
         }).then(() => {
@@ -654,8 +755,11 @@ document.addEventListener("DOMContentLoaded", function() {
     document.querySelectorAll(".favorite-item .remove-favorite-btn").forEach(function(btn) {
         btn.addEventListener('click', function(event) {
             const templateId = event.target.closest('.favorite-item').getAttribute('data-template-id');
-            const clientId = localStorage.getItem('clientId');
-            const loggedIn = (clientId && clientId !== "");
+            const customerId = localStorage.getItem('customerId');
+            // const loggedIn = (customerId && customerId !== "");
+            const loggedIn = false;
+            const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
+            const csrfToken = csrfTokenMeta ? csrfTokenMeta.getAttribute("content") : null;
 
             // Remove from local storage
             let favorites = JSON.parse(localStorage.getItem('favorites')) || {};
@@ -673,7 +777,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     },
                     body: JSON.stringify({
                         "template-id": templateId,
-                        "clientId": clientId,
+                        "customerId": customerId,
                         "collectionName": "default" // Assuming default collection for this example
                     })
                 }).then(response => {
@@ -694,8 +798,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
 
-// TODO: Implement other functionalities like managing collections, syncing with backend, etc.
-
+    // TODO: Implement other functionalities like managing collections, syncing with backend, etc.
 </script>
 <script src="https://www.paypal.com/sdk/js?client-id=sb&enable-funding=venmo&currency=USD" data-sdk-integration-source="button-factory"></script>
 <script>
@@ -786,13 +889,14 @@ document.addEventListener("DOMContentLoaded", function() {
 
     @if($sale != null)
 
-        var date = '{{ $sale['sale_ends_at'] }}';
-        var remainingSeconds = remainingSecondsUntilUtcDate(date);
-        console.log('Remaining seconds until ' + date + ': ' + remainingSeconds);
+    var date = '{{ $sale['
+    sale_ends_at '] }}';
+    var remainingSeconds = remainingSecondsUntilUtcDate(date);
+    console.log('Remaining seconds until ' + date + ': ' + remainingSeconds);
 
-        // const secondsRemaining = 3600; // 1 hour
-        const elementToUpdate = document.getElementById("countdown");
-        countdown(remainingSeconds, elementToUpdate);
+    // const secondsRemaining = 3600; // 1 hour
+    const elementToUpdate = document.getElementById("countdown");
+    countdown(remainingSeconds, elementToUpdate);
 
     @endif
 </script>

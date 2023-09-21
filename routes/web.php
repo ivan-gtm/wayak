@@ -8,9 +8,11 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CodeController;
 use App\Http\Controllers\ProductHistoryController;
 use App\Http\Controllers\SearchController;
+
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\LogoutController;
+use App\Http\Controllers\FavoritesController;
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminSaleController;
@@ -206,6 +208,25 @@ Route::group(['middleware' => ['guest']], function() {
     Route::post('/login', [LoginController::class,'login'])->name('login.perform');
 
 });
+
+Route::prefix('favorites')->group(function () {
+    // Add favorite
+    Route::post('/add', [FavoritesController::class, 'addFavorite']);
+
+    // Remove favorite
+    Route::delete('/remove', [FavoritesController::class, 'removeFavorite']);
+
+    // Get all favorites for a client
+    Route::get('/{clientId}', [FavoritesController::class, 'getFavorites']);
+
+    // Manage collections (create or delete)
+    Route::post('/collection/manage', [FavoritesController::class, 'manageCollection']);
+
+    // Get all collections for a client
+    Route::get('/collections/{clientId}', [FavoritesController::class, 'getCollections']);
+});
+
+
 
 Route::group(['middleware' => ['auth']], function() {
     /**
