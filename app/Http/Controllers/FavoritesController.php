@@ -17,13 +17,26 @@ class FavoritesController extends Controller
     public function addFavorite(Request $request)
     {
         $productID = $request->input('template-id');
-        $clientId = $request->input('clientId');
+        $customerId = $request->input('customerId');
         $collectionId = $request->input('collectionId', 'default'); // We'll use 'default' for the default collection
 
         // Store in Redis
-        Redis::sadd('wayak:favorites:' . $clientId . ':' . $collectionId, $productID);
+        Redis::sadd('wayak:favorites:' . $customerId . ':' . $collectionId, $productID);
 
         return response()->json(['status' => 'success']);
+    }
+
+    public function isFavorite($productID, $clientId, $collectionId = 'default')
+    {
+        // Check in Redis
+        $isFavorite = Redis::sismember('wayak:favorites:' . $clientId . ':' . $collectionId, $productID);
+
+        // echo 'wayak:favorites:' . $clientId . ':' . $collectionId;
+        // exit;
+
+        // return response()->json(['isFavorite' => (bool) $isFavorite]);
+        return (bool) $isFavorite;
+        // return true;
     }
 
     public function removeFavorite(Request $request)

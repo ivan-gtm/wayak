@@ -209,7 +209,8 @@ Route::group(['middleware' => ['guest']], function() {
 
 });
 
-Route::prefix('favorites')->group(function () {
+// FAVORITES
+Route::prefix('favorites')->middleware('auth')->group(function () {
     // Add favorite
     Route::post('/add', [FavoritesController::class, 'addFavorite']);
 
@@ -225,8 +226,6 @@ Route::prefix('favorites')->group(function () {
     // Get all collections for a client
     Route::get('/collections/{clientId}', [FavoritesController::class, 'getCollections']);
 });
-
-
 
 Route::group(['middleware' => ['auth']], function() {
     /**
@@ -308,10 +307,12 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('/{country}/templates/{cat_lvl_1}/{cat_lvl_2}/{cat_lvl_3}', [ContentController::class, 'showCategoryPage'])->name('showCategoryLevel3');
     Route::get('/{country}/templates/{cat_lvl_1}/{cat_lvl_2}/{cat_lvl_3}/{cat_lvl_4}', [ContentController::class, 'showCategoryPage'])->name('showCategoryLevel4');
     
-    Route::get('/{country}/template/{slug}', [ContentController::class, 'showTemplatePage'])->name('template.productDetail');
-
+    
     Route::get('/{country}/plantillas/{category}', [ContentController::class, 'showCategoryPage']);
+    
+    Route::get('/{country}/template/{slug}', [ContentController::class, 'showTemplatePage'])->name('template.productDetail');
     Route::get('/{country}/plantilla/{template_id}/{slug}', [ContentController::class, 'showTemplatePage']);
+
     Route::get('/{country}/crear/{category}', [ContentController::class, 'showCreatePerCategoryPage']);
     Route::get('/{country}/crear', [ContentController::class, 'showCreatePage']);
     

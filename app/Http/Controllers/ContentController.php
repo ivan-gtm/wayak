@@ -5,9 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\App;
+use App\Http\Controllers\FavoritesController;
+use App\Http\Controllers\AnalyticsController;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 use League\ColorExtractor\Color;
@@ -17,22 +20,20 @@ use League\ColorExtractor\Palette;
 use App\Models\Template;
 use Storage;
 
-// ini_set("max_execution_time", 0);   // no time-outs!
-// ini_set("request_terminate_timeout", 2000);   // no time-outs!
-// ini_set('memory_limit', -1);
-// ini_set('display_errors', 1);
-
-// ignore_user_abort(true);            // Continue downloading even after user closes the browser.
-// error_reporting(E_ALL);
-
-
 class ContentController extends Controller
 {
     
     public function showHome() {
         
         $country = 'us';
-        $locale = 'en';
+        
+        if( in_array($country, ['us', 'ca']) ){
+            $locale = 'en';
+        } elseif( in_array($country, ['es','mx','co','ar','bo','ch','cu','do','sv','hn','ni', 'pe', 'uy', 've','py','pa','gt','pr','gq']) ){
+            $locale = 'es';
+        } else {
+            $locale = 'en';
+        }
 
         App::setLocale($locale);
 
@@ -125,11 +126,8 @@ class ContentController extends Controller
             exit;
         }
 
-        if( Redis::hexists('wayak:'.$country.':analytics:categories',$category_slug_id) ){
-            Redis::hincrby('wayak:'.$country.':analytics:categories',$category_slug_id,1);
-        } else {
-            Redis::hset('wayak:'.$country.':analytics:categories',$category_slug_id,1);
-        }
+        $analyticsController = new AnalyticsController();
+        $analyticsController->registerVisitCategory($country,$category_slug_id);
 
         $category_obj = json_decode( Redis::get($category_redis_key) );
         
@@ -231,8 +229,8 @@ class ContentController extends Controller
         return $locale;
     }
 
-    public function showTemplatePage($country, $slug){
-
+    public function showTemplatePage($country, Request $request, $slug){
+        
         $language_code = 'en';
         $locale = self::getLocale($country);
         
@@ -260,11 +258,8 @@ class ContentController extends Controller
         $related_templates = self::getRelatedTemplates( $template->mainCategory, $language_code );
         // $related_templates = [];
         
-        if( Redis::hexists('analytics:template:views',$template_id) ){
-            Redis::hincrby('analytics:template:views',$template_id,1);
-        } else {
-            Redis::hset('analytics:template:views',$template_id,1);
-        }
+        $analyticsController = new AnalyticsController();
+        $analyticsController->registerProductView($template_id);
 
         if( App::environment() == 'local' ){
             $preview_image = asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["product_preview"] );
@@ -309,6 +304,29 @@ class ContentController extends Controller
         $menu = json_decode(Redis::get('wayak:'.$country.':menu'));
         $sale = Redis::hgetall('wayak:'.$country.':config:sales');
 
+        $logged_id = 0;
+        $isFavorite = false;
+        if (Auth::check()) {
+            // User is logged in
+            $logged_id = Auth::id();
+            $user = Auth::user();
+            
+            // [id] => 1
+            // [name] => 
+            // [email] => dagtok@gmail.com
+            // [username] => Daniel
+            // [email_verified_at] => 
+            // [password] => $2y$10$O0.Vvas396AHoyiL8M47Y.jnAeBICrf/1HWJ5C6gme.fV7YvG983e
+            // [remember_token] => 
+            // [created_at] => 2023-09-10 20:01:34
+            // [updated_at] => 2023-09-10 20:01:34
+
+            $favoritesController = new FavoritesController();
+            // echo $user->customer_id;
+            // exit;
+            $isFavorite = $favoritesController->isFavorite($template->_id, $user->customer_id);
+        } 
+
         // echo "<pre>";
         // print_r($sale);
         // exit;
@@ -324,6 +342,8 @@ class ContentController extends Controller
             'breadcrumb' => $breadcrumbs_obj,
             'template' => $template,
             'colors' => $colors,
+            'logged_id' => $logged_id,
+            'isFavorite' => $isFavorite,
             'related_templates' => $related_templates
         ]);
     }

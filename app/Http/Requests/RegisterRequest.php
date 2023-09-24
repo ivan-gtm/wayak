@@ -24,10 +24,22 @@ class RegisterRequest extends FormRequest
     public function rules()
     {
         return [
-            'email' => 'required|email:rfc,dns|unique:users,email',
-            'username' => 'required|unique:users,username',
-            'password' => 'required|min:8',
+            '_token' => 'required|string',
+            'customerId'  => 'required|string',
+            'email' => 'required|email|max:255|unique:users,email', // Assuming 'users' is the table name
+            'username' => 'required|string|max:255|unique:users,username', // Assuming 'users' is the table name
+            // 'password' => 'required|string|min:6|confirmed', // Minimum length of 6 and must match password_confirmation
+            'password' => 'required|string|confirmed', // Minimum length of 6 and must match password_confirmation
             'password_confirmation' => 'required|same:password'
         ];
     }
+
+    // public function messages()
+    // {
+    //     return [
+    //         'email.required' => 'An email address is required.',
+    //         'username.unique' => 'The username has already been taken.',
+    //         // ... other custom messages
+    //     ];
+    // }
 }

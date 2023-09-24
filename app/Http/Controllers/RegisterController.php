@@ -49,9 +49,20 @@ class RegisterController extends Controller
      */
     public function register(RegisterRequest $request)
     {
-        $user = User::create($request->validated());
+        $userData = $request->validated();
+        $userData['customer_id'] = $request->input('customerId');
+        
+        // echo "<pre>";
+        // print_r($userData);
+        // exit;
 
+        $user = User::create($userData);
+        // $user = User::create($request->validated());
+        
+
+        
         auth()->login($user);
+
 
         $user->verification_token = $this->generateVerificationToken();
 
@@ -94,11 +105,11 @@ class RegisterController extends Controller
     public function sendVerificationSms($user, $verificationCode)
     {
         $snsClient = new SnsClient([
-            'region' => env('AWS_DEFAULT_REGION'),
+            'region' => config('AWS_DEFAULT_REGION'),
             'version' => 'latest',
             'credentials' => [
-                'key' => env('AWS_ACCESS_KEY_ID'),
-                'secret' => env('AWS_SECRET_ACCESS_KEY'),
+                'key' => config('AWS_ACCESS_KEY_ID'),
+                'secret' => config('AWS_SECRET_ACCESS_KEY'),
             ]
         ]);
 

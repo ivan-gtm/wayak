@@ -43,6 +43,7 @@
         opacity: 0;
         transform: translateY(50px);
         transition: opacity 0.4s ease, transform 0.4s ease;
+        z-index: 2147483647;
     }
 
     .notification-content {
@@ -67,10 +68,68 @@
         outline: none;
     }
 </style>
+<style>
+    /* STYLE FOR LOGIN FORM  */
+    
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 4;
+        }
 
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: #fff;
+            width: 300px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .close {
+            position: absolute;
+            right: 10px;
+            top: 5px;
+            cursor: pointer;
+        }
+    
+</style>
 @endsection
 
 @section('content')
+<!-- Trigger button -->
+<button id="showModalBtn">Login</button>
+
+<!-- The Modal -->
+<div id="loginModal" class="modal">
+    <div class="modal-content">
+        <span class="close" id="closeModalBtn">&times;</span>
+        <h2>Login</h2>
+        <form id="loginForm">
+            <div>
+                <label for="usernameInput">Email:</label>
+                <input type="email" id="usernameInput" required>
+            </div>
+            <div>
+                <label for="passwordInput">Password:</label>
+                <input type="password" id="passwordInput" required>
+            </div>
+            <div>
+                <button type="submit">Login</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
 <div itemscope itemtype="https://schema.org/Product">
     <meta itemprop="sku" content="{{ $template->_id }}" />
     <div itemprop="brand" itemtype="http://schema.org/Brand" itemscope>
@@ -95,7 +154,7 @@
                         <nav class="breadcrumbs h-text-truncate ">
                             <a href="{{ url('') }}">{{ __('product.home') }}</a>
                             @foreach ($breadcrumbs as $breadcrumb)
-                                <a class="js-breadcrumb-category" href="{{ $breadcrumb->url.'?source=breadcrumbs' }}">{{ $breadcrumb->name }}</a>
+                            <a class="js-breadcrumb-category" href="{{ $breadcrumb->url.'?source=breadcrumbs' }}">{{ $breadcrumb->name }}</a>
                             @endforeach
                         </nav>
                     </div>
@@ -140,22 +199,22 @@
                                                             <span class="wt-screen-reader-only">Price:</span>
                                                             <span>
                                                                 @if(isset($sale) && $sale != null )
-                                                                MX${{ $template->prices['price'] }}
+                                                                    MX${{ $template->prices['price'] }}
                                                                 @else
-                                                                MX${{ $template->prices['original_price'] }}
+                                                                    MX${{ $template->prices['original_price'] }}
                                                                 @endif
                                                             </span>
                                                         </p>
                                                         @if(isset($sale) && $sale != null )
-                                                        <div class="wt-display-flex-xs wt-text-caption wt-text-gray">
-                                                            <div class="wt-text-strikethrough wt-mr-xs-1">
-                                                                <span class="wt-screen-reader-only">Original Price:</span>
-                                                                MX${{ $template->prices['original_price'] }}
+                                                            <div class="wt-display-flex-xs wt-text-caption wt-text-gray">
+                                                                <div class="wt-text-strikethrough wt-mr-xs-1">
+                                                                    <span class="wt-screen-reader-only">Original Price:</span>
+                                                                    MX${{ $template->prices['original_price'] }}
+                                                                </div>
+                                                                <div class="wt-mr-xs-1">
+                                                                    ({{ $template->prices['discount_percent'] }}% Off)
+                                                                </div>
                                                             </div>
-                                                            <div class="wt-mr-xs-1">
-                                                                ({{ $template->prices['discount_percent'] }}% Off)
-                                                            </div>
-                                                        </div>
                                                         @endif
                                                         <div class="wt-spinner wt-spinner--01 wt-display-none" aria-live="assertive" data-buy-box-price-spinner="">
                                                             <span class="wt-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -196,19 +255,33 @@
                                                         <div data-action="follow-shop-button-container" class="wt-display-flex-xs wt-align-items-center" data-template-id="{{ $template->_id }}">
                                                             <!-- <input type="hidden" class="id" name="user_id" value="16374284"> -->
                                                             <a rel="16374284" data-downtime-overlay-type="favorite" data-supplemental-state--use_follow_text="true" class="inline-overlay-trigger favorite-shop-action wt-btn wt-btn--small wt-btn--transparent follow-shop-button-listing-header-v3" aria-label="Follow shop" data-action="follow-shop-button" data-template-id="{{ $template->_id }}" data-shop-id="9116151" data-source-name="listing_header" data-module-name="">
-                                                                <span class="etsy-icon wt-icon--smaller" data-not-following-icon="" data-template-id="{{ $template->_id }}">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                                                                        <path d="M12,21C10.349,21,2,14.688,2,9,2,5.579,4.364,3,7.5,3A6.912,6.912,0,0,1,12,5.051,6.953,6.953,0,0,1,16.5,3C19.636,3,22,5.579,22,9,22,14.688,13.651,21,12,21ZM7.5,5C5.472,5,4,6.683,4,9c0,4.108,6.432,9.325,8,10,1.564-.657,8-5.832,8-10,0-2.317-1.472-4-3.5-4-1.979,0-3.7,2.105-3.721,2.127L11.991,8.1,11.216,7.12C11.186,7.083,9.5,5,7.5,5Z">
-                                                                        </path>
-                                                                    </svg>
-                                                                </span>
-                                                                <span class="etsy-icon wt-icon--smaller wt-display-none wt-text-brick" data-following-icon=""><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                                                                        <path d="M16.5,3A6.953,6.953,0,0,0,12,5.051,6.912,6.912,0,0,0,7.5,3C4.364,3,2,5.579,2,9c0,5.688,8.349,12,10,12S22,14.688,22,9C22,5.579,19.636,3,16.5,3Z">
-                                                                        </path>
-                                                                    </svg></span>
-                                                                <span data-following-message="" class="wt-ml-xs-1 listing-header-v3-message wt-display-inline-block wt-position-relative wt-display-none ">Following</span>
-                                                                <span data-not-following-message="" class="wt-ml-xs-1 listing-header-v3-message wt-display-inline-block wt-position-relative ">Follow</span>
-
+                                                                @if($logged_id == 0 || ($logged_id > 0 && $isFavorite == false) )
+                                                                    <span class="etsy-icon wt-icon--smaller" data-not-following-icon="" data-template-id="{{ $template->_id }}">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                                                            <path d="M12,21C10.349,21,2,14.688,2,9,2,5.579,4.364,3,7.5,3A6.912,6.912,0,0,1,12,5.051,6.953,6.953,0,0,1,16.5,3C19.636,3,22,5.579,22,9,22,14.688,13.651,21,12,21ZM7.5,5C5.472,5,4,6.683,4,9c0,4.108,6.432,9.325,8,10,1.564-.657,8-5.832,8-10,0-2.317-1.472-4-3.5-4-1.979,0-3.7,2.105-3.721,2.127L11.991,8.1,11.216,7.12C11.186,7.083,9.5,5,7.5,5Z">
+                                                                            </path>
+                                                                        </svg>
+                                                                    </span>
+                                                                    <span class="etsy-icon wt-icon--smaller wt-display-none wt-text-brick" data-following-icon=""><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                                                            <path d="M16.5,3A6.953,6.953,0,0,0,12,5.051,6.912,6.912,0,0,0,7.5,3C4.364,3,2,5.579,2,9c0,5.688,8.349,12,10,12S22,14.688,22,9C22,5.579,19.636,3,16.5,3Z">
+                                                                            </path>
+                                                                        </svg></span>
+                                                                    <span data-following-message="" class="wt-ml-xs-1 listing-header-v3-message wt-display-inline-block wt-position-relative wt-display-none ">Following</span>
+                                                                    <span data-not-following-message="" class="wt-ml-xs-1 listing-header-v3-message wt-display-inline-block wt-position-relative ">Follow</span>
+                                                                @elseif( $logged_id > 0 && $isFavorite == true )
+                                                                    <span class="etsy-icon wt-icon--smaller wt-display-none " data-not-following-icon="" data-template-id="{{ $template->_id }}">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                                                            <path d="M12,21C10.349,21,2,14.688,2,9,2,5.579,4.364,3,7.5,3A6.912,6.912,0,0,1,12,5.051,6.953,6.953,0,0,1,16.5,3C19.636,3,22,5.579,22,9,22,14.688,13.651,21,12,21ZM7.5,5C5.472,5,4,6.683,4,9c0,4.108,6.432,9.325,8,10,1.564-.657,8-5.832,8-10,0-2.317-1.472-4-3.5-4-1.979,0-3.7,2.105-3.721,2.127L11.991,8.1,11.216,7.12C11.186,7.083,9.5,5,7.5,5Z">
+                                                                            </path>
+                                                                        </svg>
+                                                                    </span>
+                                                                    <span class="etsy-icon wt-icon--smaller wt-text-brick" data-following-icon=""><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                                                            <path d="M16.5,3A6.953,6.953,0,0,0,12,5.051,6.912,6.912,0,0,0,7.5,3C4.364,3,2,5.579,2,9c0,5.688,8.349,12,10,12S22,14.688,22,9C22,5.579,19.636,3,16.5,3Z">
+                                                                            </path>
+                                                                        </svg></span>
+                                                                    <span data-following-message="" class="wt-ml-xs-1 listing-header-v3-message wt-display-inline-block wt-position-relative">Following</span>
+                                                                    <span data-not-following-message="" class="wt-ml-xs-1 listing-header-v3-message wt-display-inline-block wt-position-relative wt-display-none">Follow</span>
+                                                                @endif
                                                             </a>
                                                         </div>
                                                     </div>
@@ -499,10 +572,8 @@
     </div>
 </div>
 <div id="notification" class="notification">
-        <div class="notification-content">
-            This favorite won't last! Sign in or register to save items for more than 7 days. Do you want to <a href="https://www.ups.com/track?loc=en_US&requester=ST/" target="_blank">Sign in</a>?
-        </div>
-        <button class="notification-close" onclick="closeNotification()">✕</button>
+    <div class="notification-content"></div>
+    <button class="notification-close" onclick="closeNotification()">✕</button>
 </div>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
@@ -649,14 +720,6 @@
 
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const notificationText = "This favorite won't last! Sign in or register to save items for more than 7 days. Do you want to";
-        const actionButtonText = "Sign in";
-        const actionURL = "https://www.ups.com/track?loc=en_US&requester=ST/";
-        const displayDuration = 10; // Display for 10 seconds
-        displayNotification(notificationText, actionButtonText, actionURL, displayDuration);
-    });
-
     function displayNotification(contentText, actionText, actionURL, durationInSeconds) {
         const notification = document.getElementById("notification");
         const notificationContent = document.querySelector(".notification-content");
@@ -687,47 +750,123 @@
     document.querySelector("#listing-page-cart > div:nth-child(4) > div > div.wt-display-flex-xs.wt-align-items-center > div > a").addEventListener('click', function(event) {
 
         console.log("OPIPIPIP");
-
-        // const templateId = event.target.getAttribute('data-template-id');
+    
         // Try to get customerId from the meta tag
         let templateIdTag = document.querySelector('meta[name="product-id"]');
         let templateId = templateIdTag ? templateIdTag.getAttribute('content') : null;
 
         const customerId = localStorage.getItem('customerId');
-        const loggedIn = (customerId && customerId !== "");
-        // const loggedIn = (customerId && customerId !== "");
-
-        // if (!loggedIn) {
-        //     const confirm = window.confirm("This favorite won't last! Sign in or register to save items for more than 7 days. Do you want to Sign in?");
-        //     if (confirm) {
-        //         localStorage.setItem('redirectTo', window.location.href);
-        //         localStorage.setItem('pendingFavorite', templateId);
-        //         window.location.href = "/login"; // Assuming the login route
-        //         return;
-        //     }
-        // }
-
+        const loggedIn = localStorage.getItem('loggedIn');
+        const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
+        const csrfToken = csrfTokenMeta ? csrfTokenMeta.getAttribute("content") : null;
+        
         let favorites = JSON.parse(localStorage.getItem('favorites')) || {};
-        if (!favorites[templateId]) {
-            favorites[templateId] = new Date().toISOString();
-            localStorage.setItem('favorites', JSON.stringify(favorites));
 
+
+        if (!favorites[templateId]) {
+        
             // Send to backend if user is logged in
             if (loggedIn) {
-                fetch("/favorite/add", {
+                fetch("/favorites/add", {
                     method: "POST",
                     headers: {
                         'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
                     },
                     body: JSON.stringify({
                         "template-id": templateId,
                         "customerId": customerId,
                         "collectionName": "default" // TODO: Implement collection selection
                     })
+                })
+                .then(response => {
+                    if (response.status === 401) {
+                        // Handle the 401 Unauthorized error
+                        console.error('Unauthorized. Please login again.');
+                        // Optionally, redirect the user to the login page or show a modal asking them to log in.
+                        // window.location.href = '/login';
+                        // localStorage.setItem('pendingFavorite', templateId);
+                        favorites[templateId] = new Date().toISOString();
+                        localStorage.setItem('favorites', JSON.stringify(favorites));
+                        localStorage.setItem('loggedIn', false);
+                        showAddedToFavoritesNotification();
+                        toggleFavoritesButton();
+
+                    } else if (response.ok) {
+                        favorites[templateId] = new Date().toISOString();
+                        localStorage.setItem('favorites', JSON.stringify(favorites));
+                        // showAddedToFavoritesNotification();
+                        toggleFavoritesButton();
+                    } else if (!response.ok) {
+                        // Handle other errors
+                        return response.json().then(data => {
+                            console.error('Error:', data.message);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Fetch error:', error);
                 });
+            } else {
+                favorites[templateId] = new Date().toISOString();
+                localStorage.setItem('favorites', JSON.stringify(favorites));
+                showAddedToFavoritesNotification();
+                toggleFavoritesButton();
             }
         }
     });
+
+    function toggleFavoritesButton(){
+        const favoritedIconBtn = document.querySelector("#listing-page-cart > div > div > div.wt-display-flex-xs.wt-align-items-center > div > a > span.etsy-icon.wt-icon--smaller.wt-text-brick");
+        const favoritedLabelBtn = document.querySelector("#listing-page-cart > div > div > div.wt-display-flex-xs.wt-align-items-center > div > a > span.wt-ml-xs-1.listing-header-v3-message.wt-display-inline-block.wt-position-relative");
+        
+        const addTofavoriteLabelBtn = document.querySelector("#listing-page-cart > div > div > div.wt-display-flex-xs.wt-align-items-center > div > a > span:nth-child(1)");
+        const addTofavoriteIconBtn = document.querySelector("#listing-page-cart > div:nth-child(4) > div > div.wt-display-flex-xs.wt-align-items-center > div > a > span:nth-child(4)");
+
+        if(favoritedIconBtn){
+            /// create code to check if favoritedIconBtn has class "wt-display-none", if it has, then remove it, if it doesn't have, then add it
+            if(favoritedIconBtn.classList.contains("wt-display-none")){
+                favoritedIconBtn.classList.remove("wt-display-none");
+            } else {
+                favoritedIconBtn.classList.add("wt-display-none");
+            }
+        }
+    
+        if(favoritedLabelBtn){
+            /// create code to check if favoritedLabelBtn has class "wt-display-none", if it has, then remove it, if it doesn't have, then add it
+            if(favoritedLabelBtn.classList.contains("wt-display-none")){
+                favoritedLabelBtn.classList.remove("wt-display-none");
+            } else {
+                favoritedLabelBtn.classList.add("wt-display-none");
+            }
+        }
+        
+        if(addTofavoriteLabelBtn){
+            /// create code to check if addTofavoriteLabelBtn has class "wt-display-none", if it has, then remove it, if it doesn't have, then add it
+            if(addTofavoriteLabelBtn.classList.contains("wt-display-none")){
+                addTofavoriteLabelBtn.classList.remove("wt-display-none");
+            } else {
+                addTofavoriteLabelBtn.classList.add("wt-display-none");
+            }
+        }
+        
+        if(addTofavoriteIconBtn){
+            /// create code to check if addTofavoriteIconBtn has class "wt-display-none", if it has, then remove it, if it doesn't have, then add it
+            if(addTofavoriteIconBtn.classList.contains("wt-display-none")){
+                addTofavoriteIconBtn.classList.remove("wt-display-none");
+            } else {
+                addTofavoriteIconBtn.classList.add("wt-display-none");
+            }
+        }
+    }
+
+    function showAddedToFavoritesNotification() {
+        const notificationText = "This favorite won't last! Sign in or register to save items for more than 7 days. Do you want to";
+        const actionButtonText = "Sign in";
+        const actionURL = "https://www.ups.com/track?loc=en_US&requester=ST/";
+        const displayDuration = 10; // Display for 10 seconds
+        displayNotification(notificationText, actionButtonText, actionURL, displayDuration);
+    }
 
     // Check for pending favorites after login
     if (localStorage.getItem('redirectTo') && localStorage.getItem('pendingFavorite')) {
@@ -797,8 +936,78 @@
         });
     });
 
+</script>
+<script>
+    document.querySelector('#loginForm').addEventListener('submit', function(event) {
+        event.preventDefault();
 
-    // TODO: Implement other functionalities like managing collections, syncing with backend, etc.
+        const username = document.querySelector('#usernameInput').value;
+        const password = document.querySelector('#passwordInput').value;
+
+        ajaxLogin(username, password);
+    });
+
+    async function ajaxLogin(username, password) {
+        try {
+            const response = await fetch('/login', { // Adjust the URL if needed
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest', // Important for Laravel to recognize AJAX request
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') // CSRF token for Laravel
+                },
+                body: JSON.stringify({
+                    username,
+                    password
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                localStorage.setItem('loggedIn', 'true');
+                window.location.href = data.redirect_url; // Redirect to the intended URL
+            } else {
+                // Handle login failure, maybe show an error message
+                alert(data.message);
+            }
+        } catch (error) {
+            console.error('Error logging in:', error);
+        }
+    }
+
+      // Get modal and trigger elements
+      const modal = document.getElementById('loginModal');
+    const showModalBtn = document.getElementById('showModalBtn');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+
+    // Show modal
+    showModalBtn.addEventListener('click', function() {
+        modal.style.display = 'block';
+    });
+
+    // Close modal
+    closeModalBtn.addEventListener('click', function() {
+        modal.style.display = 'none';
+    });
+
+    // Close modal if clicked outside content
+    window.addEventListener('click', function(event) {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+
+    // Handle login form submission (you can integrate the ajaxLogin function here)
+    document.querySelector('#loginForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const email = document.querySelector('#usernameInput').value;
+        const password = document.querySelector('#passwordInput').value;
+
+        // Call your login function here
+        // ajaxLogin(email, password);
+    });
 </script>
 <script src="https://www.paypal.com/sdk/js?client-id=sb&enable-funding=venmo&currency=USD" data-sdk-integration-source="button-factory"></script>
 <script>
@@ -889,8 +1098,7 @@
 
     @if($sale != null)
 
-    var date = '{{ $sale['
-    sale_ends_at '] }}';
+    var date = '{{ $sale['sale_ends_at'] }}';
     var remainingSeconds = remainingSecondsUntilUtcDate(date);
     console.log('Remaining seconds until ' + date + ': ' + remainingSeconds);
 

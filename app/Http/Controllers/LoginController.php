@@ -28,7 +28,7 @@ class LoginController extends Controller
 
         return view('auth.login', [
             'menu' => $menu,
-            'sale' => $sale, 
+            'sale' => $sale,
             'country' => $country,
             'search_query' => ''
         ]);
@@ -45,10 +45,9 @@ class LoginController extends Controller
     {
         $credentials = $request->getCredentials();
 
-        if(!Auth::validate($credentials)):
-            return redirect()->to('login')
-                ->withErrors(trans('auth.failed'));
-        endif;
+        if (!Auth::validate($credentials)) {
+            return response()->json(['success' => false, 'message' => trans('auth.failed')], 401);
+        }
 
         $user = Auth::getProvider()->retrieveByCredentials($credentials);
 
@@ -57,16 +56,8 @@ class LoginController extends Controller
         return $this->authenticated($request, $user);
     }
 
-    /**
-     * Handle response after user authenticated
-     * 
-     * @param Request $request
-     * @param Auth $user
-     * 
-     * @return \Illuminate\Http\Response
-     */
-    protected function authenticated(Request $request, $user) 
+    protected function authenticated(Request $request, $user)
     {
-        return redirect()->intended();
+        return response()->json(['success' => true, 'redirect_url' => url()->previous()]);
     }
 }

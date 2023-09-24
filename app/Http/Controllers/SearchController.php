@@ -101,12 +101,8 @@ class SearchController extends Controller
 
     private function saveGlobalSearchHistory($country, $searchSlug, $searchQuery)
     {
-        if (Redis::hexists('wayak:' . $country . ':analytics:search:results', $searchSlug)) {
-            Redis::hincrby('wayak:' . $country . ':analytics:search:results', $searchSlug, 1);
-        } else {
-            Redis::hset('wayak:' . $country . ':analytics:search:terms', $searchSlug, $searchQuery);
-            Redis::hset('wayak:' . $country . ':analytics:search:results', $searchSlug, 1);
-        }
+        $analyticsController = new AnalyticsController();
+        $analyticsController->registerPublicSearch($country, $searchSlug, $searchQuery);
     }
 
     private function prepareTemplates($search_result, $language_code)
