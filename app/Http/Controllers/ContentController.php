@@ -71,11 +71,22 @@ class ContentController extends Controller
         if( Redis::exists('wayak:'.$country.':home:carousels') ){
             
             $carousels = json_decode(Redis::get('wayak:'.$country.':home:carousels'));
+            $userFavoritesCarousels = json_decode(Redis::get('wayak:user:o8feih6wo6:carousels:favorites'));
+            $userSerachBasedCarousels = json_decode(Redis::get('wayak:user:o8feih6wo6:carousels:search'));
+            $navigationHistoryCarousels = json_decode(Redis::get('wayak:user:o8feih6wo6:carousels:product-history'));
+            
+            // Joint the two arrays
+            $carousels = array_merge($userSerachBasedCarousels, $carousels);
+
+            array_unshift( $carousels, $userFavoritesCarousels );
+            array_unshift( $carousels, $navigationHistoryCarousels );
+
             $menu = json_decode(Redis::get('wayak:'.$country.':menu'));
             $sale = Redis::hgetall('wayak:'.$country.':config:sales');
             
             // echo "<pre>";
-            // print_r(json_encode($menu));
+            // print_r($navigationHistoryCarousels);
+            // print_r($carousels);
             // exit;
             
             return view('content.home',[

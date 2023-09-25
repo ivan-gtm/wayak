@@ -1,0 +1,77 @@
+Act as PHP developer expert using Laravel 8.
+
++ You are developing functionalities to an ecommerce to create personalized home, with custom carousels based on product product history views, categories history views and search terms. 
++ All code must be executed throw a laravel command getting {$customerId} as parameter.
++ All tamplates are stored in a MongoDB database, using "jenssegers/mongodb" to retrieve data from database. 
++ Your first assigment is to create "Recently viewed products" carousel, that consists on a JSON object that contains a [slider_id], [title], [search_term] and [items]. With following characteristics:
+    * [slider_id] is a random string of 5 characters.
+    * [title] is "Recently viewed products".
+    * [search_term] is "recently viewed".
+    * [items] is an array of products that will be displayed in the carousel. Information is gotten from redis and mongodb.
++ User history is stored on key "wayak:user:{$customerId}:history:navigation". Where {$customerId} is gotten from command parameter.
++ Command receives a parameter {$customerId} and as result must store as JSON object "Recently viewed products" slider using a key name like "wayak:user:{$customerId}:carousels".
++ [1.2-Slider Model] is an example of JSON object that must be stored on redis as result from command execution.
++ Slider items population:
+    * [items] information like title,slug,preview_image_url or height , will be gotten from Template collection an existing MongoDB model.
+    * Having [1.1-syncProductHistory] function, create a funciton that returns recently viewed products, based on user history views. All hash keys gotten from this function, will be used to retrieve product information searching in Template collection by _id.
+    * Template collection, contains products from all store. To filter items that compose slider items, you must get template ids from previous point.
+
+[1.1-syncProductHistory]
+public function syncProductHistory(Request $request)
+{
+    // Validate incoming request
+    $request->validate([
+        'customerId' => 'required|string',
+        'productHistory' => 'required|json'
+    ]);
+
+    $customerId = $request->input('customerId');
+    $incomingProductHistory = json_decode($request->input('productHistory'), true);
+
+    // Define the Redis key for storing the product history of this customer
+    $key = "wayak:user:{$customerId}:history:navigation";
+
+    // Update the existing product history
+    foreach ($incomingProductHistory as $productId => $data) {
+        $field = $productId;
+        $existingDataJSON = Redis::hget($key, $field);
+        $existingData = $existingDataJSON ? json_decode($existingDataJSON, true) : [];
+
+        if (!$existingData) {
+            // Store the updated product history in hash field
+            Redis::hset($key, $field, json_encode($data));
+        } elseif ($existingData && $existingData['lastVisited'] < $data['lastVisited']) {
+            // Increment the counter
+            $existingData['count'] += $data['count'];
+            Redis::hset($key, $field, json_encode($existingData));
+        }
+    }
+
+    return response()->json(['message' => 'Product history synced successfully']);
+}
+
+[1.2-Slider Model]
+    [
+    {
+        "slider_id": "pyTA4",
+        "title": "Templates for \"Save The Date\"",
+        "search_term": "save date",
+        "items": [
+            {
+                "_id": "6oG0KF38QT",
+                "title": "Announcement Party Invitation Birthday Save Date Wedding Vegas Custom Retirement Elopement Dallas Texas",
+                "slug": "announcement-party-invitation-birthday-save-date-wedding-vegas-custom-retirement-6oG0KF38QT",
+                "width": "5",
+                "height": "7",
+                "forSubscribers": false,
+                "previewImageUrls": {
+                    "carousel": "9MCag2_97DwfoB40l_carousel.jpg",
+                    "large": "9MCag2_97DwfoB40l_large.jpg",
+                    "product_preview": "9MCag2_97DwfoB40l_product_preview.jpg",
+                    "thumbnail": "9MCag2_97DwfoB40l_thumbnail.jpg"
+                },
+                "preview_image_url": "http://localhost:8001/design/template/6oG0KF38QT/thumbnails/en/9MCag2_97DwfoB40l_product_preview.jpg"
+            }
+        ]
+    }
+]

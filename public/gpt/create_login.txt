@@ -1,0 +1,38 @@
+Describe how to implement a login in laravel using version 8, meeting this requirements:
+
+1. General requirements:
+* 1.1 All code in JS most be written in native JS.
+* 1.2 Laravel views must use bootstrap 5.
+
+2. Email sign up requirements:
+* 2.1 Required fields for user registration form are: birthday, email, password, 6 digit verification code.
+* 2.2 Password must have 8 to 20 characters including letters, numbers and special characters.
+* 2.3 User must complete entire form to continue for user registration.
+* 2.4 For "6 digit verification code" field, user will have a button to "send code" to email user.
+* 2.5 Once user clics "send code", verification email will be sent to user, "send code" button will be locked and value will be replaced with a coundown "Resend code: Xs" where X is the number of seconds remaining.
+Verification codes expire after 48 hours. 
+
+3. Login requirements
+* 3.1 I need to use custom laravel views for login.
+* 3.2 For login, user can enter username or email and password.
+
+4. Verification email requirements
+    4.1 Email Subject: [six_digit_code] is your verification code
+    4.2 Email body "To verify your account, enter this code in Wayak:
+
+        [six_digit_code]
+
+        Verification codes expire after 48 hours.
+
+        If you didn't request this code, you can ignore this message.
+
+        Wayak Support Team
+
+        Wayak Help Center: https://support.wayak.app/"
+
+
+* User can sign up using phone or email.
+* E.164 format by phone registration
+* Required fieds for phone sing up ( Birth day, phone)
+
+* User would select
