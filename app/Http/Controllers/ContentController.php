@@ -71,15 +71,20 @@ class ContentController extends Controller
         if( Redis::exists('wayak:'.$country.':home:carousels') ){
             
             $carousels = json_decode(Redis::get('wayak:'.$country.':home:carousels'));
-            $userFavoritesCarousels = json_decode(Redis::get('wayak:user:o8feih6wo6:carousels:favorites'));
-            $userSerachBasedCarousels = json_decode(Redis::get('wayak:user:o8feih6wo6:carousels:search'));
-            $navigationHistoryCarousels = json_decode(Redis::get('wayak:user:o8feih6wo6:carousels:product-history'));
+            $trendingProductsCarousel = json_decode(Redis::get('wayak:'.$country.':home:carousels:trending'));
+            $userFavoritesCarousel = json_decode(Redis::get('wayak:user:o8feih6wo6:carousels:favorites'));
+            $navigationHistoryCarousel = json_decode(Redis::get('wayak:user:o8feih6wo6:carousels:product-history'));
             
+            $userSerachBasedCarousels = json_decode(Redis::get('wayak:user:o8feih6wo6:carousels:search'));
+            $popularCategoriesCarousels = json_decode(Redis::get('wayak:' . $country . ':home:carousels:trending-categories'));
+
             // Joint the two arrays
+            $carousels = array_merge($popularCategoriesCarousels, $carousels);
             $carousels = array_merge($userSerachBasedCarousels, $carousels);
 
-            array_unshift( $carousels, $userFavoritesCarousels );
-            array_unshift( $carousels, $navigationHistoryCarousels );
+            array_unshift( $carousels, $trendingProductsCarousel );
+            array_unshift( $carousels, $userFavoritesCarousel );
+            array_unshift( $carousels, $navigationHistoryCarousel );
 
             $menu = json_decode(Redis::get('wayak:'.$country.':menu'));
             $sale = Redis::hgetall('wayak:'.$country.':config:sales');
@@ -120,7 +125,6 @@ class ContentController extends Controller
         App::setLocale($locale);
 
         $slug = '/'.$cat_lvl_1_slug;
-        
         if( $cat_lvl_2_slug != null ){
             $slug .=  '/'.$cat_lvl_2_slug;
         }

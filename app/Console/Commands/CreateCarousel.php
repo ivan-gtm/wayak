@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Redis;
 use App\Models\Template;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 class CreateCarousel extends Command
 {
@@ -42,14 +43,158 @@ class CreateCarousel extends Command
     public function handle()
     {
         $customerId = $this->argument('customerId');
-        $this->buildFavoritesCarousels($customerId);
-        $this->buildSearchBasedCarousels($customerId);
-        $this->buildRecentlyViewedProductsCarousel($customerId);
+
+        $this->buildCarouselPopularCategories();
+        // $this->buildCarouselTrendingNow();
+        // $this->buildFavoritesCarousels($customerId);
+        // $this->buildSearchBasedCarousels($customerId);
+        // $this->buildRecentlyViewedProductsCarousel($customerId);
     }
+
+    // Global user preferences
+    function buildCarouselTrendingNow()
+    {
+        try {
+            // Fetch all template views
+            $views = Redis::hgetall('analytics:template:views');
+            $limit = 30;
+            $language_code = 'en';
+            $country = 'us';
+
+            // Sort the templates by views in descending order
+            arsort($views);
+
+            // Return the top $limit template_ids
+            $mostVisitedProductIDs = array_slice(array_keys($views), 0, $limit);
+            // print_r($most_visited);
+            // exit;
+
+            $products = Template::whereIn('_id', $mostVisitedProductIDs)->get([
+                'title',
+                'slug',
+                'previewImageUrls',
+                'width',
+                'height',
+                'forSubscribers',
+                'previewImageUrls'
+            ]);
+
+            // Convert the products into a suitable format for the carousel
+            $carouselItems = [];
+            foreach ($products as $product) {
+
+                if (App::environment() == 'local') {
+                    $product->preview_image_url = asset('design/template/' . $product->_id . '/thumbnails/' . $language_code . '/' . $product->previewImageUrls['product_preview']);
+                } else {
+                    $product->preview_image_url = Storage::disk('s3')->url('design/template/' . $product->_id . '/thumbnails/' . $language_code . '/' . $product->previewImageUrls['product_preview']);
+                }
+
+                $carouselItems[] = [
+                    '_id' => $product->_id,
+                    'title' => $product->title,
+                    'slug' => $product->slug,
+                    'width' => $product->width,
+                    'height' => $product->height,
+                    'forSubscribers' => $product->forSubscribers,
+                    'previewImageUrls' => $product->previewImageUrls,
+                    'preview_image_url' => $product->preview_image_url
+                ];
+            }
+
+            // Construct the carousel JSON object
+            $carousel = [
+                'slider_id' => Str::random(5),
+                'title' => 'Trending Now',
+                'search_term' => 'Favorites',
+                'items' => $carouselItems
+            ];
+
+            // Store the JSON object in Redis
+            $redisCarouselKey = 'wayak:' . $country . ':home:carousels:trending';
+            Redis::set($redisCarouselKey, json_encode($carousel));
+
+            $this->info('Carousel created successfully ');
+        } catch (Exception $e) {
+            // Consider logging the exception for debugging purposes
+            // Log::error("Error fetching top visited templates: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    function buildCarouselPopularCategories()
+    {
+        $country = 'us';
+        $redisKey = 'wayak:' . $country . ':analytics:categories';
+        $views = Redis::hgetall($redisKey);
+        $limit = 10;
+        $language_code = 'en';
+
+        // Sort the categories by views in descending order
+        arsort($views);
+
+        // Return the top $limit category_ids
+        $mostVisitedCategories = array_slice(array_keys($views), 0, $limit);
+
+        $carousels = [];
+        foreach ($mostVisitedCategories as $category) {
+            $category = '/'.$category;
+
+            // Fetch 30 random templates matching the category
+            $randomProducts = DB::connection('mongodb')->collection('templates')
+                ->raw(function ($collection) use ($category) {
+                    return $collection->aggregate([
+                        [
+                            '$match' => [
+                                '$or' => [
+                                    ['mainCategory' => $category],
+                                    ['categories' => $category]
+                                ]
+                            ]
+                        ],
+                        ['$sample' => ['size' => 30]]
+                    ]);
+                });
+            
+            $carouselItems = [];
+            foreach ($randomProducts as $product) {
+                $urlPath = 'design/template/' . $product->_id . '/thumbnails/' . $language_code . '/' . $product->previewImageUrls['product_preview'];
+                $product->preview_image_url = App::environment() == 'local' ? asset($urlPath) : Storage::disk('s3')->url($urlPath);
+
+                $carouselItems[] = [
+                    '_id' => $product->_id,
+                    'title' => $product->title,
+                    'slug' => $product->slug,
+                    'width' => $product->width,
+                    'height' => $product->height,
+                    'forSubscribers' => $product->forSubscribers,
+                    'previewImageUrls' => $product->previewImageUrls,
+                    'preview_image_url' => $product->preview_image_url
+                ];
+            }
+
+            // Construct the carousel JSON object
+            $carousels[] = [
+                'slider_id' => Str::random(5),
+                'title' => 'Cateogory '.$category,
+                'search_term' => 'Favorites',
+                'items' => $carouselItems
+            ];
+        }
+
+        print_r($carousels);
+
+        // Store the JSON object in Redis
+        $redisCarouselKey = 'wayak:' . $country . ':home:carousels:trending-categories';
+        Redis::set($redisCarouselKey, json_encode($carousels));
+
+        $this->info('Carousel created successfully ');
+    }
+
+
 
     function buildFavoritesCarousels($customerId)
     {
-        
+
         $language_code = 'en';
         $favoriteProductIds = $this->getFavorites($customerId);
         $products = Template::whereIn('_id', $favoriteProductIds)->get([
@@ -65,11 +210,11 @@ class CreateCarousel extends Command
         // Convert the products into a suitable format for the carousel
         $carouselItems = [];
         foreach ($products as $product) {
-            
-            if( App::environment() == 'local' ){
-                $product->preview_image_url = asset( 'design/template/'.$product->_id.'/thumbnails/'.$language_code.'/'.$product->previewImageUrls['product_preview'] );
+
+            if (App::environment() == 'local') {
+                $product->preview_image_url = asset('design/template/' . $product->_id . '/thumbnails/' . $language_code . '/' . $product->previewImageUrls['product_preview']);
             } else {
-                $product->preview_image_url = Storage::disk('s3')->url( 'design/template/'.$product->_id.'/thumbnails/'.$language_code.'/'.$product->previewImageUrls['product_preview'] );
+                $product->preview_image_url = Storage::disk('s3')->url('design/template/' . $product->_id . '/thumbnails/' . $language_code . '/' . $product->previewImageUrls['product_preview']);
             }
 
             $carouselItems[] = [
