@@ -11,7 +11,7 @@ use App\Http\Controllers\AnalyticsController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
+
 
 use League\ColorExtractor\Color;
 use League\ColorExtractor\ColorExtractor;
