@@ -244,7 +244,6 @@
                     <div class="AA1EE83D">
                         <div class="jBXcSG6t">
                             <h3 class="SNcU6rNK">Featured Graphic Templates</h3>
-
                         </div>
                     </div>
                 </div>

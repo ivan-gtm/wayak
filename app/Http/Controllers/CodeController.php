@@ -6,12 +6,13 @@ use App\Models\Template;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\App;
+use App\Traits\LocaleTrait;
 
 class CodeController extends Controller
 {
     // Define a constant for expiration time
     const EXPIRATION_TIME = 86400;  // 24 hours in seconds
-
+    use LocaleTrait;
     /**
      * Validates the code based on the given country and request parameters.
      *
@@ -21,19 +22,7 @@ class CodeController extends Controller
      */
     function validateCode($country, Request $request)
     {
-        // Determine the locale based on the country
-        $locales = [
-            'en' => ['us', 'ca'],
-            'es' => ['es', 'mx', 'co', 'ar', 'bo', 'ch', 'cu', 'do', 'sv', 'hn', 'ni', 'pe', 'uy', 've', 'py', 'pa', 'gt', 'pr', 'gq']
-        ];
-
-        $locale = 'en';  // default locale
-        foreach ($locales as $key => $countries) {
-            if (in_array($country, $countries)) {
-                $locale = $key;
-                break;
-            }
-        }
+        $locale = $this->getLocaleByCountry($country);
 
         // Set the application's locale
         App::setLocale($locale);

@@ -2,20 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Http\Requests\LoginRequest;
+use App\Models\User;
+use App\Traits\LocaleTrait;
+
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
-use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
 // Source: https://codeanddeploy.com/blog/laravel/laravel-8-authentication-login-and-registration-with-username-or-email
 class LoginController extends Controller
 {
+    use LocaleTrait;
+
     /**
      * Display login page.
      * 
@@ -24,7 +28,7 @@ class LoginController extends Controller
     public function show()
     {
         $country = 'us';
-        $locale = 'en';
+        $locale = $this->getLocaleByCountry($country);
 
         App::setLocale($locale);
 
@@ -69,7 +73,7 @@ class LoginController extends Controller
     public function showLinkRequestForm(Request $request, $token = null)
     {
         $country = 'us';
-        $locale = 'en';
+        $locale = $this->getLocaleByCountry($country);
 
         App::setLocale($locale);
 
@@ -83,7 +87,7 @@ class LoginController extends Controller
     public function showResetForm()
     {
         $country = 'us';
-        $locale = 'en';
+        $locale = $this->getLocaleByCountry($country);
 
         App::setLocale($locale);
 

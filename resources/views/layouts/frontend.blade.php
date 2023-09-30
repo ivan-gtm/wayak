@@ -173,68 +173,6 @@
                         </div>
                     @endguest
 
-                    {{---
-                    <div class="nav-item-container -to-right for-mobile" id="nav-hamburger-container"> 
-                        <input type="checkbox" class="nav-dropdown-btn" value="1" id="nav-hamburger-menu" /> 
-                        <label class="action-btn-container -passive side-btn" id="label-hamburger-menu" for="nav-hamburger-menu" aria-label="Menu"> <span class="_hidden">Menu</span> <i class="icon-bars action-btn-icon"></i></label>
-                        <div class="dropdown-list">
-                            <div class="list-container" id="nav-hamburger-list-container">
-                                <a id="nav-scroll-to-top" class="nav-scroll-to-top nav-scroller">
-                                    <p class="scroll-icon-container"><i class="icon-caret-down scroller-icon"></i></p>
-                                </a>
-                                <ul class="list has-user-input" id="nav-hamburger-list">
-                                    <li class="list-item for-user">
-                                        <!-- Placeholder text will be replaced as soon as the JS runs--><a class="item header" id="ulname-toggled" href="https://wayak.app/index.php/posters/mine">My Stuff</a> </li>
-                                    <li class="list-item for-user"> <a class="item" href="https://wayak.app/index.php/posters/mine">My Stuff</a> </li>
-                                    <li class="list-item"> <a class="item" href="https://wayak.app/index.php/posterbuilder?utm_source=nav&utm_content=createadesign&utm_medium=mobilelink&utm_campaign=templategallerynav">Create a Design</a> </li>
-                                    <li class="list-item js-nav-with-list -with-list hide-for-student" id="nav-promote"> <a class="item" href="javascript:void(0);">Promote<i class="icon icon-caret-up"></i></a> </li>
-                                    <li class="list-item js-nav-with-list -with-list hide-for-student" id="nav-features"> <a class="item" href="javascript:void(0);">Features<i class="icon icon-caret-up"></i></a> </li>
-                                    <li class="list-item js-nav-with-list -with-list hide-for-student" id="nav-tutorials"> <a class="item" href="javascript:void(0);">Learn<i class="icon icon-caret-up"></i></a> </li>
-                                    <li class="list-item for-anon"> <a class="item" href="https://wayak.app/index.php/premium?utm_source=mainnav&utm_medium=link&utm_campaign=premiumui">Subscriptions</a> </li>
-                                    <li class="list-item for-premium"> <a class="item" href="https://wayak.app/index.php/premium/subscriptions">Premium Billing</a> </li>
-                                    <li class="list-item"> <a class="item" href="https://wayak.app/index.php/cart/orderhistory">Order History</a> </li>
-                                    <li class="list-item for-user"> <a class="item" href="https://wayak.app/index.php/user/editprofile">Edit Profile</a> </li>
-                                    <li class="list-item"> <a class="item" href="https://support.postermywall.com/hc/en-us">Help Center</a> </li>
-                                    <li class="list-item for-payg">
-                                        <a class="item -premium-color -premium-color-hover" href="https://wayak.app/index.php/premium?utm_source=profilenavdropdown&utm_medium=link&utm_campaign=premiumui" title="Search for answers, read FAQ or contact Customer Support"><i class="icon-crown premium-icon"></i>Unlimited Downloads </a>
-                                    </li>
-                                    <li class="list-item for-anon"> <a class="item" href="https://wayak.app/index.php/authenticate/showlogin/?redirect=https%3A%2F%2Fwww.postermywall.com%2Findex.php">Log In</a> </li>
-                                    <li class="list-item for-user"> <a class="item js-mobile-app-reset" href="https://wayak.app/index.php/authenticate/logout">Log out</a> </li>
-                                </ul>
-                                <a id="nav-scroll-to-bottom" class="nav-scroll-to-bottom nav-scroller">
-                                    <p class="scroll-icon-container"><i class="icon-caret-down scroller-icon"></i></p>
-                                </a>
-                            </div>
-                            <div class="list-container -mobile-list js-nav-mobile-list" data-for="nav-promote">
-                                <ul class="list">
-                                    <li class="list-item"><a class="item" href="https://wayak.app/index.php/m/events?utm_source=nav&utm_content=m/events&utm_medium=link&utm_campaign=marketingnav">Event</a> </li>
-                                    <li class="list-item"><a class="item" href="https://wayak.app/index.php/m/small-business?utm_source=nav&utm_content=m/small-business&utm_medium=link&utm_campaign=marketingnav">Small business</a> </li>
-                                    <li class="list-item"><a class="item" href="https://wayak.app/index.php/m/church?utm_source=nav&utm_content=m/church&utm_medium=link&utm_campaign=marketingnav">Church</a> </li>
-                                    <li class="list-item"><a class="item" href="https://wayak.app/index.php/m/restaurants?utm_source=nav&utm_content=m/restaurants&utm_medium=link&utm_campaign=marketingnav">Restaurant</a> </li>
-                                    <li class="list-item"><a class="item" href="https://wayak.app/index.php/m/schools?utm_source=nav&utm_content=m/schools&utm_medium=link&utm_campaign=marketingnav">School</a> </li>
-                                    <li class="list-item"><a class="item" href="https://wayak.app/index.php/m/bands?utm_source=nav&utm_content=m/bands&utm_medium=link&utm_campaign=marketingnav">Band</a> </li>
-                                    <li class="list-item"><a class="item" href="https://wayak.app/index.php/m/real-estate?utm_source=nav&utm_content=m/real-estate&utm_medium=link&utm_campaign=marketingnav">Real Estate</a> </li>
-                                </ul>
-                            </div>
-                            <div class="list-container -mobile-list js-nav-mobile-list" data-for="nav-features">
-                                <ul class="list">
-                                    <li class="list-item"><a class="item" href="https://wayak.app/index.php/sizes/social-media-templates?utm_source=nav&utm_medium=link&utm_campaign=marketingnav">Social Media Posts</a> </li>
-                                    <li class="list-item"><a class="item" href="https://wayak.app/index.php/video?utm_source=nav&utm_medium=link&utm_campaign=marketingnav">4K and HD Videos</a> </li>
-                                    <li class="list-item"><a class="item" href="https://wayak.app/index.php/m/digital-signage?utm_source=nav&utm_medium=link&utm_campaign=marketingnav">Digital Signage</a> </li>
-                                    <li class="list-item"><a class="item" href="https://wayak.app/index.php/m/restaurants?utm_source=nav&utm_medium=link&utm_campaign=marketingnav">Menu Maker</a> </li>
-                                </ul>
-                            </div>
-                            <div class="list-container -mobile-list js-nav-mobile-list" data-for="nav-tutorials">
-                                <ul class="list">
-                                    <li class="list-item"><a class="item" href="https://gradient.postermywall.com/category-tutorials/">Video Tutorials</a> </li>
-                                    <li class="list-item"><a class="item" href="https://support.postermywall.com/">Help Center</a> </li>
-                                    <li class="list-item"><a class="item" href="https://gradient.postermywall.com/learn-with-postermywall/">Live Classes</a> </li>
-                                    <li class="list-item"><a class="item" href="https://www.facebook.com/groups/pmwcreativecorner">Creative Corner</a> </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    ---}}
                 </div>
             </nav>
             <div class="nav-spacer"></div>

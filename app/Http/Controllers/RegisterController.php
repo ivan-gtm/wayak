@@ -3,20 +3,25 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Http\Requests\RegisterRequest;
+use App\Traits\LocaleTrait;
+
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\App;
-use App\Http\Requests\RegisterRequest;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Str;
-use Aws\Sns\SnsClient;
+
 use Aws\Exception\AwsException;
+use Aws\Sns\SnsClient;
 use Aws\Ses\SesClient;
 use Aws\Ses\Exception\SesException;
-use Illuminate\Http\Request;
 
 
 class RegisterController extends Controller
 {
+    use LocaleTrait;
+
     /**
      * Display register page.
      * 
@@ -25,9 +30,9 @@ class RegisterController extends Controller
     public function show()
     {
         $country = 'us';
-        $locale = 'en';
+        $locale = $this->getLocaleByCountry($country);
 
-        App::setLocale($locale);
+        $locale = $this->getLocaleByCountry($country);
 
         $menu = json_decode(Redis::get('wayak:' . $country . ':menu'));
         $sale = Redis::hgetall('wayak:' . $country . ':config:sales');

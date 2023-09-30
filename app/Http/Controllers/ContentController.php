@@ -7,6 +7,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\App;
 use App\Http\Controllers\FavoritesController;
 use App\Http\Controllers\AnalyticsController;
+use App\Traits\LocaleTrait;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
@@ -17,31 +18,28 @@ use League\ColorExtractor\Color;
 use League\ColorExtractor\ColorExtractor;
 use League\ColorExtractor\Palette;
 
+
+
 use App\Models\Template;
 use Storage;
 
 class ContentController extends Controller
 {
-    
+    use LocaleTrait;
+
     public function showHome() {
-        
-        $country = 'us';
-        
-        if( in_array($country, ['us', 'ca']) ){
-            $locale = 'en';
-        } elseif( in_array($country, ['es','mx','co','ar','bo','ch','cu','do','sv','hn','ni', 'pe', 'uy', 've','py','pa','gt','pr','gq']) ){
-            $locale = 'es';
-        } else {
-            $locale = 'en';
-        }
-
+    
+        $country = 'us'; // default country
+        $locale = $this->getLocaleByCountry($country);
+    
         App::setLocale($locale);
-
-        $carousels = json_decode(Redis::get('wayak:'.$country.':home:carousels'));
-        $menu = json_decode(Redis::get('wayak:'.$country.':menu'));
-        $sale = Redis::hgetall('wayak:'.$country.':config:sales');
-
-        return view('content.home',[
+    
+        $prefix = 'wayak:' . $country;
+        $carousels = json_decode(Redis::get($prefix . ':home:carousels'));
+        $menu = json_decode(Redis::get($prefix . ':menu'));
+        $sale = Redis::hgetall($prefix . ':config:sales');
+    
+        return view('content.home', [
             'search_term' => '',
             'language_code' => $locale,
             'country' => $country,
@@ -50,17 +48,11 @@ class ContentController extends Controller
             'search_query' => '',
             'carousels' => $carousels
         ]);
-
     }
-   
+    
     public function showHomePerPage( $country ) {
-        if( in_array($country, ['us', 'ca']) ){
-            $locale = 'en';
-        } elseif( in_array($country, ['es','mx','co','ar','bo','ch','cu','do','sv','hn','ni', 'pe', 'uy', 've','py','pa','gt','pr','gq']) ){
-            $locale = 'es';
-        } else {
-            $locale = 'en';
-        }
+        
+        $locale = $this->getLocaleByCountry($country);
 
         if( !in_array($locale, ['en', 'es']) ){
             abort(400);
@@ -110,13 +102,7 @@ class ContentController extends Controller
 
     public function showCategoryPage($country, $cat_lvl_1_slug = null, $cat_lvl_2_slug = null, $cat_lvl_3_slug = null, Request $request){
         
-        if( in_array($country, ['us', 'ca']) ){
-            $locale = 'en';
-        } elseif( in_array($country, ['es','mx','co','ar','bo','ch','cu','do','sv','hn','ni', 'pe', 'uy', 've','py','pa','gt','pr','gq']) ){
-            $locale = 'es';
-        } else {
-            $locale = 'en';
-        }
+        $locale = $this->getLocaleByCountry($country);
         
         if( !in_array($locale, ['en', 'es']) ){
             abort(400);
@@ -232,22 +218,10 @@ class ContentController extends Controller
         return view('content.create',[]);
     }
 
-    function getLocale($country){
-        if( in_array($country, ['us', 'ca']) ){
-            $locale = 'en';
-        } elseif( in_array($country, ['es','mx','co','ar','bo','ch','cu','do','sv','hn','ni', 'pe', 'uy', 've','py','pa','gt','pr','gq']) ){
-            $locale = 'es';
-        } else {
-            $locale = 'en';
-        }
-        
-        return $locale;
-    }
-
     public function showTemplatePage($country, Request $request, $slug){
         
         $language_code = 'en';
-        $locale = self::getLocale($country);
+        $locale = $this->getLocaleByCountry($country);
         
         if( !in_array($locale, ['en', 'es']) ){
             abort(400);
@@ -580,7 +554,7 @@ class ContentController extends Controller
     public function getTemplate($country, $slug){
 
         // $language_code = 'en';
-        // $locale = self::getLocale($country);
+        // $locale = $this->getLocaleByCountry($country);
         
         // if( !in_array($locale, ['en', 'es']) ){
         //     abort(400);
