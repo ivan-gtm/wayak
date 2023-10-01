@@ -206,12 +206,12 @@ Route::group(['middleware' => ['guest']], function() {
      */
     Route::get('/login', [LoginController::class,'show'])->name('login.show');
     Route::post('/login', [LoginController::class,'login'])->name('login.perform');
-    Route::post('/password/email', [LoginController::class,'sendResetLinkEmail'])->name('recoverPassword.sendResetLinkEmail');
     
     // Password Reset Routes...
-    Route::get('password/reset', [LoginController::class,'showLinkRequestForm'])->name('password.request');
+    Route::get('password/reset', [LoginController::class,'showResetForm'])->name('password.resetForm');
+    Route::post('/password/email', [LoginController::class,'sendResetLinkEmail'])->name('recoverPassword.sendResetLinkEmail');
+    Route::get('password/reset/{token}', [LoginController::class,'showLinkRequestForm'])->name('password.request');
     Route::post('password/email', [LoginController::class,'sendResetLinkEmail'])->name('password.email');
-    Route::get('password/reset/{token}', [LoginController::class,'showResetForm'])->name('password.reset');
     Route::post('password/reset', [LoginController::class,'reset'])->name('password.update');
 
 

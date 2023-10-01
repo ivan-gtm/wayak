@@ -583,42 +583,45 @@
     </style>
     <style>
         /* Base styles for the rules */
-.list-insider li {
-    color: red; /* Set the default color to red for unsatisfied rules */
-    transition: color 0.3s, transform 0.3s; /* Smooth transitions for color and icons */
-    display: flex;
-    align-items: center;
-}
+        .list-insider li {
+            color: red;
+            /* Set the default color to red for unsatisfied rules */
+            transition: color 0.3s, transform 0.3s;
+            /* Smooth transitions for color and icons */
+            display: flex;
+            align-items: center;
+        }
 
-.list-insider li::before {
-    content: '\274C'; /* Cross mark */
-    margin-right: 8px;
-    display: inline-block;
-    transition: transform 0.3s;
-}
+        .list-insider li::before {
+            content: '\274C';
+            /* Cross mark */
+            margin-right: 8px;
+            display: inline-block;
+            transition: transform 0.3s;
+        }
 
-.list-insider li.valid {
-    color: green; /* Satisfied rules turn green */
-}
+        .list-insider li.valid {
+            color: green;
+            /* Satisfied rules turn green */
+        }
 
-.list-insider li.valid::before {
-    content: '\2713'; /* Check mark */
-}
-
-
+        .list-insider li.valid::before {
+            content: '\2713';
+            /* Check mark */
+        }
     </style>
 </head>
 
 <body>
     <main class="main pages">
-        <div class="page-header breadcrumb-wrap">
+        <!-- <div class="page-header breadcrumb-wrap">
             <div class="container">
                 <div class="breadcrumb">
                     <a href="index.html" rel="nofollow"><i class="fi-rs-home mr-5"></i>Home</a>
                     <span></span> Pages <span></span> My Account
                 </div>
             </div>
-        </div>
+        </div> -->
         <div class="page-content pt-150 pb-150">
             <div class="container">
                 <div class="row">
@@ -673,69 +676,68 @@
         </div>
     </main>
 
-<script>
-// document.addEventListener("DOMContentLoaded", function() {
-//     const passwordInput = document.getElementById('password');
-//     const rules = {
-//         length: document.querySelector('.list-insider li:nth-child(1)'),
-//         uppercase: document.querySelector('.list-insider li:nth-child(2)'),
-//         lowercase: document.querySelector('.list-insider li:nth-child(3)'),
-//         number: document.querySelector('.list-insider li:nth-child(4)'),
-//         specialChar: document.querySelector('.list-insider li:nth-child(5)')
-//     };
+    <script>
+        // document.addEventListener("DOMContentLoaded", function() {
+        //     const passwordInput = document.getElementById('password');
+        //     const rules = {
+        //         length: document.querySelector('.list-insider li:nth-child(1)'),
+        //         uppercase: document.querySelector('.list-insider li:nth-child(2)'),
+        //         lowercase: document.querySelector('.list-insider li:nth-child(3)'),
+        //         number: document.querySelector('.list-insider li:nth-child(4)'),
+        //         specialChar: document.querySelector('.list-insider li:nth-child(5)')
+        //     };
 
-//     passwordInput.addEventListener('keyup', function() {
-//         let password = passwordInput.value;
+        //     passwordInput.addEventListener('keyup', function() {
+        //         let password = passwordInput.value;
 
-//         // Check for length
-//         if (password.length >= 9 && password.length <= 64) {
-//             rules.length.classList.add('valid');
-//         } else {
-//             rules.length.classList.remove('valid');
-//         }
+        //         // Check for length
+        //         if (password.length >= 9 && password.length <= 64) {
+        //             rules.length.classList.add('valid');
+        //         } else {
+        //             rules.length.classList.remove('valid');
+        //         }
 
-//         // Check for uppercase
-//         if (/[A-Z]/.test(password)) {
-//             rules.uppercase.classList.add('valid');
-//         } else {
-//             rules.uppercase.classList.remove('valid');
-//         }
+        //         // Check for uppercase
+        //         if (/[A-Z]/.test(password)) {
+        //             rules.uppercase.classList.add('valid');
+        //         } else {
+        //             rules.uppercase.classList.remove('valid');
+        //         }
 
-//         // Check for lowercase
-//         if (/[a-z]/.test(password)) {
-//             rules.lowercase.classList.add('valid');
-//         } else {
-//             rules.lowercase.classList.remove('valid');
-//         }
+        //         // Check for lowercase
+        //         if (/[a-z]/.test(password)) {
+        //             rules.lowercase.classList.add('valid');
+        //         } else {
+        //             rules.lowercase.classList.remove('valid');
+        //         }
 
-//         // Check for numbers
-//         if (/\d/.test(password)) {
-//             rules.number.classList.add('valid');
-//         } else {
-//             rules.number.classList.remove('valid');
-//         }
+        //         // Check for numbers
+        //         if (/\d/.test(password)) {
+        //             rules.number.classList.add('valid');
+        //         } else {
+        //             rules.number.classList.remove('valid');
+        //         }
 
-//         // Check for special characters
-//         if (/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/.test(password)) {
-//             rules.specialChar.classList.add('valid');
-//         } else {
-//             rules.specialChar.classList.remove('valid');
-//         }
-//     });
-// });
+        //         // Check for special characters
+        //         if (/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/.test(password)) {
+        //             rules.specialChar.classList.add('valid');
+        //         } else {
+        //             rules.specialChar.classList.remove('valid');
+        //         }
+        //     });
+        // });
 
-// document.querySelector('form').addEventListener('submit', function(event) {
-//     const allRules = document.querySelectorAll('.list-insider li');
-//     for (let rule of allRules) {
-//         if (!rule.classList.contains('valid')) {
-//             event.preventDefault();
-//             alert('Please ensure your password meets all the requirements.');
-//             return;
-//         }
-//     }
-// });
-
-</script>
+        // document.querySelector('form').addEventListener('submit', function(event) {
+        //     const allRules = document.querySelectorAll('.list-insider li');
+        //     for (let rule of allRules) {
+        //         if (!rule.classList.contains('valid')) {
+        //             event.preventDefault();
+        //             alert('Please ensure your password meets all the requirements.');
+        //             return;
+        //         }
+        //     }
+        // });
+    </script>
 </body>
 
 </html>

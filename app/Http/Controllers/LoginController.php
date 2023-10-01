@@ -55,34 +55,66 @@ class LoginController extends Controller
         $credentials = $request->getCredentials();
 
         if (!Auth::validate($credentials)) {
-            return response()->json(['success' => false, 'message' => trans('auth.failed')], 401);
+            $errorResponse = ['success' => false, 'message' => trans('auth.failed')];
+
+            return $request->expectsJson()
+                ? response()->json($errorResponse, 401)
+                : redirect()->back()->withInput($request->only('email', 'remember'))->withErrors($errorResponse);
         }
 
         $user = Auth::getProvider()->retrieveByCredentials($credentials);
-
         Auth::login($user);
 
         return $this->authenticated($request, $user);
     }
 
+
     protected function authenticated(Request $request, $user)
     {
-        return response()->json(['success' => true, 'redirect_url' => url()->previous()]);
+        if ($request->expectsJson()) {
+            return response()->json(['success' => true, 'redirect_url' => url()->previous()]);
+        }
+
+        // For conventional requests, redirect to the intended location or default to the home page
+        // return redirect()->intended('/');
+        return redirect()->to(url()->previous());
     }
 
-    public function showLinkRequestForm(Request $request, $token = null)
+
+    public function showLinkRequestForm(Request $request, $token)
     {
         $country = 'us';
         $locale = $this->getLocaleByCountry($country);
 
         App::setLocale($locale);
 
+        // Validate the token
+        $tokenData = DB::table('password_resets')
+            ->where('token', $token)
+            // ->where('email', $request->email)
+            ->first();
+        
+        if (!$tokenData) {
+            // Token not found in the database
+            return redirect('password/reset')->withErrors(['email' => 'The password reset token is invalid.']);
+        }
+
+        // Check if token has expired
+        $tokenCreatedAt = \Carbon\Carbon::parse($tokenData->created_at);
+        if ($tokenCreatedAt->addMinutes(config('auth.passwords.' . config('auth.defaults.passwords') . '.expire'))->isPast()) {
+            // Token has expired
+            return redirect('password/reset')->withErrors(['email' => 'The password reset token has expired.']);
+        }
+
         $menu = json_decode(Redis::get('wayak:' . $country . ':menu'));
         $sale = Redis::hgetall('wayak:' . $country . ':config:sales');
 
-        return view('auth.passwords.reset',['country' => $country, 'menu' => $menu, 'sale' => $sale, 'search_query' => null,
-        'token' => $token, 'email' => $request->email]);
+        return view('auth.passwords.reset', [
+            'country' => $country, 'menu' => $menu, 'sale' => $sale, 'search_query' => null,
+            'token' => $token, 'email' => $request->email
+        ]);
     }
+
 
     public function showResetForm()
     {
@@ -95,7 +127,7 @@ class LoginController extends Controller
         $sale = Redis::hgetall('wayak:' . $country . ':config:sales');
 
         return view('auth.passwords.email')->with(
-            [   'country' => $country, 'menu' => $menu, 'sale' => $sale, 'search_query' => null]
+            ['country' => $country, 'menu' => $menu, 'sale' => $sale, 'search_query' => null]
         );
     }
 
@@ -138,7 +170,7 @@ class LoginController extends Controller
             ->where('token', $request->reset_token)
             ->where('created_at', '>', now()->subMinutes(60))
             ->first();
-        
+
         if (!$passwordReset) {
             return back()->withErrors(['email' => 'This password resset token is invalid.']);
         }
@@ -146,15 +178,15 @@ class LoginController extends Controller
         // Reset the password
         $user = User::where('email', $passwordReset->email)->first();
 
-        
+
         $user->password = $request->password;
         $user->save();
-        
+
         // Delete the token
         DB::table('password_resets')->where('email', $passwordReset->email)->delete();
-        
+
         return redirect('/login')->with('status', 'Your password has been reset!');
-        
+
         // echo "<pre>";
         // print_r($request->password);
         // print_r($request->all() );

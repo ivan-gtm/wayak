@@ -738,14 +738,14 @@
     </style>
 
     <main class="main pages">
-        <div class="page-header breadcrumb-wrap">
+        <!-- <div class="page-header breadcrumb-wrap">
             <div class="container">
                 <div class="breadcrumb">
                     <a href="index.html" rel="nofollow"><i class="fi-rs-home mr-5"></i>Home</a>
                     <span></span> Pages <span></span> My Account
                 </div>
             </div>
-        </div>
+        </div> -->
         <div class="page-content pt-150 pb-150">
             <div class="container">
                 <div class="row">
@@ -762,7 +762,7 @@
                                     <div class="form-group">
                                         <input type="text" required="" name="email" placeholder="Username or Email *">
                                     </div>
-                                    <div class="login_footer form-group">
+                                    <!-- <div class="login_footer form-group">
                                         <div class="chek-form">
                                             <input type="text" required="" placeholder="Security code *">
                                         </div>
@@ -772,7 +772,7 @@
                                             <b class="text-sale">7</b>
                                             <b class="text-best">5</b>
                                         </span>
-                                    </div>
+                                    </div> -->
                                     <div class="login_footer form-group mb-50">
                                         <div class="chek-form">
                                             <div class="custome-checkbox">

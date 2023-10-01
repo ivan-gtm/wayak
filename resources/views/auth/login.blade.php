@@ -162,14 +162,6 @@
 </style>
 
 <main class="main pages">
-    <div class="page-header breadcrumb-wrap">
-        <div class="container">
-            <div class="breadcrumb">
-                <a href="index.html" rel="nofollow"><i class="fi-rs-home mr-5"></i>Home</a>
-                <span></span> Pages <span></span> My Account
-            </div>
-        </div>
-    </div>
     <div class="page-content pt-150 pb-150">
         <div class="container">
             <div class="row">
@@ -214,7 +206,7 @@
                                                     <label class="form-check-label" for="exampleCheckbox1"><span>Remember me</span></label>
                                                 </div>
                                             </div> -->
-                                            <a class="text-muted" href="#">Forgot password?</a>
+                                            <a class="text-muted" href="{{ route('password.resetForm') }}">Forgot password?</a>
                                         </div>
                                         <div class="form-group">
                                             <button type="submit" class="btn btn-heading btn-block hover-up" name="login">Log in</button>
