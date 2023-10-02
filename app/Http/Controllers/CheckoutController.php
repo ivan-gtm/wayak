@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Redis;
 class CheckoutController extends Controller
 {
     public function cart(){
-        return view('cart.checkout', [
+        return view('auth.user.cart', [
         ]);
     }
 

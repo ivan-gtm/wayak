@@ -92,8 +92,8 @@ class ContentController extends Controller
             $userPrefix = 'wayak:user:' . $customer_id . ':carousels:';
 
             $userCarouselKeys = [
-                $userPrefix . 'favorites',
                 $userPrefix . 'product-history',
+                $userPrefix . 'favorites',
                 $userPrefix . 'search'
             ];
 

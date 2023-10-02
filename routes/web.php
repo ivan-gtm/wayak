@@ -29,191 +29,188 @@ use App\Http\Controllers\PacktController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\TemplettScrapperController;
 use App\Http\Controllers\LinkedInController;
+use App\Http\Controllers\UserController;
 
 Route::get('/api/demo-url', [AdminController::class, 'getTemplateObjects']);
 
-// SCRAPPER
-    // Linkedin
-        Route::get('/linked', [LinkedInController::class, 'index']);
-    // PACKT
-        Route::get('/packt', [PacktController::class, 'index']);
-    // OVER
-        Route::get('/admin/scrapper/over', [OverController::class, 'index']);
-    // FOCO
-        Route::get('/admin/scrapper/foco', [FocoController::class, 'index']);
-    // CANVA
-        Route::get('/admin/scrapper/canva', [canvaController::class, 'index']);
-        Route::get('/admin/scrapper/canva/convert-json/{template_key}', [canvaController::class, 'convertToJSON']);
-        Route::post('/admin/scrapper/canva/convert-json/{template_key}', [canvaController::class, 'convertToJSON'])->name('canva.convertToJSON');
-    // CORJL
-        Route::get('/admin/scrapper/corjl', [CorjlController::class, 'index']);
-    // TEMPLETT
-        Route::get('/admin/scrapper/templett', [TemplettScrapperController::class, 'downloadOriginalTemplate']);
-        Route::get('/admin/scrapper/templett/keynames', [TemplettScrapperController::class, 'migrateTemplateKeyNames']);
-        Route::get('/admin/scrapper/templett/missing-translation', [TemplettScrapperController::class, 'missinTranslation']);
-    // DESYGNER
-        Route::get('/admin/desygner/download-templates', [DesygnerController::class, 'index']);
-    // CRELLO
-        Route::get('/admin/crello/explore', [CrelloController::class,'explore'])->name('crello.explore');
-        Route::get('/admin/crello/download-templates', [CrelloController::class, 'index']);
-        Route::get('/admin/crello/translate-templates', [CrelloController::class, 'translateTemplate']);
-        // Route::get('/crello', [EditorController::class, 'home']);
-    // GREEN
-        Route::get('/admin/green/explore', [greenController::class, 'getFrontCategories']);
-        Route::get('/admin/green/all-products', [greenController::class, 'getAllProducts'])->name('green.products');
-        Route::get('/admin/green/all-categories', [greenController::class, 'getAllCategories'])->name('green.categories');
-        Route::get('/admin/green/category/{category_id}/products', [greenController::class, 'getFrontCategoryProducts']);
-        Route::get('/admin/green/translate-templates', [greenController::class, 'translateTemplate']);
-        Route::get('/admin/green/download-templates', [greenController::class, 'index']);
+Route::prefix('admin')->middleware('auth')->group(function () {
+    // SCRAPPER
+        // Linkedin
+            Route::get('/linked', [LinkedInController::class, 'index']);
+        // PACKT
+            Route::get('/packt', [PacktController::class, 'index']);
+        // OVER
+            Route::get('/scrapper/over', [OverController::class, 'index']);
+        // FOCO
+            Route::get('/scrapper/foco', [FocoController::class, 'index']);
+        // CANVA
+            Route::get('/scrapper/canva', [canvaController::class, 'index']);
+            Route::get('/scrapper/canva/convert-json/{template_key}', [canvaController::class, 'convertToJSON']);
+            Route::post('/scrapper/canva/convert-json/{template_key}', [canvaController::class, 'convertToJSON'])->name('canva.convertToJSON');
+        // CORJL
+            Route::get('/scrapper/corjl', [CorjlController::class, 'index']);
+        // TEMPLETT
+            Route::get('/scrapper/templett', [TemplettScrapperController::class, 'downloadOriginalTemplate']);
+            Route::get('/scrapper/templett/keynames', [TemplettScrapperController::class, 'migrateTemplateKeyNames']);
+            Route::get('/scrapper/templett/missing-translation', [TemplettScrapperController::class, 'missinTranslation']);
+        // DESYGNER
+            Route::get('/desygner/download-templates', [DesygnerController::class, 'index']);
+        // CRELLO
+            Route::get('/crello/explore', [CrelloController::class,'explore'])->name('crello.explore');
+            Route::get('/crello/download-templates', [CrelloController::class, 'index']);
+            Route::get('/crello/translate-templates', [CrelloController::class, 'translateTemplate']);
+            // Route::get('/crello', [EditorController::class, 'home']);
+        // GREEN
+            Route::get('/green/explore', [greenController::class, 'getFrontCategories']);
+            Route::get('/green/all-products', [greenController::class, 'getAllProducts'])->name('green.products');
+            Route::get('/green/all-categories', [greenController::class, 'getAllCategories'])->name('green.categories');
+            Route::get('/green/category/{category_id}/products', [greenController::class, 'getFrontCategoryProducts']);
+            Route::get('/green/translate-templates', [greenController::class, 'translateTemplate']);
+            Route::get('/green/download-templates', [greenController::class, 'index']);
 
-    // PLACEIT
-        Route::get('/admin/placeit', [PlaceitController::class, 'index']);
+        // PLACEIT
+            Route::get('/placeit', [PlaceitController::class, 'index']);
 
 
-// Route::get('/scrap-from-templett', [TemplettScrapperController::class, 'scrapURL']);
+    // Route::get('/scrap-from-templett', [TemplettScrapperController::class, 'scrapURL']);
 
-// https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes#UNI2
+    // https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes#UNI2
 
-// TRANSLATE
-    // Route::get('/translate/words', [TranslatorController::class, 'translateWord']);
-    // Route::post('/translate/words/update', [TranslatorController::class, 'updateWord']);
-    // Route::post('/translate/words/save-translation', [TranslatorController::class, 'saveTranslation']);
-    // Route::get('/translate/product-title', [TranslatorController::class, 'translateProductTitle']);
-    // Route::post('/translate/product-title/update', [TranslatorController::class, 'updateProductTitle']);
-    // Route::get('/translate/template', [TranslatorController::class, 'translateTemplate']);
+    // TRANSLATE
+        // Route::get('/translate/words', [TranslatorController::class, 'translateWord']);
+        // Route::post('/translate/words/update', [TranslatorController::class, 'updateWord']);
+        // Route::post('/translate/words/save-translation', [TranslatorController::class, 'saveTranslation']);
+        // Route::get('/translate/product-title', [TranslatorController::class, 'translateProductTitle']);
+        // Route::post('/translate/product-title/update', [TranslatorController::class, 'updateProductTitle']);
+        // Route::get('/translate/template', [TranslatorController::class, 'translateTemplate']);
 
-// ADMIN
-    // HOME
-        Route::get('/admin', [AdminController::class, 'adminHome'])->name('admin.home');
-        // Route::get('/admin/orders', [AdminController::class, 'orders'])->name('admin.orders');
+    // ADMIN
+        // HOME
+            Route::get('', [AdminController::class, 'adminHome'])->name('admin.home');
+            // Route::get('/orders', [AdminController::class, 'orders'])->name('admin.orders');
 
-    // CATEGORIES
-        Route::get('/admin/categories', [CategoryController::class, 'manage'])->name('admin.category.manage');
-        Route::get('/admin/campaign', [AdminSaleController::class, 'createCampaing'])->name('admin.create.campaing');
-        Route::get('/admin/categories/translate/{from}/{to}', [CategoryController::class, 'translateCategory'])->name('admin.category.translate');
+        // CATEGORIES
+            Route::get('/categories', [CategoryController::class, 'manage'])->name('admin.category.manage');
+            Route::get('/campaign', [AdminSaleController::class, 'createCampaing'])->name('admin.create.campaing');
+            Route::get('/categories/translate/{from}/{to}', [CategoryController::class, 'translateCategory'])->name('admin.category.translate');
+            
+        // TEMPORAL
+            Route::get('/refactor', [AdminController::class, 'refactor'])->name('admin.keyrefactor');
+            Route::get('/thumbnail-generation', [AdminController::class, 'thumbnailGeneration'])->name('admin.thumbnailGeneration');
+            
+        // TEMPLATES TRANLATION
+            Route::get('/template/edit/{language_code}/{template_key}', [EditorController::class, 'adminTemplateEditor'])->name('admin.edit.template');
+
+            Route::get('/bulk-translate/{from}/{to}', [AdminController::class, 'bulkTranslate'])->name('admin.bulkTranslateText');
+            Route::post('/bulk-translate/{from}/{to}', [AdminController::class, 'bulkTranslate'])->name('admin.bulkTranslate');
+            Route::get('/template/translate/{template_key}/{from}/{to}', [AdminController::class, 'translateTemplateForm'])->name('admin.translate.templateForm');
+            Route::post('/template/translate/{template_key}/{from}/{to}', [AdminController::class, 'translateTemplate'])->name('admin.translate.template');
+            Route::get('/template/gallery/{country}', [AdminController::class, 'viewGallery'])->name('admin.template.gallery');
+        // Sales    
+            Route::get('/sales', [AdminController::class, 'salesManager'])->name('admin.sales_manager');
+            Route::post('/sales', [AdminController::class, 'salesManager']);
+            
+        // Carousels
+            Route::get('/{country}/carousels/manage', [AdminController::class, 'carouselsManage'])->name('admin.carousels.manage');
+            Route::post('/{country}/carousels/home/update', [AdminController::class, 'updateHomeCarousel'])->name('admin.carousels.updateCarousels');
+
+            Route::get('/{country}/carousels/name', [AdminController::class, 'carouselsSetName'])->name('admin.carousels.step1');
+            Route::get('/{country}/carousels/items', [AdminController::class, 'carouselsSelectItems'])->name('admin.carousels.step2');
+            Route::get('/{country}/carousel/preview', [AdminController::class, 'getCarouselItemsPreview'])->name('admin.carousel.preview');
+            Route::get('/{country}/carousel/item/delete', [AdminController::class, 'deleteItem'])->name('admin.carousel.deleteItem');
+            Route::get('/{country}/carousels/items/create', [AdminController::class, 'carouselItemsCreate'])->name('admin.carousel.items.create');
+            // Route::post('/carousels', [AdminController::class, 'carouselsManager']);
         
-    // TEMPORAL
-        Route::get('/admin/refactor', [AdminController::class, 'refactor'])->name('admin.keyrefactor');
-        Route::get('/admin/thumbnail-generation', [AdminController::class, 'thumbnailGeneration'])->name('admin.thumbnailGeneration');
+        // Analytics
+            Route::get('/analytics/categories', [AdminController::class, 'analyticsCategories'])->name('admin.analyticsCategories');
+            Route::get('/analytics/templates', [AdminController::class, 'analyticsTemplates'])->name('admin.analyticsTemplates');
         
-    // TEMPLATES TRANLATION
-        Route::get('/admin/template/edit/{language_code}/{template_key}', [EditorController::class, 'adminTemplateEditor'])->name('admin.edit.template');
+        // BOT
+            Route::get('/bot/templett/bulk-translation/{from}/{to}', [TemplettScrapperController::class, 'bulkTranslation']);
+            Route::post('/bot/templett/bulk-translation/{from}/{to}', [TemplettScrapperController::class, 'bulkTranslation'])->name('templett.bulkTranslate');
+            Route::get('/bot/generate-thumbs', [AdminController::class, 'generateProductThumbnails'])->name('admin.generateProductThumbnails');
+            Route::get('/bot/db-missing-thumbs', [AdminController::class, 'registerMissingTemplatesOnDB']);
 
-        Route::get('/admin/bulk-translate/{from}/{to}', [AdminController::class, 'bulkTranslate'])->name('admin.bulkTranslateText');
-        Route::post('/admin/bulk-translate/{from}/{to}', [AdminController::class, 'bulkTranslate'])->name('admin.bulkTranslate');
-        Route::get('/admin/template/translate/{template_key}/{from}/{to}', [AdminController::class, 'translateTemplateForm'])->name('admin.translate.templateForm');
-        Route::post('/admin/template/translate/{template_key}/{from}/{to}', [AdminController::class, 'translateTemplate'])->name('admin.translate.template');
-        Route::get('/admin/template/gallery/{country}', [AdminController::class, 'viewGallery'])->name('admin.template.gallery');
-    // Sales    
-        Route::get('/admin/sales', [AdminController::class, 'salesManager'])->name('admin.sales_manager');
-        Route::post('/admin/sales', [AdminController::class, 'salesManager']);
+        // KEYWORDS
+            Route::get('/metadata/keywords/manage', [AdminController::class, 'manageKeywords']);
+            Route::post('/metadata/keywords/manage', [AdminController::class, 'manageKeywords'])->name('admin.keywords.manage');
+            Route::get('/metadata/product', [AdminController::class, 'editProductName']);
+            Route::post('/metadata/product', [AdminController::class, 'editProductName'])->name('admin.metadata.product');
+
+        // CODES ADMINISTRATION
+            Route::get('/{country}/codes/manage', [AdminCodeController::class, 'manageCodes'])->name('admin.code.manage');
+            Route::get('/{country}/codes/create', [AdminCodeController::class, 'createCode'])->name('admin.code.create');
+            Route::get('/{country}/codes/delete/{code}', [AdminCodeController::class, 'deleteCode'])->name('admin.code.delete');
+            // Route::post('/{country}/generate-code', [AdminController::class, 'generateCode'])->name('code.generate');
+
+    // MARKETPLACE SELLING PRODUCTS
+        // PRODUCT
+            Route::get('/create-product/{template_key}', [AdminController::class, 'createProduct'])->name('admin.createProduct');
+            Route::post('/create-product/{template_key}', [AdminController::class, 'createDBProduct']);
+
+        // ETSY
+            Route::get('/etsy/thumbs/{template_id}', [AdminController::class, 'createEtsyProductThumbs'])->name('admin.etsy.thumbs');
+
+            Route::get('/etsy/gallery', [AdminController::class, 'etsyGallery'])->name('admin.etsy.templatesGallery');
+            Route::get('/gallery/vendor/{vendor}', [AdminController::class, 'getTemplatesByVendor'])->name('admin.templatesByVendor');
+            Route::get('/etsy/get-pdf/{template_id}', [AdminController::class, 'createEtsyPDF'])->name('admin.etsy.getPDF');
+            
+            Route::get('/etsy/gallery/template-dashboard/{app}/{template_id}', [AdminController::class, 'getTemplateDashboard'])->name('admin.etsy.templateDashboard');
+            Route::post('/etsy/gallery/template-dashboard/{app}/{template_id}', [AdminController::class, 'getTemplateDashboard']);
+
+            Route::get('/etsy/gallery/template-assets/{app}/{template_id}', [AdminController::class, 'getTemplateAssets'])->name('admin.etsy.templateAssets');
+
+            Route::get('/etsy/templates/description', [AdminController::class, 'etsyDescriptionTemplate'])->name('admin.etsy.editMetadata');
+            Route::post('/etsy/templates/description', [AdminController::class, 'editEtsyDescriptionTemplate']);
+            
+        // Assets Gallery
+            Route::get('/assets-gallery/static', [AdminController::class, 'staticGallery'])->name('admin.staticGallery');
+            Route::post('/assets-gallery/update-status', [AdminController::class, 'updateAssetStatus'])->name('admin.assets.register_download');
+            Route::get('/assets-gallery/static/set-keywords/{img_id}', [AdminController::class, 'setIMGKeywords'])->name('admin.setIMGKeywords');
+            Route::post('/assets-gallery/static/set-keywords/{img_id}', [AdminController::class, 'setIMGKeywords'])->name('admin.saveKeywords');
+            Route::get('/assets-gallery/keywords/{search_param}', [AdminController::class, 'getKeywordRecomendations'])->name('admin.getKeywordRecomendations');
+            Route::post('/assets-gallery/multiple-keywords', [AdminController::class, 'saveMultipleKeywords'])->name('admin.saveMultipleKeywords');
+            
+        // FACEBOOK 
+            Route::get('/facebook/catalogo', [AdminController::class, 'facebookCSV'])->name('admin.fb.facebookCSV');
         
-    // Carousels
-        Route::get('/admin/{country}/carousels/manage', [AdminController::class, 'carouselsManage'])->name('admin.carousels.manage');
-        Route::post('/admin/{country}/carousels/home/update', [AdminController::class, 'updateHomeCarousel'])->name('admin.carousels.updateCarousels');
+        // MERCADO LIBRE
+            Route::get('/ml/templates/description', [AdminController::class, 'mlDescriptionTemplate'])->name('ml.getDescriptionMetadata');
+            Route::post('/ml/templates/description', [AdminController::class, 'editMlDescriptionTemplate'])->name('ml.editDescriptionMetadata');
 
-        Route::get('/admin/{country}/carousels/name', [AdminController::class, 'carouselsSetName'])->name('admin.carousels.step1');
-        Route::get('/admin/{country}/carousels/items', [AdminController::class, 'carouselsSelectItems'])->name('admin.carousels.step2');
-        Route::get('/admin/{country}/carousel/preview', [AdminController::class, 'getCarouselItemsPreview'])->name('admin.carousel.preview');
-        Route::get('/admin/{country}/carousel/item/delete', [AdminController::class, 'deleteItem'])->name('admin.carousel.deleteItem');
-        Route::get('/admin/{country}/carousels/items/create', [AdminController::class, 'carouselItemsCreate'])->name('admin.carousel.items.create');
-        // Route::post('/admin/carousels', [AdminController::class, 'carouselsManager']);
-    
-    // Analytics
-        Route::get('/admin/analytics/categories', [AdminController::class, 'analyticsCategories'])->name('admin.analyticsCategories');
-        Route::get('/admin/analytics/templates', [AdminController::class, 'analyticsTemplates'])->name('admin.analyticsTemplates');
-    
-    // BOT
-        Route::get('/admin/bot/templett/bulk-translation/{from}/{to}', [TemplettScrapperController::class, 'bulkTranslation']);
-        Route::post('/admin/bot/templett/bulk-translation/{from}/{to}', [TemplettScrapperController::class, 'bulkTranslation'])->name('templett.bulkTranslate');
-        Route::get('/admin/bot/generate-thumbs', [AdminController::class, 'generateProductThumbnails'])->name('admin.generateProductThumbnails');
-        Route::get('/admin/bot/db-missing-thumbs', [AdminController::class, 'registerMissingTemplatesOnDB']);
-
-    // KEYWORDS
-        Route::get('/admin/metadata/keywords/manage', [AdminController::class, 'manageKeywords']);
-        Route::post('/admin/metadata/keywords/manage', [AdminController::class, 'manageKeywords'])->name('admin.keywords.manage');
-        Route::get('/admin/metadata/product', [AdminController::class, 'editProductName']);
-        Route::post('/admin/metadata/product', [AdminController::class, 'editProductName'])->name('admin.metadata.product');
-
-    // CODES ADMINISTRATION
-        Route::get('/admin/{country}/codes/manage', [AdminCodeController::class, 'manageCodes'])->name('admin.code.manage');
-        Route::get('/admin/{country}/codes/create', [AdminCodeController::class, 'createCode'])->name('admin.code.create');
-        Route::get('/admin/{country}/codes/delete/{code}', [AdminCodeController::class, 'deleteCode'])->name('admin.code.delete');
-        // Route::post('/admin/{country}/generate-code', [AdminController::class, 'generateCode'])->name('code.generate');
-
-// MARKETPLACE SELLING PRODUCTS
-    // PRODUCT
-        Route::get('/admin/create-product/{template_key}', [AdminController::class, 'createProduct'])->name('admin.createProduct');
-        Route::post('/admin/create-product/{template_key}', [AdminController::class, 'createDBProduct']);
-
-    // ETSY
-        Route::get('/admin/etsy/thumbs/{template_id}', [AdminController::class, 'createEtsyProductThumbs'])->name('admin.etsy.thumbs');
-
-        Route::get('/admin/etsy/gallery', [AdminController::class, 'etsyGallery'])->name('admin.etsy.templatesGallery');
-        Route::get('/admin/gallery/vendor/{vendor}', [AdminController::class, 'getTemplatesByVendor'])->name('admin.templatesByVendor');
-        Route::get('/admin/etsy/get-pdf/{template_id}', [AdminController::class, 'createEtsyPDF'])->name('admin.etsy.getPDF');
-        
-        Route::get('/admin/etsy/gallery/template-dashboard/{app}/{template_id}', [AdminController::class, 'getTemplateDashboard'])->name('admin.etsy.templateDashboard');
-        Route::post('/admin/etsy/gallery/template-dashboard/{app}/{template_id}', [AdminController::class, 'getTemplateDashboard']);
-
-        Route::get('/admin/etsy/gallery/template-assets/{app}/{template_id}', [AdminController::class, 'getTemplateAssets'])->name('admin.etsy.templateAssets');
-
-        Route::get('/admin/etsy/templates/description', [AdminController::class, 'etsyDescriptionTemplate'])->name('admin.etsy.editMetadata');
-        Route::post('/admin/etsy/templates/description', [AdminController::class, 'editEtsyDescriptionTemplate']);
-        
-    // Assets Gallery
-        Route::get('/admin/assets-gallery/static', [AdminController::class, 'staticGallery'])->name('admin.staticGallery');
-        Route::post('/admin/assets-gallery/update-status', [AdminController::class, 'updateAssetStatus'])->name('admin.assets.register_download');
-        Route::get('/admin/assets-gallery/static/set-keywords/{img_id}', [AdminController::class, 'setIMGKeywords'])->name('admin.setIMGKeywords');
-        Route::post('/admin/assets-gallery/static/set-keywords/{img_id}', [AdminController::class, 'setIMGKeywords'])->name('admin.saveKeywords');
-        Route::get('/admin/assets-gallery/keywords/{search_param}', [AdminController::class, 'getKeywordRecomendations'])->name('admin.getKeywordRecomendations');
-        Route::post('/admin/assets-gallery/multiple-keywords', [AdminController::class, 'saveMultipleKeywords'])->name('admin.saveMultipleKeywords');
-        
-    // FACEBOOK 
-        Route::get('/admin/facebook/catalogo', [AdminController::class, 'facebookCSV'])->name('admin.fb.facebookCSV');
-    
-    // MERCADO LIBRE
-        Route::get('/admin/ml/templates/description', [AdminController::class, 'mlDescriptionTemplate'])->name('ml.getDescriptionMetadata');
-        Route::post('/admin/ml/templates/description', [AdminController::class, 'editMlDescriptionTemplate'])->name('ml.editDescriptionMetadata');
-
-        Route::get('/admin/ml/catalogo', [AdminController::class, 'mercadoLibreCatalog'])->name('admin.ml.mercadoLibreCatalog');
-        Route::get('/admin/ml/excel/productos/{excel_id}', [AdminController::class, 'mercadoLibreExcelProducts'])->name('admin.ml.mercadoLibreExcelProducts');
-        Route::get('/admin/ml/catalogo-excel', [AdminController::class, 'mercadoLibreExcel'])->name('admin.ml.generateProductExcel');
-        
-        // Route::get('/admin/ml/products/missing-metadata', [AdminController::class, 'getMissingMetadataTemplates'])->name('admin.ml.getMissingMetadataTemplates');
-        Route::get('/admin/ml/product/edit-metadata/{template_key}', [AdminController::class, 'editMLMetadata'])->name('admin.ml.editMLMetadata');
-        Route::post('/admin/ml/product/edit-metadata/{template_key}', [AdminController::class, 'editMPProduct']);
-        
-        Route::get('/admin/ml/templates/format-ready', [AdminController::class, 'getFormatReadyTemplates'])->name('admin.ml.getFormatReady');
-        Route::get('/admin/ml/templates/missing-translation', [AdminController::class, 'getMissingTranslationTemplates'])->name('admin.ml.getMissingTranslation');
-        Route::get('/admin/ml/templates/translation-ready', [AdminController::class, 'getTranslationReadyTemplates'])->name('admin.ml.getTranslationReady');
-        Route::get('/admin/ml/templates/thumbnail-ready', [AdminController::class, 'getThumbnailReady'])->name('admin.ml.getThumbnailReady');
-        Route::get('/admin/ml/templates/ready-for-sale', [AdminController::class, 'templatesReadyForSale'])->name('admin.ml.templatesReadyForSale');
-        Route::get('/admin/ml/templates/missing-metadata', [AdminController::class, 'getMissingMetadataTemplates'])->name('admin.ml.getMissingMetadataTemplates');
-        
-        Route::get('/admin/ml/update-url', [AdminController::class, 'updateURL']);
+            Route::get('/ml/catalogo', [AdminController::class, 'mercadoLibreCatalog'])->name('admin.ml.mercadoLibreCatalog');
+            Route::get('/ml/excel/productos/{excel_id}', [AdminController::class, 'mercadoLibreExcelProducts'])->name('admin.ml.mercadoLibreExcelProducts');
+            Route::get('/ml/catalogo-excel', [AdminController::class, 'mercadoLibreExcel'])->name('admin.ml.generateProductExcel');
+            
+            // Route::get('/ml/products/missing-metadata', [AdminController::class, 'getMissingMetadataTemplates'])->name('admin.ml.getMissingMetadataTemplates');
+            Route::get('/ml/product/edit-metadata/{template_key}', [AdminController::class, 'editMLMetadata'])->name('admin.ml.editMLMetadata');
+            Route::post('/ml/product/edit-metadata/{template_key}', [AdminController::class, 'editMPProduct']);
+            
+            Route::get('/ml/templates/format-ready', [AdminController::class, 'getFormatReadyTemplates'])->name('admin.ml.getFormatReady');
+            Route::get('/ml/templates/missing-translation', [AdminController::class, 'getMissingTranslationTemplates'])->name('admin.ml.getMissingTranslation');
+            Route::get('/ml/templates/translation-ready', [AdminController::class, 'getTranslationReadyTemplates'])->name('admin.ml.getTranslationReady');
+            Route::get('/ml/templates/thumbnail-ready', [AdminController::class, 'getThumbnailReady'])->name('admin.ml.getThumbnailReady');
+            Route::get('/ml/templates/ready-for-sale', [AdminController::class, 'templatesReadyForSale'])->name('admin.ml.templatesReadyForSale');
+            Route::get('/ml/templates/missing-metadata', [AdminController::class, 'getMissingMetadataTemplates'])->name('admin.ml.getMissingMetadataTemplates');
+            
+            Route::get('/ml/update-url', [AdminController::class, 'updateURL']);
+});
 
 // USER
 Route::group(['middleware' => ['guest']], function() {
-    /**
-     * Register Routes
-     */
+    // Register Routes
     Route::get('/register', [RegisterController::class,'show'])->name('register.show');
     Route::post('/register', [RegisterController::class,'register'])->name('register.perform');
 
-    /**
-     * Login Routes
-     */
+    // Login Routes
     Route::get('/login', [LoginController::class,'show'])->name('login.show');
     Route::post('/login', [LoginController::class,'login'])->name('login.perform');
     
     // Password Reset Routes...
     Route::get('password/reset', [LoginController::class,'showResetForm'])->name('password.resetForm');
-    Route::post('/password/email', [LoginController::class,'sendResetLinkEmail'])->name('recoverPassword.sendResetLinkEmail');
-    Route::get('password/reset/{token}', [LoginController::class,'showLinkRequestForm'])->name('password.request');
     Route::post('password/email', [LoginController::class,'sendResetLinkEmail'])->name('password.email');
+    Route::get('password/reset/{token}', [LoginController::class,'showLinkRequestForm'])->name('password.request');
     Route::post('password/reset', [LoginController::class,'reset'])->name('password.update');
-
 
 });
 
@@ -236,25 +233,30 @@ Route::prefix('favorites')->middleware('auth')->group(function () {
 });
 
 Route::group(['middleware' => ['auth']], function() {
-    /**
-     * Logout Routes
-     */
+    // Logout Routes
     Route::get('/logout', [LogoutController::class,'perform'])->name('logout.perform');
+
+    // CHECKOUT
+    Route::get('/cart', [CheckoutController::class,'cart']);
+    Route::get('/orders/create', [CheckoutController::class,'createOrder']);
+    Route::get('/orders/capture', [CheckoutController::class,'capturePayment']);
+
+    // PRODUCT HISTORY
+    Route::post('/product/history/remove-product', [ProductHistoryController::class,'removeProductFromHistory']);
+
+    Route::get('/user/account', [UserController::class,'showAccount']);
+    Route::get('/user/cart', [UserController::class,'showCart']);
+    Route::get('/user/wishlist', [UserController::class,'showWishlist']);
 });
+
+
+// PRODUCT HISTORY
+Route::post('/product/history/sync', [ProductHistoryController::class,'syncProductHistory']);
+Route::get('/product/history', [ProductHistoryController::class,'getProductHistory']);
 
 // DESIGNER
     // Route::get('/open',  [EditorController::class,'open']);
     // Route::get('/explore',  [EditorController::class,'explore']);
-
-// PRODUCT HISTORY
-    Route::post('/syncProductHistory', [ProductHistoryController::class,'syncProductHistory']);
-    Route::post('/removeProductFromHistory', [ProductHistoryController::class,'removeProductFromHistory']);
-    Route::get('/getProductHistory', [ProductHistoryController::class,'getProductHistory']);
-
-// CHECKOUT
-    Route::get('/cart', [CheckoutController::class,'cart']);
-    Route::get('/orders/create', [CheckoutController::class,'createOrder']);
-    Route::get('/orders/capture', [CheckoutController::class,'capturePayment']);
 
 //EDITOR
     Route::get('/editor/get-thumbnails', [EditorController::class,'getTemplateThumbnails']);
@@ -288,7 +290,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('/{country}/editar/plantillas', [EditorController::class, 'editPurchasedTemplate']);
     
     
-// FRONTEND
+// Store
     
     // New frontend
     Route::get('/{country}/buscar', [ContentController::class, 'search'])->name('product.search');

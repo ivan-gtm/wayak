@@ -19,8 +19,10 @@ class Authenticate extends Middleware
      */
     public function handle($request, \Closure $next, ...$guards)
     {
-        if ($this->authenticate($request, $guards) === 'authentication_failed') {
+        if ($request->expectsJson() && $request->header('Content-Type') !== 'application/json' && $this->authenticate($request, $guards) === 'authentication_failed') {
             return response()->json(['message' => 'Unauthenticated.'], Response::HTTP_UNAUTHORIZED);
+        } elseif(!$request->expectsJson() && $this->authenticate($request, $guards) === 'authentication_failed') {
+            return redirect()->intended('/');
         }
 
         return $next($request);

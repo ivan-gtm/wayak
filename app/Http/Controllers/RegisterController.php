@@ -31,9 +31,6 @@ class RegisterController extends Controller
     {
         $country = 'us';
         $locale = $this->getLocaleByCountry($country);
-
-        $locale = $this->getLocaleByCountry($country);
-
         $menu = json_decode(Redis::get('wayak:' . $country . ':menu'));
         $sale = Redis::hgetall('wayak:' . $country . ':config:sales');
 

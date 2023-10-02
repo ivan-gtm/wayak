@@ -1,12 +1,6 @@
-<!-- https://wp.alithemes.com/html/nest/demo/page-account.html -->
-<html>
+@extends('layouts.frontend')
 
-<head>
-    <style>
-        body {
-            font-size: 100%;
-        }
-    </style>
+@section('content')
     <style>
         /*! CSS Used from: https://wp.alithemes.com/html/nest/demo/assets/css/main.css?v=5.6 */
         /*! @import https://wp.alithemes.com/html/nest/demo/assets/css/vendors/normalize.css */
@@ -1098,9 +1092,7 @@
             src: url("https://wp.alithemes.com/html/nest/demo/assets/fonts/uicons/uicons-regular-straight.eot#iefix") format("embedded-opentype"), url("https://wp.alithemes.com/html/nest/demo/assets/fonts/uicons/uicons-regular-straight.woff2") format("woff2"), url("https://wp.alithemes.com/html/nest/demo/assets/fonts/uicons/uicons-regular-straight.woff") format("woff");
         }
     </style>
-</head>
 
-<body>
     <main class="main pages">
         <div class="page-header breadcrumb-wrap">
             <div class="container">
@@ -1312,6 +1304,35 @@
             </div>
         </div>
     </main>
-</body>
 
-</html>
+<script>
+// Add event listener to each ".dashboard-menu ul li a" element
+document.querySelectorAll('.dashboard-menu ul li a').forEach(function(link) {
+    link.addEventListener('click', function(e) {
+        e.preventDefault(); // Prevent the default behavior of the anchor
+        
+        // 1) Remove "active" class from all ".dashboard-menu ul li a" elements
+        document.querySelectorAll('.dashboard-menu ul li a').forEach(function(innerLink) {
+            innerLink.classList.remove('active');
+        });
+        // Add "active" class to the clicked element
+        this.classList.add('active');
+        
+        // 2) Get the "id" attribute value and remove "-tab" suffix
+        let tabId = this.getAttribute('id').replace('-tab', '');
+        
+        // 3) Remove "active show" classes from all ".tab-content>.tab-pane" elements
+        document.querySelectorAll('.tab-content>.tab-pane').forEach(function(tabPane) {
+            tabPane.classList.remove('active', 'show');
+        });
+        
+        // 4) Find the ".tab-content>.tab-pane" element with the id from step 2 and add "active show" classes
+        let targetTabPane = document.querySelector('.tab-content>.tab-pane#' + tabId);
+        if (targetTabPane) {
+            targetTabPane.classList.add('active', 'show');
+        }
+    });
+});
+
+</script>
+@endsection
