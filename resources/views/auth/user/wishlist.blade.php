@@ -1,11 +1,6 @@
-<html>
+@extends('layouts.frontend')
 
-<head>
-    <style>
-        body {
-            font-size: 100%;
-        }
-    </style>
+@section('content')
     <style>
         /*! CSS Used from: https://wp.alithemes.com/html/nest/demo/assets/css/main.css?v=5.6 */
         /*! @import https://wp.alithemes.com/html/nest/demo/assets/css/vendors/normalize.css */
@@ -938,9 +933,7 @@
 
         
     </style>
-</head>
 
-<body>
     <main class="main">
         <div class="page-header breadcrumb-wrap">
             <div class="container">
@@ -1120,6 +1113,5 @@
             </div>
         </div>
     </main>
-</body>
 
-</html>
+@endsection

@@ -133,16 +133,13 @@ class ContentController extends Controller
 
         $customerId = $request->input('customer_id');
 
-        if ($customerId && Redis::exists('wayak:user:' . $customerId . ':carousels:product-history')) {
+        if ($customerId) {
             return $customerId;
         }
 
         return false;
     }
-
-
-
-
+    
     public function showCategoryPage($country, $cat_lvl_1_slug = null, $cat_lvl_2_slug = null, $cat_lvl_3_slug = null, Request $request)
     {
 
@@ -159,12 +156,16 @@ class ContentController extends Controller
         $category_redis_key = 'wayak:' . $locale . ':categories:' . ltrim($slug, '/');
         
         if (!Redis::exists($category_redis_key)) {
-            echo "CATEGORY DOES NOT EXISTS.";
-            exit;
+            abort(404);
         }
         
         $analyticsController = new AnalyticsController();
         $analyticsController->registerVisitCategory($country, ltrim($slug, '/'));
+        
+        $customer_id = $this->getCustomerId($request);
+        if ($customer_id) {
+            $analyticsController->registerCategoryVisitByUser(ltrim($slug, '/'),$customer_id);
+        }
         
         list($category_obj, $breadcrumbs_str, $menu) = array_map('json_decode', Redis::mget([$category_redis_key, $category_redis_key, 'wayak:' . $country . ':menu']));
         

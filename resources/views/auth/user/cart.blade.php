@@ -1,11 +1,6 @@
-<html>
+@extends('layouts.frontend')
 
-<head>
-    <style>
-        body {
-            font-size: 100%;
-        }
-    </style>
+@section('content')
     <style>
         /*! CSS Used from: https://wp.alithemes.com/html/nest/demo/assets/css/main.css?v=5.6 */
         /*! @import https://wp.alithemes.com/html/nest/demo/assets/css/vendors/normalize.css */
@@ -1492,9 +1487,7 @@
             src: url("https://wp.alithemes.com/html/nest/demo/assets/fonts/uicons/uicons-regular-straight.eot#iefix") format("embedded-opentype"), url("https://wp.alithemes.com/html/nest/demo/assets/fonts/uicons/uicons-regular-straight.woff2") format("woff2"), url("https://wp.alithemes.com/html/nest/demo/assets/fonts/uicons/uicons-regular-straight.woff") format("woff");
         }
     </style>
-</head>
 
-<body>
     <main class="main">
         <div class="page-header breadcrumb-wrap">
             <div class="container">
@@ -1980,6 +1973,4 @@
             </div>
         </div>
     </main>
-</body>
-
-</html>
+@endsection

@@ -28,6 +28,29 @@ class AnalyticsController extends Controller
             return false;
         }
     }
+   
+    function registerCategoryVisitByUser($category_slug_id, $user_id)
+    {
+        // try {
+            $redisKey = 'wayak:user:' . $user_id . ':history:category';
+            // echo $redisKey;
+            // exit;
+            
+            // Use Redis transaction
+            Redis::transaction(function ($tx) use ($redisKey, $category_slug_id) {
+                if ($tx->hexists($redisKey, $category_slug_id)) {
+                    $tx->hincrby($redisKey, $category_slug_id, 1);
+                } else {
+                    $tx->hset($redisKey, $category_slug_id, 1);
+                }
+            });
+
+            return true;
+        // } catch (Exception $e) {
+        //     // Consider logging the exception for debugging purposes
+        //     return false;
+        // }
+    }
 
     function registerPublicSearch($country, $searchSlug, $searchQuery)
     {

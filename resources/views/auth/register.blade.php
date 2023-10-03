@@ -946,7 +946,7 @@
                                             <span class="text-danger text-left">{{ $errors->first('password_confirmation') }}</span>
                                             @endif
                                         </div>
-                                        <div class="login_footer form-group">
+                                        <!-- <div class="login_footer form-group">
                                             <div class="chek-form">
                                                 <input type="text" required name="security_code" placeholder="Security code *">
                                             </div>
@@ -965,17 +965,17 @@
                                                 </div>
                                             </div>
                                             <a href="page-privacy-policy.html"><i class="fi-rs-book-alt mr-5 text-muted"></i>Lean more</a>
-                                        </div>
+                                        </div> -->
                                         <div class="form-group mb-30">
                                             <button type="submit" class="btn btn-fill-out btn-block hover-up font-weight-bold" name="login">Submit &amp; Register</button>
                                         </div>
-                                        <p class="font-xs text-muted"><strong>Note:</strong>Your personal data will be used to support your experience throughout this website, to manage access to your account, and for other purposes described in our privacy policy</p>
+                                        <!-- <p class="font-xs text-muted"><strong>Note:</strong>Your personal data will be used to support your experience throughout this website, to manage access to your account, and for other purposes described in our privacy policy</p> -->
                                     </form>
                                 </div>
                             </div>
                         </div>
                         <div class="col-lg-6 pr-30 d-none d-lg-block">
-                            <div class="card-login mt-115">
+                            <!-- <div class="card-login mt-115">
                                 <a href="#" class="social-login facebook-login">
                                     <img src="https://wp.alithemes.com/html/nest/demo/assets/imgs/theme/icons/logo-facebook.svg" alt="">
                                     <span>Continue with Facebook</span>
@@ -988,7 +988,7 @@
                                     <img src="https://wp.alithemes.com/html/nest/demo/assets/imgs/theme/icons/logo-apple.svg" alt="">
                                     <span>Continue with Apple</span>
                                 </a>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                 </div>

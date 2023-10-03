@@ -247,6 +247,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('/user/account', [UserController::class,'showAccount']);
     Route::get('/user/cart', [UserController::class,'showCart']);
     Route::get('/user/wishlist', [UserController::class,'showWishlist']);
+    Route::get('/user/checkout', [UserController::class,'showCheckout']);
 });
 
 
