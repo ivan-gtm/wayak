@@ -246,7 +246,6 @@ class ContentController extends Controller
         $template_id = substr($slug, strrpos($slug, '-') + 1, strlen($slug));
         $search_query = '';
 
-
         if (isset($request->searchQuery)) {
             $search_query = $request->searchQuery;
         }
@@ -263,7 +262,7 @@ class ContentController extends Controller
 
         $analyticsController = new AnalyticsController();
         $analyticsController->registerProductView($template_id);
-
+        
         if (App::environment() == 'local') {
             $preview_image = asset('design/template/' . $template->_id . '/thumbnails/' . $language_code . '/' . $template->previewImageUrls["product_preview"]);
             // print_r($preview_image);
@@ -309,7 +308,8 @@ class ContentController extends Controller
 
         $logged_id = 0;
         $isFavorite = false;
-        if (Auth::check()) {
+
+        if( Auth::check() ) {
             // User is logged in
             $logged_id = Auth::id();
             $user = Auth::user();
@@ -325,9 +325,8 @@ class ContentController extends Controller
             // [updated_at] => 2023-09-10 20:01:34
 
             $favoritesController = new FavoritesController();
-            // echo $user->customer_id;
-            // exit;
             $isFavorite = $favoritesController->isFavorite($template->_id, $user->customer_id);
+            $analyticsController->registerCategoryVisitByUser( substr($template->mainCategory, 1), $user->customer_id );
         }
 
         // echo "<pre>";

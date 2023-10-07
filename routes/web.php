@@ -215,7 +215,7 @@ Route::group(['middleware' => ['guest']], function() {
 });
 
 // FAVORITES
-Route::prefix('favorites')->middleware('auth')->group(function () {
+Route::prefix('favorites')->group(function () {
     // Add favorite
     Route::post('/add', [FavoritesController::class, 'addFavorite']);
 

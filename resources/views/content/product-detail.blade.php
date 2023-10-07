@@ -254,7 +254,7 @@
 
                                                         <div data-action="follow-shop-button-container" class="wt-display-flex-xs wt-align-items-center" data-template-id="{{ $template->_id }}">
                                                             <!-- <input type="hidden" class="id" name="user_id" value="16374284"> -->
-                                                            <a rel="16374284" data-downtime-overlay-type="favorite" data-supplemental-state--use_follow_text="true" class="inline-overlay-trigger favorite-shop-action wt-btn wt-btn--small wt-btn--transparent follow-shop-button-listing-header-v3" aria-label="Follow shop" data-action="follow-shop-button" data-template-id="{{ $template->_id }}" data-shop-id="9116151" data-source-name="listing_header" data-module-name="">
+                                                            <a rel="16374284" data-downtime-overlay-type="favorite" data-supplemental-state--use_follow_text="true" class="inline-overlay-trigger add-to-favorites favorite-shop-action wt-btn wt-btn--small wt-btn--transparent follow-shop-button-listing-header-v3" aria-label="Follow shop" data-action="follow-shop-button" data-template-id="{{ $template->_id }}" data-shop-id="9116151" data-source-name="listing_header" data-module-name="">
                                                                 @if($logged_id == 0 || ($logged_id > 0 && $isFavorite == false) )
                                                                     <span class="etsy-icon wt-icon--smaller" data-not-following-icon="" data-template-id="{{ $template->_id }}">
                                                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -262,10 +262,12 @@
                                                                             </path>
                                                                         </svg>
                                                                     </span>
-                                                                    <span class="etsy-icon wt-icon--smaller wt-display-none wt-text-brick" data-following-icon=""><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                                                    <span class="etsy-icon wt-icon--smaller wt-display-none wt-text-brick" data-following-icon="" data-template-id="{{ $template->_id }}">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                                                                             <path d="M16.5,3A6.953,6.953,0,0,0,12,5.051,6.912,6.912,0,0,0,7.5,3C4.364,3,2,5.579,2,9c0,5.688,8.349,12,10,12S22,14.688,22,9C22,5.579,19.636,3,16.5,3Z">
                                                                             </path>
-                                                                        </svg></span>
+                                                                        </svg>
+                                                                    </span>
                                                                     <span data-following-message="" class="wt-ml-xs-1 listing-header-v3-message wt-display-inline-block wt-position-relative wt-display-none ">Following</span>
                                                                     <span data-not-following-message="" class="wt-ml-xs-1 listing-header-v3-message wt-display-inline-block wt-position-relative ">Follow</span>
                                                                 @elseif( $logged_id > 0 && $isFavorite == true )
@@ -747,11 +749,8 @@
 </script>
 <script>
     // Add to favorites
-    document.querySelector("#listing-page-cart > div:nth-child(4) > div > div.wt-display-flex-xs.wt-align-items-center > div > a").addEventListener('click', function(event) {
-
-        console.log("OPIPIPIP");
-    
-        // Try to get customerId from the meta tag
+    function addToFavorites(){
+        // Try to get customerId from¡ the meta tag
         let templateIdTag = document.querySelector('meta[name="product-id"]');
         let templateId = templateIdTag ? templateIdTag.getAttribute('content') : null;
 
@@ -762,11 +761,10 @@
         
         let favorites = JSON.parse(localStorage.getItem('favorites')) || {};
 
-
         if (!favorites[templateId]) {
         
             // Send to backend if user is logged in
-            if (loggedIn) {
+            if (customerId) {
                 fetch("/favorites/add", {
                     method: "POST",
                     headers: {
@@ -790,13 +788,12 @@
                         localStorage.setItem('favorites', JSON.stringify(favorites));
                         localStorage.setItem('loggedIn', false);
                         showAddedToFavoritesNotification();
-                        toggleFavoritesButton();
+                        // toggleFavoritesButton();
 
                     } else if (response.ok) {
                         favorites[templateId] = new Date().toISOString();
                         localStorage.setItem('favorites', JSON.stringify(favorites));
                         // showAddedToFavoritesNotification();
-                        toggleFavoritesButton();
                     } else if (!response.ok) {
                         // Handle other errors
                         return response.json().then(data => {
@@ -811,51 +808,6 @@
                 favorites[templateId] = new Date().toISOString();
                 localStorage.setItem('favorites', JSON.stringify(favorites));
                 showAddedToFavoritesNotification();
-                toggleFavoritesButton();
-            }
-        }
-    });
-
-    function toggleFavoritesButton(){
-        const favoritedIconBtn = document.querySelector("#listing-page-cart > div > div > div.wt-display-flex-xs.wt-align-items-center > div > a > span.etsy-icon.wt-icon--smaller.wt-text-brick");
-        const favoritedLabelBtn = document.querySelector("#listing-page-cart > div > div > div.wt-display-flex-xs.wt-align-items-center > div > a > span.wt-ml-xs-1.listing-header-v3-message.wt-display-inline-block.wt-position-relative");
-        
-        const addTofavoriteLabelBtn = document.querySelector("#listing-page-cart > div > div > div.wt-display-flex-xs.wt-align-items-center > div > a > span:nth-child(1)");
-        const addTofavoriteIconBtn = document.querySelector("#listing-page-cart > div:nth-child(4) > div > div.wt-display-flex-xs.wt-align-items-center > div > a > span:nth-child(4)");
-
-        if(favoritedIconBtn){
-            /// create code to check if favoritedIconBtn has class "wt-display-none", if it has, then remove it, if it doesn't have, then add it
-            if(favoritedIconBtn.classList.contains("wt-display-none")){
-                favoritedIconBtn.classList.remove("wt-display-none");
-            } else {
-                favoritedIconBtn.classList.add("wt-display-none");
-            }
-        }
-    
-        if(favoritedLabelBtn){
-            /// create code to check if favoritedLabelBtn has class "wt-display-none", if it has, then remove it, if it doesn't have, then add it
-            if(favoritedLabelBtn.classList.contains("wt-display-none")){
-                favoritedLabelBtn.classList.remove("wt-display-none");
-            } else {
-                favoritedLabelBtn.classList.add("wt-display-none");
-            }
-        }
-        
-        if(addTofavoriteLabelBtn){
-            /// create code to check if addTofavoriteLabelBtn has class "wt-display-none", if it has, then remove it, if it doesn't have, then add it
-            if(addTofavoriteLabelBtn.classList.contains("wt-display-none")){
-                addTofavoriteLabelBtn.classList.remove("wt-display-none");
-            } else {
-                addTofavoriteLabelBtn.classList.add("wt-display-none");
-            }
-        }
-        
-        if(addTofavoriteIconBtn){
-            /// create code to check if addTofavoriteIconBtn has class "wt-display-none", if it has, then remove it, if it doesn't have, then add it
-            if(addTofavoriteIconBtn.classList.contains("wt-display-none")){
-                addTofavoriteIconBtn.classList.remove("wt-display-none");
-            } else {
-                addTofavoriteIconBtn.classList.add("wt-display-none");
             }
         }
     }
@@ -868,73 +820,119 @@
         displayNotification(notificationText, actionButtonText, actionURL, displayDuration);
     }
 
-    // Check for pending favorites after login
-    if (localStorage.getItem('redirectTo') && localStorage.getItem('pendingFavorite')) {
-        const templateId = localStorage.getItem('pendingFavorite');
+    // // Check for pending favorites after login
+    // if (localStorage.getItem('redirectTo') && localStorage.getItem('pendingFavorite')) {
+    //     const templateId = localStorage.getItem('pendingFavorite');
+    //     const customerId = localStorage.getItem('customerId');
+    //     fetch("/favorite/add", {
+    //         method: "POST",
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //         },
+    //         body: JSON.stringify({
+    //             "template-id": templateId,
+    //             "customerId": customerId,
+    //             "collectionName": "default"
+    //         })
+    //     }).then(() => {
+    //         window.location.href = localStorage.getItem('redirectTo');
+    //         localStorage.removeItem('redirectTo');
+    //         localStorage.removeItem('pendingFavorite');
+    //     });
+    // }
+
+    // Remove from favorites
+    function removeFromFavorites(){
+        
+        console.log("favorited");
+        // console.log(btn);
+
+        // Try to get customerId from the meta tag
+        let templateIdTag = document.querySelector('meta[name="product-id"]');
+        let templateId = templateIdTag ? templateIdTag.getAttribute('content') : null;
+
         const customerId = localStorage.getItem('customerId');
-        fetch("/favorite/add", {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                "template-id": templateId,
-                "customerId": customerId,
-                "collectionName": "default"
-            })
-        }).then(() => {
-            window.location.href = localStorage.getItem('redirectTo');
-            localStorage.removeItem('redirectTo');
-            localStorage.removeItem('pendingFavorite');
-        });
+        // const loggedIn = localStorage.getItem('loggedIn');
+        const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
+        const csrfToken = csrfTokenMeta ? csrfTokenMeta.getAttribute("content") : null;
+        
+        // Remove from local storage
+        let favorites = JSON.parse(localStorage.getItem('favorites')) || {};
+        if (favorites[templateId]) {
+                        delete favorites[templateId];
+                        localStorage.setItem('favorites', JSON.stringify(favorites));
+        }
+
+        // Send removal request to backend if user is logged in
+        if (customerId) {
+            fetch("/favorites/remove", {
+                method: "DELETE",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                body: JSON.stringify({
+                    "template-id": templateId,
+                    "customerId": customerId,
+                    "collectionName": "default" // Assuming default collection for this example
+                })
+            }).then(response => {
+                if (response.status === 200) {
+                    // Successfully removed from backend
+                    // Remove the product from the display
+                    // event.target.closest('.favorite-item').remove();
+                    
+                } else {
+                    // Handle error, maybe show an alert or a message to the user
+                    alert("There was an issue removing the product from favorites.");
+                }
+            });
+        } else {
+            // Remove the product from the display for non-logged in users
+            // event.target.closest('.favorite-item').remove();
+        }
+        
     }
 
-    // Assuming each favorite product is displayed in a div with a class 'favorite-item'
-    // and each 'remove' button within this div has a class 'remove-favorite-btn'
-    document.querySelectorAll(".favorite-item .remove-favorite-btn").forEach(function(btn) {
-        btn.addEventListener('click', function(event) {
-            const templateId = event.target.closest('.favorite-item').getAttribute('data-template-id');
-            const customerId = localStorage.getItem('customerId');
-            // const loggedIn = (customerId && customerId !== "");
-            const loggedIn = false;
-            const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
-            const csrfToken = csrfTokenMeta ? csrfTokenMeta.getAttribute("content") : null;
-
-            // Remove from local storage
-            let favorites = JSON.parse(localStorage.getItem('favorites')) || {};
-            if (favorites[templateId]) {
-                delete favorites[templateId];
-                localStorage.setItem('favorites', JSON.stringify(favorites));
-            }
-
-            // Send removal request to backend if user is logged in
-            if (loggedIn) {
-                fetch("/favorite/remove", {
-                    method: "POST",
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        "template-id": templateId,
-                        "customerId": customerId,
-                        "collectionName": "default" // Assuming default collection for this example
-                    })
-                }).then(response => {
-                    if (response.status === 200) {
-                        // Successfully removed from backend
-                        // Remove the product from the display
-                        event.target.closest('.favorite-item').remove();
-                    } else {
-                        // Handle error, maybe show an alert or a message to the user
-                        alert("There was an issue removing the product from favorites.");
-                    }
-                });
-            } else {
-                // Remove the product from the display for non-logged in users
-                event.target.closest('.favorite-item').remove();
-            }
-        });
+document.addEventListener('DOMContentLoaded', (event) => {
+    // Get the favorite button element
+    const favoriteButton = document.querySelector('.favorite-shop-action');
+    
+    // Add event listener for click event
+    favoriteButton.addEventListener('click', () => {
+        toggleFavorite(favoriteButton);
     });
+});
+
+function toggleFavorite(button) {
+    // Toggle the 'favorited' class on the button
+    button.classList.toggle('favorited');
+    
+    // Toggle visibility of elements inside the button
+    const notFollowingIcon = button.querySelector('[data-not-following-icon]');
+    const followingIcon = button.querySelector('[data-following-icon]');
+    const notFollowingMessage = button.querySelector('[data-not-following-message]');
+    const followingMessage = button.querySelector('[data-following-message]');
+    
+    if (button.classList.contains('favorited')) {
+        // The product is now favorited
+        notFollowingIcon.classList.add('wt-display-none');
+        notFollowingMessage.classList.add('wt-display-none');
+        followingIcon.classList.remove('wt-display-none');
+        followingMessage.classList.remove('wt-display-none');
+        addToFavorites();
+        console.log("The product is now favorited");
+    } else {
+        // The product is not favorited
+        notFollowingIcon.classList.remove('wt-display-none');
+        notFollowingMessage.classList.remove('wt-display-none');
+        followingIcon.classList.add('wt-display-none');
+        followingMessage.classList.add('wt-display-none');
+        console.log("The product is not favorited");
+        removeFromFavorites();
+    }
+}
+
 
 </script>
 <script>

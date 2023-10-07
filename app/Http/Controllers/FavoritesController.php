@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\App;
-
-// use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Redis;
+// use Illuminate\Http\Response;
+// use Illuminate\Support\Facades\App;
+// use Illuminate\Support\Facades\DB;
 // use Illuminate\Support\Str;
 // use App\Models\Template;
 // use Storage;
@@ -16,12 +16,21 @@ class FavoritesController extends Controller
 {
     public function addFavorite(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'template-id' => 'required|string|alpha_num|size:10', // Assuming template-id is always 10 characters long
+            'customerId' => 'required|string|alpha_num|min:8|max:20', // Assuming customerId is between 8 and 20 characters
+            'collectionName' => 'nullable|string|alpha_dash|max:255', // Assuming collectionName can have alphabets, numbers, dashes and underscores
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
         $productID = $request->input('template-id');
         $customerId = $request->input('customerId');
-        $collectionId = $request->input('collectionId', 'default'); // We'll use 'default' for the default collection
+        $collectionName = $request->input('collectionName', 'default');  // Default to 'default' if collectionName is not provided
 
-        // Store in Redis
-        Redis::sadd('wayak:user:favorites:' . $customerId . ':' . $collectionId, $productID);
+        Redis::sadd('wayak:user:favorites:' . $customerId . ':' . $collectionName, $productID);
 
         return response()->json(['status' => 'success']);
     }
@@ -41,15 +50,25 @@ class FavoritesController extends Controller
 
     public function removeFavorite(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'template-id' => 'required|string|alpha_num|size:10', // Assuming template-id is always 10 characters long
+            'customerId' => 'required|string|alpha_num|min:8|max:20', // Assuming clientId is between 8 and 20 characters
+            'collectionId' => 'nullable|string|alpha_dash|max:255', // Assuming collectionId can have alphabets, numbers, dashes and underscores
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
         $productID = $request->input('template-id');
         $clientId = $request->input('clientId');
-        $collectionId = $request->input('collectionId', 'default'); // We'll use 'default' for the default collection
+        $collectionId = $request->input('collectionId', 'default');  // Default to 'default' if collectionId is not provided
 
-        // Remove from Redis
         Redis::srem('wayak:user:favorites:' . $clientId . ':' . $collectionId, $productID);
 
         return response()->json(['status' => 'success']);
     }
+
 
     public function getFavorites(Request $request)
     {

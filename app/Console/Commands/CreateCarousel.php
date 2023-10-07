@@ -137,6 +137,9 @@ class CreateCarousel extends Command
 
         $carousels = [];
         foreach ($mostVisitedCategories as $category) {
+            $rawCategory = json_decode( Redis::get('wayak:en:categories:'.$category) );
+            $categoryName = $rawCategory->name;
+
             $category = '/'.$category;
 
             // Fetch 30 random templates matching the category
@@ -175,7 +178,7 @@ class CreateCarousel extends Command
             // Construct the carousel JSON object
             $carousels[] = [
                 'slider_id' => Str::random(5),
-                'title' => 'Cateogory '.$category,
+                'title' => $categoryName,
                 'search_term' => 'Favorites',
                 'items' => $carouselItems
             ];
