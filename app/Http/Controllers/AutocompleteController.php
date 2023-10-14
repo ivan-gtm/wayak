@@ -11,29 +11,28 @@ class AutocompleteController extends Controller
     {
         $term = $request->input('term');
 
-        for ($i = 1; $i <= strlen($term); $i++) {
-            $prefix = substr($term, 0, $i);
-            Redis::zAdd('wayak:us:autocomplete', 0, $prefix);
-        }
+        // Store the term in a Redis set
+        Redis::sAdd('wayak:us:terms', $term);
 
-        Redis::zAdd('wayak:us:autocomplete', 0, "$term*");
+        // Generate all substrings and create an inverted index for each one
+        $length = strlen($term);
+        for ($i = 0; $i < $length; $i++) {
+            for ($j = $i + 1; $j <= $length; $j++) {
+                $substring = substr($term, $i, $j - $i);
+                Redis::sAdd('wayak:us:index:' . $substring, $term);
+            }
+        }
 
         return response()->json(['message' => 'Term added successfully']);
     }
 
     public function search(Request $request)
     {
-        $prefix = $request->input('prefix');
-        $results = Redis::zRangeByLex('wayak:us:autocomplete', "[$prefix", "[$prefix\xff");
+        $query = $request->input('prefix');
+        
+        // Retrieve terms from the inverted index
+        $results = Redis::sMembers('wayak:us:index:' . $query);
 
-        // Filter out results that don't match the exact prefix
-        $matches = [];
-        foreach ($results as $result) {
-            if (strpos($result, '*') !== false) {
-                $matches[] = str_replace('*', '', $result);
-            }
-        }
-
-        return response()->json($matches);
+        return response()->json($results);
     }
 }
