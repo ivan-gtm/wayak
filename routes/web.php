@@ -30,6 +30,7 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\TemplettScrapperController;
 use App\Http\Controllers\LinkedInController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\AutocompleteController;
 
 Route::get('/api/demo-url', [AdminController::class, 'getTemplateObjects']);
 
@@ -250,10 +251,13 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('/user/checkout', [UserController::class,'showCheckout']);
 });
 
+// Autocompelte
+    Route::get('/terms', [AutocompleteController::class,'addTerm']);
+    Route::get('/search', [AutocompleteController::class,'search']);
 
 // PRODUCT HISTORY
-Route::post('/product/history/sync', [ProductHistoryController::class,'syncProductHistory']);
-Route::get('/product/history', [ProductHistoryController::class,'getProductHistory']);
+    Route::post('/product/history/sync', [ProductHistoryController::class,'syncProductHistory']);
+    Route::get('/product/history', [ProductHistoryController::class,'getProductHistory']);
 
 // DESIGNER
     // Route::get('/open',  [EditorController::class,'open']);

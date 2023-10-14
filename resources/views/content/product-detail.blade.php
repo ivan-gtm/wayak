@@ -651,7 +651,7 @@
         function syncProductHistory(customerId, productHistory) {
             if (shouldRunSyncProductHistory()) {
                 const xhr = new XMLHttpRequest();
-                xhr.open('POST', '/syncProductHistory', true);
+                xhr.open('POST', '/product/history/sync', true);
                 if (csrfToken) {
                     xhr.setRequestHeader("X-CSRF-TOKEN", csrfToken);
                 }
