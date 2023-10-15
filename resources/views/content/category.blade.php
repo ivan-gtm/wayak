@@ -13,7 +13,6 @@
     <link rel="stylesheet" href="{{ asset('assets/css/search.css') }}">
 @endsection
 
-
 @section('content')
 <main class="content">
     <div id="app" class="appReady">

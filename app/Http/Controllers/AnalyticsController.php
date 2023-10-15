@@ -52,7 +52,7 @@ class AnalyticsController extends Controller
         // }
     }
 
-    function registerPublicSearch($country, $searchSlug, $searchQuery)
+    function registerPublicSearch($country, $searchSlug, $searchTerm)
     {
         try {
             $redisKeyResults = 'wayak:' . $country . ':analytics:search:results';
@@ -62,8 +62,8 @@ class AnalyticsController extends Controller
                 Redis::hincrby($redisKeyResults, $searchSlug, 1);
             } else {
                 // Use pipelining for multiple Redis commands
-                Redis::pipeline(function ($pipe) use ($redisKeyResults, $redisKeyTerms, $searchSlug, $searchQuery) {
-                    $pipe->hset($redisKeyTerms, $searchSlug, $searchQuery);
+                Redis::pipeline(function ($pipe) use ($redisKeyResults, $redisKeyTerms, $searchSlug, $searchTerm) {
+                    $pipe->hset($redisKeyTerms, $searchSlug, $searchTerm);
                     $pipe->hset($redisKeyResults, $searchSlug, 1);
                 });
             }

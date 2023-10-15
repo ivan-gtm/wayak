@@ -16,14 +16,34 @@
 
         <!-- Global site tag (gtag.js) - Google Analytics -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-FQVV2SLQED"></script>
-            <script>
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-
-                gtag('config', 'G-FQVV2SLQED');
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+    
+            gtag('config', 'G-FQVV2SLQED');
         </script>
-        
+        <style>
+            .autocomplete-results {
+                position: absolute;
+                border: 1px solid #ccc;
+                max-height: 315px;
+                overflow-y: auto;
+                background-color: #fff;
+                z-index: 9999;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
+
+            .autocomplete-item {
+                padding: 8px 12px;
+                cursor: pointer;
+            }
+
+            .autocomplete-item:hover {
+                background-color: #f7f7f7;
+            }
+
+        </style>
 	</head>
 	<body>
         <header>
@@ -135,7 +155,7 @@
                 <div class="user-options">
                     <form action="{{ route('user.search',['country' => $country]) }}" class="inline-search-form" 
                         name="nav-search-form" id="nav-search-form" method="GET" 
-                        onclick="document.getElementById('nav-search-input').focus();" accept-charset="utf-8">
+                        onclick="document.getElementById('nav-search-input').focus();" accept-charset="utf-8" autocomplete="off">
                         @csrf
                         <input type="hidden" id="search-customer-id" name="customerId">
                         <label for="nav-search-input" class="_hidden">{{ __('menu.search_btn_label') }}</label>
@@ -180,6 +200,129 @@
 
         @yield('content')
         <script>
+            // Debounce function: Ensures that the given function is not called until after the specified time has elapsed since the last time it was called
+            function debounce(func, delay) {
+                let debounceTimer;
+                return function() {
+                    const context = this;
+                    const args = arguments;
+                    clearTimeout(debounceTimer);
+                    debounceTimer = setTimeout(() => func.apply(context, args), delay);
+                };
+            }
+        
+            // Function to fetch results from the server using AJAX
+            function fetchData(query, callback) {
+                const xhr = new XMLHttpRequest();
+                xhr.open('GET', `http://localhost:8001/search?prefix=${query}`, true);
+                xhr.onreadystatechange = function() {
+                    if (this.readyState === 4 && this.status === 200) {
+                        const results = JSON.parse(this.responseText);
+                        callback(results);
+                    }
+                };
+                xhr.send();
+            }
+
+            // Function to display the results
+            function displayResults(results, container) {
+                // Clear previous results
+                container.innerHTML = '';
+                results.forEach(item => {
+                    const div = document.createElement('div');
+                    div.classList.add('autocomplete-item');
+                    div.innerText = item;
+                    container.appendChild(div);
+                });
+            }
+
+            function displayPopularSearches(resultsContainer){
+                // Get the parsed data from localStorage
+                const popularSearchesData = JSON.parse(localStorage.getItem('popularSearches'));
+
+                // Extract terms from the data
+                const terms = popularSearchesData.map(item => item.term);
+
+                // Use the displayResults function to display the terms
+                displayResults(terms, resultsContainer);
+            }
+        
+            function positionResultsContainer(input, container) {
+                const rect = input.getBoundingClientRect();
+                container.style.top = (rect.bottom + window.scrollY) + 'px';
+                container.style.left = (rect.left + window.scrollX) + 'px';
+                container.style.width = rect.width + 'px';
+            }
+        
+            document.addEventListener('DOMContentLoaded', function() {
+                // Elements
+                const searchInput = document.getElementById('nav-search-input');
+                const mobileSearchInput = document.getElementById('nav-mobile-search-input');
+                const resultsContainer = document.createElement('div');
+                resultsContainer.classList.add('autocomplete-results');
+        
+                // Append results container to the body (can be adjusted based on design requirements)
+                document.body.appendChild(resultsContainer);
+        
+                // Event listener for search input using debouncing
+                searchInput.addEventListener('keyup', debounce(function(e) {
+                    const query = e.target.value;
+                    fetchData(query, function(results) {
+                        displayResults(results, resultsContainer);
+                        positionResultsContainer(searchInput, resultsContainer);
+                    });
+                }, 300));  // 300ms debounce time
+
+                // New focus event listener for searchInput
+                searchInput.addEventListener('focus', function() {
+                    displayPopularSearches(resultsContainer);
+                    positionResultsContainer(searchInput, resultsContainer);
+                });
+        
+                // Event listener for mobile search input using debouncing
+                mobileSearchInput.addEventListener('keyup', debounce(function(e) {
+                    const query = e.target.value;
+                    fetchData(query, function(results) {
+                        displayResults(results, resultsContainer);
+                        positionResultsContainer(mobileSearchInput, resultsContainer);
+                    });
+                }, 300));  // 300ms debounce time
+                
+            
+                // Function to fetch and store data in local storage
+                const fetchDataAndStorePopularSearches = () => {
+                    const currentTime = Date.now();
+
+                    const lastUpdated = localStorage.getItem('lastUpdatedSearchTerms');
+                    if (lastUpdated && (currentTime - lastUpdated < 2 * 60 * 60 * 1000)) {
+                        // Data is less than 2 hours old, so no need to refetch
+                        return;
+                    }
+
+                    fetch('http://localhost:8001/us/search/popular-searches')
+                        .then(response => response.json())
+                        .then(data => {
+                            localStorage.setItem('popularSearches', JSON.stringify(data));
+                            localStorage.setItem('lastUpdatedSearchTerms', currentTime.toString());
+                        })
+                        .catch(error => {
+                            console.error('Error fetching popular searches:', error);
+                        });
+                };
+
+                // Fetch data once page is loaded
+                fetchDataAndStorePopularSearches();
+
+                // displayPopularSearches(resultsContainer);
+                
+                // Set an interval to fetch data every 2 hours
+                setInterval(fetchDataAndStorePopularSearches, 2 * 60 * 60 * 1000); // 2 hours in milliseconds
+            });
+
+        </script>
+
+        <script>
+            // Assign customer ID
             document.addEventListener("DOMContentLoaded", function() {
                 const customerId = getCustomerId();
                 function getCustomerId() {
@@ -208,6 +351,7 @@
                 }
             });
         </script>
+
         <div id="footer" class="site-footer js-site-footer" role="contentinfo">
             <div class="container-large">
                 <div class="footer-lower-content">

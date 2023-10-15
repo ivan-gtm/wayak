@@ -26,6 +26,18 @@ class AutocompleteController extends Controller
         return response()->json(['message' => 'Term added successfully']);
     }
 
+    public function getTopSearches(Request $request, $country)
+    {
+        $redisKey = 'wayak:' . $country . ':analytics:search:top-results';
+        $data = Redis::get($redisKey);
+
+        if (!$data) {
+            return response()->json(['error' => 'No data found for the specified country.'], 404);
+        }
+
+        return response()->json(json_decode($data, true));
+    }
+
     public function search(Request $request)
     {
         $query = $request->input('prefix');

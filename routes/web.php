@@ -254,6 +254,7 @@ Route::group(['middleware' => ['auth']], function() {
 // Autocompelte
     Route::get('/terms', [AutocompleteController::class,'addTerm']);
     Route::get('/search', [AutocompleteController::class,'search']);
+    Route::get('/{country}/search/popular-searches', [AutocompleteController::class, 'getTopSearches']);
 
 // PRODUCT HISTORY
     Route::post('/product/history/sync', [ProductHistoryController::class,'syncProductHistory']);
