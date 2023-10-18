@@ -13,6 +13,8 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\FavoritesController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\AutocompleteController;
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminSaleController;
@@ -29,8 +31,6 @@ use App\Http\Controllers\PacktController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\TemplettScrapperController;
 use App\Http\Controllers\LinkedInController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\AutocompleteController;
 
 Route::get('/api/demo-url', [AdminController::class, 'getTemplateObjects']);
 
@@ -213,42 +213,43 @@ Route::group(['middleware' => ['guest']], function() {
     Route::get('password/reset/{token}', [LoginController::class,'showLinkRequestForm'])->name('password.request');
     Route::post('password/reset', [LoginController::class,'reset'])->name('password.update');
 
+    // FAVORITES
+    Route::prefix('favorites')->group(function () {
+        // Add favorite
+        Route::post('/add', [FavoritesController::class, 'addFavorite']);
+    
+        // Remove favorite
+        Route::delete('/remove', [FavoritesController::class, 'removeFavorite']);
+    });
+    
 });
 
-// FAVORITES
-Route::prefix('favorites')->group(function () {
-    // Add favorite
-    Route::post('/add', [FavoritesController::class, 'addFavorite']);
-
-    // Remove favorite
-    Route::delete('/remove', [FavoritesController::class, 'removeFavorite']);
-
-    // Get all favorites for a client
-    Route::get('/{clientId}', [FavoritesController::class, 'getFavorites']);
-
-    // Manage collections (create or delete)
-    Route::post('/collection/manage', [FavoritesController::class, 'manageCollection']);
-
-    // Get all collections for a client
-    Route::get('/collections/{clientId}', [FavoritesController::class, 'getCollections']);
-});
 
 Route::group(['middleware' => ['auth']], function() {
     // Logout Routes
-    Route::get('/logout', [LogoutController::class,'perform'])->name('logout.perform');
+    Route::get('/{country}/logout', [LogoutController::class, 'perform'])->name('logout.perform');
 
     // CHECKOUT
-    Route::get('/cart', [CheckoutController::class,'cart']);
-    Route::get('/orders/create', [CheckoutController::class,'createOrder']);
-    Route::get('/orders/capture', [CheckoutController::class,'capturePayment']);
+    Route::get('/{country}/cart', [CheckoutController::class, 'cart']);
+    Route::get('/{country}/orders/create', [CheckoutController::class, 'createOrder']);
+    Route::get('/{country}/orders/capture', [CheckoutController::class, 'capturePayment']);
 
     // PRODUCT HISTORY
-    Route::post('/product/history/remove-product', [ProductHistoryController::class,'removeProductFromHistory']);
+    Route::post('/{country}/user/product-history/remove-product', [ProductHistoryController::class, 'removeProductFromHistory']);
 
-    Route::get('/user/account', [UserController::class,'showAccount']);
-    Route::get('/user/cart', [UserController::class,'showCart']);
-    Route::get('/user/wishlist', [UserController::class,'showWishlist']);
-    Route::get('/user/checkout', [UserController::class,'showCheckout']);
+    Route::get('/{country}/user/account', [UserController::class, 'showAccount']);
+    Route::get('/{country}/user/cart', [UserController::class, 'showCart']);
+    Route::get('/{country}/user/wishlist', [UserController::class, 'showWishlist']);
+    Route::get('/{country}/user/checkout', [UserController::class, 'showCheckout']);
+
+    // Get all favorites for a client
+    Route::get('/{country}/user/favorites/{clientId}', [FavoritesController::class, 'getFavorites']);
+
+    // Manage collections (create or delete)
+    Route::post('/{country}/user/favorites/collection/manage', [FavoritesController::class, 'manageCollection']);
+
+    // Get all collections for a client
+    Route::get('/{country}/user/favorites/collections/{clientId}', [FavoritesController::class, 'getCollections']);
 });
 
 // Autocompelte
@@ -309,20 +310,14 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('/{country}/code', [CodeController::class, 'validateCode'])->name('code.validate.form');
     Route::post('/{country}/code', [CodeController::class,'redeemCode'])->name('code.validate');
 
+// Search
+Route::get('/{country}/search', [SearchController::class, 'showSearchPage'])->name('user.search');
     
-    // Search
-    Route::get('/{country}/search', [SearchController::class, 'showSearchPage'])->name('user.search');
-    Route::get('/{country}/search/search-by-title', [SearchController::class,'searchByTitle']);
-    Route::get('/{country}/search/search-by-title-and-category', [SearchController::class,'searchByTitleAndCategory']);
-    Route::get('/{country}/search/count-by-format', [SearchController::class,'getFormatsTotals']);
-    Route::get('/{country}/search/filter-by-search-term-and-price', [SearchController::class,'filterBySearchTermAndPrice']);
-
     // Navigation by category
     Route::get('/{country}/templates/{cat_lvl_1}', [ContentController::class, 'showCategoryPage'])->name('showCategoryLevel1');
     Route::get('/{country}/templates/{cat_lvl_1}/{cat_lvl_2}', [ContentController::class, 'showCategoryPage'])->name('showCategoryLevel2');
     Route::get('/{country}/templates/{cat_lvl_1}/{cat_lvl_2}/{cat_lvl_3}', [ContentController::class, 'showCategoryPage'])->name('showCategoryLevel3');
     Route::get('/{country}/templates/{cat_lvl_1}/{cat_lvl_2}/{cat_lvl_3}/{cat_lvl_4}', [ContentController::class, 'showCategoryPage'])->name('showCategoryLevel4');
-    
     
     Route::get('/{country}/plantillas/{category}', [ContentController::class, 'showCategoryPage']);
     

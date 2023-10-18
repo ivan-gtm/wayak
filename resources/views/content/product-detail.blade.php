@@ -83,6 +83,55 @@
             z-index: 4;
         }
 
+        .modal-content.login h2 {
+            text-align: center;
+        }
+
+        .modal-content.login input {
+            color: #222;
+            background: #fff;
+            border-radius: 4px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            font-size: 18px;
+            line-height: normal;
+            color: #222;
+            background: #fff;
+            text-align: left;
+            display: flex;
+            width: 100%;
+        }
+        .modal-content.login button {
+            width: 100%;
+            height: 48px;
+            font-size: 16px;
+            line-height: 20px;
+            color: #fff;
+            background: #f73859;
+            border-radius: 26px;
+            font-weight: 600;
+            margin: 20px auto 0;
+            padding: 0 19px;
+            display: block;
+            cursor: pointer;
+        }
+        .modal-content.login {
+            background-color: #fff;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            width: 514px;
+            padding: 40px 50px;
+            border-radius: 4px;
+            transition: all .15s ease;
+            /* -webkit-transform: scale(.9); */
+            /* transform: scale(.9); */
+            /* opacity: 0; */
+            max-height: calc(100vh - 62px);
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
         .modal-content {
             position: absolute;
             top: 50%;
@@ -95,10 +144,25 @@
         }
 
         .close {
+            /* position: absolute; */
+            /* right: 10px; */
+            /* top: 5px; */
+            /* cursor: pointer; */
             position: absolute;
-            right: 10px;
-            top: 5px;
+            top: 6px;
+            right: 12px;
+            width: 36px;
+            height: 36px;
+            /* line-height: 16px; */
             cursor: pointer;
+            display: flex;
+            display: -webkit-flex;
+            justify-content: center;
+            -webkit-justify-content: center;
+            align-items: center;
+            -webkit-align-items: center;
+            flex-direction: row;
+            font-size: 27px;
         }
     
 </style>
@@ -110,7 +174,7 @@
 
 <!-- The Modal -->
 <div id="loginModal" class="modal">
-    <div class="modal-content">
+    <div class="modal-content login">
         <span class="close" id="closeModalBtn">&times;</span>
         <h2>Login</h2>
         <form id="loginForm">

@@ -71,8 +71,8 @@ class ContentController extends Controller
 
         $carouselKeys = [
             $redisPrefix . ':home:carousels',
-            $redisPrefix . ':home:carousels:trending-categories',
-            $redisPrefix . ':home:carousels:trending'
+            // $redisPrefix . ':home:carousels:trending-categories',
+            // $redisPrefix . ':home:carousels:trending'
         ];
 
         $redisResults = Redis::mget($carouselKeys);
@@ -82,30 +82,30 @@ class ContentController extends Controller
         }
 
         $carousels = json_decode($redisResults[0]);
-        $carousels = array_merge(json_decode($redisResults[1]), $carousels);
-        array_unshift($carousels, json_decode($redisResults[2]));
+        // $carousels = array_merge(json_decode($redisResults[1]), $carousels);
+        // array_unshift($carousels, json_decode($redisResults[2]));
 
-        $customer_id = $this->getCustomerId($request);
+        // $customer_id = $this->getCustomerId($request);
 
-        if ($customer_id) {
-            $userPrefix = 'wayak:user:' . $customer_id . ':carousels:';
+        // if ($customer_id) {
+        //     $userPrefix = 'wayak:user:' . $customer_id . ':carousels:';
 
-            $userCarouselKeys = [
-                $userPrefix . 'product-history',
-                $userPrefix . 'favorites',
-                $userPrefix . 'search'
-            ];
+        //     $userCarouselKeys = [
+        //         $userPrefix . 'product-history',
+        //         $userPrefix . 'favorites',
+        //         $userPrefix . 'search'
+        //     ];
 
-            $userRedisResults = Redis::mget($userCarouselKeys);
+        //     $userRedisResults = Redis::mget($userCarouselKeys);
 
-            $userCarousels = [
-                json_decode($userRedisResults[0]),
-                json_decode($userRedisResults[1])
-            ];
+        //     $userCarousels = [
+        //         json_decode($userRedisResults[0]),
+        //         json_decode($userRedisResults[1])
+        //     ];
 
-            $userRedisResults = array_merge($userCarousels, json_decode($userRedisResults[2]));
-            $carousels = array_merge($userCarousels, $carousels);
-        }
+        //     $userRedisResults = array_merge($userCarousels, json_decode($userRedisResults[2]));
+        //     $carousels = array_merge($userCarousels, $carousels);
+        // }
 
         $menu = json_decode(Redis::get($redisPrefix . ':menu'));
         $sale = Redis::hgetall($redisPrefix . ':config:sales');
