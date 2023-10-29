@@ -15,6 +15,7 @@ use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\FavoritesController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AutocompleteController;
+use App\Http\Controllers\WishlistController;
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminSaleController;
@@ -237,10 +238,14 @@ Route::group(['middleware' => ['auth']], function() {
     // PRODUCT HISTORY
     Route::post('/{country}/user/product-history/remove-product', [ProductHistoryController::class, 'removeProductFromHistory']);
 
+    Route::get('/{country}/user/wishlist', [WishlistController::class, 'showWishlist']);
+    Route::get('/{country}/user/wishlist/2', [WishlistController::class, 'showWishlist']);
     Route::get('/{country}/user/account', [UserController::class, 'showAccount']);
     Route::get('/{country}/user/cart', [UserController::class, 'showCart']);
-    Route::get('/{country}/user/wishlist', [UserController::class, 'showWishlist']);
     Route::get('/{country}/user/checkout', [UserController::class, 'showCheckout']);
+    
+    Route::get('/{country}/user/history/browsing', [ProductHistoryController::class, 'showBrowsingHistory']);
+    Route::get('/{country}/user/history/search', [ProductHistoryController::class, 'showSearchHistory']);
 
     // Get all favorites for a client
     Route::get('/{country}/user/favorites/{clientId}', [FavoritesController::class, 'getFavorites']);
@@ -251,11 +256,6 @@ Route::group(['middleware' => ['auth']], function() {
     // Get all collections for a client
     Route::get('/{country}/user/favorites/collections/{clientId}', [FavoritesController::class, 'getCollections']);
 });
-
-// Autocompelte
-    Route::get('/terms', [AutocompleteController::class,'addTerm']);
-    Route::get('/search', [AutocompleteController::class,'search']);
-    Route::get('/{country}/search/popular-searches', [AutocompleteController::class, 'getTopSearches']);
 
 // PRODUCT HISTORY
     Route::post('/product/history/sync', [ProductHistoryController::class,'syncProductHistory']);
@@ -310,8 +310,13 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('/{country}/code', [CodeController::class, 'validateCode'])->name('code.validate.form');
     Route::post('/{country}/code', [CodeController::class,'redeemCode'])->name('code.validate');
 
-// Search
-Route::get('/{country}/search', [SearchController::class, 'showSearchPage'])->name('user.search');
+    // Search
+    Route::get('/{country}/search', [SearchController::class, 'showSearchPage'])->name('user.search');
+    
+    // Autocompelte
+    Route::get('/terms', [AutocompleteController::class,'addTerm']);
+    Route::get('/search', [AutocompleteController::class,'search']);
+    Route::get('/{country}/search/popular-searches', [AutocompleteController::class, 'getTopSearches']);
     
     // Navigation by category
     Route::get('/{country}/templates/{cat_lvl_1}', [ContentController::class, 'showCategoryPage'])->name('showCategoryLevel1');

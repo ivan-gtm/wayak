@@ -6,10 +6,11 @@ use Illuminate\Console\Command;
 use App\Models\Template;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
+// use Illuminate\Support\Facades\Log;
 
 class UpdateTemplateMetadata extends Command
 {
-    protected $signature = 'template:update-metadata';
+    protected $signature = 'template:ai:update-metadata';
     protected $description = 'Update templates metadata from external API';
 
     public function __construct()
@@ -20,6 +21,7 @@ class UpdateTemplateMetadata extends Command
     public function handle()
     {
         $this->info('Fetching up to 200 completed templates...');
+        // Exclude templates that have status 'failed'
         $templates = Template::where('status', 'completed')->take(200)->get();
 
         if ($templates->isEmpty()) {
@@ -37,14 +39,21 @@ class UpdateTemplateMetadata extends Command
                 'prompt_text' => 'Describe this image',
             ]);
 
+            // Print the response to console
+            $this->line('Response for template ID ' . $template->_id . ': ' . json_encode($response->json()));
+
             if ($response->failed()) {
                 $this->error('Failed to process template ID: ' . $template->_id . ' due to HTTP error.');
+                $template->status = 'failed';
+                $template->save();
                 continue;
             }
 
             $responseData = $response->json();
             if ($responseData === null) {
                 $this->error('Failed to process template ID: ' . $template->_id . ' due to invalid JSON response.');
+                $template->status = 'failed';
+                $template->save();
                 continue;
             }
 
@@ -53,13 +62,17 @@ class UpdateTemplateMetadata extends Command
                 $this->updateTemplate($template, $responseData);
             } else {
                 $this->error('Failed to process template ID: ' . $template->_id . ' due to invalid response structure.');
+                $template->status = 'failed';
+                $template->save();
             }
+
+            // Sleep for 5 minutes
+            sleep(120);
         }
 
         $this->info('Processing completed.');
         return 0;
     }
-
 
     protected function isValidResponse(array $response): bool
     {

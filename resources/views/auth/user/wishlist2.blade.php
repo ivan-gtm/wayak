@@ -1,15 +1,6 @@
 @extends('layouts.frontend')
 
-@section('title', __('category.meta_title', ['cat_name' => $category_obj->name ]) )
-
 @section('meta')
-    <meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
-    <meta name="title" content="{{ __('category.meta_title', ['cat_name' => $category_obj->name ]) }}" />
-    <meta name="description" content="{{ __('category.meta_description', ['cat_name' => $category_obj->name ]) }}" />
-    <meta name="keywords" content="{{ $category_obj->name }}" />
-    
-    <link rel="stylesheet" href="{{ asset('assets/css/menu.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/home.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/search.css') }}">
 @endsection
 
@@ -27,17 +18,11 @@
                                     <li class="M5DAz63W" data-test-selector="breadcrumbs-list-item">
                                         <a class="TDnT_QDN" href="{{ url('/'.$country) }}">{{ __('product.home') }}</a>
                                     </li>
-                                    @foreach ($breadcrumbs as $breadcrumb)
-                                        <li class="M5DAz63W" data-test-selector="breadcrumbs-list-item">
-                                            <a class="TDnT_QDN" href="{{ $breadcrumb->url.'?source=breadcrumbs' }}">
-                                                {{ $breadcrumb->name }}
-                                            </a>
-                                        </li>
-                                    @endforeach
+                                    
                                 </ul>
                             </div>
                             <div class="hILQ5O1m">
-                                <h1 class="r9m1sI3F">{{ $category_obj->name }}</h1>
+                                <h1 class="r9m1sI3F">{{ 'sdasds' }}</h1>
                                 {{-- <aside class="kb2fhv7t">
                                     <h2 class="gxUHa9Js"><span class="mIDWdUGM" data-test-selector="top-article-visible">Customizeable wireframe print
                                             templates</span><br></h2>

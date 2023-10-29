@@ -1,0 +1,139 @@
+Act as an expert in PHP and laravel 8
+
+Create a laravel command that meets the following requirements. The porpuse of this command is to communicate with an external API to improve templates metadata.
+
+General requirements:
+  Templates are stored in mongodb.
+  Assume there is an existing "Template" model in laravel. 
+  [template_collection_example] is an example of a "Template" document.
+  Laravel manage documents using "Jenssegers\Mongodb" library.
+
+Request Requirements:
+  + You can only modify templates with status equal to "completed".
+  + Command should modify only 200 documents per excecution.
+  + After all modifications, template status must change to "gpt".
+  + To communicate with destination server, command needs to build a curl requiest based on [request_example].
+    * "file_name" parameter must be composed with following structure.
+    template.id + '/thumbnails/en/' + template.previewImageUrls.large
+    Where template.id and template.previewImageUrls.large are gotten from [Template] collection in mongodb.
+    '/thumbnails/en/' is a static string concatenated with the rest of fields.
+    * "prompt_text" parameter is a static string always equal to "Describe this image".
+
+Response requirements:
+  * Once requested is sent, command must wait up to 40 seconds before declaring call as timeout.
+  * Command must only apply changes to db, if JSON meets entire structure [response_json]
+  * Once command gets a response from destination server, should update following fields. Getting values from [response_json]
+      + template.title
+      + template.keywords
+      + template.localizedTitle
+      + template.languages, must always be equal to ["en","es","fr","pt"]
+      + template.updated_at, must be changed with current date using format "2021-04-23T14:30:17.914Z"
+
+
+[response_json]
+  {
+    "title": "Winnie the Pooh First Birthday Poster",
+    "keywords": {
+        "en": [
+            "winnie the pooh",
+            "first birthday",
+            "poster"
+        ],
+        "es": [
+            "winnie the pooh",
+            "primer cumplea\u00f1os",
+            "p\u00f3ster"
+        ],
+        "fr": [
+            "winnie l'ourson",
+            "premier anniversaire",
+            "poster"
+        ],
+        "pt": [
+            "winnie the pooh",
+            "primeiro anivers\u00e1rio",
+            "p\u00f4ster"
+        ]
+    },
+    "localizedTitle": {
+        "en": "Winnie the Pooh First Birthday Poster",
+        "es": "P\u00f3ster de primer cumplea\u00f1os de Winnie the Pooh",
+        "fr": "Poster de premier anniversaire Winnie l'ourson",
+        "pt": "P\u00f4ster de primeiro anivers\u00e1rio do Winnie the Pooh"
+    }
+  }
+  
+[request_example]
+  curl -X POST http://bard:5000/get_image_description \
+     -H "Content-Type: application/json" \
+     -d '{"file_name": "jQNc4HqJGJ/thumbnails/en/59DhRE_UpKZHi10c7_large.jpg", "prompt_text": "Describe this image"}'
+
+[template_collection_example]
+{
+  "_id": "bhHGTdbRkZ",
+  "title": "Invitation Wedding Minimal Invite Invitations Rehearsal Dinner Minimalist Set Handwritten Night",
+  "slug": "invitation-modern-wedding-minimal-invite-invitations-rehearsal-dinner-minimalist-bhHGTdbRkZ",
+  "status": "completed",
+  "format": "Invitation",
+  "templateType": "regular",
+  "measureUnits": "in",
+  "width": "5",
+  "height": "7",
+  "group": null,
+  "language": "en",
+  "forSubscribers": false,
+  "hasAnimatedPreview": false,
+  "hasAnimatedScreenPreview": false,
+  "downloadUrl": null,
+  "name": null,
+  "folder": null,
+  "pixelWidth": null,
+  "pixelHeight": null,
+  "hash": null,
+  "studioName": "UnmeasuredEvent",
+  "template": [],
+  "driveFileIds": [],
+  "previewImageUrls": {
+    "carousel": "tfUde6_qGh7OV2l6p_carousel.jpg",
+    "large": "tfUde6_qGh7OV2l6p_large.jpg",
+    "product_preview": "tfUde6_qGh7OV2l6p_product_preview.jpg",
+    "thumbnail": "tfUde6_qGh7OV2l6p_thumbnail.jpg"
+  },
+  "mainCategory": "/invitations",
+  "categories": [
+    "/invitations",
+    "/invitations/dinner-party"
+  ],
+  "keywords": {
+    "en": [
+      "Rehearsal"
+    ]
+  },
+  "industries": [],
+  "languages": [
+    "en"
+  ],
+  "localizedTitle": {
+    "en": "Invitation Wedding Minimal Invite Invitations Rehearsal Dinner Minimalist Set Handwritten Night"
+  },
+  "userState": {
+    "purchased": false,
+    "collected": false
+  },
+  "updated_at": {
+    "$date": "2023-10-10T00:57:21.709Z"
+  },
+  "created_at": {
+    "$date": "2021-04-23T14:30:17.914Z"
+  },
+  "price": 8.62,
+  "prices": {
+    "original_price": 8.62,
+    "price": 8.62,
+    "discount_percent": 0
+  },
+  "author": "UnityUniverse",
+  "sales": 20690,
+  "stars": 3.6,
+  "in_sale": 1
+}

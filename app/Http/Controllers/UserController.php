@@ -62,20 +62,4 @@ class UserController extends Controller
         ]);
     }
     
-    function showWishlist(){
-        $country = 'us';
-        $locale = $this->getLocaleByCountry($country);
-
-        App::setLocale($locale);
-
-        $menu = json_decode(Redis::get('wayak:' . $country . ':menu'));
-        $sale = Redis::hgetall('wayak:' . $country . ':config:sales');
-        
-        return view('auth.user.wishlist', [
-            'menu' => $menu,
-            'sale' => $sale,
-            'country' => $country,
-            'search_query' => ''
-        ]);
-    }
 }

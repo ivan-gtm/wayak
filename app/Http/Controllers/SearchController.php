@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Template;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Auth;
 
 class SearchController extends Controller
 {
@@ -22,7 +23,12 @@ class SearchController extends Controller
         $author = $request->author ?? null;
         $productsInSale = $request->productsInSale ?? null;
 
-        $customer_id = $request->customerId ?? null;
+        $user = Auth::user();
+        if($user){
+            $customer_id = $user->customer_id;
+        } elseif( isset($request->customerId) ) {
+            $customer_id = $request->customerId;
+        }
 
         $page = $request->page ?? 1;
         $per_page = 100;
