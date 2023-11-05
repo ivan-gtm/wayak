@@ -3,25 +3,44 @@ import os
 import re
 import json
 from bardapi import Bard
+import requests
 
-os.environ['_BARD_API_KEY']="cAhW7t8qcu9EVNrXVWPx2ZXPM1_jNVooWKNAXPRq83CwM7kS5ppofiW_QbBlAEtDB6LY9Q."
+# Set up environment variables
+# os.environ['_BARD_API_KEY'] = "cghW7kByc5YYcD7dOnznChWJMugE4pul0c1-9c8MW3pPX6aTFYE2TkHbtIxD7RCYg2WnMg."
 
-# Extract JSON from string using regular expressions
+# Initialize a reusable session object
+token = 'cwhW7oacjOjNxMTYXlUwWySLOEhGUyRQJYWB_vXmQnmRTIwRj-iQx1HDglDwIyotU4el1g.'
+session = requests.Session()
+session.headers = {
+    "Host": "bard.google.com",
+    "X-Same-Domain": "1",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36",
+    "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+    "Origin": "https://bard.google.com",
+    "Referer": "https://bard.google.com/",
+}
+session.cookies.set("__Secure-1PSID", token)
+
+# proxy_url = "pbhNC_DtKuiHHlEg8CjalA:@smartproxy.crawlbase.com:8012"
+# proxies={
+#         'http': 'http://pbhNC_DtKuiHHlEg8CjalA:@smartproxy.crawlbase.com:8012',
+#         'https': 'http://pbhNC_DtKuiHHlEg8CjalA:@smartproxy.crawlbase.com:8012'
+# }
+
+# Initialize Bard with the session
+bard = Bard(token=token, session=session, timeout=30)
+
+# Function to extract JSON from a string
 def extract_json(s):
-    # Regular expression pattern to match content between ```json and ```
     pattern = r'```json\n(.*?)\n```'
     match = re.search(pattern, s, re.DOTALL)
-    
     if match:
         json_str = match.group(1).strip()
         try:
-            parsed = json.loads(json_str)
-            return parsed
+            return json.loads(json_str)
         except json.JSONDecodeError:
             pass
-
     return None
-
 
 app = Flask(__name__)
 
@@ -35,14 +54,13 @@ def get_image_description():
     try:
         with open(f"./images/{file_name}", "rb") as f:
             image_data = f.read()
-        
         string = '''
         Prompt for Metadata Creation based on Product Image:
 
         Given a product image, you are tasked with creating metadata for it. Please follow the guidelines below:
 
         Provide your response in a JSON format, adhering strictly to the structure specified. Exclude any extraneous details.
-        For the "title" field, craft something that's both captivating and engaging.
+        For the "title" field, craft something that's both captivating and engaging, avoid personal data.
         Translate the "title" into the languages "es", "fr", "pt", and "en", and place them under the "localizedTitle" field using their respective ISO 639-1 language codes.
         Populate the "keywords" field with single-word descriptors related to the color, occasion, theme, and event evident in the image. Ensure you list at least 5 keywords.
         Translate all the keywords into the languages "es", "fr", "pt", and "en", maintaining the structure shown in the example.
@@ -51,38 +69,24 @@ def get_image_description():
         {
             "title": "",
             "keywords": {
-                "en": ["invitation"],
-                "es": ["invitación"],
-                "fr": ["invitation"],
-                "pt": ["convite"]
+                "en": [],
+                "es": [],
+                "fr": [],
+                "pt": []
             },
             "localizedTitle": {
-                "en": "Elephant and Zebra Baby Shower Invitation",
-                "es": "Invitación de Baby Shower de Elefante y Zebra",
-                "fr": "Invitation à la baby shower éléphant et zèbre",
-                "pt": "Convite para chá de bebê de elefante e zebra"
+                "en": "",
+                "es": "",
+                "fr": "",
+                "pt": ""
             }
         }
 
         '''
-
         single_quote_string = string.replace('"', "'")
-
-        token = 'cAhW7t8qcu9EVNrXVWPx2ZXPM1_jNVooWKNAXPRq83CwM7kS5ppofiW_QbBlAEtDB6LY9Q.'
-        bard = Bard(token=token)
         bard_answer = bard.ask_about_image(single_quote_string, image_data)
-        
-        # Extract JSON from the bard response
         extracted_json_results = extract_json(bard_answer['content'])
-        print('+++++++++++++++++++++')
-        print(bard_answer['content'])
-        print('+++++++++++++++++++++')
-        print(json.dumps(extracted_json_results, indent=4))
-
-        # for result in extracted_json_results:
-
-        return json.dumps(extracted_json_results, indent=4)
-
+        return jsonify(extracted_json_results)
     except FileNotFoundError:
         return jsonify({'error': f'File {file_name} not found in /images directory'}), 404
 

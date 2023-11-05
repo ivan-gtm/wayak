@@ -29,7 +29,15 @@ class UpdateTemplateMetadata extends Command
             return 0;
         }
 
+        $consecutiveFailures = 0;  // Initialize consecutive failure counter
+
         foreach ($templates as $index => $template) {
+            
+            if ($consecutiveFailures >= 2) {
+                $this->error('Two consecutive failures occurred. Stopping the process.');
+                break;  // Exit the loop after two consecutive failures
+            }
+
             $this->info('Processing template ' . ($index + 1) . ' of ' . $templates->count() . '...');
             $fileName = $template->_id . '/thumbnails/en/' . $template->previewImageUrls['large'];
 
@@ -46,6 +54,7 @@ class UpdateTemplateMetadata extends Command
                 $this->error('Failed to process template ID: ' . $template->_id . ' due to HTTP error.');
                 $template->status = 'failed';
                 $template->save();
+                $consecutiveFailures = $consecutiveFailures+1;  // Increment consecutive failure counter
                 continue;
             }
 
@@ -53,6 +62,7 @@ class UpdateTemplateMetadata extends Command
             if ($responseData === null) {
                 $this->error('Failed to process template ID: ' . $template->_id . ' due to invalid JSON response.');
                 $template->status = 'failed';
+                $consecutiveFailures = $consecutiveFailures+1;  // Increment consecutive failure counter
                 $template->save();
                 continue;
             }
@@ -60,14 +70,17 @@ class UpdateTemplateMetadata extends Command
             if ($this->isValidResponse($responseData)) {
                 $this->info('Response received and validated. Updating template metadata...');
                 $this->updateTemplate($template, $responseData);
+                $consecutiveFailures = 0;  // Reset consecutive failure counter after any save action
+
             } else {
                 $this->error('Failed to process template ID: ' . $template->_id . ' due to invalid response structure.');
                 $template->status = 'failed';
+                $consecutiveFailures = $consecutiveFailures+1;
                 $template->save();
             }
 
-            // Sleep for 5 minutes
-            sleep(120);
+            // Sleep for 20 to 30 seconds
+            sleep(rand(20,30));
         }
 
         $this->info('Processing completed.');
