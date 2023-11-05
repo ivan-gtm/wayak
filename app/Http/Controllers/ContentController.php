@@ -41,9 +41,16 @@ class ContentController extends Controller
             $prefix . ':home:carousels',
             $prefix . ':menu'
         ];
+
         list($carousels, $menu) = array_map('json_decode', Redis::mget($redisKeys));
 
         $sale = Redis::hgetall($prefix . ':config:sales');
+        
+        if( Auth::check() ) {
+            // User is logged in
+            // $logged_id = Auth::id();
+            $user = Auth::user();
+        }
 
         return view('content.home', [
             'search_term' => '',
@@ -52,6 +59,7 @@ class ContentController extends Controller
             'menu' => $menu,
             'sale' => $sale,
             'search_query' => '',
+            'customer_id' => isset($user->customer_id) ? $user->customer_id : null,
             'carousels' => $carousels
         ]);
     }
@@ -109,17 +117,22 @@ class ContentController extends Controller
 
         $menu = json_decode(Redis::get($redisPrefix . ':menu'));
         $sale = Redis::hgetall($redisPrefix . ':config:sales');
+        if( Auth::check() ) {
+            // User is logged in
+            // $logged_id = Auth::id();
+            $user = Auth::user();
+        }
 
         return view('content.home', [
             'language_code' => $locale,
             'country' => $country,
             'menu' => $menu,
+            'customer_id' => isset($user->customer_id) ? $user->customer_id : null,
             'sale' => $sale,
             'search_query' => '',
             'carousels' => $carousels
         ]);
     }
-
 
     private function getCustomerId(Request $request)
     {
@@ -344,6 +357,7 @@ class ContentController extends Controller
             'template' => $template,
             'colors' => $colors,
             'logged_id' => $logged_id,
+            'customer_id' => isset($user->customer_id) ? $user->customer_id : null,
             'isFavorite' => $isFavorite,
             'related_templates' => $related_templates
         ]);
@@ -372,8 +386,6 @@ class ContentController extends Controller
             ]);
         return $template;
     }
-
-
 
     function getRelatedTemplates($mainCategory, $language_code)
     {

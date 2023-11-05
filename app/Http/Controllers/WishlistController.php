@@ -72,6 +72,7 @@ class WishlistController extends Controller
         return view('auth.user.wishlist2', [
             'menu' => $menu,
             'sale' => $sale,
+            'customer_id' => isset($user->customer_id) ? $user->customer_id : null,
             'templates' => $templates,
             'country' => $country,
             'search_query' => '',

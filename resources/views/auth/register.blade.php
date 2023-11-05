@@ -919,24 +919,24 @@
                                         <div class="form-group form-floating mb-3">
                                             <input type="email" class="form-control" name="email" value="{{ old('email') }}" placeholder="name@example.com" required="required" autofocus>
                                             @if ($errors->has('email'))
-                                                <span class="text-danger text-left">{{ $errors->first('email') }}</span>
+                                            <span class="text-danger text-left">{{ $errors->first('email') }}</span>
                                             @endif
-                                            @if ($errors->has('customerId'))  
-                                                <span class="text-danger text-left">{{ $errors->first('customerId') }}</span>
+                                            @if ($errors->has('customerId'))
+                                            <span class="text-danger text-left">{{ $errors->first('customerId') }}</span>
                                             @endif
                                         </div>
 
                                         <div class="form-group form-floating mb-3">
                                             <input type="text" class="form-control" name="username" value="{{ old('username') }}" placeholder="Username" required="required" autofocus>
                                             @if ($errors->has('username'))
-                                                <span class="text-danger text-left">{{ $errors->first('username') }}</span>
+                                            <span class="text-danger text-left">{{ $errors->first('username') }}</span>
                                             @endif
                                         </div>
 
                                         <div class="form-group form-floating mb-3">
                                             <input type="password" class="form-control" name="password" value="{{ old('password') }}" placeholder="Password" required="required">
                                             @if ($errors->has('password'))
-                                                <span class="text-danger text-left">{{ $errors->first('password') }}</span>
+                                            <span class="text-danger text-left">{{ $errors->first('password') }}</span>
                                             @endif
                                         </div>
 
@@ -998,39 +998,18 @@
 </main>
 
 <script>
-     document.addEventListener("DOMContentLoaded", function() {
-        const customerId = getCustomerId();
-        const form = document.querySelector('form');
+    document.addEventListener("DOMContentLoaded", function() {
+        let customerId = getCustomerId();
+        let form = document.querySelector('form');
 
-        function getCustomerId() {
-            // Try to get customerId from the meta tag
-            let metaTag = document.querySelector('meta[name="customer-id"]');
-            let customerId = metaTag ? metaTag.getAttribute('content') : null;
-
-            // If meta tag is empty, try to get customerId from localStorage
-            if (!customerId) {
-                customerId = localStorage.getItem('customerId');
-            }
-
-            // If customerId is still not found, generate a new one and store it in localStorage
-            if (!customerId) {
-                customerId = Math.random().toString(36).substr(2, 10);
-                localStorage.setItem('customerId', customerId);
-            }
-
-            return customerId;
-        }
-    
-        
         form.addEventListener('submit', function() {
-            const customerIdInput = document.getElementById('customerId');
-            const customerIdFromLocalStorage = localStorage.getItem('customerId');
+            let customerIdInput = document.getElementById('customerId');
+            let customerIdFromLocalStorage = localStorage.getItem('customerId');
             if (customerIdFromLocalStorage) {
                 customerIdInput.value = customerIdFromLocalStorage;
             }
         });
     });
-    
 </script>
 
 @endsection

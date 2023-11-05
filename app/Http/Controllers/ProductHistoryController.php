@@ -15,7 +15,7 @@ class ProductHistoryController extends Controller
     use LocaleTrait;
     
     function showBrowsingHistory($country, Request $request){
-        
+        // exit;
         $locale = $this->getLocaleByCountry($country);
 
         App::setLocale($locale);
@@ -23,7 +23,11 @@ class ProductHistoryController extends Controller
         $menu = json_decode(Redis::get('wayak:' . $country . ':menu'));
         $sale = Redis::hgetall('wayak:' . $country . ':config:sales');
 
-        $user = Auth::user();
+        // User is logged in
+        if( Auth::check() ) {
+            $user = Auth::user();
+        }
+
         $clientId = $user->customer_id;
         $key = "wayak:user:{$clientId}:history:navigation";
 
@@ -66,6 +70,7 @@ class ProductHistoryController extends Controller
             'current_page' => $page,
             'pagination_begin' => max($page - 4, 1),
             'pagination_end' => min($page + 4, $last_page),
+            'customer_id' => isset($user->customer_id) ? $user->customer_id : null,
             'first_page' => 1,
             'last_page' => $last_page,
             'templates' => $templates,
@@ -150,7 +155,10 @@ class ProductHistoryController extends Controller
             'customerId' => 'required|string',
             'productHistory' => 'required|json'
         ]);
-
+        
+        // echo "pito ";
+        // exit;
+        
         $customerId = $request->input('customerId');
         $incomingProductHistory = json_decode($request->input('productHistory'), true);
 

@@ -22,6 +22,7 @@ class SearchController extends Controller
         $maxPrice = $request->maxPrice ?? null;
         $author = $request->author ?? null;
         $productsInSale = $request->productsInSale ?? null;
+        $customerId = $request->customerId ?? null;
 
         $user = Auth::user();
         if($user){
@@ -54,6 +55,7 @@ class SearchController extends Controller
         return view('content.search', [
             'country' => $country,
             'language_code' => $language_code,
+            'customer_id' => $customerId,
             'menu' => $menu,
             'sale' => $sale,
             'search_query' => $searchTerm,

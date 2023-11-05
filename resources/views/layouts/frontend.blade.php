@@ -13,6 +13,8 @@
     <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous"> -->
     <link type="text/css" rel="stylesheet" href="{{ asset('assets/css/menu.css') }}">
     <link type="text/css" rel="stylesheet" href="{{ asset('assets/css/home.css') }}">
+    
+    <meta name="customer-id" content="{{ $customer_id }}">
     @yield('css')
 
     <!-- Global site tag (gtag.js) - Google Analytics -->
@@ -207,7 +209,7 @@
                 @auth
                     {{auth()->user()->name}}
                     <div class="text-end">
-                        <a style="color: black;" href="{{ route('logout.perform',['country' => $country]) }}" class="btn btn-outline-light me-2">Logout</a>
+                        <a style="color: black;" href="javascript:void(0)" onclick="logout()" class="btn btn-outline-light me-2">Logout</a>
                     </div>
                 @endauth
 
@@ -226,6 +228,7 @@
     @yield('content')
 
     <script>
+        const logoutUrl = "{{ route('logout.perform',['country' => $country]) }}";
         // Debounce function: Ensures that the given function is not called until after the specified time has elapsed since the last time it was called
         function debounce(func, delay) {
             let debounceTimer;
@@ -236,6 +239,15 @@
                 debounceTimer = setTimeout(() => func.apply(context, args), delay);
             };
         }
+
+        function logout() {
+            // Clear local storage
+            localStorage.clear();
+
+            // Redirect to the Laravel logout route
+            window.location.href = logoutUrl;
+        }
+
 
         // Function to fetch results from the server using AJAX
         function fetchData(query, callback) {
@@ -452,34 +464,45 @@
     </script>
 
     <script>
+        function getCustomerId() {
+            // Try to get customerId from the meta tag
+            let customerMetaTag = document.querySelector('meta[name="customer-id"]');
+            let customerId = customerMetaTag ? customerMetaTag.getAttribute("content") : null;
+
+            // If customerId exists from server session
+            if(customerId) {
+                console.log("If customerId exists from server session")
+                localStorage.setItem('customerId', customerId);
+            
+            }
+            
+            // If meta tag is empty, try to get customerId from localStorage
+            if (!customerId) {
+                console.log("If meta tag is empty, try to get customerId from localStorage")
+                customerId = localStorage.getItem('customerId');
+            }
+            
+            // If customerId is still not found, generate a new one and store it in localStorage
+            if (!customerId) {
+                console.log("If customerId is still not found, generate a new one and store it in localStorage");
+                customerId = Math.random().toString(36).substr(2, 10);
+                localStorage.setItem('customerId', customerId);
+            }
+
+            return customerId;
+        }
+
         // Assign customer ID
         document.addEventListener("DOMContentLoaded", function() {
-            const customerId = getCustomerId();
+            
+            let customerId = getCustomerId();
 
-            function getCustomerId() {
-                // Try to get customerId from the meta tag
-                let metaTag = document.querySelector('meta[name="customer-id"]');
-                let customerId = metaTag ? metaTag.getAttribute('content') : null;
+            // Update any input elements with name="customer-id" to have the value of customerId
+            const customerInputs = document.querySelectorAll('input[name="customerId"]');
+            customerInputs.forEach(input => {
+                input.value = customerId;
+            });
 
-                // If meta tag is empty, try to get customerId from localStorage
-                if (!customerId) {
-                    customerId = localStorage.getItem('customerId');
-                }
-
-                // If customerId is still not found, generate a new one and store it in localStorage
-                if (!customerId) {
-                    customerId = Math.random().toString(36).substr(2, 10);
-                    localStorage.setItem('customerId', customerId);
-                }
-
-                // Update any input elements with name="customer-id" to have the value of customerId
-                const customerInputs = document.querySelectorAll('input[name="customerId"]');
-                customerInputs.forEach(input => {
-                    input.value = customerId;
-                });
-
-                return customerId;
-            }
         });
     </script>
 

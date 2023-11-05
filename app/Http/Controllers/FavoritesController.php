@@ -5,12 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Redis;
-// use Illuminate\Http\Response;
-// use Illuminate\Support\Facades\App;
-// use Illuminate\Support\Facades\DB;
-// use Illuminate\Support\Str;
-// use App\Models\Template;
-// use Storage;
+use Illuminate\Support\Facades\Log;
+
+
+use App\Models\User;
+use App\Models\Template;
+use Exception;
+
 
 class FavoritesController extends Controller
 {
@@ -30,7 +31,37 @@ class FavoritesController extends Controller
         $customerId = $request->input('customerId');
         $collectionName = $request->input('collectionName', 'default');  // Default to 'default' if collectionName is not provided
 
-        Redis::sadd('wayak:user:favorites:' . $customerId . ':' . $collectionName, $productID);
+        // return response()->json(['status' => 'success']);
+
+        // Check if the customer exists
+        if (!User::where('customer_id', $customerId)->exists()) {
+            return response()->json(['error' => 'Customer does not exist.'], 404);
+        }
+
+        // Check if the product exists
+        if (!Template::where('_id', $productID)->exists()) {
+            return response()->json(['error' => 'Product does not exist.'], 404);
+        }
+
+        // Generate the Redis key
+        $redisKey = 'wayak:user:favorites:' . $customerId . ':' . $collectionName;
+
+        try {
+            // Check if the Redis key exists
+            if (!Redis::exists($redisKey)) {
+                return response()->json(['error' => 'The favorite list does not exist.'], 404);
+            }
+
+            // Add the product to the favorites set
+            Redis::sadd('wayak:user:favorites:' . $customerId . ':' . $collectionName, $productID);
+
+        } catch (Exception $e) {
+            // Log the error message
+            Log::error('Redis connection error: ' . $e->getMessage());
+
+            // Return a response indicating that there was a server error
+            return response()->json(['error' => 'Got an error getting favorites.'], 500);
+        }
 
         return response()->json(['status' => 'success']);
     }
@@ -61,10 +92,38 @@ class FavoritesController extends Controller
         }
 
         $productID = $request->input('template-id');
-        $clientId = $request->input('clientId');
+        $customerId = $request->input('customerId');
         $collectionId = $request->input('collectionId', 'default');  // Default to 'default' if collectionId is not provided
 
-        Redis::srem('wayak:user:favorites:' . $clientId . ':' . $collectionId, $productID);
+        // Check if the customer exists
+        if (!User::where('customer_id', $customerId)->exists()) {
+            return response()->json(['error' => 'Customer does not exist.'], 404);
+        }
+
+        // Check if the product exists
+        if (!Template::where('_id', $productID)->exists()) {
+            return response()->json(['error' => 'Product does not exist.'], 404);
+        }
+
+        // Generate the Redis key
+        $redisKey = 'wayak:user:favorites:' . $customerId . ':' . $collectionId;
+
+        try {
+            // Check if the Redis key exists
+            if (!Redis::exists($redisKey)) {
+                return response()->json(['error' => 'The favorite list does not exist.'], 404);
+            }
+
+            // Remove the product from the favorites set
+            Redis::srem($redisKey, $productID);
+
+        } catch (Exception $e) {
+            // Log the error message
+            Log::error('Redis connection error: ' . $e->getMessage());
+
+            // Return a response indicating that there was a server error
+            return response()->json(['error' => 'Got an error getting favorites.'], 500);
+        }
 
         return response()->json(['status' => 'success']);
     }

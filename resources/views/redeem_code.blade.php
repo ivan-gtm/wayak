@@ -1,6 +1,6 @@
 @extends('layouts.frontend')
 
-@section('title', 'Redeem Template Code | WAYAK')
+@section('title', 'Template Access Code Redemption | WAYAK')
 
 @section('meta')
 @endsection
@@ -207,7 +207,10 @@
                     ]) }}">
                 <!-- CROSS Site Request Forgery Protection -->
                 @csrf
+                
                 <input name="product_id" type="hidden" value="{{ $product_id }}" />
+                <input name="customer_id" type="hidden" value="{{ $customer_id }}" />
+
                 <input class="digit" name="digit1" type="text" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}" autofocus />
                 <input class="digit" name="digit2" type="text" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}" />
                 <input class="digit" name="digit3" type="text" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}" />

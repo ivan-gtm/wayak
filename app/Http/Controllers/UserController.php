@@ -24,6 +24,7 @@ class UserController extends Controller
             'menu' => $menu,
             'sale' => $sale,
             'country' => $country,
+            'customer_id' => isset($user->customer_id) ? $user->customer_id : null,
             'search_query' => ''
         ]);
     }
@@ -41,6 +42,7 @@ class UserController extends Controller
             'menu' => $menu,
             'sale' => $sale,
             'country' => $country,
+            'customer_id' => isset($user->customer_id) ? $user->customer_id : null,
             'search_query' => ''
         ]);
     }
@@ -58,6 +60,7 @@ class UserController extends Controller
             'menu' => $menu,
             'sale' => $sale,
             'country' => $country,
+            'customer_id' => isset($user->customer_id) ? $user->customer_id : null,
             'search_query' => ''
         ]);
     }

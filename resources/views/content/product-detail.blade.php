@@ -14,8 +14,8 @@
 <meta property="og:image" content="{{ asset( 'design/template/'.$template->_id.'/thumbnails/'.$language_code.'/'.$template->previewImageUrls["product_preview"] ) }}" />
 
 <meta name="product-id" content="{{ $template->_id }}">
-<meta name="customer-id" content="">
 <meta name="csrf-token" content="{{ csrf_token() }}" />
+
 @endsection
 
 @section('css')
@@ -643,34 +643,18 @@
 </div>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        const customerId = getCustomerId();
-        const metaElement = document.querySelector('meta[name="product-id"]');
-        const productId = metaElement.getAttribute('content');
-        const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
-        const csrfToken = csrfTokenMeta ? csrfTokenMeta.getAttribute("content") : null;
+        console.log("DOMContentLoaded");
 
-        function getCustomerId() {
-            // Try to get customerId from the meta tag
-            let metaTag = document.querySelector('meta[name="customer-id"]');
-            let customerId = metaTag ? metaTag.getAttribute('content') : null;
-
-            // If meta tag is empty, try to get customerId from localStorage
-            if (!customerId) {
-                customerId = localStorage.getItem('customerId');
-            }
-
-            // If customerId is still not found, generate a new one and store it in localStorage
-            if (!customerId) {
-                customerId = Math.random().toString(36).substr(2, 10);
-                localStorage.setItem('customerId', customerId);
-            }
-
-            return customerId;
-        }
+        let customerId = getCustomerId();
+        let metaElement = document.querySelector('meta[name="product-id"]');
+        let productId = metaElement.getAttribute('content');
+        let csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
+        let csrfToken = csrfTokenMeta ? csrfTokenMeta.getAttribute("content") : null;
 
         function saveProductHistory() {
             let productHistory = localStorage.getItem('productHistory');
-            const currentTime = Date.now();
+            let customerId = getCustomerId();
+            let currentTime = Date.now();
 
             if (productHistory) {
                 productHistory = JSON.parse(productHistory);
@@ -696,17 +680,17 @@
         }
 
         function shouldRunSyncProductHistory() {
-            const lastSynced = localStorage.getItem('lastSynced');
-            const currentTime = Date.now();
-            const timeSinceLastSync = currentTime - lastSynced; // Time in milliseconds
+            let lastSynced = localStorage.getItem('lastSynced');
+            let currentTime = Date.now();
+            let timeSinceLastSync = currentTime - lastSynced; // Time in milliseconds
             // 24 * 60 * 60 * 1000; // 24 hours in milliseconds
-            const timeToNextSync = 600000 - timeSinceLastSync; // 600,000 milliseconds (10 minutes)
+            let timeToNextSync = 600000 - timeSinceLastSync; // 600,000 milliseconds (10 minutes)
 
             if (!lastSynced || timeSinceLastSync > 600000) { // 600,000 milliseconds (10 minutes)
                 console.debug("Time for the next update.");
                 return true;
             } else {
-                const remainingMinutes = Math.ceil(timeToNextSync / 60000); // Convert to minutes
+                let remainingMinutes = Math.ceil(timeToNextSync / 60000); // Convert to minutes
                 console.debug(`Next update in ${remainingMinutes} minute(s).`);
                 return false;
             }
@@ -714,12 +698,12 @@
 
         function syncProductHistory(customerId, productHistory) {
             if (shouldRunSyncProductHistory()) {
-                const xhr = new XMLHttpRequest();
+                let xhr = new XMLHttpRequest();
                 xhr.open('POST', '/product/history/sync', true);
                 if (csrfToken) {
                     xhr.setRequestHeader("X-CSRF-TOKEN", csrfToken);
                 }
-                const formData = new FormData();
+                let formData = new FormData();
                 formData.append('customerId', customerId);
                 formData.append('productHistory', JSON.stringify(productHistory));
 
@@ -742,12 +726,12 @@
         }
 
         function removeProductFromServer(customerId, productId) {
-            const xhr = new XMLHttpRequest();
+            let xhr = new XMLHttpRequest();
             xhr.open('POST', '/removeProductFromHistory', true);
             if (csrfToken) {
                 xhr.setRequestHeader("X-CSRF-TOKEN", csrfToken);
             }
-            const formData = new FormData();
+            let formData = new FormData();
             formData.append('customerId', customerId);
             formData.append('productId', productId);
 
@@ -780,15 +764,17 @@
             saveProductHistory();
         });
 
-        // saveProductHistory();
+        window.onload = function() {
+            saveProductHistory();
+        };
     });
 </script>
 
 
 <script>
     function displayNotification(contentText, actionText, actionURL, durationInSeconds) {
-        const notification = document.getElementById("notification");
-        const notificationContent = document.querySelector(".notification-content");
+        let notification = document.getElementById("notification");
+        let notificationContent = document.querySelector(".notification-content");
 
         // Update notification content
         notificationContent.innerHTML = `${contentText} <a href="${actionURL}" target="_blank">${actionText}</a>?`;
@@ -806,7 +792,7 @@
     }
 
     function closeNotification() {
-        const notification = document.getElementById("notification");
+        let notification = document.getElementById("notification");
         notification.style.opacity = "0";
         notification.style.transform = "translateY(50px)";
     }
@@ -818,10 +804,10 @@
         let templateIdTag = document.querySelector('meta[name="product-id"]');
         let templateId = templateIdTag ? templateIdTag.getAttribute('content') : null;
 
-        const customerId = localStorage.getItem('customerId');
-        const loggedIn = localStorage.getItem('loggedIn');
-        const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
-        const csrfToken = csrfTokenMeta ? csrfTokenMeta.getAttribute("content") : null;
+        let customerId = localStorage.getItem('customerId');
+        let loggedIn = localStorage.getItem('loggedIn');
+        let csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
+        let csrfToken = csrfTokenMeta ? csrfTokenMeta.getAttribute("content") : null;
         
         let favorites = JSON.parse(localStorage.getItem('favorites')) || {};
 
@@ -877,17 +863,17 @@
     }
 
     function showAddedToFavoritesNotification() {
-        const notificationText = "This favorite won't last! Sign in or register to save items for more than 7 days. Do you want to";
-        const actionButtonText = "Sign in";
-        const actionURL = "https://www.ups.com/track?loc=en_US&requester=ST/";
-        const displayDuration = 10; // Display for 10 seconds
+        let notificationText = "This favorite won't last! Sign in or register to save items for more than 7 days. Do you want to";
+        let actionButtonText = "Sign in";
+        let actionURL = "https://www.ups.com/track?loc=en_US&requester=ST/";
+        let displayDuration = 10; // Display for 10 seconds
         displayNotification(notificationText, actionButtonText, actionURL, displayDuration);
     }
 
     // // Check for pending favorites after login
     // if (localStorage.getItem('redirectTo') && localStorage.getItem('pendingFavorite')) {
-    //     const templateId = localStorage.getItem('pendingFavorite');
-    //     const customerId = localStorage.getItem('customerId');
+    //     let templateId = localStorage.getItem('pendingFavorite');
+    //     let customerId = localStorage.getItem('customerId');
     //     fetch("/favorite/add", {
     //         method: "POST",
     //         headers: {
@@ -908,17 +894,17 @@
     // Remove from favorites
     function removeFromFavorites(){
         
-        console.log("favorited");
+        // console.log("favorited");
         // console.log(btn);
 
         // Try to get customerId from the meta tag
         let templateIdTag = document.querySelector('meta[name="product-id"]');
         let templateId = templateIdTag ? templateIdTag.getAttribute('content') : null;
 
-        const customerId = localStorage.getItem('customerId');
-        // const loggedIn = localStorage.getItem('loggedIn');
-        const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
-        const csrfToken = csrfTokenMeta ? csrfTokenMeta.getAttribute("content") : null;
+        let customerId = localStorage.getItem('customerId');
+        // let loggedIn = localStorage.getItem('loggedIn');
+        let csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
+        let csrfToken = csrfTokenMeta ? csrfTokenMeta.getAttribute("content") : null;
         
         // Remove from local storage
         let favorites = JSON.parse(localStorage.getItem('favorites')) || {};
@@ -960,7 +946,7 @@
 
 document.addEventListener('DOMContentLoaded', (event) => {
     // Get the favorite button element
-    const favoriteButton = document.querySelector('.favorite-shop-action');
+    let favoriteButton = document.querySelector('.favorite-shop-action');
     
     // Add event listener for click event
     favoriteButton.addEventListener('click', () => {
@@ -973,10 +959,10 @@ function toggleFavorite(button) {
     button.classList.toggle('favorited');
     
     // Toggle visibility of elements inside the button
-    const notFollowingIcon = button.querySelector('[data-not-following-icon]');
-    const followingIcon = button.querySelector('[data-following-icon]');
-    const notFollowingMessage = button.querySelector('[data-not-following-message]');
-    const followingMessage = button.querySelector('[data-following-message]');
+    let notFollowingIcon = button.querySelector('[data-not-following-icon]');
+    let followingIcon = button.querySelector('[data-following-icon]');
+    let notFollowingMessage = button.querySelector('[data-not-following-message]');
+    let followingMessage = button.querySelector('[data-following-message]');
     
     if (button.classList.contains('favorited')) {
         // The product is now favorited
@@ -1003,15 +989,15 @@ function toggleFavorite(button) {
     document.querySelector('#loginForm').addEventListener('submit', function(event) {
         event.preventDefault();
 
-        const username = document.querySelector('#usernameInput').value;
-        const password = document.querySelector('#passwordInput').value;
+        let username = document.querySelector('#usernameInput').value;
+        let password = document.querySelector('#passwordInput').value;
 
         ajaxLogin(username, password);
     });
 
     async function ajaxLogin(username, password) {
         try {
-            const response = await fetch('/login', { // Adjust the URL if needed
+            let response = await fetch('/login', { // Adjust the URL if needed
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -1024,7 +1010,7 @@ function toggleFavorite(button) {
                 })
             });
 
-            const data = await response.json();
+            let data = await response.json();
 
             if (data.success) {
                 localStorage.setItem('loggedIn', 'true');
@@ -1039,9 +1025,9 @@ function toggleFavorite(button) {
     }
 
       // Get modal and trigger elements
-      const modal = document.getElementById('loginModal');
-    const showModalBtn = document.getElementById('showModalBtn');
-    const closeModalBtn = document.getElementById('closeModalBtn');
+      let modal = document.getElementById('loginModal');
+    let showModalBtn = document.getElementById('showModalBtn');
+    let closeModalBtn = document.getElementById('closeModalBtn');
 
     // Show modal
     showModalBtn.addEventListener('click', function() {
@@ -1064,8 +1050,8 @@ function toggleFavorite(button) {
     document.querySelector('#loginForm').addEventListener('submit', function(event) {
         event.preventDefault();
 
-        const email = document.querySelector('#usernameInput').value;
-        const password = document.querySelector('#passwordInput').value;
+        let email = document.querySelector('#usernameInput').value;
+        let password = document.querySelector('#passwordInput').value;
 
         // Call your login function here
         // ajaxLogin(email, password);
@@ -1102,7 +1088,7 @@ function toggleFavorite(button) {
                             console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
 
                             // Show a success message within this page, e.g.
-                            // const element = document.getElementById('paypal-button-container');
+                            // let element = document.getElementById('paypal-button-container');
                             // element.innerHTML = '';
                             // element.innerHTML = '<h3>Thank you for your payment!</h3>';
 
@@ -1127,16 +1113,16 @@ function toggleFavorite(button) {
 
     function countdown(secondsRemaining, elementToUpdate) {
         // update the count down every second
-        const x = setInterval(function() {
+        let x = setInterval(function() {
 
             // calculate the time remaining
-            const days = Math.floor(secondsRemaining / (24 * 60 * 60));
-            const hours = Math.floor((secondsRemaining % (24 * 60 * 60)) / (60 * 60));
-            const minutes = Math.floor((secondsRemaining % (60 * 60)) / 60);
-            const seconds = Math.floor(secondsRemaining % 60);
+            let days = Math.floor(secondsRemaining / (24 * 60 * 60));
+            let hours = Math.floor((secondsRemaining % (24 * 60 * 60)) / (60 * 60));
+            let minutes = Math.floor((secondsRemaining % (60 * 60)) / 60);
+            let seconds = Math.floor(secondsRemaining % 60);
 
             // format the countdown text
-            const countdownText = days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
+            let countdownText = days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
 
             // update the HTML element
             elementToUpdate.innerText = countdownText;
@@ -1164,8 +1150,8 @@ function toggleFavorite(button) {
     var remainingSeconds = remainingSecondsUntilUtcDate(date);
     console.log('Remaining seconds until ' + date + ': ' + remainingSeconds);
 
-    // const secondsRemaining = 3600; // 1 hour
-    const elementToUpdate = document.getElementById("countdown");
+    // let secondsRemaining = 3600; // 1 hour
+    let elementToUpdate = document.getElementById("countdown");
     countdown(remainingSeconds, elementToUpdate);
 
     @endif

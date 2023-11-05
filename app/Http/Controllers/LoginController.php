@@ -39,7 +39,8 @@ class LoginController extends Controller
             'menu' => $menu,
             'sale' => $sale,
             'country' => $country,
-            'search_query' => ''
+            'search_query' => '',
+            'customer_id' => ''
         ]);
     }
 
@@ -93,7 +94,7 @@ class LoginController extends Controller
             ->where('token', $token)
             // ->where('email', $request->email)
             ->first();
-        
+
         if (!$tokenData) {
             // Token not found in the database
             return redirect('password/reset')->withErrors(['email' => 'The password reset token is invalid.']);
@@ -136,6 +137,12 @@ class LoginController extends Controller
         // Validate the email
         $request->validate(['email' => 'required|email']);
 
+        // Check if the user exists
+        $user = User::where('email', $request->email)->first();
+        if (!$user) {
+            return back()->withErrors(['email' => 'We can\'t find a user with that e-mail address.']);
+        }
+
         // Generate a token
         $token = Str::random(60);
 
@@ -157,43 +164,36 @@ class LoginController extends Controller
 
     public function reset(Request $request)
     {
+        // Validate the request input
         $request->validate([
             '_token' => 'required|string',
-            'reset_token' => 'required',
-            // 'email' => 'required|email',
-            'password' => 'required|confirmed|min:8',
-            'password_confirmation' => 'required|same:password'
+            'reset_token' => 'required|string',
+            'password' => 'required|string|confirmed|min:8',
         ]);
 
-        // Verify if the token is valid (also check if it's not older than, say, 60 minutes)
+        // Verify if the token is valid and not older than 60 minutes
         $passwordReset = DB::table('password_resets')
             ->where('token', $request->reset_token)
             ->where('created_at', '>', now()->subMinutes(60))
             ->first();
 
         if (!$passwordReset) {
-            return back()->withErrors(['email' => 'This password resset token is invalid.']);
+            return back()->withErrors(['reset_token' => 'This password reset token is invalid or has expired.']);
+        }
+
+        // Check if the user exists
+        $user = User::where('email', $passwordReset->email)->first();
+        if (!$user) {
+            return back()->withErrors(['email' => 'We can\'t find a user with that e-mail address.']);
         }
 
         // Reset the password
-        $user = User::where('email', $passwordReset->email)->first();
-
-
-        $user->password = $request->password;
+        $user->password = Hash::make($request->password);
         $user->save();
 
         // Delete the token
-        DB::table('password_resets')->where('email', $passwordReset->email)->delete();
+        DB::table('password_resets')->where('token', $request->reset_token)->delete();
 
         return redirect('/login')->with('status', 'Your password has been reset!');
-
-        // echo "<pre>";
-        // print_r($request->password);
-        // print_r($request->all() );
-        // print_r( $passwordReset );
-        // print_r($user );
-        // // // print_r($passwordReset);
-        // // // print_r($passwordReset);
-        // exit;
     }
 }

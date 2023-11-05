@@ -4,13 +4,45 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
-
+use Illuminate\Support\Facades\App;
+use App\Traits\LocaleTrait;
 
 
 class CheckoutController extends Controller
 {
-    public function cart(){
+    use LocaleTrait;
+
+    public function cart($country, Request $request){
+
+        $country = 'us'; // default country
+        $locale = $this->getLocaleByCountry($country);
+        $prefix = 'wayak:' . $country;
+
+        App::setLocale($locale);
+
+        // Batch Redis requests
+        $redisKeys = [
+            $prefix . ':menu'
+        ];
+
+        list($menu) = array_map('json_decode', Redis::mget($redisKeys));
+        
+
+        $sale = Redis::hgetall($prefix . ':config:sales');
+
+        $search_query = '';
+
+        if (isset($request->searchQuery)) {
+            $search_query = $request->searchQuery;
+        }
+        
+
         return view('auth.user.cart', [
+            'country' => $country,
+            'menu' => $menu,
+            'sale' => $sale,
+            'search_query' => $search_query,
+            'customer_id' => 1
         ]);
     }
 

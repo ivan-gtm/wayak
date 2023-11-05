@@ -756,6 +756,9 @@
                                     <img class="border-radius-15" src="https://wp.alithemes.com/html/nest/demo/assets/imgs/page/forgot_password.svg" alt="">
                                     <h2 class="mb-15 mt-15">Forgot your password?</h2>
                                     <p class="mb-30">Not to worry, we got you! Let’s get you a new password. Please enter your email address or your Username.</p>
+                                    <div class="error-message" id="error-message">
+                                        @include('layouts.partials.messages')
+                                    </div>
                                 </div>
                                 <form method="POST" action="{{ route('password.email') }}">
                                     @csrf

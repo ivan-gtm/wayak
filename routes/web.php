@@ -198,6 +198,37 @@ Route::prefix('admin')->middleware('auth')->group(function () {
             Route::get('/ml/update-url', [AdminController::class, 'updateURL']);
 });
 
+// Functions in develop
+Route::prefix('demo')->group(function () {
+    
+    // New frontend // beta
+    Route::get('/{country}/buscar', [ContentController::class, 'search'])->name('product.search');
+    Route::get('/{country}/p/{slug}', [ContentController::class, 'getTemplate'])->name('product.template');
+    Route::get('/{country}/demo/{product_id}', [ContentController::class, 'demo'])->name('product.demo');
+
+    // CHECKOUT
+    Route::get('/{country}/cart', [CheckoutController::class, 'cart']);
+    Route::get('/{country}/orders/create', [CheckoutController::class, 'createOrder']);
+    Route::get('/{country}/orders/capture', [CheckoutController::class, 'capturePayment']);
+
+    Route::get('/{country}/user/cart', [UserController::class, 'showCart']); // beta
+    Route::get('/{country}/user/checkout', [UserController::class, 'showCheckout']); // beta
+    
+    // Get all favorites for a client
+    Route::get('/{country}/user/favorites/{clientId}', [FavoritesController::class, 'getFavorites']); // beta
+
+    // Manage collections (create or delete)
+    Route::post('/{country}/user/favorites/collection/manage', [FavoritesController::class, 'manageCollection']); // beta
+
+    // Get all collections for a client
+    Route::get('/{country}/user/favorites/collections/{clientId}', [FavoritesController::class, 'getCollections']); // beta
+
+    // DESIGNER
+        // Route::get('/open',  [EditorController::class,'open']);
+        // Route::get('/explore',  [EditorController::class,'explore']);
+
+});
+
 // USER
 Route::group(['middleware' => ['guest']], function() {
     // Register Routes
@@ -214,56 +245,35 @@ Route::group(['middleware' => ['guest']], function() {
     Route::get('password/reset/{token}', [LoginController::class,'showLinkRequestForm'])->name('password.request');
     Route::post('password/reset', [LoginController::class,'reset'])->name('password.update');
 
-    // FAVORITES
-    Route::prefix('favorites')->group(function () {
-        // Add favorite
-        Route::post('/add', [FavoritesController::class, 'addFavorite']);
-    
-        // Remove favorite
-        Route::delete('/remove', [FavoritesController::class, 'removeFavorite']);
-    });
     
 });
 
+// FAVORITES
+Route::prefix('favorites')->group(function () {
+    // Add favorite
+    Route::post('/add', [FavoritesController::class, 'addFavorite']);
+
+    // Remove favorite
+    Route::delete('/remove', [FavoritesController::class, 'removeFavorite']);
+});
 
 Route::group(['middleware' => ['auth']], function() {
     // Logout Routes
     Route::get('/{country}/logout', [LogoutController::class, 'perform'])->name('logout.perform');
 
-    // CHECKOUT
-    Route::get('/{country}/cart', [CheckoutController::class, 'cart']);
-    Route::get('/{country}/orders/create', [CheckoutController::class, 'createOrder']);
-    Route::get('/{country}/orders/capture', [CheckoutController::class, 'capturePayment']);
-
     // PRODUCT HISTORY
-    Route::post('/{country}/user/product-history/remove-product', [ProductHistoryController::class, 'removeProductFromHistory']);
-
-    Route::get('/{country}/user/wishlist', [WishlistController::class, 'showWishlist']);
-    Route::get('/{country}/user/wishlist/2', [WishlistController::class, 'showWishlist']);
-    Route::get('/{country}/user/account', [UserController::class, 'showAccount']);
-    Route::get('/{country}/user/cart', [UserController::class, 'showCart']);
-    Route::get('/{country}/user/checkout', [UserController::class, 'showCheckout']);
-    
+    Route::post('/{country}/user/history/remove-product', [ProductHistoryController::class, 'removeProductFromHistory']);
     Route::get('/{country}/user/history/browsing', [ProductHistoryController::class, 'showBrowsingHistory']);
     Route::get('/{country}/user/history/search', [ProductHistoryController::class, 'showSearchHistory']);
 
-    // Get all favorites for a client
-    Route::get('/{country}/user/favorites/{clientId}', [FavoritesController::class, 'getFavorites']);
-
-    // Manage collections (create or delete)
-    Route::post('/{country}/user/favorites/collection/manage', [FavoritesController::class, 'manageCollection']);
-
-    // Get all collections for a client
-    Route::get('/{country}/user/favorites/collections/{clientId}', [FavoritesController::class, 'getCollections']);
+    Route::get('/{country}/user/wishlist', [WishlistController::class, 'showWishlist']);
+    Route::get('/{country}/user/account', [UserController::class, 'showAccount']);
+    
 });
 
 // PRODUCT HISTORY
     Route::post('/product/history/sync', [ProductHistoryController::class,'syncProductHistory']);
     Route::get('/product/history', [ProductHistoryController::class,'getProductHistory']);
-
-// DESIGNER
-    // Route::get('/open',  [EditorController::class,'open']);
-    // Route::get('/explore',  [EditorController::class,'explore']);
 
 //EDITOR
     Route::get('/editor/get-thumbnails', [EditorController::class,'getTemplateThumbnails']);
@@ -299,10 +309,6 @@ Route::group(['middleware' => ['auth']], function() {
     
 // Store
     
-    // New frontend
-    Route::get('/{country}/buscar', [ContentController::class, 'search'])->name('product.search');
-    Route::get('/{country}/p/{slug}', [ContentController::class, 'getTemplate'])->name('product.template');
-    Route::get('/{country}/demo/{product_id}', [ContentController::class, 'demo'])->name('product.demo');
     Route::get('/', [ContentController::class, 'showHome']);
     
     Route::get('/{country}', [ContentController::class, 'showHomePerPage'])->name('user.homepage');
