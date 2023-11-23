@@ -11,6 +11,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=PT+Sans+Caption&display=swap" rel="stylesheet">
     <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous"> -->
+    
     <link type="text/css" rel="stylesheet" href="{{ asset('assets/css/menu.css') }}">
     <link type="text/css" rel="stylesheet" href="{{ asset('assets/css/home.css') }}">
     
@@ -29,6 +30,7 @@
 
         gtag('config', 'G-FQVV2SLQED');
     </script>
+    
     <style>
         .autocomplete-results {
             position: absolute;
@@ -74,7 +76,7 @@
 
         /* ensure header and autocomplete results are above the overlay */
         header, .autocomplete-results {
-            z-index: 102; /* adjust this value if needed */
+            z-index: 100; /* adjust this value if needed */
         }
 
 
@@ -109,8 +111,8 @@
         @endif
         <nav class="navbar -nomargin" id="nav">
             <div class="logo-container">
-                <a id="logo" href="{{ url('/'.$country.'?source=logo') }}" title="{{ __('home.logo_alt_title') }}" class="embedded-remove-url">
-                    <div class="logo-wrapper">
+                <a id="logo" href="{{ url('/') }}" title="Go to the home page" class="embedded-remove-url">
+                    <div class="logo-wrapper"> 
                         <img class="logo-img" src="{{ url('assets/img/logo.svg') }}" alt="Wayak Logo" />
                     </div>
                 </a>
@@ -194,37 +196,97 @@
                         </svg>
                     </i>
                 </form>
-                <div id="mobile-search-options">
-                    <input type="checkbox" class="mobile-search-checkbox" value="1" id="mobile-search-bar" />
-                    <label class="mobile-search-container action-btn-container -white -passive side-btn" for="mobile-search-bar" id="mobile-search-bar-label" onclick="document.getElementById('nav-mobile-search-input').focus();" aria-label="{{ __('menu.search_btn_label') }}"> <span class="_hidden">{{ __('menu.search_btn_label') }}</span> <i class="icon-search action-btn-icon"></i> </label>
+                <div id="mobile-search-options"> <input type="checkbox" class="mobile-search-checkbox" value="1"
+                        id="mobile-search-bar" /> <label
+                        class="mobile-search-container action-btn-container -white -passive side-btn"
+                        for="mobile-search-bar" id="mobile-search-bar-label"
+                        onclick="document.getElementById('nav-mobile-search-input').focus();"
+                        aria-label="Search for inspiration"> <span class="_hidden">Search for inspiration</span> <i
+                            class="icon-search action-btn-icon"></i> </label>
                     <div id="mobile-search" class="inline-search-form -mobile">
-                        <form action="{{ route('user.search',['country' => $country]) }}" class="mobile-search-form" name="mobile-search-form" id="mobile-search-form" method="GET" onclick="document.getElementById('nav-mobile-search-input').focus();" accept-charset="utf-8">
-                            <label for="nav-mobile-search-input" class="_hidden">{{ __('menu.search_btn_label') }}</label>
-                            <input class="mobile-search-input search-input" name="s" type="text" aria-label="{{ __('menu.search_btn_label') }}" id="nav-mobile-search-input" placeholder="{{ __('menu.mobile_search_placeholder') }}" maxlength="50" />
-                            <i class="icon-search search-submit mobile-search-submit" onclick="document.forms['mobile-search-form'].submit();"></i>
+                        <form action="https://wayak.app/index.php/posters/search" class="mobile-search-form"
+                            name="mobile-search-form" id="mobile-search-form" method="GET"
+                            onclick="document.getElementById('nav-mobile-search-input').focus();"
+                            accept-charset="utf-8">
+                            <label for="nav-mobile-search-input" class="_hidden">Search for inspiration</label> <input
+                                class="mobile-search-input search-input" name="s" type="text"
+                                aria-label="Search for inspiration" id="nav-mobile-search-input"
+                                placeholder="Try &lsquo;sale flyer&rsquo;" maxlength="50" /> <i
+                                class="icon-search search-submit mobile-search-submit"
+                                onclick="document.forms['mobile-search-form'].submit();"></i>
                         </form>
                     </div>
                 </div>
+                <div class="wt-flex-shrink-xs-0" data-primary-nav-container="">
+                    <nav aria-label="Main">
+                        <ul class="wt-display-flex-xs wt-justify-content-space-between wt-list-unstyled wt-m-xs-0 wt-align-items-center">
+                            
+                            <li>
+                                @auth
+                                {{auth()->user()->name}}
+                                <div class="text-end">
+                                    <a style="color: black;" href="javascript:void(0)" onclick="logout()" class="btn btn-outline-light me-2">Logout</a>
+                                </div>
+                                @endauth
+                                @guest
+                                    <div class="text-end">
+                                        <a style="color: black;" href="{{ route('login.perform') }}" class="btn btn-outline-light me-2">Sign in</a>
+                                        <a style="color: black;" href="{{ route('register.perform') }}" class="btn btn-warning">Sign-up</a>
+                                    </div>
+                                @endguest
+                            </li>
+                            <li data-favorites-nav-container="">
+                                <span class="wt-tooltip wt-tooltip--disabled-touch" data-wt-tooltip="">
+                                    <a href="https://www.etsy.com/guest/favorites?ref=hdr-fav"
+                                        class="wt-tooltip__trigger wt-tooltip__trigger--icon-only wt-btn wt-btn--transparent wt-btn--icon reduced-margin-xs header-button"
+                                        data-favorites-nav-link="" aria-labelledby="ge-tooltip-label-favorites">
 
-                @auth
-                    {{auth()->user()->name}}
-                    <div class="text-end">
-                        <a style="color: black;" href="javascript:void(0)" onclick="logout()" class="btn btn-outline-light me-2">Logout</a>
-                    </div>
-                @endauth
+                                        <span class="etsy-icon"><svg xmlns="http://www.w3.org/2000/svg"
+                                                viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                                    d="M20.877 12.52c.054-.076.103-.157.147-.239A6 6 0 0 0 12 4.528a6 6 0 0 0-9.024 7.753c.044.082.093.162.147.24l.673.961a6 6 0 0 0 .789.915L12 21.422l7.415-7.025c.293-.278.557-.584.789-.915l.673-.961Zm-14.916.425L12 18.667l6.04-5.722c.195-.185.371-.39.525-.61l.673-.961a.335.335 0 0 0 .044-.087 4 4 0 1 0-7.268-2.619v.003L12 8.667l-.013.004v-.002a3.975 3.975 0 0 0-1.237-2.574 4 4 0 0 0-6.031 5.193c.009.03.023.058.043.086l.673.961a4 4 0 0 0 .526.61Z">
+                                                </path>
+                                            </svg></span>
+                                    </a>
 
-                @guest
-                    <div class="text-end">
-                        <a style="color: black;" href="{{ route('login.perform') }}" class="btn btn-outline-light me-2">Login</a>
-                        <a style="color: black;" href="{{ route('register.perform') }}" class="btn btn-warning">Sign-up</a>
-                    </div>
-                @endguest
-
+                                    <span id="ge-tooltip-label-favorites" role="tooltip"
+                                        data-favorites-label-tooltip="">Favorites</span>
+                                </span>
+                            </li>
+                            <li>
+                                <span class="wt-tooltip wt-tooltip--bottom-left wt-tooltip--disabled-touch"
+                                    data-wt-tooltip="" data-header-cart-button="">
+                                    <a data-header-cart-nav-anchor="" aria-label="Cart"
+                                        href="https://www.etsy.com/cart?ref=hdr-cart"
+                                        class="wt-tooltip__trigger wt-tooltip__trigger--icon-only wt-btn wt-btn--transparent wt-btn--icon header-button">
+                                        <span id="mini-cart-description" class="wt-screen-reader-only">Cart preview
+                                            displayed</span>
+                                        <span
+                                            class="wt-z-index-1 wt-no-wrap wt-display-none ge-cart-badge wt-badge wt-badge--notificationPrimary wt-badge--small wt-badge--outset-top-right"
+                                            data-selector="header-cart-count" aria-hidden="true">
+                                            0
+                                        </span>
+                                        <span class="wt-icon"><svg xmlns="http://www.w3.org/2000/svg"
+                                                viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                                    d="m5.766 5-.618-3H1v2h2.518l2.17 10.535L6.18 17h14.306l2.4-12H5.767ZM7.82 15l-1.6-8h14.227l-1.6 8H7.82Z">
+                                                </path>
+                                                <path
+                                                    d="M10.666 20.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm8.334 0a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z">
+                                                </path>
+                                            </svg></span>
+                                    </a>
+                                    <div id="mini-cart"></div>
+                                </span>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
             </div>
         </nav>
         <div class="nav-spacer"></div>
     </header>
-
+    
     @yield('content')
 
     <script>

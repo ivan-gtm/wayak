@@ -9,7 +9,7 @@ import requests
 # os.environ['_BARD_API_KEY'] = "cghW7kByc5YYcD7dOnznChWJMugE4pul0c1-9c8MW3pPX6aTFYE2TkHbtIxD7RCYg2WnMg."
 
 # Initialize a reusable session object
-token = 'cwhW7oacjOjNxMTYXlUwWySLOEhGUyRQJYWB_vXmQnmRTIwRj-iQx1HDglDwIyotU4el1g.'
+token = 'dQhW7vNkvpVOZDVZsNdLfqZbNHOtl6mO6kHy207FM9qfYOxa4GXudR6M8VaA6fWSLDlE0g.'
 session = requests.Session()
 session.headers = {
     "Host": "bard.google.com",
@@ -60,7 +60,7 @@ def get_image_description():
         Given a product image, you are tasked with creating metadata for it. Please follow the guidelines below:
 
         Provide your response in a JSON format, adhering strictly to the structure specified. Exclude any extraneous details.
-        For the "title" field, craft something that's both captivating and engaging, avoid personal data.
+        For "title",avoid including personal details and create something that is both captivating and appealing to the sale of the product.
         Translate the "title" into the languages "es", "fr", "pt", and "en", and place them under the "localizedTitle" field using their respective ISO 639-1 language codes.
         Populate the "keywords" field with single-word descriptors related to the color, occasion, theme, and event evident in the image. Ensure you list at least 5 keywords.
         Translate all the keywords into the languages "es", "fr", "pt", and "en", maintaining the structure shown in the example.

@@ -105,7 +105,7 @@
                                     </div>
                                 </div> --}}
                                 <div class="">
-                                    <div class="grid-container">
+                                    <div class="search-grid-container">
                                         @foreach($templates as $template)
                                         <a href="{{ route( 'template.productDetail', [ 'country' => $country, 'slug' => $template->slug ] ) }}">
                                             <figure>
@@ -249,6 +249,7 @@
                     --}}
                 </div>
             </main>
+            {{--
             <div class="yducsd44">
                 <nav class="aeEIJ0Oi"><a class="vs3__w6e" href="/"><svg class="f0hiXs2f KlMn5auq" tabindex="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19 18" role="img" aria-label="Icon Home">
                             <path d="M18.5556 9.24V17C18.5556 17.5523 18.1067 18 17.5529 18H13.5422C12.9885 18 12.5396 17.5523 12.5396 17V11.5C12.5396 11.2239 12.3151 11 12.0382 11H7.0249C6.74802 11 6.52357 11.2239 6.52357 11.5V17C6.52357 17.5523 6.07466 18 5.5209 18H1.51024C0.956478 18 0.507568 17.5523 0.507568 17V9.24C0.50827 8.44462 0.825644 7.68207 1.38992 7.12L8.23813 0.29C8.42489 0.105256 8.67696 0.00110462 8.93999 0H10.1231C10.3862 0.00110462 10.6383 0.105256 10.825 0.29L17.6732 7.12C18.2375 7.68207 18.5549 8.44462 18.5556 9.24Z">
@@ -264,6 +265,7 @@
                             </path>
                         </svg><span>Sign in</span></a></nav>
             </div>
+            --}}
         </div>
     </div>
 

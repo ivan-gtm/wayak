@@ -1,4 +1,4 @@
-/* // jdaksdjasdkajs */
+@charset "UTF-8";
 .f0hiXs2f {
   fill: currentColor;
   height: 1em; }
@@ -214,7 +214,7 @@ img.itemImg {
   color: #303030;
   font-size: 12px;
   font-style: inherit;
-  font-weight: 200;
+  font-weight: 700;
   letter-spacing: 0;
   line-height: 16px;
   margin: 4px 18px;
@@ -784,7 +784,7 @@ img.itemImg {
   padding: 0; }
 
 .TDnT_QDN {
-  color: black;
+  color: inherit;
   font-weight: 700;
   text-decoration: none; }
 
@@ -882,7 +882,7 @@ img.itemImg {
     padding-bottom: 30px;
     padding-top: 30px; } }
 
-.grid-container {
+.search-grid-container {
   column-count: 3;
   column-gap: 10px; }
 
@@ -953,20 +953,27 @@ img {
   max-width: 100%; }
 
 @media only screen and (max-width: 600px) {
-  .grid-container {
-    background-color: red;
+  .M9td4zg0 {
+    padding: 0; } }
+
+@media screen and (max-width: 1024px) {
+  .M9td4zg0 {
+    padding: 0; } }
+
+@media only screen and (max-width: 600px) {
+  .search-grid-container {
     column-count: 2; } }
 
 @media only screen and (min-width: 600px) {
-  .grid-container {
+  .search-grid-container {
     column-count: 2; } }
 
 @media only screen and (min-width: 768px) {
-  .grid-container {
+  .search-grid-container {
     column-count: 3; } }
 
 @media only screen and (min-width: 992px) {
-  .grid-container {
+  .search-grid-container {
     column-count: 3; } }
 
 @media only screen and (max-width: 1200px) {
@@ -980,7 +987,7 @@ img {
     font-size: 33px;
     font-weight: 100;
     padding: 24px 70px 26px 30px; }
-  .grid-container {
+  .search-grid-container {
     column-count: 2; }
   .kb2fhv7t,
   .qJyzQBny {
@@ -1009,24 +1016,24 @@ img {
     display: none; } }
 
 @media only screen and (min-width: 1300px) {
-  .grid-container {
+  .search-grid-container {
     column-count: 4; } }
 
 p.wt-text-title-01 {
-  color: black;
   font-weight: 700;
   font-size: 16px;
   line-height: 20px;
   margin-bottom: 2px; }
 
-p.wt-text-caption {
+.search-grid-container p.wt-text-caption {
   margin-bottom: 2px; }
 
-p.wt-text-caption {
+.search-grid-container p.wt-text-caption {
   font-weight: 400;
   font-size: 13px;
   line-height: 18px; }
 
+.search-grid-container
 .wt-text-caption {
   font-weight: 400;
   font-size: 13px;
@@ -1065,11 +1072,12 @@ p.wt-text-title-01 {
   font-size: 16px;
   line-height: 20px; }
 
-p.wt-text-caption {
+.search-grid-container p.wt-text-caption {
   font-weight: 400;
   font-size: 13px;
   line-height: 18px; }
 
+.search-grid-container
 .wt-text-caption {
   font-weight: 400;
   font-size: 13px;

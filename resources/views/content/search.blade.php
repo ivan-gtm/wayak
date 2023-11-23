@@ -28,92 +28,92 @@
                     <div class="M9td4zg0">
                         <div class="QLzW0Tal">
                             @if( sizeof($templates) == 0 )
-                            <h3>No results found. Try broadening your search or changing categories.</h3>
+                                <h3>No results found. Try broadening your search or changing categories.</h3>
                             @endif
                             <div class="">
-                                <div class="grid-container">
+                                <div class="search-grid-container">
                                     @foreach($templates as $template)
-                                    <a href="{{ route( 'template.productDetail', [ 'country' => $country, 'slug' => $template->slug ] ) }}">
-                                        <figure>
-                                            <img alt="{{ $template->title }}" crossorigin="anonymous" loading="lazy" data-categ="invitations" data-value="{{ $template->_id }}" src="{{ str_replace('_carousel','_product_preview',$template->preview_image) }}" class="itemImg">
-                                            <figcaption>
-                                                <a href="{{ route( 'template.productDetail', [ 'country' => $country, 'slug' => $template->slug ] ) }}">
-                                                    <div class="dMnq_Lr8">
-                                                        <span>
-                                                            {{ $template->title }}
-                                                        </span>
-                                                    </div>
-                                                </a>
-                                                <div class="_n0J0gGK">
-                                                    <div class="d6YhEXPR">
-                                                        <div class="utcowRMZ">
-                                                            <a href="{{ route( 'template.productDetail', [ 'country' => $country, 'slug' => $template->slug ] ) }}">
-                                                                By
-                                                            </a>
-                                                            <a href="{{ route( 'template.productDetail', [ 'country' => $country, 'slug' => $template->slug ] ) }}">
-                                                                {{ $template->studioName }}
-                                                            </a>
+                                        <a href="{{ route( 'template.productDetail', [ 'country' => $country, 'slug' => $template->slug ] ) }}">
+                                            <figure>
+                                                <img alt="{{ $template->title }}" crossorigin="anonymous" loading="lazy" data-categ="invitations" data-value="{{ $template->_id }}" src="{{ str_replace('_carousel','_product_preview',$template->preview_image) }}" class="itemImg">
+                                                <figcaption>
+                                                    <a href="{{ route( 'template.productDetail', [ 'country' => $country, 'slug' => $template->slug ] ) }}">
+                                                        <div class="dMnq_Lr8">
+                                                            <span>
+                                                                {{ $template->title }}
+                                                            </span>
                                                         </div>
-                                                        <div class="n-listing-card__price  wt-display-block wt-text-title-01 lc-price">
-                                                            <p class="wt-text-title-01 lc-price ">
-                                                                <span class="wt-screen-reader-only">
-                                                                    Sale Price MX$
-                                                                    @if($sale != null )
-                                                                        {{ $template->prices['price'] }}
-                                                                    @else
-                                                                        {{ $template->prices['original_price'] }}
-                                                                    @endif
-                                                                </span>
-                                                                <span aria-hidden="true">
-                                                                    <span class="currency-symbol">MX$</span>
-                                                                    <span class="currency-value">
+                                                    </a>
+                                                    <div class="_n0J0gGK">
+                                                        <div class="d6YhEXPR">
+                                                            <div class="utcowRMZ">
+                                                                <a href="{{ route( 'template.productDetail', [ 'country' => $country, 'slug' => $template->slug ] ) }}">
+                                                                    By
+                                                                </a>
+                                                                <a href="{{ route( 'template.productDetail', [ 'country' => $country, 'slug' => $template->slug ] ) }}">
+                                                                    {{ $template->studioName }}
+                                                                </a>
+                                                            </div>
+                                                            <div class="n-listing-card__price  wt-display-block wt-text-title-01 lc-price">
+                                                                <p class="wt-text-title-01 lc-price ">
+                                                                    <span class="wt-screen-reader-only">
+                                                                        Sale Price MX$
                                                                         @if($sale != null )
                                                                             {{ $template->prices['price'] }}
                                                                         @else
                                                                             {{ $template->prices['original_price'] }}
                                                                         @endif
                                                                     </span>
-                                                                </span>
-                                                            </p>
-                                                            @if($sale != null )
-                                                            <p class="wt-text-caption search-collage-promotion-price wt-text-slime wt-text-truncate wt-no-wrap">
-                                                                <span class="wt-text-strikethrough " aria-hidden="true">
-                                                                    <span class="currency-symbol">MX$</span>
-                                                                    <span class="currency-value">{{ $template->prices['original_price'] }}</span>
-                                                                </span>
-                                                                <span class="wt-screen-reader-only">
-                                                                    Original Price MX${{ $template->prices['original_price'] }}
-                                                                </span>
-                                                                <span>
-                                                                    ({{ $template->prices['discount_percent'] }}% off)
-                                                                </span>
-                                                            </p>
-                                                            @endif
+                                                                    <span aria-hidden="true">
+                                                                        <span class="currency-symbol">MX$</span>
+                                                                        <span class="currency-value">
+                                                                            @if($sale != null )
+                                                                                {{ $template->prices['price'] }}
+                                                                            @else
+                                                                                {{ $template->prices['original_price'] }}
+                                                                            @endif
+                                                                        </span>
+                                                                    </span>
+                                                                </p>
+                                                                @if($sale != null )
+                                                                    <p class="wt-text-caption search-collage-promotion-price wt-text-slime wt-text-truncate wt-no-wrap">
+                                                                        <span class="wt-text-strikethrough " aria-hidden="true">
+                                                                            <span class="currency-symbol">MX$</span>
+                                                                            <span class="currency-value">{{ $template->prices['original_price'] }}</span>
+                                                                        </span>
+                                                                        <span class="wt-screen-reader-only">
+                                                                            Original Price MX${{ $template->prices['original_price'] }}
+                                                                        </span>
+                                                                        <span>
+                                                                            ({{ $template->prices['discount_percent'] }}% off)
+                                                                        </span>
+                                                                    </p>
+                                                                @endif
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    {{-- <div class="EnawCRza wnbOpC0l">
-                                                        <div class="iA5PAkih HbV3rXzN fZgJpwQj" role="tooltip" tabindex="0">
-                                                            <a href="{{ route( 'template.productDetail', [ 'country' => $country, 'slug' => $template->slug ] ) }}" class="ROjO8oOw" data-test-selector="collection-popup-button" type="button">
-                                                                <div class="hxFZwp8w">
-                                                                    <img src="https://img.icons8.com/ios/300/search-more.png"
-                                                                        class="fMdfaJgH" alt="Explore more like this">
-                                                                </div>
+                                                        {{-- <div class="EnawCRza wnbOpC0l">
+                                                            <div class="iA5PAkih HbV3rXzN fZgJpwQj" role="tooltip" tabindex="0">
+                                                                <a href="{{ route( 'template.productDetail', [ 'country' => $country, 'slug' => $template->slug ] ) }}" class="ROjO8oOw" data-test-selector="collection-popup-button" type="button">
+                                                                    <div class="hxFZwp8w">
+                                                                        <img src="https://img.icons8.com/ios/300/search-more.png"
+                                                                            class="fMdfaJgH" alt="Explore more like this">
+                                                                    </div>
+                                                                </a>
+                                                                <span class="Y8B0rMYR LBIWVYxj SgR6kXef">
+                                                                    Explore more like this</span>
+                                                            </div>
+                                                        </div> --}}
+                                                        <div class="iA5PAkih MnYus99x MHpx2FCM HbV3rXzN" role="tooltip" tabindex="0">
+                                                            <a href="{{ route( 'template.productDetail', [ 'country' => $country, 'slug' => $template->slug ] ) }}" data-test-selector="item-card-download-button" class="Y2SkMErw" type="button">
+                                                                <img src="https://img.icons8.com/material-outlined/300/shopping-cart--v1.png"
+                                                                        class="RN7zpzqN" alt="View Details">
                                                             </a>
-                                                            <span class="Y8B0rMYR LBIWVYxj SgR6kXef">
-                                                                Explore more like this</span>
+                                                            <span class="Y8B0rMYR LBIWVYxj">View Details</span>
                                                         </div>
-                                                    </div> --}}
-                                                    <div class="iA5PAkih MnYus99x MHpx2FCM HbV3rXzN" role="tooltip" tabindex="0">
-                                                        <a href="{{ route( 'template.productDetail', [ 'country' => $country, 'slug' => $template->slug ] ) }}" data-test-selector="item-card-download-button" class="Y2SkMErw" type="button">
-                                                            <img src="https://img.icons8.com/material-outlined/300/shopping-cart--v1.png"
-                                                                    class="RN7zpzqN" alt="View Details">
-                                                        </a>
-                                                        <span class="Y8B0rMYR LBIWVYxj">View Details</span>
                                                     </div>
-                                                </div>
-                                            </figcaption>
-                                        </figure>
-                                    </a>
+                                                </figcaption>
+                                            </figure>
+                                        </a>
                                     @endforeach
                                 </div>
                                 <div class="hZFJ5g_b">
@@ -167,11 +167,6 @@
                         </div>
                     </div>
                 </section>
-                <!-- <div class="AA1EE83D">
-                    <div class="jBXcSG6t">
-                        <h3 class="SNcU6rNK">Featured Graphic Templates</h3>
-                    </div>
-                </div> -->
             </main>
         </div>
     </div>

@@ -25,6 +25,7 @@ class SearchController extends Controller
         $customerId = $request->customerId ?? null;
 
         $user = Auth::user();
+        
         if($user){
             $customer_id = $user->customer_id;
         } elseif( isset($request->customerId) ) {
@@ -37,7 +38,12 @@ class SearchController extends Controller
 
         $searchSlug = $this->generateSearchSlug($searchTerm);
         $this->saveGlobalSearchHistory($country, $searchSlug, $searchTerm);
-        $this->updateUserSearchHistory($customer_id, $searchSlug);
+        if($customerId != null){
+            $this->updateUserSearchHistory($customer_id, $searchSlug);
+        }
+         else {
+            abort(404);
+        }
 
         $result = (new Template())->filterDocuments(strtolower($searchTerm), $category, $minPrice, $maxPrice, $author, $productsInSale, $skip, $per_page);
         $total_documents = $result['total'];

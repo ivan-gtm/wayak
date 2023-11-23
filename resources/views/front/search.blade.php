@@ -18,14 +18,6 @@
     <meta name="dist" content="202209231663975789">
 
 
-
-
-
-    <!-- SpeedCurve LUX -->
-    <!-- /SpeedCurve LUX -->
-
-
-
     <title>Corjl - Etsy</title>
     <meta name="description" content="Check out our corjl selection for the very best in unique or custom, handmade pieces from our shops.">
 
@@ -58,7 +50,6 @@
         }
     </style>
     <style>
-        /*! CSS Used from: https://www.etsy.com/dac/site-chrome/components/components.20220922162759,site-chrome/header/header.20220906191844,site-chrome/footer/footer.20220906191844,gdpr/settings-overlay.20220906191844.css */
         aside,
         footer,
         header,

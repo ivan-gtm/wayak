@@ -143,10 +143,11 @@ class ContentController extends Controller
             return $user->customer_id;
         }
 
-        $customerId = $request->input('customer_id');
-
-        if ($customerId) {
-            return $customerId;
+        // $customerId = $request->input('customer_id');
+        // print_r($request->all());
+        // exit;
+        if ($request->userId) {
+            return $request->userId;
         }
 
         return false;
@@ -175,6 +176,8 @@ class ContentController extends Controller
         $analyticsController->registerVisitCategory($country, ltrim($slug, '/'));
         
         $customer_id = $this->getCustomerId($request);
+        // echo $customer_id;
+        // exit;
         if ($customer_id) {
             $analyticsController->registerCategoryVisitByUser(ltrim($slug, '/'),$customer_id);
         }
@@ -185,8 +188,11 @@ class ContentController extends Controller
         $breadcrumbs_obj = $breadcrumbs_str;
         self::getBreadCrumbs($breadcrumbs_obj);
         
-        foreach ($this->bread_array as $bread) {
-            $bread->url = url($country . '/templates' . $slug . $bread->slug);
+        $url = "";
+        $total_breads = sizeof($this->bread_array);
+        for ($i = 0; $i < $total_breads; $i++) {
+            $url .= '/' . $this->bread_array[$i]->slug;
+            $this->bread_array[$i]->url = url($country . '/templates' . $url);
         }
         
         $page = $request->input('page', 1);
@@ -218,12 +224,20 @@ class ContentController extends Controller
         $last_page = ceil($total_documents / $per_page);
 
         $sale = Redis::hgetall('wayak:' . $country . ':config:sales');
+        $customer_id = null;
+
+        // User is logged in
+        if( Auth::check() ) {
+            $user = Auth::user();
+            $customer_id = isset($user->customer_id) ? $user->customer_id : null;
+        }
 
         return view('content.category', [
             'country' => $country,
             'language_code' => $locale,
             'menu' => $menu,
             'sale' => $sale,
+            'customer_id' => $customer_id,
             'search_query' => '',
             'category_obj' => $category_obj,
             'breadcrumbs' => $this->bread_array,
@@ -246,10 +260,10 @@ class ContentController extends Controller
     public function showTemplatePage($country, Request $request, $slug)
     {
 
-        $language_code = 'en';
+        // $language_code = 'en';
         $locale = $this->getLocaleByCountry($country);
 
-        if (!in_array($locale, ['en', 'es'])) {
+        if (!in_array($locale, ['en', 'es','fr','pt'])) {
             abort(400);
         }
 
@@ -269,12 +283,13 @@ class ContentController extends Controller
             abort(404);
         }
 
-        $related_templates = self::getRelatedTemplates($template->mainCategory, $language_code);
+        $related_templates = self::getRelatedTemplates($template->mainCategory, $locale);
         // $related_templates = [];
 
         $analyticsController = new AnalyticsController();
         $analyticsController->registerProductView($template_id);
         
+        $language_code = 'en'; // Temporal
         if (App::environment() == 'local') {
             $preview_image = asset('design/template/' . $template->_id . '/thumbnails/' . $language_code . '/' . $template->previewImageUrls["product_preview"]);
             // print_r($preview_image);
@@ -326,29 +341,20 @@ class ContentController extends Controller
             $logged_id = Auth::id();
             $user = Auth::user();
 
-            // [id] => 1
-            // [name] => 
-            // [email] => dagtok@gmail.com
-            // [username] => Daniel
-            // [email_verified_at] => 
-            // [password] => $2y$10$O0.Vvas396AHoyiL8M47Y.jnAeBICrf/1HWJ5C6gme.fV7YvG983e
-            // [remember_token] => 
-            // [created_at] => 2023-09-10 20:01:34
-            // [updated_at] => 2023-09-10 20:01:34
-
             $favoritesController = new FavoritesController();
             $isFavorite = $favoritesController->isFavorite($template->_id, $user->customer_id);
             $analyticsController->registerCategoryVisitByUser( substr($template->mainCategory, 1), $user->customer_id );
         }
 
         // echo "<pre>";
-        // print_r($sale);
+        // print_r($template->localizedTitle['es']);
+        // print_r($template->keywords['es']);
         // exit;
 
         return view('content.product-detail', [
             'country' => $country,
             'preview_image' => $preview_image,
-            'language_code' => $language_code,
+            'language_code' => $locale,
             'search_query' => $search_query,
             'menu' => $menu,
             'sale' => $sale,
@@ -381,6 +387,8 @@ class ContentController extends Controller
                 'stars',
                 'studioName',
                 'title',
+                'keywords',
+                'localizedTitle',
                 'width',
                 'updatedAt'
             ]);

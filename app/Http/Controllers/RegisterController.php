@@ -37,6 +37,7 @@ class RegisterController extends Controller
         return view('auth.register', [
             'menu' => $menu,
             'sale' => $sale, 
+            'customer_id' => null,
             'country' => $country,
             'search_query' => ''
         ]);
