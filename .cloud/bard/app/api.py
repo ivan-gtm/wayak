@@ -9,7 +9,6 @@ import requests
 # os.environ['_BARD_API_KEY'] = "cghW7kByc5YYcD7dOnznChWJMugE4pul0c1-9c8MW3pPX6aTFYE2TkHbtIxD7RCYg2WnMg."
 
 # Initialize a reusable session object
-token = 'dQhW7vNkvpVOZDVZsNdLfqZbNHOtl6mO6kHy207FM9qfYOxa4GXudR6M8VaA6fWSLDlE0g.'
 session = requests.Session()
 session.headers = {
     "Host": "bard.google.com",

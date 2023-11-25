@@ -1086,13 +1086,14 @@ class EditorController extends Controller
 			// exit;
 
 			if (isset($font_info->name)) {
-				$success = true;
+				$success = 'true';
 				$font_url = url('design/fonts_new/' . $font_info->name);
 			}
 
 			return json_encode(array(
 				'success' => $success,
-				'url' => $font_url
+				'url' => $font_url,
+				'msg' => '',
 			));
 		}
 	}

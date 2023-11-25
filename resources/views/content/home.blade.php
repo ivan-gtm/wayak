@@ -44,9 +44,7 @@
                 <div>
                     <div class="bd dark-background" lang="en-MX" data-uia="container-adult">
                         <div class="mainView" role="main">
-
                             <div class="lolomo is-fullbleed">
-
                                 <div class="lolomoRow lolomoRow_title_card ltr-0" data-list-context="categories" style="margin-top: 4vw;">
                                     <div class="heroWrapper___2WxOZ">
                                         <div class="bannerContainer___Y4ecx">
@@ -91,7 +89,7 @@
                                         <div class="ptrack-container">
                                             <div class="rowContent slider-hover-trigger-layer">
                                                 <div class="category slider">
-                                                    <span class="handle handlePrev active" tabindex="0" role="button" aria-label="See previous titles">
+                                                    <span class="handle handlePrev active slick-arrow" tabindex="0" role="button" aria-label="See previous titles" style="display: flex;">
                                                         <b class="indicator-icon icon-leftCaret"></b>
                                                     </span>
                                                     <div class="dotClass"></div>
@@ -118,7 +116,7 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                @endfor
+                                                            @endfor
                                                         </div>
                                                     </div>
                                                     <span class="handle handleNext active" tabindex="0" role="button" aria-label="See more titles">
@@ -133,7 +131,7 @@
                                 @foreach ($carousels as $carousel)
                                 <div class="lolomoRow lolomoRow_title_card ltr-0 template-carousel" data-list-context="similars">
                                     <h2 class="rowHeader ltr-0">
-                                        <a aria-label="because you watched taco chronicles" class="rowTitle ltr-0" href="{{ route('user.search',[
+                                        <a class="rowTitle ltr-0" href="{{ route('user.search',[
                                                             'country' => $country,
                                                             'searchQuery' => $carousel->search_term
                                                         ]) }}">
@@ -150,7 +148,7 @@
                                         <div class="ptrack-container">
                                             <div class="rowContent slider-hover-trigger-layer">
                                                 <div class="slider">
-                                                    <span class="handle handlePrev active" tabindex="0" role="button" aria-label="See previous titles">
+                                                    <span class="handle handlePrev active slick-arrow" tabindex="0" role="button" aria-label="See previous titles">
                                                         <b class="indicator-icon icon-leftCaret"></b>
                                                     </span>
                                                     <div class="dotClass"></div>
@@ -226,7 +224,7 @@
                 // variableWidth: true,
                 slidesToShow: 6,
                 slidesToScroll: 4,
-                dots: true,
+                dots: false,
                 appendDots: $('#' + id + ' > div > div > div > div.dotClass'),
                 dotsClass: 'pagination-indicator',
                 // infinite: true,

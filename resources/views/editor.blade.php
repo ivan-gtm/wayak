@@ -216,13 +216,13 @@
                                             <div class="list">
                                                 <div class="content">
                                                     <ul>
-                                                        <!-- <li style="text-align:center;">
+                                                        <li style="text-align:center;">
                                                             <a href="#" id="downloadPDF">
                                                                 <span class="icon s7-print" style="font-size:24px; vertical-align:middle;">
                                                                 </span>
                                                                 PDF (Para imprimir)
                                                             </a>
-                                                        </li> -->
+                                                        </li>
                                                         <li class="download-jpeg-menu-item" style="text-align:center;">
                                                             <a href="#" id="downloadJPEG">
                                                                 <span class="icon s7-print" style="font-size:24px; vertical-align:middle;">
@@ -4966,6 +4966,7 @@
         </script>
         <!-- build:app -->
         <script src="{{ asset('assets/js/app.js?rev='.time()) }}"></script>
+        <script src="{{ asset('assets/js/app_refactor.js?rev='.time()) }}"></script>
         <!-- endbuild -->
         <script type="text/javascript">
             // Wait for window load
