@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Http;
 
 class UpdateTemplateMetadata extends Command
 {
-    protected $signature = 'ai:bard:update-metadata';
+    protected $signature = 'wayak:util:ai:bard:update-metadata';
     protected $description = 'Update templates metadata from external API';
 
     public function __construct()

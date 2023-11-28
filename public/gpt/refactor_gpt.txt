@@ -1,0 +1,34 @@
+Take your time, write functions one by one, if answer is too big.
+
+Act as an expert in JavaScript development.
+Refactor this function to improve the readability and maintainability. I'm using "fabric.js" 2.7.0 and "jQuery" 1.12
+This function belongs to a bigger script and is called by another functions, keep original function name to avoid errors with the rest of the code.
+Be meticulous with scope variables, taking into consideration that global variables could be used by other functions.
+
+function setDemoOverlay() {
+    scale = $("#zoomperc").data("scaleValue");
+	var uri = appUrl + "assets/img/demo_overlay.svg";
+    fabric.Image.fromURL(uri, function(img) {
+        img.scaleToWidth(50 * scale),
+        img.angle = 315,
+        img.top = 50 * scale,
+        img.left = 20 * scale,
+        patternSourceCanvas = new fabric.StaticCanvas,
+        patternSourceCanvas.add(img);
+        for (var pattern = new fabric.Pattern({
+            source: function() {
+                return patternSourceCanvas.setDimensions({
+                    width: 80 * scale,
+                    height: 80 * scale
+                }),
+                patternSourceCanvas.renderAll(),
+                patternSourceCanvas.getElement()
+            },
+            repeat: "repeat"
+        }), n = 0; canvasarray[n]; )
+            $("#divcanvas" + n).is(":visible") && canvasarray[n].setOverlayColor(pattern, function() {
+                canvasarray[n].renderAll()
+            }),
+            n++
+    })
+}

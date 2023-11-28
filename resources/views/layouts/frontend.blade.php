@@ -231,7 +231,7 @@
                                 @guest
                                     <div class="text-end">
                                         <a style="color: black;" href="{{ route('login.perform') }}" class="btn btn-outline-light me-2">Sign in</a>
-                                        <a style="color: black;" href="{{ route('register.perform') }}" class="btn btn-warning">Sign-up</a>
+                                        <!-- <a style="color: black;" href="{{ route('register.perform') }}" class="btn btn-warning">Sign-up</a> -->
                                     </div>
                                 @endguest
                             </li>
@@ -291,6 +291,17 @@
 
     <script>
         const logoutUrl = "{{ route('logout.perform',['country' => $country]) }}";
+        function logout() {
+            // Clear local storage
+            localStorage.clear();
+
+            // Redirect to the Laravel logout route
+            window.location.href = logoutUrl;
+        }
+    </script>
+    
+    <script>
+        
         // Debounce function: Ensures that the given function is not called until after the specified time has elapsed since the last time it was called
         function debounce(func, delay) {
             let debounceTimer;
@@ -301,15 +312,6 @@
                 debounceTimer = setTimeout(() => func.apply(context, args), delay);
             };
         }
-
-        function logout() {
-            // Clear local storage
-            localStorage.clear();
-
-            // Redirect to the Laravel logout route
-            window.location.href = logoutUrl;
-        }
-
 
         // Function to fetch results from the server using AJAX
         function fetchData(query, callback) {

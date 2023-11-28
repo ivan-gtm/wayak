@@ -199,7 +199,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 });
 
 // Functions in develop
-Route::prefix('demo')->group(function () {
+Route::prefix('in-develop')->group(function () {
     
     // New frontend // beta
     Route::get('/{country}/buscar', [ContentController::class, 'search'])->name('product.search');
@@ -229,7 +229,7 @@ Route::prefix('demo')->group(function () {
 
 });
 
-// USER
+// User related functions
 Route::group(['middleware' => ['guest']], function() {
     // Register Routes
     Route::get('/register', [RegisterController::class,'show'])->name('register.show');
@@ -244,8 +244,6 @@ Route::group(['middleware' => ['guest']], function() {
     Route::post('password/email', [LoginController::class,'sendResetLinkEmail'])->name('password.email');
     Route::get('password/reset/{token}', [LoginController::class,'showLinkRequestForm'])->name('password.request');
     Route::post('password/reset', [LoginController::class,'reset'])->name('password.update');
-
-    
 });
 
 // FAVORITES
@@ -267,8 +265,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('/{country}/user/history/search', [ProductHistoryController::class, 'showSearchHistory']);
 
     Route::get('/{country}/user/wishlist', [WishlistController::class, 'showWishlist']);
-    Route::get('/{country}/user/account', [UserController::class, 'showAccount']);
-    
+    Route::get('/{country}/user/account', [UserController::class, 'showAccount']); 
 });
 
 // PRODUCT HISTORY
@@ -308,7 +305,6 @@ Route::group(['middleware' => ['auth']], function() {
     
     
 // Store
-    
     Route::get('/', [ContentController::class, 'showHome']);
     
     Route::get('/{country}', [ContentController::class, 'showHomePerPage'])->name('user.homepage');

@@ -1250,8 +1250,7 @@
 
     @if($sale != null)
 
-    var date = '{{ $sale['
-    sale_ends_at '] }}';
+    var date = '{{ $sale['sale_ends_at'] }}';
     var remainingSeconds = remainingSecondsUntilUtcDate(date);
     console.log('Remaining seconds until ' + date + ': ' + remainingSeconds);
 
