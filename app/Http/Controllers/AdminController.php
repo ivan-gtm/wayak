@@ -322,63 +322,6 @@ class AdminController extends Controller
         ]);
     }
 
-    function remaining_seconds_until_utc_date($date) {
-        date_default_timezone_set("America/Mexico_City");
-        
-        $timestamp = \strtotime($date);
-        $now = \time();
-        $remaining_seconds = $timestamp-$now;
-        
-        // echo '<br>'; 
-        // echo $timestamp;
-        // echo '<br>'; 
-        // echo $now;
-        // echo '<br>'; 
-        // echo $remaining_seconds.'<br>';
-        // echo '<br>';
-        // echo date('d.m.Y H:i:s', $timestamp)  .  "\n\n";
-        // echo '<br>';
-        // echo date('d.m.Y H:i:s', $now)  .  "\n\n";
-        // exit;
-        return $remaining_seconds;
-        // $date1 = new \DateTime($date);
-        // $date2 = new \DateTime("now");
-        // $interval = $date1->diff($date2);
-        // echo $date.'<br>'; 
-        // echo "difference " . $interval->y . " years, " . $interval->m." months, ".$interval->d." days "; 
-    }
-    
-    function salesManager(Request $request){
-        $country = 'us';
-        $language_code = self::getCountryLanguage($country);
-        
-        $redis_key = 'wayak:'.$country.':config:sales';
-        $active_campaign = Redis::hgetall($redis_key);
-
-        if( isset( $request->delete_campaign ) ) {
-            Redis::del($redis_key);
-        } elseif( isset( $request->discount_percentage ) ) {
-            
-            Redis::hset($redis_key, 'site_banner_txt',$request->site_banner_txt);
-            Redis::hset($redis_key, 'site_banner_btn',$request->site_banner_btn);
-            Redis::hset($redis_key, 'discount_percentage',$request->discount_percentage);
-            // Redis::hset($redis_key, 'sale_starts_at',$request->sale_starts_at);
-            Redis::hset($redis_key, 'sale_ends_at',$request->sale_ends_at);
-            
-            $date = $request->sale_ends_at;
-            $remaining_seconds = self::remaining_seconds_until_utc_date($date);
-            
-            Redis::expire($redis_key, $remaining_seconds );
-
-        } 
-
-        return view('admin.sales_manager', [
-            'language_code' => $language_code,
-            'country' => $country,
-            'active_campaign' => $active_campaign
-        ]);
-    }
-    
     function createProduct($template_key){
         
         $product_metadata = new \stdClass();

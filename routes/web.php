@@ -19,6 +19,7 @@ use App\Http\Controllers\WishlistController;
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminSaleController;
+use App\Http\Controllers\SalesManagerController;
 
 use App\Http\Controllers\greenController;
 use App\Http\Controllers\DesygnerController;
@@ -109,8 +110,8 @@ Route::prefix('admin')->middleware('auth')->group(function () {
             Route::post('/template/translate/{template_key}/{from}/{to}', [AdminController::class, 'translateTemplate'])->name('admin.translate.template');
             Route::get('/template/gallery/{country}', [AdminController::class, 'viewGallery'])->name('admin.template.gallery');
         // Sales    
-            Route::get('/sales', [AdminController::class, 'salesManager'])->name('admin.sales_manager');
-            Route::post('/sales', [AdminController::class, 'salesManager']);
+            Route::get('/manage-campaign', [SalesManagerController::class, 'manageCampaign'])->name('admin.sales_manager');
+            Route::post('/manage-campaign', [SalesManagerController::class, 'manageCampaign']);
             
         // Carousels
             Route::get('/{country}/carousels/manage', [AdminController::class, 'carouselsManage'])->name('admin.carousels.manage');

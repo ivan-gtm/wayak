@@ -30,6 +30,75 @@
 
         gtag('config', 'G-FQVV2SLQED');
     </script>
+
+    <style>
+        /*! CSS Used to promo bar */
+        ::selection{background:var(--default-color);color:#fff;text-shadow:none;}
+        a{transition:color .25s;outline:0 none;color:var(--default-link-color);-webkit-text-decoration:var(--default-link-text-decoration);text-decoration:var(--default-link-text-decoration);}
+        a:hover{color:var(--default-link-hover-color);}
+        a svg{color:var(--default-color);}
+        svg:not(:root){overflow:hidden;}
+        svg:focus{outline:unset;outline-style:unset;}
+        :focus-visible{outline:2px solid var(--accessible-outline-color);}
+        .u-type-label-small-semibold{font-size:14px;line-height:14px;font-family:Filson Pro,sans-serif;font-weight:500;}
+        html[data-theme=legacy] .u-type-label-small-semibold{font-family:Averta,sans-serif;font-weight:700;}
+        /*! CSS Used from: https://d3ui957tjb5bqd.cloudfront.net/css/global_slim.css?768d1ea9cb */
+        p{font-size:14px;line-height:22px;margin:0 0 20px;}
+        @media screen and (max-width:767px){
+        .mobile-hidden{display:none!important;}
+        }
+        /*! CSS Used from: Embedded */
+        .btn[data-v-5e31f9cb]{display:inline-flex;position:relative;align-items:center;justify-content:center;width:var(--btn-width, initial);height:var(--btn-height);padding:0 var(--btn-padding, 24px);overflow:hidden;transition:.2s cubic-bezier(0.32, 0, 0.59, 0.03);transition-property:color,background-color,border-color;border:var(--btn-border-width, 2px) solid var(--btn-border-color);border-radius:var(--btn-border-radius);background-color:var(--btn-bg-color);color:var(--btn-text-color);font-family:var(--btn-font-family, var(--default-font-family));font-size:var(--btn-font-size, 16px);font-weight:var(--btn-font-weight, 600);text-decoration:none;cursor:pointer;}
+        .btn__inner[data-v-5e31f9cb]{display:flex;z-index:1;align-items:center;justify-content:center;}
+        .btn[data-v-5e31f9cb]:before{content:"";position:absolute;top:0;left:50%;width:160%;transform:translate(-50%, var(--btn-circle-y, -125%));transition:1.6s cubic-bezier(0.25, 1, 0.5, 1);border-radius:999999999999px;background-color:var(--btn-bg-color-hover, var(--btn-text-color));pointer-events:none;aspect-ratio:1;}
+        @media (hover: hover){
+        .btn[data-v-5e31f9cb]:hover:not([disabled]){border-color:var(--btn-border-color-hover, var(--btn-border-color));background-color:var(--btn-bg-color-hover, var(--btn-text-color));color:var(--btn-text-color-hover, var(--btn-bg-color));}
+        }
+        .btn--secondary[data-v-5e31f9cb]{--btn-bg-color:#ffffff;--btn-text-color:#121314;--btn-border-color:#121314;}
+        html[data-theme=legacy] .btn--secondary[data-v-5e31f9cb]{--btn-text-color:#088178;--btn-text-color-hover:#003a37;--btn-border-color:#088178;--btn-border-color-hover:#088178;--btn-bg-color-hover:#dff8f6;}
+        .btn--small[data-v-5e31f9cb]{--btn-height:32px;--btn-font-size:14px;--btn-padding:12px;}
+        /*! CSS Used from: Embedded */
+        .site-banner[data-v-f3f1b72a]{display:flex;position:relative;align-items:center;justify-content:center;padding:12px 24px;background-color:var(--site-banner-bg-color);text-align:center;}
+        .site-banner--cyber[data-v-f3f1b72a]{background-color:#ffd8ea;}
+        html[data-theme=legacy] .site-banner--cyber .btn--secondary[data-v-f3f1b72a]{--btn-text-color:#e070af;--btn-text-color-hover:#da60a5;--btn-border-color:#e070af;--btn-border-color-hover:#e070af;--btn-bg-color-hover:#fbf4f6;}
+        .site-banner__content[data-v-f3f1b72a]{font-size:14px;line-height:14px;font-family:Filson Pro, sans-serif;font-weight:400;display:-webkit-box;max-width:280px;margin-bottom:0;overflow:hidden;text-overflow:ellipsis;-webkit-line-clamp:3;-webkit-box-orient:vertical;}
+        html[data-theme=legacy] .site-banner__content[data-v-f3f1b72a]{font-family:Averta, sans-serif;font-weight:normal;}
+        @media (min-width: 768px){
+        .site-banner__content[data-v-f3f1b72a]{font-size:16px;line-height:28px;font-family:Filson Pro, sans-serif;font-weight:600;max-width:600px;}
+        html[data-theme=legacy] .site-banner__content[data-v-f3f1b72a]{font-family:AvertaBold, sans-serif;font-weight:normal;}
+        }
+        @media (min-width: 1024px){
+        .site-banner__content[data-v-f3f1b72a]{font-size:16px;line-height:28px;font-family:Filson Pro, sans-serif;font-weight:600;max-width:unset;}
+        html[data-theme=legacy] .site-banner__content[data-v-f3f1b72a]{font-family:AvertaBold, sans-serif;font-weight:normal;}
+        }
+        @media (min-width: 1024px){
+        .site-banner__text[data-v-f3f1b72a]{margin-right:20px;}
+        }
+        .site-banner__link[data-v-f3f1b72a]{text-decoration:underline;}
+        @media (min-width: 768px){
+        .site-banner__link[data-v-f3f1b72a]{font-size:16px;line-height:28px;font-family:Filson Pro, sans-serif;font-weight:600;}
+        html[data-theme=legacy] .site-banner__link[data-v-f3f1b72a]{font-family:AvertaBold, sans-serif;font-weight:normal;}
+        }
+        .site-banner__close-button[data-v-f3f1b72a]{position:absolute;top:50%;right:0%;margin-right:24px;transform:translate(0%, -50%);cursor:pointer;}
+        .site-banner__close-button[data-v-f3f1b72a]  svg{color:#121314;}
+        @media (min-width: 1024px){
+        .site-banner .large-screen-hidden[data-v-f3f1b72a]{display:none!important;}
+        }
+        @media (max-width: 1023px){
+        .site-banner .mobile-hidden[data-v-f3f1b72a]{display:none!important;}
+        }
+        /*! CSS Used from: Embedded */
+        .btn[data-v-5e31f9cb]{display:inline-flex;position:relative;align-items:center;justify-content:center;width:var(--btn-width, initial);height:var(--btn-height);padding:0 var(--btn-padding, 24px);overflow:hidden;transition:.2s cubic-bezier(0.32, 0, 0.59, 0.03);transition-property:color,background-color,border-color;border:var(--btn-border-width, 2px) solid var(--btn-border-color);border-radius:var(--btn-border-radius);background-color:var(--btn-bg-color);color:var(--btn-text-color);font-family:var(--btn-font-family, var(--default-font-family));font-size:var(--btn-font-size, 16px);font-weight:var(--btn-font-weight, 600);text-decoration:none;cursor:pointer;}
+        .btn__inner[data-v-5e31f9cb]{display:flex;z-index:1;align-items:center;justify-content:center;}
+        .btn[data-v-5e31f9cb]:before{content:"";position:absolute;top:0;left:50%;width:160%;transform:translate(-50%, var(--btn-circle-y, -125%));transition:1.6s cubic-bezier(0.25, 1, 0.5, 1);border-radius:999999999999px;background-color:var(--btn-bg-color-hover, var(--btn-text-color));pointer-events:none;aspect-ratio:1;}
+        @media (hover: hover){
+        .btn[data-v-5e31f9cb]:hover:not([disabled]){border-color:var(--btn-border-color-hover, var(--btn-border-color));background-color:var(--btn-bg-color-hover, var(--btn-text-color));color:var(--btn-text-color-hover, var(--btn-bg-color));}
+        }
+        .btn--secondary[data-v-5e31f9cb]{--btn-bg-color:#ffffff;--btn-text-color:#121314;--btn-border-color:#121314;}
+        html[data-theme=legacy] .btn--secondary[data-v-5e31f9cb]{--btn-text-color:#088178;--btn-text-color-hover:#003a37;--btn-border-color:#088178;--btn-border-color-hover:#088178;--btn-bg-color-hover:#dff8f6;}
+        .btn--small[data-v-5e31f9cb]{--btn-height:32px;--btn-font-size:14px;--btn-padding:12px;}
+
+    </style>
     
     <style>
         .autocomplete-results {
@@ -85,29 +154,42 @@
 
 <body>
     <header>
-        @if( \Route::currentRouteName() != "user.search" && $sale != null)
-        <div class="site-banner" data-v-f3f1b72a="" data-v-9440fe54="">
-            <p class="site-banner__content" data-v-f3f1b72a="">
-                <span class="site-banner__text" data-v-f3f1b72a="">
-                    {{ $sale['site_banner_txt'] }}
-                </span>
-                <a href="{{ route('user.search',['country'=>$country,'sale'=> 1, 'sort'=>'popular','utm_source'=>'banner']) }}" class="site-banner__link large-screen-hidden u-type-label-small" data-v-f3f1b72a="">
-                    {{ $sale['site_banner_btn'] }}
-                </a>
-                <a href="{{ route('user.search',['country'=>$country,'sale'=> 1, 'sort'=>'popular','utm_source'=>'banner']) }}" class="mobile-hidden btn btn--secondary btn--small btn--animated" data-v-5e31f9cb="" data-v-f3f1b72a="">
-                    <span class="btn__inner" data-v-5e31f9cb="">
-                        {{ $sale['site_banner_btn'] }}
-                    </span>
-                </a>
-            </p>
-            <a data-test-close="" class="site-banner__close-button" data-v-f3f1b72a="">
-                <span data-v-f3f1b72a="">
-                    <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor" xmlns="http://www.w3.org/2000/svg" svg-inline="" role="presentation" focusable="false" tabindex="-1">
-                        <path d="M1.563 10.688l9.374-9.376M10.938 10.688L1.562 1.312" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                    </svg>
-                </span>
-            </a>
-        </div>
+        @if( $sale != null && $sale['status'] > 0)
+            @php
+                // Convert sale_ends_at to a Carbon instance for easy comparison
+                $saleEndsAt = \Carbon\Carbon::parse( $sale['sale_ends_at'] );
+
+                // Check if the current date is before the sale ends
+                $isNotExpired = now()->lte($saleEndsAt);
+
+                // Check if the status is equal to 1
+                $isActive = $sale['status'] == 1;
+            
+            @endphp
+            @if($isActive && $isNotExpired)
+                <div class="site-banner" data-v-f3f1b72a="" data-v-9440fe54="">
+                    <p class="site-banner__content" data-v-f3f1b72a="">
+                        <span class="site-banner__text" data-v-f3f1b72a="">
+                            {{ $sale['site_banner_txt'] }}
+                        </span>
+                        <a href="{{ route('user.search',['country'=>$country,'sale'=> 1, 'sort'=>'popular','utm_source'=>'banner']) }}" class="site-banner__link large-screen-hidden u-type-label-small" data-v-f3f1b72a="">
+                            {{ $sale['site_banner_btn'] }}
+                        </a>
+                        <a href="{{ route('user.search',['country'=>$country,'sale'=> 1, 'sort'=>'popular','utm_source'=>'banner']) }}" class="mobile-hidden btn btn--secondary btn--small btn--animated" data-v-5e31f9cb="" data-v-f3f1b72a="">
+                            <span class="btn__inner" data-v-5e31f9cb="">
+                                {{ $sale['site_banner_btn'] }}
+                            </span>
+                        </a>
+                    </p>
+                    <a data-test-close="" class="site-banner__close-button" data-v-f3f1b72a="">
+                        <span data-v-f3f1b72a="">
+                            <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor" xmlns="http://www.w3.org/2000/svg" svg-inline="" role="presentation" focusable="false" tabindex="-1">
+                                <path d="M1.563 10.688l9.374-9.376M10.938 10.688L1.562 1.312" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                            </svg>
+                        </span>
+                    </a>
+                </div>
+            @endif
         @endif
         <nav class="navbar -nomargin" id="nav">
             <div class="logo-container">

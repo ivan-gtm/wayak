@@ -251,7 +251,6 @@ class ContentController extends Controller
         ]);
     }
 
-
     public function showCreatePage($country)
     {
         return view('content.create', []);
@@ -347,8 +346,7 @@ class ContentController extends Controller
         }
 
         // echo "<pre>";
-        // print_r($template->localizedTitle['es']);
-        // print_r($template->keywords['es']);
+        // print_r($sale);
         // exit;
 
         return view('content.product-detail', [
@@ -357,7 +355,7 @@ class ContentController extends Controller
             'language_code' => $locale,
             'search_query' => $search_query,
             'menu' => $menu,
-            'sale' => $sale,
+            'sale' => $sale, // campaignDetails
             'breadcrumbs' => $this->bread_array,
             'breadcrumb' => $breadcrumbs_obj,
             'template' => $template,
@@ -392,6 +390,7 @@ class ContentController extends Controller
                 'width',
                 'updatedAt'
             ]);
+
         return $template;
     }
 
