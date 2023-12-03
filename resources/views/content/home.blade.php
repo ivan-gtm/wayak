@@ -6,6 +6,7 @@
     <meta name="description" content="{{ __('home.meta_description') }}" />
     <meta name="title" content="{{ __('home.meta_title') }}" />
     <meta name="keywords" content="{{ __('home.meta_keywords') }}" />
+    <link type="text/css" rel="stylesheet" href="{{ asset('assets/css/home.css') }}" media="all" preload>
     <style>
         .category.slider .sliderMask .sliderContent .slider-item {
             color: #303538;
@@ -259,39 +260,4 @@
     });
 </script>
 
-<script>
-function updateAnchorTags() {
-    // Check if localStorage contains the key "customerId"
-    if (localStorage.getItem('customerId')) {
-        // Get userId from localStorage
-        let userId = localStorage.getItem('customerId');
-
-        // Select all the relevant anchor tags
-        let anchors = document.querySelectorAll('a');
-
-        // Loop through each anchor tag and modify the href attribute
-        anchors.forEach(anchor => {
-            let href = anchor.getAttribute('href');
-            // Check if href is not null and then modify it
-            if (href) {
-                // Check if the URL already has parameters
-                if (href.includes('?')) {
-                    // If yes, append the userId with an ampersand
-                    href += `&userId=${userId}`;
-                } else {
-                    // If no, append the userId with a question mark
-                    href += `?userId=${userId}`;
-                }
-                // Set the modified href back on the anchor tag
-                anchor.setAttribute('href', href);
-            }
-        });
-    }
-}
-
-
-// Ensure the function is called once the page is fully loaded
-window.onload = updateAnchorTags;
-
-</script>
 @endsection

@@ -16,8 +16,9 @@
 <meta name="product-id" content="{{ $template->_id }}">
 <meta name="csrf-token" content="{{ csrf_token() }}" />
 
-<link rel="stylesheet" href="{{ asset('assets/css/product.css') }}">
-<link rel="stylesheet" href="{{ asset('assets/css/search.css') }}">
+<link type="text/css" rel="stylesheet" href="{{ asset('assets/css/product.css') }}" media="all" preload>
+<link type="text/css" rel="stylesheet" href="{{ asset('assets/css/search.css') }}" media="all">
+
 @endsection
 
 @section('css')
@@ -167,7 +168,7 @@
 
 @section('content')
 <!-- Trigger button -->
-<button id="showModalBtn">Login</button>
+<button style="display: none;" id="showModalBtn">Login</button>
 
 <!-- The Modal -->
 <div id="loginModal" class="modal">
@@ -303,7 +304,6 @@
                                         <div class="wt-display-flex-xs wt-align-items-center">
                                             <p class="wt-text-body-01">
                                                 <a class="wt-text-link-no-underline"
-                                                    href="https://www.etsy.com/shop/paperandinkdesignco?ref=simple-shop-header-name&amp;listing_id=1199031261"
                                                     aria-label="View more products from store owner paperandinkdesignco">
                                                     <span aria-hidden="true">
                                                         paperandinkdesignco
@@ -314,21 +314,15 @@
                                             <div data-action="follow-shop-button-container"
                                                 class="wt-display-flex-xs wt-align-items-center">
                                                 <input type="hidden" class="id" name="user_id" value="16374284">
-                                                <a href="https://www.etsy.com/signin?workflow=ZmF2b3JpdGVfdXNlcl9pZDoxNjM3NDI4NDoxNjc3NDQ0OTg2OjExN2I0MjY0MmNiNTMxMDUzN2ExYWUxZTM1MGEwMmI5&amp;use_follow_text=1&amp;from_page=https%3A%2F%2Fwww.etsy.com%2Flisting%2F1199031261%2Fmermaid-birthday-invitation-template%3Fga_order%3Dmost_relevant%26ga_search_type%3Dall%26ga_view_type%3Dgallery%26ga_search_query%3Dwatercolor%26ref%3Dsc_gallery-1-4%26sts%3D1%26plkey%3D9934cad6cf0b948daaa1e643ff8a63600ce14767%253A1199031261"
-                                                    rel="16374284" data-downtime-overlay-type="favorite"
-                                                    data-supplemental-state--use_follow_text="true"
-                                                    class="inline-overlay-trigger favorite-shop-action wt-btn wt-btn--small wt-btn--transparent follow-shop-button-listing-header-v3"
-                                                    aria-label="Follow shop" data-action="follow-shop-button"
-                                                    data-shop-id="9116151" data-source-name="listing_header"
-                                                    data-module-name="">
-                                                    <span class="etsy-icon wt-icon--smaller"
-                                                        data-not-following-icon=""><svg
-                                                            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                                <a rel="16374284" class="inline-overlay-trigger favorite-shop-action wt-btn wt-btn--small wt-btn--transparent follow-shop-button-listing-header-v3">
+                                                    <span class="etsy-icon wt-icon--smaller" data-not-following-icon="">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
                                                             aria-hidden="true" focusable="false">
                                                             <path
                                                                 d="M12,21C10.349,21,2,14.688,2,9,2,5.579,4.364,3,7.5,3A6.912,6.912,0,0,1,12,5.051,6.953,6.953,0,0,1,16.5,3C19.636,3,22,5.579,22,9,22,14.688,13.651,21,12,21ZM7.5,5C5.472,5,4,6.683,4,9c0,4.108,6.432,9.325,8,10,1.564-.657,8-5.832,8-10,0-2.317-1.472-4-3.5-4-1.979,0-3.7,2.105-3.721,2.127L11.991,8.1,11.216,7.12C11.186,7.083,9.5,5,7.5,5Z">
                                                             </path>
-                                                        </svg></span>
+                                                        </svg>
+                                                    </span>
                                                     <span
                                                         class="etsy-icon wt-icon--smaller wt-display-none wt-text-brick"
                                                         data-following-icon=""><svg xmlns="http://www.w3.org/2000/svg"
@@ -341,7 +335,6 @@
                                                         class="wt-ml-xs-1 listing-header-v3-message wt-display-inline-block wt-position-relative wt-display-none ">Following</span>
                                                     <span data-not-following-message=""
                                                         class="wt-ml-xs-1 listing-header-v3-message wt-display-inline-block wt-position-relative ">Follow</span>
-
                                                 </a>
                                             </div>
                                         </div>
@@ -907,6 +900,41 @@
 </script>
 
 <script>
+    function toggleButtonOnLoad() {
+        // Get the templateId from the meta tag
+        let templateIdTag = document.querySelector('meta[name="product-id"]');
+        let templateId = templateIdTag ? templateIdTag.getAttribute('content') : null;
+
+        // Check if templateId is valid
+        if (templateId) {
+            // Retrieve the favorites from localStorage
+            let favorites = JSON.parse(localStorage.getItem('favorites')) || {};
+            // If the templateId is in favorites, toggle the button
+            if (favorites[templateId]) {
+                console.log("If the templateId is in favorites, toggle the button")
+                let favoriteButton = document.querySelector('.favorite-shop-action');
+                toggleFavorite(favoriteButton); // Assuming toggleFavorite is a function that toggles the state of the button
+            }
+        }
+    }
+
+    // // This function should be called on page load
+    // document.addEventListener('DOMContentLoaded', toggleButtonOnLoad);
+    
+    document.addEventListener('DOMContentLoaded', (event) => {
+        
+        // Get the favorite button element
+        let favoriteButton = document.querySelector('.favorite-shop-action');
+        // Add event listener for click event
+        favoriteButton.addEventListener('click', () => {
+            toggleFavorite(favoriteButton);
+        });
+        
+        toggleButtonOnLoad(favoriteButton);
+
+    });
+
+
     // Add to favorites
     function addToFavorites() {
         // Try to get customerId from¡ the meta tag
@@ -948,10 +976,16 @@
                             localStorage.setItem('loggedIn', false);
                             showAddedToFavoritesNotification();
                             // toggleFavoritesButton();
+                            let favoriteButton = document.querySelector('.favorite-shop-action');
+                            // toggleFavorite(favoriteButton);
 
                         } else if (response.ok) {
                             favorites[templateId] = new Date().toISOString();
                             localStorage.setItem('favorites', JSON.stringify(favorites));
+                            
+                            let favoriteButton = document.querySelector('.favorite-shop-action');
+                            // toggleFavorite(favoriteButton);
+                            
                             // showAddedToFavoritesNotification();
                         } else if (!response.ok) {
                             // Handle other errors
@@ -970,7 +1004,7 @@
             }
         }
     }
-
+    
     function showAddedToFavoritesNotification() {
         let notificationText = "This favorite won't last! Sign in or register to save items for more than 7 days. Do you want to";
         let actionButtonText = "Sign in";
@@ -978,27 +1012,6 @@
         let displayDuration = 10; // Display for 10 seconds
         displayNotification(notificationText, actionButtonText, actionURL, displayDuration);
     }
-
-    // // Check for pending favorites after login
-    // if (localStorage.getItem('redirectTo') && localStorage.getItem('pendingFavorite')) {
-    //     let templateId = localStorage.getItem('pendingFavorite');
-    //     let customerId = localStorage.getItem('customerId');
-    //     fetch("/favorite/add", {
-    //         method: "POST",
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //         },
-    //         body: JSON.stringify({
-    //             "template-id": templateId,
-    //             "customerId": customerId,
-    //             "collectionName": "default"
-    //         })
-    //     }).then(() => {
-    //         window.location.href = localStorage.getItem('redirectTo');
-    //         localStorage.removeItem('redirectTo');
-    //         localStorage.removeItem('pendingFavorite');
-    //     });
-    // }
 
     // Remove from favorites
     function removeFromFavorites() {
@@ -1052,16 +1065,6 @@
         }
 
     }
-
-    document.addEventListener('DOMContentLoaded', (event) => {
-        // Get the favorite button element
-        let favoriteButton = document.querySelector('.favorite-shop-action');
-
-        // Add event listener for click event
-        favoriteButton.addEventListener('click', () => {
-            toggleFavorite(favoriteButton);
-        });
-    });
 
     function toggleFavorite(button) {
         // Toggle the 'favorited' class on the button

@@ -17,8 +17,6 @@ use League\ColorExtractor\Color;
 use League\ColorExtractor\ColorExtractor;
 use League\ColorExtractor\Palette;
 
-
-
 use App\Models\Template;
 use Storage;
 

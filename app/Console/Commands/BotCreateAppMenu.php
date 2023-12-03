@@ -79,7 +79,7 @@ class BotCreateAppMenu extends Command
             }
         }
 
-        foreach (['es','mx','co','ar','bo','ch','cu','do','sv','hn','ni', 'pe', 'uy', 've','py','pa','gt','pr','gq','us','ca','gb','gh','ke','lr','ng'] as $country) {
+        foreach (['us','ca','es','mx','co','ar','bo','ch','cu','do','sv','hn','ni','pe','uy','ve','py','pa','gt','pr','gq','fr','be','ch','mc','lu','bj','bf','bi','cm','cf','td','km','cg','cd','dj','gq','ga','gn','ci','mg','ml','ne','rw','sn','sc','tg','vu','ht','pt','br','ao','mz','cv','gw','st','tl','gq','mo'] as $country) {
             $menu['templates'] = self::sortByHits( $menu['templates'] );
             // print_r( $menu );
             // exit;

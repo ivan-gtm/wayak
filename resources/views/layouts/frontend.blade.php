@@ -12,14 +12,15 @@
     <link href="https://fonts.googleapis.com/css2?family=PT+Sans+Caption&display=swap" rel="stylesheet">
     <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous"> -->
     
-    <link type="text/css" rel="stylesheet" href="{{ asset('assets/css/menu.css') }}">
-    <link type="text/css" rel="stylesheet" href="{{ asset('assets/css/home.css') }}">
+    <link type="text/css" rel="stylesheet" href="{{ asset('assets/css/menu.css') }}" media="all">
+    
     
     <meta name="customer-id" content="{{ $customer_id }}">
     @yield('css')
 
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-FQVV2SLQED"></script>
+    
     <script>
         window.dataLayer = window.dataLayer || [];
 
@@ -319,7 +320,7 @@
                             </li>
                             <li data-favorites-nav-container="">
                                 <span class="wt-tooltip wt-tooltip--disabled-touch" data-wt-tooltip="">
-                                    <a href="https://www.etsy.com/guest/favorites?ref=hdr-fav"
+                                    <a href="{{ route('user.favorites',['country'=>$country]) }}"
                                         class="wt-tooltip__trigger wt-tooltip__trigger--icon-only wt-btn wt-btn--transparent wt-btn--icon reduced-margin-xs header-button"
                                         data-favorites-nav-link="" aria-labelledby="ge-tooltip-label-favorites">
 
@@ -335,7 +336,7 @@
                                         data-favorites-label-tooltip="">Favorites</span>
                                 </span>
                             </li>
-                            <li>
+                            <li style="display: none;">
                                 <span class="wt-tooltip wt-tooltip--bottom-left wt-tooltip--disabled-touch"
                                     data-wt-tooltip="" data-header-cart-button="">
                                     <a data-header-cart-nav-anchor="" aria-label="Cart"
@@ -381,8 +382,44 @@
             window.location.href = logoutUrl;
         }
     </script>
+
+<script>
+
+function updateAnchorTags() {
+    // Check if localStorage contains the key "customerId"
+    if (localStorage.getItem('customerId')) {
+        // Get userId from localStorage
+        let userId = localStorage.getItem('customerId');
+
+        // Select all the relevant anchor tags
+        let anchors = document.querySelectorAll('a');
+
+        // Loop through each anchor tag and modify the href attribute
+        anchors.forEach(anchor => {
+            let href = anchor.getAttribute('href');
+            // Check if href is not null and then modify it
+            if (href) {
+                // Check if the URL already has parameters
+                if (href.includes('?')) {
+                    // If yes, append the userId with an ampersand
+                    href += `&userId=${userId}`;
+                } else {
+                    // If no, append the userId with a question mark
+                    href += `?userId=${userId}`;
+                }
+                // Set the modified href back on the anchor tag
+                anchor.setAttribute('href', href);
+            }
+        });
+    }
+}
+
+// // Ensure the function is called once the page is fully loaded
+window.onload = updateAnchorTags;
+
+</script>
     
-    <script>
+<script>
         
         // Debounce function: Ensures that the given function is not called until after the specified time has elapsed since the last time it was called
         function debounce(func, delay) {
