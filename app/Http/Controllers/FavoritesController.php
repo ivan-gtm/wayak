@@ -3,18 +3,100 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Redis;
-use Illuminate\Support\Facades\Log;
-
-
-use App\Models\User;
+use App\Traits\LocaleTrait;
 use App\Models\Template;
-use Exception;
-
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class FavoritesController extends Controller
 {
+    use LocaleTrait;
+
+    function showFavorites($country, Request $request){
+        // $this->getFavorites();
+        // $country = 'us';
+        $validator = Validator::make($request->all(), [
+            'userId' => 'required|string|alpha_num|min:10|max:10', // Assuming clientId is between 8 and 20 characters
+        ]);
+
+        if ($validator->fails()) {
+            // return response()->json(['errors' => $validator->errors()], 422);
+            abort(404);
+        }
+
+        $locale = $this->getLocaleByCountry($country);
+        App::setLocale($locale);
+
+        $menu = json_decode(Redis::get('wayak:' . $country . ':menu'));
+        $sale = Redis::hgetall('wayak:' . $country . ':config:sales');
+
+        $user = Auth::user();
+        if($user){
+            $customerId = $user->customer_id;
+        } elseif(isset($request->userId)) {
+            $customerId = $request->userId;
+        } else {
+            abort(404);
+        }
+
+        $collections = Redis::keys('wayak:user:favorites:' . $customerId . ':*');
+        $favorites = [];
+
+        foreach ($collections as $collection) {
+            // $favorites[$collection] = Redis::smembers($collection);
+            $favorites = array_merge( Redis::smembers($collection) ,$favorites);
+        }
+        
+        $page = $request->input('page', 1);
+        $templates = [];
+        $last_page = 0;
+        if(sizeof($favorites) > 0){
+            $per_page = 100;
+            $skip = $per_page * ($page - 1);
+            $category_products = Template::whereIn('_id', $favorites)
+                ->skip($skip)
+                ->take($per_page)
+                ->get([
+                    '_id',
+                    'title',
+                    'slug',
+                    'previewImageUrls',
+                    'studioName',
+                    'prices'
+                ]);
+    
+            $templates = [];
+            foreach ($category_products as $template) {
+                $template->preview_image = App::environment() == 'local'
+                    ? asset('design/template/' . $template->_id . '/thumbnails/' . $locale . '/' . $template->previewImageUrls["carousel"])
+                    : Storage::disk('s3')->url('design/template/' . $template->_id . '/thumbnails/' . $locale . '/' . $template->previewImageUrls["carousel"]);
+    
+                $templates[] = $template;
+            }
+    
+            $total_documents = Template::whereIn('_id', ['gmnftcCJWK'])->count();
+            $last_page = ceil($total_documents / $per_page);
+        }
+                
+        return view('auth.user.wishlist2', [
+            'menu' => $menu,
+            'sale' => $sale,
+            'customer_id' => $customerId,
+            'templates' => $templates,
+            'country' => $country,
+            'search_query' => '',
+            'current_page' => $page,
+            'pagination_begin' => max($page - 4, 1),
+            'pagination_end' => min($page + 4, $last_page),
+            'first_page' => 1,
+            'last_page' => $last_page,
+            'templates' => $templates,
+            'current_url' => url()->current()
+        ]);
+    }
+
     public function addFavorite(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -31,37 +113,7 @@ class FavoritesController extends Controller
         $customerId = $request->input('customerId');
         $collectionName = $request->input('collectionName', 'default');  // Default to 'default' if collectionName is not provided
 
-        // return response()->json(['status' => 'success']);
-
-        // Check if the customer exists
-        if (!User::where('customer_id', $customerId)->exists()) {
-            return response()->json(['error' => 'Customer does not exist.'], 404);
-        }
-
-        // Check if the product exists
-        if (!Template::where('_id', $productID)->exists()) {
-            return response()->json(['error' => 'Product does not exist.'], 404);
-        }
-
-        // Generate the Redis key
-        $redisKey = 'wayak:user:favorites:' . $customerId . ':' . $collectionName;
-
-        try {
-            // Check if the Redis key exists
-            if (!Redis::exists($redisKey)) {
-                return response()->json(['error' => 'The favorite list does not exist.'], 404);
-            }
-
-            // Add the product to the favorites set
-            Redis::sadd('wayak:user:favorites:' . $customerId . ':' . $collectionName, $productID);
-
-        } catch (Exception $e) {
-            // Log the error message
-            Log::error('Redis connection error: ' . $e->getMessage());
-
-            // Return a response indicating that there was a server error
-            return response()->json(['error' => 'Got an error getting favorites.'], 500);
-        }
+        Redis::sadd('wayak:user:favorites:' . $customerId . ':' . $collectionName, $productID);
 
         return response()->json(['status' => 'success']);
     }
@@ -83,7 +135,7 @@ class FavoritesController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'template-id' => 'required|string|alpha_num|size:10', // Assuming template-id is always 10 characters long
-            'customerId' => 'required|string|alpha_num|min:8|max:20', // Assuming clientId is between 8 and 20 characters
+            'customerId' => 'required|string|alpha_num|min:10|max:10', // Assuming clientId is between 8 and 20 characters
             'collectionId' => 'nullable|string|alpha_dash|max:255', // Assuming collectionId can have alphabets, numbers, dashes and underscores
         ]);
 
@@ -92,56 +144,28 @@ class FavoritesController extends Controller
         }
 
         $productID = $request->input('template-id');
-        $customerId = $request->input('customerId');
+        $clientId = $request->input('customerId');
         $collectionId = $request->input('collectionId', 'default');  // Default to 'default' if collectionId is not provided
-
-        // Check if the customer exists
-        if (!User::where('customer_id', $customerId)->exists()) {
-            return response()->json(['error' => 'Customer does not exist.'], 404);
-        }
-
-        // Check if the product exists
-        if (!Template::where('_id', $productID)->exists()) {
-            return response()->json(['error' => 'Product does not exist.'], 404);
-        }
-
-        // Generate the Redis key
-        $redisKey = 'wayak:user:favorites:' . $customerId . ':' . $collectionId;
-
-        try {
-            // Check if the Redis key exists
-            if (!Redis::exists($redisKey)) {
-                return response()->json(['error' => 'The favorite list does not exist.'], 404);
-            }
-
-            // Remove the product from the favorites set
-            Redis::srem($redisKey, $productID);
-
-        } catch (Exception $e) {
-            // Log the error message
-            Log::error('Redis connection error: ' . $e->getMessage());
-
-            // Return a response indicating that there was a server error
-            return response()->json(['error' => 'Got an error getting favorites.'], 500);
-        }
+        $redisKey = 'wayak:user:favorites:' . $clientId . ':' . $collectionId;
+        // echo $redisKey.'<br>';
+        Redis::srem($redisKey, $productID);
 
         return response()->json(['status' => 'success']);
     }
 
+    // public function getFavorites(Request $request)
+    // {
+    //     $clientId = $request->input('clientId');
 
-    public function getFavorites(Request $request)
-    {
-        $clientId = $request->input('clientId');
+    //     $collections = Redis::keys('wayak:user:favorites:' . $clientId . ':*');
+    //     $favorites = [];
 
-        $collections = Redis::keys('wayak:user:favorites:' . $clientId . ':*');
-        $favorites = [];
+    //     foreach ($collections as $collection) {
+    //         $favorites[$collection] = Redis::smembers($collection);
+    //     }
 
-        foreach ($collections as $collection) {
-            $favorites[$collection] = Redis::smembers($collection);
-        }
-
-        return response()->json(['favorites' => $favorites]);
-    }
+    //     return response()->json(['favorites' => $favorites]);
+    // }
 
     public function manageCollection(Request $request)
     {

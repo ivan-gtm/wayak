@@ -21,9 +21,9 @@ class AIUpdateTemplateMetadataGPT extends Command
 
     public function handle()
     {
-        $this->info('Fetching up to 100 completed templates...');
+        $this->info('Fetching up to 200 completed templates...');
         // Exclude templates that have status 'failed'
-        $templates = Template::where('status', 'completed')->take(100)->get();
+        $templates = Template::where('status', 'completed')->take(200)->get();
 
         if ($templates->isEmpty()) {
             $this->info('No templates found to update.');

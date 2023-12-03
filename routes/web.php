@@ -15,10 +15,8 @@ use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\FavoritesController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AutocompleteController;
-use App\Http\Controllers\WishlistController;
 
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\AdminSaleController;
 use App\Http\Controllers\SalesManagerController;
 
 use App\Http\Controllers\greenController;
@@ -92,9 +90,11 @@ Route::prefix('admin')->middleware('auth')->group(function () {
             Route::get('', [AdminController::class, 'adminHome'])->name('admin.home');
             // Route::get('/orders', [AdminController::class, 'orders'])->name('admin.orders');
 
+        // CAMPAING / SALES 
+            Route::get('/campaign', [SalesManagerController::class, 'createCampaing'])->name('admin.create.campaing');
+
         // CATEGORIES
             Route::get('/categories', [CategoryController::class, 'manage'])->name('admin.category.manage');
-            Route::get('/campaign', [AdminSaleController::class, 'createCampaing'])->name('admin.create.campaing');
             Route::get('/categories/translate/{from}/{to}', [CategoryController::class, 'translateCategory'])->name('admin.category.translate');
             
         // TEMPORAL
@@ -215,9 +215,6 @@ Route::prefix('in-develop')->group(function () {
     Route::get('/{country}/user/cart', [UserController::class, 'showCart']); // beta
     Route::get('/{country}/user/checkout', [UserController::class, 'showCheckout']); // beta
     
-    // Get all favorites for a client
-    Route::get('/{country}/user/favorites/{clientId}', [FavoritesController::class, 'getFavorites']); // beta
-
     // Manage collections (create or delete)
     Route::post('/{country}/user/favorites/collection/manage', [FavoritesController::class, 'manageCollection']); // beta
 
@@ -248,6 +245,8 @@ Route::group(['middleware' => ['guest']], function() {
 });
 
 // FAVORITES
+// Get all favorites for a client
+Route::get('/{country}/user/favorites', [FavoritesController::class, 'showFavorites'])->name('user.favorites'); // beta
 Route::prefix('favorites')->group(function () {
     // Add favorite
     Route::post('/add', [FavoritesController::class, 'addFavorite']);
@@ -264,8 +263,6 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('/{country}/user/history/remove-product', [ProductHistoryController::class, 'removeProductFromHistory']);
     Route::get('/{country}/user/history/browsing', [ProductHistoryController::class, 'showBrowsingHistory']);
     Route::get('/{country}/user/history/search', [ProductHistoryController::class, 'showSearchHistory']);
-
-    Route::get('/{country}/user/wishlist', [WishlistController::class, 'showWishlist']);
     Route::get('/{country}/user/account', [UserController::class, 'showAccount']); 
 });
 

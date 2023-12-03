@@ -961,7 +961,7 @@
                         body: JSON.stringify({
                             "template-id": templateId,
                             "customerId": customerId,
-                            "collectionName": "default" // TODO: Implement collection selection
+                            "collectionId": "default" // TODO: Implement collection selection
                         })
                     })
                     .then(response => {
@@ -1046,7 +1046,7 @@
                 body: JSON.stringify({
                     "template-id": templateId,
                     "customerId": customerId,
-                    "collectionName": "default" // Assuming default collection for this example
+                    "collectionId": "default" // Assuming default collection for this example
                 })
             }).then(response => {
                 if (response.status === 200) {

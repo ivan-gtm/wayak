@@ -1,7 +1,7 @@
 @extends('layouts.frontend')
 
 @section('meta')
-    <link rel="stylesheet" href="{{ asset('assets/css/search.css') }}">
+    <link type="text/css" rel="stylesheet" href="{{ asset('assets/css/search.css') }}" media="all">
 @endsection
 
 @section('content')
@@ -12,21 +12,31 @@
                 <header class="SJ5W7Cap">
                     <div class="ufwFRNuO">
                         <div class="iiyeEkHc">
-                            <div class="qJyzQBny">
-                                <ul class="T5vuSnA9" role="navigation" aria-label="Breadcrumbs" data-test-selector="breadcrumbs-list">
-                                    
-                                    <li class="M5DAz63W" data-test-selector="breadcrumbs-list-item">
-                                        <a class="TDnT_QDN" href="{{ url('/'.$country) }}">{{ __('product.home') }}</a>
-                                    </li>
-                                    
-                                </ul>
-                            </div>
+                            @if(!Auth::guest())
+                                <div class="qJyzQBny">
+                                    <ul class="T5vuSnA9" role="navigation" aria-label="Breadcrumbs" data-test-selector="breadcrumbs-list">
+                                        <li class="M5DAz63W" data-test-selector="breadcrumbs-list-item">
+                                            <a class="TDnT_QDN" href="{{ url('/'.$country.'/profile') }}">User</a>
+                                        </li>
+                                        <li class="M5DAz63W" data-test-selector="breadcrumbs-list-item">
+                                            <a class="TDnT_QDN" href="{{ url('/'.$country.'/user/favorites') }}">Favorite items</a>
+                                        </li>
+                                        
+                                    </ul>
+                                </div>
+                            @endif
                             <div class="hILQ5O1m">
-                                <h1 class="r9m1sI3F">{{ 'sdasds' }}</h1>
-                                {{-- <aside class="kb2fhv7t">
-                                    <h2 class="gxUHa9Js"><span class="mIDWdUGM" data-test-selector="top-article-visible">Customizeable wireframe print
-                                            templates</span><br></h2>
-                                </aside> --}}
+                                <h1 class="r9m1sI3F">Favorite items</h1>
+                                @if(Auth::guest())
+                                <aside class="kb2fhv7t">
+                                    <h2 class="gxUHa9Js">
+                                        <span class="mIDWdUGM" data-test-selector="top-article-visible">
+                                            Don't lose your faves! <a href="{{ url('/login') }}"><button>Sign in</button></a> or create an account.
+                                            Guest favorites are only saved to your device for 7 days, or until you clear your cache. <a href="{{ url('/login') }}"><button>Sign in</button></a> or create an account to hang on to your picks.
+                                        </span><br>
+                                    </h2>
+                                </aside>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -35,62 +45,8 @@
                     <section class="brjUfGeW CTPdOQUg">
                         <div class="M9td4zg0">
                             <div class="QLzW0Tal">
-                                {{-- <div class="Ocm_Mx1a">
-                                    <div class="FpTCNow5">
-                                        <div class="jF8YvPxc">
-                                            <div class="HyLWiDjH BiroUOAJ"><button class="bhgufQ6f" type="button"><svg class="f0hiXs2f C6Lv3KAO" tabindex="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 7 12" role="img" aria-label="Arrow left bold">
-                                                        <path d="M0.22 6.72001C0.0793078 6.57949 0.00017505 6.38885 0 6.19V5.81001C0.00230401 5.61159 0.0811163 5.42173 0.22 5.28L5.36 0.150005C5.45388 0.0553485 5.58168 0.00210571 5.715 0.00210571C5.84832 0.00210571 5.97612 0.0553485 6.07 0.150005L6.78 0.860005C6.87406 0.952168 6.92707 1.07832 6.92707 1.21C6.92707 1.34169 6.87406 1.46784 6.78 1.56L2.33 6L6.78 10.44C6.87466 10.5339 6.9279 10.6617 6.9279 10.795C6.9279 10.9283 6.87466 11.0561 6.78 11.15L6.07 11.85C5.97612 11.9447 5.84832 11.9979 5.715 11.9979C5.58168 11.9979 5.45388 11.9447 5.36 11.85L0.22 6.72001Z">
-                                                        </path>
-                                                    </svg></button></div>
-                                            <div class="lzjNLhdd"><button class="x_UP53cd icCCJwMz" type="button"><svg class="f0hiXs2f C6Lv3KAO" tabindex="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 7 12" role="img" aria-label="Arrow right bold">
-                                                        <path d="M6.78016 5.2801C6.92086 5.42061 6.99999 5.61125 7.00016 5.8101V6.1901C6.99786 6.38851 6.91905 6.57838 6.78016 6.7201L1.64017 11.8501C1.54628 11.9448 1.41848 11.998 1.28516 11.998C1.15185 11.998 1.02405 11.9448 0.930165 11.8501L0.220165 11.1401C0.126101 11.0479 0.0730934 10.9218 0.0730934 10.7901C0.0730934 10.6584 0.126101 10.5323 0.220165 10.4401L4.67017 6.0001L0.220165 1.5601C0.125509 1.46621 0.0722656 1.33842 0.0722656 1.2051C0.0722656 1.07178 0.125509 0.94398 0.220165 0.850096L0.930165 0.150096C1.02405 0.0554401 1.15185 0.00219727 1.28516 0.00219727C1.41848 0.00219727 1.54628 0.0554401 1.64017 0.150096L6.78016 5.2801Z">
-                                                        </path>
-                                                    </svg></button></div>
-                                            <div class="pjq8xm0j">
-                                                <div class="twAYSZt2">
-                                                    <div class="xPhOeJTI"><svg class="f0hiXs2f zsm934mk" tabindex="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" role="img" aria-label="Icon Star Outlined"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                <path d="M2.20143 9.85425C2.03248 9.73123 1.96025 9.51452 2.02161 9.31473L2.10153 9.06496C2.15996 8.86756 2.33563 8.72781 2.5411 8.71527L8.92493 8.20573L11.3726 2.32101C11.4547 2.11485 11.6607 1.98554 11.8821 2.00129H12.1418C12.3505 1.99687 12.539 2.12523 12.6114 2.32101L15.069 8.20573L21.4528 8.71527C21.6583 8.72781 21.8339 8.86756 21.8924 9.06496L21.9723 9.31473C22.0403 9.50821 21.9805 9.72355 21.8224 9.85425L17.0071 13.9905L18.4857 20.195C18.5344 20.3936 18.4596 20.6021 18.2959 20.7245L18.0061 20.8843C17.8371 20.9986 17.6157 20.9986 17.4467 20.8843L12.0119 17.5873L6.54723 20.9143C6.37823 21.0286 6.15676 21.0286 5.98777 20.9143L5.76798 20.7645C5.60419 20.642 5.52945 20.4335 5.57816 20.2349L7.01677 13.9905L2.20143 9.85425Z" fill="#505050"></path>
-                                                            </svg></svg>Trending:</div>
-                                                    <ul class="AGuHURAT">
-                                                        <li class="PNW7Som0"><a class="m58ZY2dp" href="/graphic-templates/graphic+design+portfolio+template"><img class="OyjilzK5" src="https://elements-cover-images.imgix.net/825854d1-a2d1-4a95-9794-54cf845e5e6e?crop=top&amp;fit=crop&amp;fm=jpeg&amp;h=40&amp;q=80&amp;w=60&amp;s=30e0682819f521fce3be8e8065b487fb" alt="graphic design portfolio template"><span class="K2M1i3S_">graphic design portfolio
-                                                                    template</span></a></li>
-                                                    </ul>
-                                                </div>
-                                                <div class="twAYSZt2">
-                                                    <div class="xPhOeJTI"><svg class="f0hiXs2f zsm934mk" tabindex="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" role="img" aria-label="Icon Heart"><svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                                                                <title>heart</title>
-                                                                <path d="M22,8.5A5.5,5.5,0,0,0,16.5,3,6.36,6.36,0,0,0,12,5.07,6.36,6.36,0,0,0,7.5,3,5.5,5.5,0,0,0,2,8.5C2,12.42,6.75,16.75,9,19l2.28,2.28a.75.75,0,0,0,.53.22h.38a.75.75,0,0,0,.53-.22L15,19C17.25,16.75,22,12.42,22,8.5Z" fill="#505050"></path>
-                                                            </svg></svg>Popular:</div>
-                                                    <ul class="AGuHURAT">
-                                                        <li class="PNW7Som0"><a class="m58ZY2dp" href="/graphic-templates/business+card"><img class="OyjilzK5" src="https://elements-cover-images.imgix.net/3b258d23-5126-4674-ac84-596955eb9ed5?crop=top&amp;fit=crop&amp;fm=jpeg&amp;h=40&amp;q=80&amp;w=60&amp;s=2e4af5429db79720235ecff96bf4117c" alt="business card"><span class="K2M1i3S_">business card</span></a></li>
-                                                        <li class="PNW7Som0"><a class="m58ZY2dp" href="/graphic-templates/logo"><img class="OyjilzK5" src="https://elements-cover-images.imgix.net/79f53511-6014-4e4d-a7a4-02711036ecc9?crop=top&amp;fit=crop&amp;fm=jpeg&amp;h=40&amp;q=80&amp;w=60&amp;s=cc0013b4106748b7811d9e9691d7388e" alt="logo"><span class="K2M1i3S_">logo</span></a></li>
-                                                        <li class="PNW7Som0"><a class="m58ZY2dp" href="/graphic-templates/flyer"><img class="OyjilzK5" src="https://elements-cover-images.imgix.net/f7eb16f4-e5bc-4412-ac6d-cd8bb25da55d?crop=top&amp;fit=crop&amp;fm=jpeg&amp;h=40&amp;q=80&amp;w=60&amp;s=27f1a55294b408e9be24dbf9f0344e2f" alt="flyer"><span class="K2M1i3S_">flyer</span></a></li>
-                                                        <li class="PNW7Som0"><a class="m58ZY2dp" href="/graphic-templates/brochure"><img class="OyjilzK5" src="https://elements-cover-images.imgix.net/934a1407-170c-41a1-a307-9a0325f68f79?crop=top&amp;fit=crop&amp;fm=jpeg&amp;h=40&amp;q=80&amp;w=60&amp;s=fb298a91ecff091bff5a1d6a5195dc6d" alt="brochure"><span class="K2M1i3S_">brochure</span></a></li>
-                                                        <li class="PNW7Som0"><a class="m58ZY2dp" href="/graphic-templates/logo+mockup"><img class="OyjilzK5" src="https://elements-cover-images.imgix.net/e32d3ae4-4c81-4603-a4c7-4b351072b13b?crop=top&amp;fit=crop&amp;fm=jpeg&amp;h=40&amp;q=80&amp;w=60&amp;s=3e46e03a37ac91ed6d272fbdc4ce1ba1" alt="logo mockup"><span class="K2M1i3S_">logo
-                                                                    mockup</span></a></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="SrnSv3qf">
-                                    <div>
-                                        <div class="LNTJGgij"></div>
-                                    </div>
-                                    <div class="WxjErMSd">
-                                        <div class="yByqVOIe"><select class="eLC5tHwk">
-                                                <option value="popular" aria-label="Popular">Sort by Popular
-                                                </option>
-                                                <option value="latest" aria-label="New">New</option>
-                                            </select><svg class="f0hiXs2f WEqlS_5G" tabindex="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 16" role="img" aria-label="Arrow down">
-                                                <path d="M24,1.9c0,0.4-0.1,0.8-0.4,1L13.2,15.2c-0.3,0.4-0.8,0.6-1.2,0.6s-0.9-0.2-1.2-0.6L0.4,2.9c-0.6-0.8-0.5-1.8,0.2-2.4 c0.4-0.3,0.7-0.4,1.1-0.4s0.9,0.2,1.1,0.6L12,11.5l9.1-10.7c0.3-0.3,0.7-0.6,1.1-0.6s0.9,0.1,1.2,0.4C23.8,1,24,1.4,24,1.9z">
-                                                </path>
-                                            </svg></div>
-                                    </div>
-                                </div> --}}
                                 <div class="">
-                                    <div class="grid-container">
+                                    <div class="search-grid-container">
                                         @foreach($templates as $template)
                                         <a href="{{ route( 'template.productDetail', [ 'country' => $country, 'slug' => $template->slug ] ) }}">
                                             <figure>
