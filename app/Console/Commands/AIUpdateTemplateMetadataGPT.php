@@ -23,7 +23,7 @@ class AIUpdateTemplateMetadataGPT extends Command
     {
         $this->info('Fetching up to 200 completed templates...');
         // Exclude templates that have status 'failed'
-        $templates = Template::where('status', 'completed')->take(200)->get();
+        $templates = Template::where('status', 'completed')->where('mainCategory','/invitations/baby-shower')->take(200)->get();
 
         if ($templates->isEmpty()) {
             $this->info('No templates found to update.');

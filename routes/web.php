@@ -91,7 +91,10 @@ Route::prefix('admin')->middleware('auth')->group(function () {
             // Route::get('/orders', [AdminController::class, 'orders'])->name('admin.orders');
 
         // CAMPAING / SALES 
-            Route::get('/campaign', [SalesManagerController::class, 'createCampaing'])->name('admin.create.campaing');
+        Route::get('/campaign', [SalesManagerController::class, 'createCampaing'])->name('admin.create.campaing');
+        
+        // AUTOCOMPLETE 
+            Route::get('/{country}/autocomplete/add-term', [AutocompleteController::class,'addTerm']);
 
         // CATEGORIES
             Route::get('/categories', [CategoryController::class, 'manage'])->name('admin.category.manage');
@@ -314,8 +317,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('/{country}/search', [SearchController::class, 'showSearchPage'])->name('user.search');
     
     // Autocompelte
-    Route::get('/terms', [AutocompleteController::class,'addTerm']);
-    Route::get('/search', [AutocompleteController::class,'search']);
+    Route::get('/{country}/autocomplete', [AutocompleteController::class,'search']);
     Route::get('/{country}/search/popular-searches', [AutocompleteController::class, 'getTopSearches']);
     
     // Navigation by category

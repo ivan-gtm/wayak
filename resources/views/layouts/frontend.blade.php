@@ -437,7 +437,7 @@
         // Function to fetch results from the server using AJAX
         function fetchData(query, callback) {
             const xhr = new XMLHttpRequest();
-            xhr.open('GET', `http://localhost:8001/search?prefix=${query}`, true);
+            xhr.open('GET', `/us/autocomplete?prefix=${query}`, true);
             xhr.onreadystatechange = function() {
                 if (this.readyState === 4 && this.status === 200) {
                     const results = JSON.parse(this.responseText);
