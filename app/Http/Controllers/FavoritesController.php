@@ -41,7 +41,7 @@ class FavoritesController extends Controller
             abort(404);
         }
 
-        $collections = Redis::keys('wayak:user:favorites:' . $customerId . ':*');
+        $collections = Redis::keys('wayak:user:' . $customerId . ':favorites:*');
         $favorites = [];
 
         foreach ($collections as $collection) {
@@ -113,17 +113,17 @@ class FavoritesController extends Controller
         $customerId = $request->input('customerId');
         $collectionName = $request->input('collectionName', 'default');  // Default to 'default' if collectionName is not provided
 
-        Redis::sadd('wayak:user:favorites:' . $customerId . ':' . $collectionName, $productID);
+        Redis::sadd('wayak:user:' . $customerId . ':favorites:' . $collectionName, $productID);
 
         return response()->json(['status' => 'success']);
     }
 
-    public function isFavorite($productID, $clientId, $collectionId = 'default')
+    public function isFavorite($productID, $customerId, $collectionId = 'default')
     {
         // Check in Redis
-        $isFavorite = Redis::sismember('wayak:user:favorites:' . $clientId . ':' . $collectionId, $productID);
+        $isFavorite = Redis::sismember('wayak:user:' . $customerId . ':favorites:' . $collectionId, $productID);
 
-        // echo 'wayak:user:favorites:' . $clientId . ':' . $collectionId;
+        // echo 'wayak:user:' . $customerId . ':favorites:' . $collectionId;
         // exit;
 
         // return response()->json(['isFavorite' => (bool) $isFavorite]);
@@ -144,9 +144,9 @@ class FavoritesController extends Controller
         }
 
         $productID = $request->input('template-id');
-        $clientId = $request->input('customerId');
+        $customerId = $request->input('customerId');
         $collectionId = $request->input('collectionId', 'default');  // Default to 'default' if collectionId is not provided
-        $redisKey = 'wayak:user:favorites:' . $clientId . ':' . $collectionId;
+        $redisKey = 'wayak:user:' . $customerId . ':favorites:' . $collectionId;
         // echo $redisKey.'<br>';
         Redis::srem($redisKey, $productID);
 
@@ -155,9 +155,9 @@ class FavoritesController extends Controller
 
     // public function getFavorites(Request $request)
     // {
-    //     $clientId = $request->input('clientId');
+    //     $customerId = $request->input('clientId');
 
-    //     $collections = Redis::keys('wayak:user:favorites:' . $clientId . ':*');
+    //     $collections = Redis::keys('wayak:user:' . $customerId . ':favorites:*');
     //     $favorites = [];
 
     //     foreach ($collections as $collection) {
@@ -171,17 +171,17 @@ class FavoritesController extends Controller
     {
         $action = $request->input('action'); // create or delete
         $collectionName = $request->input('collectionName');
-        $clientId = $request->input('clientId');
+        $customerId = $request->input('clientId');
 
         if ($action === 'create') {
             $collectionId = Redis::incr('collection_id_counter'); // Create a unique ID
             Redis::set('collection_names:' . $collectionId, $collectionName); // Save the name with the unique ID
-            Redis::sadd('wayak:user:favorites:' . $clientId . ':' . $collectionId, []); // Create the collection
+            Redis::sadd('wayak:user:' . $customerId . ':favorites:' . $collectionId, []); // Create the collection
 
             return response()->json(['status' => 'success', 'collectionId' => $collectionId, 'collectionName' => $collectionName]);
         } elseif ($action === 'delete') {
             $collectionId = $request->input('collectionId');
-            Redis::del('wayak:user:favorites:' . $clientId . ':' . $collectionId);
+            Redis::del('wayak:user:' . $customerId . ':favorites:' . $collectionId);
             Redis::del('collection_names:' . $collectionId);
 
             return response()->json(['status' => 'success']);
@@ -191,9 +191,9 @@ class FavoritesController extends Controller
     // Inside FavoritesController
     public function getCollections(Request $request)
     {
-        $clientId = $request->input('clientId');
+        $customerId = $request->input('clientId');
 
-        $collectionKeys = Redis::keys('wayak:user:favorites:' . $clientId . ':*');
+        $collectionKeys = Redis::keys('wayak:user:' . $customerId . ':favorites:*');
         $collections = [];
 
         foreach ($collectionKeys as $key) {

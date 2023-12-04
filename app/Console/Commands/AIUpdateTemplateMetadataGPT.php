@@ -45,9 +45,9 @@ class AIUpdateTemplateMetadataGPT extends Command
             $this->info('Sending request to external API for template ID: ' . $template->_id);
             $jsonResponse = self::fetchImageAnalysis($fileName);
             $GPTArray = self::extractContentJson($jsonResponse);
-            
+
             if (self::validateJsonStructure(json_encode($GPTArray)) == false) {
-                $this->error('JSON not valid: ' . $template->_id . ' due >>'. json_encode($GPTArray));
+                $this->error('JSON not valid: ' . $template->_id . ' due >>' . json_encode($GPTArray));
                 $template->status = 'failed';
                 $template->save();
                 $consecutiveFailures = $consecutiveFailures + 1;  // Increment consecutive failure counter
@@ -55,7 +55,7 @@ class AIUpdateTemplateMetadataGPT extends Command
             }
 
             // Print the response to console
-            $this->line('Response for template ID ' . $template->_id . '>>  ' . json_encode($GPTArray) );
+            $this->line('Response for template ID ' . $template->_id . '>>  ' . json_encode($GPTArray));
 
 
             // $responseData = $response->json();
@@ -141,42 +141,42 @@ class AIUpdateTemplateMetadataGPT extends Command
     private function fetchImageAnalysis($imageName)
     {
         // try {
-            $imageUrl = Storage::disk('s3')->url('design/template/' . $imageName);
-            $curl = curl_init();
-    
-            curl_setopt_array($curl, [
-                CURLOPT_URL => 'https://api.openai.com/v1/chat/completions',
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_ENCODING => '',
-                CURLOPT_MAXREDIRS => 10,
-                CURLOPT_TIMEOUT => 0,
-                CURLOPT_FOLLOWLOCATION => true,
-                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                CURLOPT_CUSTOMREQUEST => 'POST',
-                CURLOPT_POSTFIELDS => json_encode([
-                    'model' => 'gpt-4-vision-preview',
-                    'messages' => [
-                        [
-                            'role' => 'user',
-                            'content' => [
-                                ['type' => 'text', 'text' => 'Craft a JSON for an e-commerce engaging product ONLY with \'keywords\' (single-word +5 array) and \'localizedTitle\' as main keys, both in en, es, fr, pt, detailing event, occasion, colors, objects, animals, ensuring these elements are echoed both keys.'],
-                                ['type' => 'image_url', 'image_url' => ['url' => $imageUrl]]
-                            ]
+        $imageUrl = Storage::disk('s3')->url('design/template/' . $imageName);
+        $curl = curl_init();
+
+        curl_setopt_array($curl, [
+            CURLOPT_URL => 'https://api.openai.com/v1/chat/completions',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => json_encode([
+                'model' => 'gpt-4-vision-preview',
+                'messages' => [
+                    [
+                        'role' => 'user',
+                        'content' => [
+                            ['type' => 'text', 'text' => 'Craft a JSON for an e-commerce engaging product ONLY with \'keywords\' (single-word +5 array) and \'localizedTitle\' as main keys, both in en, es, fr, pt, detailing event, occasion, colors, objects, animals, ensuring these elements are echoed both keys.'],
+                            ['type' => 'image_url', 'image_url' => ['url' => $imageUrl]]
                         ]
-                    ],
-                    'max_tokens' => 300
-                ]),
-                CURLOPT_HTTPHEADER => [
-                    'Content-Type: application/json',
-                    'Authorization: Bearer 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',
+                    ]
                 ],
-            ]);
-    
-            $response = curl_exec($curl);
-    
-            curl_close($curl);
-            
-            return $response;
+                'max_tokens' => 300
+            ]),
+            CURLOPT_HTTPHEADER => [
+                'Content-Type: application/json',
+                'Authorization: Bearer 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',
+            ],
+        ]);
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+
+        return $response;
 
         // } catch (\Exception $e) {
         //     // Optionally log the error
@@ -186,47 +186,47 @@ class AIUpdateTemplateMetadataGPT extends Command
     }
 
     function validateJsonStructure($jsonString)
-{
-    $requiredKeys = ['keywords', 'localizedTitle'];
-    $requiredLangs = ['en', 'es', 'fr', 'pt'];
+    {
+        $requiredKeys = ['keywords', 'localizedTitle'];
+        $requiredLangs = ['en', 'es', 'fr', 'pt'];
 
-    try {
-        // Decode the JSON string.
-        $data = json_decode($jsonString, true);
+        try {
+            // Decode the JSON string.
+            $data = json_decode($jsonString, true);
 
-        // Check for JSON decoding errors.
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new \Exception('Invalid JSON format.');
-        }
-
-        // Validate required keys and their value types.
-        foreach ($requiredKeys as $key) {
-            if (!isset($data[$key])) {
-                throw new \Exception("Missing required key: $key");
+            // Check for JSON decoding errors.
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                throw new \Exception('Invalid JSON format.');
             }
 
-            foreach ($requiredLangs as $lang) {
-                if (!isset($data[$key][$lang])) {
-                    throw new \Exception("Missing $lang entry in $key");
+            // Validate required keys and their value types.
+            foreach ($requiredKeys as $key) {
+                if (!isset($data[$key])) {
+                    throw new \Exception("Missing required key: $key");
                 }
 
-                // Validate value types.
-                if ($key === 'keywords' && !is_array($data[$key][$lang])) {
-                    throw new \Exception("The $lang entry in $key should be an array.");
-                }
+                foreach ($requiredLangs as $lang) {
+                    if (!isset($data[$key][$lang])) {
+                        throw new \Exception("Missing $lang entry in $key");
+                    }
 
-                if ($key === 'localizedTitle' && !is_string($data[$key][$lang])) {
-                    throw new \Exception("The $lang entry in $key should be a string.");
+                    // Validate value types.
+                    if ($key === 'keywords' && !is_array($data[$key][$lang])) {
+                        throw new \Exception("The $lang entry in $key should be an array.");
+                    }
+
+                    if ($key === 'localizedTitle' && !is_string($data[$key][$lang])) {
+                        throw new \Exception("The $lang entry in $key should be a string.");
+                    }
                 }
             }
-        }
 
-        return true;
-    } catch (\Exception $e) {
-        // Handle the error as needed, e.g., log it or return false.
-        return false;
+            return true;
+        } catch (\Exception $e) {
+            // Handle the error as needed, e.g., log it or return false.
+            return false;
+        }
     }
-}
 
     function extractContentJson($jsonResponse)
     {

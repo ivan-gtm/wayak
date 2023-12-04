@@ -13,10 +13,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Auth;
 
-use League\ColorExtractor\Color;
-use League\ColorExtractor\ColorExtractor;
-use League\ColorExtractor\Palette;
-
 use App\Models\Template;
 use Storage;
 
@@ -313,19 +309,7 @@ class ContentController extends Controller
             $this->bread_array[$i]->url = url($country . '/templates' . $url);
         }
 
-        if (App::environment() == 'local') {
-            $thumb_path = public_path('design/template/' . $template->_id . '/thumbnails/' . $language_code . '/' . $template->previewImageUrls["product_preview"]);
-        } else {
-            $thumb_path = $preview_image;
-        }
-
-        $palette = Palette::fromFilename($thumb_path);
-        $extractor = new ColorExtractor($palette);
-        $colors = $extractor->extract(10);
-
-        for ($i = 0; $i < sizeof($colors); $i++) {
-            $colors[$i] = Color::fromIntToHex($colors[$i]);
-        }
+        $colors = $template->colors;
 
         $menu = json_decode(Redis::get('wayak:' . $country . ':menu'));
         $sale = Redis::hgetall('wayak:' . $country . ':config:sales');
@@ -372,6 +356,7 @@ class ContentController extends Controller
                 'categories',
                 'createdAt',
                 'format',
+                'colors',
                 'forSubscribers',
                 'height',
                 'preview_image',
