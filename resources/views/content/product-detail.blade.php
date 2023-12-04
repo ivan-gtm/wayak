@@ -236,402 +236,365 @@
                                             data-google-analytics-payload="{&quot;actionData&quot;:null,&quot;productsArray&quot;:[{&quot;id&quot;:29900946,&quot;name&quot;:&quot;Dj Flyer&quot;,&quot;brand&quot;:&quot;Hotpin&quot;,&quot;category&quot;:&quot;Wakay.net/print-templates/flyers/events&quot;,&quot;quantity&quot;:&quot;1&quot;}],&quot;timestamp&quot;:1611619309}"
                                             action="/cart/add/29900946" accept-charset="UTF-8" method="post"> -->
                                         <div id="listing-page-cart" >
-
                                             <div data-buy-box-region="price">
-                                    @if(isset($sale) && $sale != null )
-                                    <p class="wt-text-title-01 sale-ending-soon wt-mb-xs-1">
-                                        Sale ends in <span id="countdown"></span>
-                                    </p>
-                                    @endif
-                                    <div class="wt-display-flex-xs wt-align-items-center wt-justify-content-space-between">
-                                        <div class="wt-display-flex-xs wt-align-items-center wt-flex-wrap">
-                                            <p class="wt-text-title-03 wt-mr-xs-1">
-                                                <span class="wt-screen-reader-only">Price:</span>
-                                                <span>
-                                                    @if(isset($sale) && $sale != null )
-                                                    MX${{ $template->prices['price'] }}
-                                                    @else
-                                                    MX${{ $template->prices['original_price'] }}
-                                                    @endif
-                                                </span>
-                                            </p>
-                                            @if(isset($sale) && $sale != null )
-                                            <div class="wt-display-flex-xs wt-text-caption wt-text-gray">
-                                                <div class="wt-text-strikethrough wt-mr-xs-1">
-                                                    <span class="wt-screen-reader-only">Original Price:</span>
-                                                    MX${{ $template->prices['original_price'] }}
-                                                </div>
-                                                <div class="wt-mr-xs-1">
-                                                    ({{ $template->prices['discount_percent'] }}% Off)
-                                                </div>
-                                            </div>
-                                            @endif
-                                            <div class="wt-spinner wt-spinner--01 wt-display-none" aria-live="assertive"
-                                                data-buy-box-price-spinner="">
-                                                <span class="wt-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                                                        aria-hidden="true" focusable="false">
-                                                        <circle fill="transparent" cx="12" cy="12" r="10"></circle>
-                                                    </svg></span>
-                                                Loading
-                                            </div>
-
-                                        </div>
-                                        <div data-buy-box-region="stock_indicator">
-                                        </div>
-                                    </div>
-
-                                </div>
-
-                                <div data-buy-box-region="vat_messaging">
-                                    <div class="wt-text-gray wt-text-caption wt-pt-xs-1 wt-pb-xs-1">
-                                        VAT Included
-                                    </div>
-                                </div>
-
-                                <div class="wt-mb-xs-2">
-                                    <h1 class="wt-text-body-01 wt-line-height-tight wt-break-word wt-mt-xs-1"
-                                        data-buy-box-listing-title="true">
-                                        @if( isset($template->localizedTitle[$language_code]) )
-                                        {{ $template->localizedTitle[$language_code] }}
-                                        @else
-                                        {{ $template->title }}
-                                        @endif
-                                    </h1>
-                                </div>
-
-                                <div class="">
-                                    <div data-action="follow-shop-listing-header" class=" wt-mb-xs-1">
-                                        <div class="wt-display-flex-xs wt-align-items-center">
-                                            <p class="wt-text-body-01">
-                                                <a class="wt-text-link-no-underline"
-                                                    aria-label="View more products from store owner paperandinkdesignco">
-                                                    <span aria-hidden="true">
-                                                        paperandinkdesignco
-                                                    </span>
-                                                </a>
-                                            </p>
-
-                                            <div data-action="follow-shop-button-container"
-                                                class="wt-display-flex-xs wt-align-items-center">
-                                                <input type="hidden" class="id" name="user_id" value="16374284">
-                                                <a rel="16374284" class="inline-overlay-trigger favorite-shop-action wt-btn wt-btn--small wt-btn--transparent follow-shop-button-listing-header-v3">
-                                                    <span class="etsy-icon wt-icon--smaller" data-not-following-icon="">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                                                            aria-hidden="true" focusable="false">
-                                                            <path
-                                                                d="M12,21C10.349,21,2,14.688,2,9,2,5.579,4.364,3,7.5,3A6.912,6.912,0,0,1,12,5.051,6.953,6.953,0,0,1,16.5,3C19.636,3,22,5.579,22,9,22,14.688,13.651,21,12,21ZM7.5,5C5.472,5,4,6.683,4,9c0,4.108,6.432,9.325,8,10,1.564-.657,8-5.832,8-10,0-2.317-1.472-4-3.5-4-1.979,0-3.7,2.105-3.721,2.127L11.991,8.1,11.216,7.12C11.186,7.083,9.5,5,7.5,5Z">
-                                                            </path>
-                                                        </svg>
-                                                    </span>
-                                                    <span
-                                                        class="etsy-icon wt-icon--smaller wt-display-none wt-text-brick"
-                                                        data-following-icon=""><svg xmlns="http://www.w3.org/2000/svg"
-                                                            viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                                                            <path
-                                                                d="M16.5,3A6.953,6.953,0,0,0,12,5.051,6.912,6.912,0,0,0,7.5,3C4.364,3,2,5.579,2,9c0,5.688,8.349,12,10,12S22,14.688,22,9C22,5.579,19.636,3,16.5,3Z">
-                                                            </path>
-                                                        </svg></span>
-                                                    <span data-following-message=""
-                                                        class="wt-ml-xs-1 listing-header-v3-message wt-display-inline-block wt-position-relative wt-display-none ">Following</span>
-                                                    <span data-not-following-message=""
-                                                        class="wt-ml-xs-1 listing-header-v3-message wt-display-inline-block wt-position-relative ">Follow</span>
-                                                </a>
-                                            </div>
-                                        </div>
-
-                                        <div>
-                                            <div
-                                                class="wt-display-inline-flex-xs wt-align-items-center wt-flex-wrap wt-mb-xs-1">
-                                                <div class="wt-flex-basis-lg-full wt-flex-basis-xl-auto wt-mb-xs-1">
-                                                    <div class="star-seller-badge ">
-                                                        <div class="wt-popover star-seller-badge-listing-page wt-display-flex-xs"
-                                                            data-wt-popover="">
-                                                            <button data-wt-popover-trigger=""
-                                                                class="wt-popover__trigger wt-popover__trigger--underline wt-display-inline-flex-xs wt-align-items-center"
-                                                                aria-describedby="popover-content-01">
-
-                                                                <span
-                                                                    class="wt-icon wt-icon--smaller-xs wt-icon--core wt-fill-lavender-light wt-flex-shrink-xs-0 wt-nudge-t-1"><svg
-                                                                        xmlns="http://www.w3.org/2000/svg"
-                                                                        viewBox="0 0 24 24" aria-hidden="true"
-                                                                        focusable="false">
-                                                                        <path
-                                                                            d="M20.902 7.09l-2.317-1.332-1.341-2.303H14.56L12.122 2 9.805 3.333H7.122L5.78 5.758 3.341 7.09v2.667L2 12.06l1.341 2.303v2.666l2.318 1.334L7 20.667h2.683L12 22l2.317-1.333H17l1.341-2.303 2.317-1.334v-2.666L22 12.06l-1.341-2.303V7.09h.243zm-6.097 6.062l.732 3.515-.488.363-2.927-1.818-3.049 1.697-.488-.363.732-3.516-2.56-2.181.121-.485 3.537-.243 1.341-3.273h.488l1.341 3.273 3.537.243.122.484-2.44 2.303z">
-                                                                        </path>
-                                                                    </svg></span>
-
-                                                                <p class="wt-text-caption-title wt-ml-xs-1">
-                                                                    Star Seller
-                                                                </p>
-                                                            </button>
-
-                                                            <div class="wt-p-xs-3 seller-badge-popover"
-                                                                id="popover-content-01" role="tooltip"
-                                                                style="position: absolute; margin: 0px; inset: auto auto 20px -105px;"
-                                                                data-popper-placement="top">
-                                                                <p class="wt-mb-xs-1 wt-text-title-01">
-                                                                    Star Seller
-                                                                </p>
-
-                                                                <p class="wt-mb-xs-1 wt-text-caption">
-                                                                    Star Sellers have an outstanding
-                                                                    track record for providing a
-                                                                    great customer experience—they
-                                                                    consistently earned 5-star
-                                                                    reviews, shipped orders on time,
-                                                                    and replied quickly to any
-                                                                    messages they received.
-                                                                </p>
-                                                                <span class="wt-popover__arrow"
-                                                                    style="position: absolute; left: 143px;"></span>
+                                                @if(isset($sale) && $sale != null )
+                                                    <p class="wt-text-title-01 sale-ending-soon wt-mb-xs-1">
+                                                        Sale ends in <span id="countdown"></span>
+                                                    </p>
+                                                @endif
+                                                <div class="wt-display-flex-xs wt-align-items-center wt-justify-content-space-between">
+                                                    <div class="wt-display-flex-xs wt-align-items-center wt-flex-wrap">
+                                                        <p class="wt-text-title-03 wt-mr-xs-1">
+                                                            <span class="wt-screen-reader-only">Price:</span>
+                                                            <span>
+                                                                @if(isset($sale) && $sale != null )
+                                                                MX${{ $template->prices['price'] }}
+                                                                @else
+                                                                MX${{ $template->prices['original_price'] }}
+                                                                @endif
+                                                            </span>
+                                                        </p>
+                                                        @if(isset($sale) && $sale != null )
+                                                            <div class="wt-display-flex-xs wt-text-caption wt-text-gray">
+                                                                <div class="wt-text-strikethrough wt-mr-xs-1">
+                                                                    <span class="wt-screen-reader-only">Original Price:</span>
+                                                                    MX${{ $template->prices['original_price'] }}
+                                                                </div>
+                                                                <div class="wt-mr-xs-1">
+                                                                    ({{ $template->prices['discount_percent'] }}% Off)
+                                                                </div>
                                                             </div>
+                                                        @endif
+                                                        <div class="wt-spinner wt-spinner--01 wt-display-none" aria-live="assertive"
+                                                            data-buy-box-price-spinner="">
+                                                            <span class="wt-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                                                    aria-hidden="true" focusable="false">
+                                                                    <circle fill="transparent" cx="12" cy="12" r="10"></circle>
+                                                                </svg></span>
+                                                            Loading
+                                                        </div>
+                                                    </div>
+                                                    <div data-buy-box-region="stock_indicator">
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div data-buy-box-region="vat_messaging">
+                                                <div class="wt-text-gray wt-text-caption wt-pt-xs-1 wt-pb-xs-1">
+                                                    VAT Included
+                                                </div>
+                                            </div>
+
+                                            <div class="wt-mb-xs-2">
+                                                <h1 class="wt-text-body-01 wt-line-height-tight wt-break-word wt-mt-xs-1"
+                                                    data-buy-box-listing-title="true">
+                                                    @if( isset($template->localizedTitle[$language_code]) )
+                                                        {{ $template->localizedTitle[$language_code] }}
+                                                    @else
+                                                        {{ $template->title }}
+                                                    @endif
+                                                </h1>
+                                            </div>
+
+                                            <div class="">
+                                                <div data-action="follow-shop-listing-header" class=" wt-mb-xs-1">
+                                                    <div class="wt-display-flex-xs wt-align-items-center">
+                                                        <p class="wt-text-body-01">
+                                                            <a class="wt-text-link-no-underline"
+                                                                aria-label="View more products from store owner paperandinkdesignco">
+                                                                <span aria-hidden="true">
+                                                                    {{ $template->studioName }}
+                                                                </span>
+                                                            </a>
+                                                        </p>
+
+                                                        <div data-action="follow-shop-button-container"
+                                                            class="wt-display-flex-xs wt-align-items-center">
+                                                            <input type="hidden" class="id" name="user_id" value="16374284">
+                                                            <a rel="16374284" class="inline-overlay-trigger favorite-shop-action wt-btn wt-btn--small wt-btn--transparent follow-shop-button-listing-header-v3">
+                                                                <span class="etsy-icon wt-icon--smaller" data-not-following-icon="">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                                                        <path
+                                                                            d="M12,21C10.349,21,2,14.688,2,9,2,5.579,4.364,3,7.5,3A6.912,6.912,0,0,1,12,5.051,6.953,6.953,0,0,1,16.5,3C19.636,3,22,5.579,22,9,22,14.688,13.651,21,12,21ZM7.5,5C5.472,5,4,6.683,4,9c0,4.108,6.432,9.325,8,10,1.564-.657,8-5.832,8-10,0-2.317-1.472-4-3.5-4-1.979,0-3.7,2.105-3.721,2.127L11.991,8.1,11.216,7.12C11.186,7.083,9.5,5,7.5,5Z">
+                                                                        </path>
+                                                                    </svg>
+                                                                </span>
+                                                                <span class="etsy-icon wt-icon--smaller wt-display-none wt-text-brick" data-following-icon="">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                                                        <path
+                                                                            d="M16.5,3A6.953,6.953,0,0,0,12,5.051,6.912,6.912,0,0,0,7.5,3C4.364,3,2,5.579,2,9c0,5.688,8.349,12,10,12S22,14.688,22,9C22,5.579,19.636,3,16.5,3Z">
+                                                                        </path>
+                                                                    </svg>
+                                                                </span>
+                                                                <span data-following-message="" class="wt-ml-xs-1 listing-header-v3-message wt-display-inline-block wt-position-relative wt-display-none ">Favorited</span>
+                                                                <span data-not-following-message="" class="wt-ml-xs-1 listing-header-v3-message wt-display-inline-block wt-position-relative ">Add to Favorites</span>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+
+                                                    <div>
+                                                        <div
+                                                            class="wt-display-inline-flex-xs wt-align-items-center wt-flex-wrap wt-mb-xs-1">
+                                                            <div class="wt-flex-basis-lg-full wt-flex-basis-xl-auto wt-mb-xs-1">
+                                                                <div class="star-seller-badge ">
+                                                                    <div class="wt-popover star-seller-badge-listing-page wt-display-flex-xs"
+                                                                        data-wt-popover="">
+                                                                        <button data-wt-popover-trigger=""
+                                                                            class="wt-popover__trigger wt-popover__trigger--underline wt-display-inline-flex-xs wt-align-items-center"
+                                                                            aria-describedby="popover-content-01">
+
+                                                                            <span
+                                                                                class="wt-icon wt-icon--smaller-xs wt-icon--core wt-fill-lavender-light wt-flex-shrink-xs-0 wt-nudge-t-1"><svg
+                                                                                    xmlns="http://www.w3.org/2000/svg"
+                                                                                    viewBox="0 0 24 24" aria-hidden="true"
+                                                                                    focusable="false">
+                                                                                    <path
+                                                                                        d="M20.902 7.09l-2.317-1.332-1.341-2.303H14.56L12.122 2 9.805 3.333H7.122L5.78 5.758 3.341 7.09v2.667L2 12.06l1.341 2.303v2.666l2.318 1.334L7 20.667h2.683L12 22l2.317-1.333H17l1.341-2.303 2.317-1.334v-2.666L22 12.06l-1.341-2.303V7.09h.243zm-6.097 6.062l.732 3.515-.488.363-2.927-1.818-3.049 1.697-.488-.363.732-3.516-2.56-2.181.121-.485 3.537-.243 1.341-3.273h.488l1.341 3.273 3.537.243.122.484-2.44 2.303z">
+                                                                                    </path>
+                                                                                </svg></span>
+
+                                                                            <p class="wt-text-caption-title wt-ml-xs-1">
+                                                                                Star Seller
+                                                                            </p>
+                                                                        </button>
+
+                                                                        <div class="wt-p-xs-3 seller-badge-popover"
+                                                                            id="popover-content-01" role="tooltip"
+                                                                            style="position: absolute; margin: 0px; inset: auto auto 20px -105px;"
+                                                                            data-popper-placement="top">
+                                                                            <p class="wt-mb-xs-1 wt-text-title-01">
+                                                                                Star Seller
+                                                                            </p>
+
+                                                                            <p class="wt-mb-xs-1 wt-text-caption">
+                                                                                Star Sellers have an outstanding
+                                                                                track record for providing a
+                                                                                great customer experience—they
+                                                                                consistently earned 5-star
+                                                                                reviews, shipped orders on time,
+                                                                                and replied quickly to any
+                                                                                messages they received.
+                                                                            </p>
+                                                                            <span class="wt-popover__arrow"
+                                                                                style="position: absolute; left: 143px;"></span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <span
+                                                                class="wt-ml-xs-1 wt-mr-xs-1 wt-mb-xs-1 wt-show-xs wt-hide-lg wt-show-xl"
+                                                                style="color: #e1e3df;">|</span>
+
+
+                                                            <span class="wt-mb-xs-1 wt-display-inline-block">
+                                                                <span class="wt-text-caption ">
+                                                                    {{ $template->sales }} sales
+                                                                </span>
+                                                            </span>
+
+                                                            <span class="wt-ml-xs-1 wt-mr-xs-1 wt-mb-xs-1 wt-display-inline-block"
+                                                                style="color: #e1e3df;">|</span>
+
+                                                            <span class="wt-mb-xs-1 wt-display-inline-block">
+                                                                <a class="wt-text-link-no-underline ssh-review-stars-text-decoration-none wt-display-inline-flex-xs wt-align-items-center wt-nudge-b-1"
+                                                                    style="vertical-align: top;" href="#reviews">
+
+                                                                    <span class="wt-display-inline-block wt-mr-xs-1">
+                                                                        <input type="hidden" name="initial-rating" value="{{ $template->stars }}">
+                                                                        <input type="hidden" name="rating" value="{{ $template->stars }}">
+                                                                        <span class="wt-screen-reader-only">
+                                                                            {{ $template->stars }} out of {{ $template->stars }} stars
+                                                                        </span>
+
+                                                                        <span>
+                                                                            @for ($i = 1; $i <= ceil($template->stars); $i++)
+                                                                                <span class="wt-icon wt-nudge-b-1 wt-icon--smallest"
+                                                                                    data-rating="0"><svg
+                                                                                        xmlns="http://www.w3.org/2000/svg"
+                                                                                        viewBox="3 3 18 18" aria-hidden="true"
+                                                                                        focusable="false">
+                                                                                        <path
+                                                                                            d="M20.83,9.15l-6-.52L12.46,3.08h-.92L9.18,8.63l-6,.52L2.89,10l4.55,4L6.08,19.85l.75.55L12,17.3l5.17,3.1.75-.55L16.56,14l4.55-4Z">
+                                                                                        </path>
+                                                                                    </svg>
+                                                                                </span>
+                                                                            @endfor
+                                                                        </span>
+                                                                    </span>
+
+                                                                </a>
+                                                            </span>
+
                                                         </div>
                                                     </div>
                                                 </div>
 
-                                                <span
-                                                    class="wt-ml-xs-1 wt-mr-xs-1 wt-mb-xs-1 wt-show-xs wt-hide-lg wt-show-xl"
-                                                    style="color: #e1e3df;">|</span>
+                                            </div>
+                                            
+                                            <div class="purchase-form__button">
+                                                Buy Now With
+                                                <div id="smart-button-container">
+                                                    <div style="text-align: center;">
+                                                        <div id="paypal-button-container"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <a class="wt-btn wt-btn--outline wt-width-full wt-display-flex-xs wt-align-items-center wt-justify-content-center wt-line-height-tight wt-p-xs-0 t-heading"
+                                                rel="nofollow" title="Add to Cart"
+                                                href="{{ 
+                                                                            route('editor.demoTemplate',[
+                                                                            'country' => $country,
+                                                                            'template_key' => $template->_id
+                                                                        ] )
+                                                                    }}">
+                                                Try Demo
+                                            </a>
+                                            <a class="wt-btn wt-btn--outline wt-width-full wt-display-flex-xs wt-align-items-center wt-justify-content-center wt-line-height-tight wt-p-xs-0 t-heading" rel="nofollow" title="Add to Cart" href="{{ 
+                                                                            route('code.validate.form',[
+                                                                            'country' => $country,
+                                                                            'product_id' => $template->_id,
+                                                                            'ref' => url()->full()
+                                                                        ] )
+                                                                    }}">
+                                                Use Code
+                                            </a>
+                                            <p class="t-body -size-s" itemprop="description">
+                                                <!-- The size of this template is 5x7in. Click “Use This Template“, start your own design. Then you can change the text and images as you wish. After that, preview and save your work, your design will be ready to print, share or download. -->
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-
-                                                <span class="wt-mb-xs-1 wt-display-inline-block">
-                                                    <span class="wt-text-caption ">
-                                                        61,046 sales
-                                                    </span>
-                                                </span>
-
-                                                <span class="wt-ml-xs-1 wt-mr-xs-1 wt-mb-xs-1 wt-display-inline-block"
-                                                    style="color: #e1e3df;">|</span>
-
-                                                <span class="wt-mb-xs-1 wt-display-inline-block">
-                                                    <a class="wt-text-link-no-underline ssh-review-stars-text-decoration-none wt-display-inline-flex-xs wt-align-items-center wt-nudge-b-1"
-                                                        style="vertical-align: top;" href="#reviews">
-
-                                                        <span class="wt-display-inline-block wt-mr-xs-1">
-                                                            <input type="hidden" name="initial-rating" value="4.9366">
-                                                            <input type="hidden" name="rating" value="4.9366">
-                                                            <span class="wt-screen-reader-only">5
-                                                                out of 5 stars</span>
-
-                                                            <span>
-                                                                <span class="wt-icon wt-nudge-b-1 wt-icon--smallest"
-                                                                    data-rating="0"><svg
-                                                                        xmlns="http://www.w3.org/2000/svg"
-                                                                        viewBox="3 3 18 18" aria-hidden="true"
-                                                                        focusable="false">
-                                                                        <path
-                                                                            d="M20.83,9.15l-6-.52L12.46,3.08h-.92L9.18,8.63l-6,.52L2.89,10l4.55,4L6.08,19.85l.75.55L12,17.3l5.17,3.1.75-.55L16.56,14l4.55-4Z">
-                                                                        </path>
-                                                                    </svg></span>
-                                                                <span class="wt-icon wt-nudge-b-1 wt-icon--smallest"
-                                                                    data-rating="1"><svg
-                                                                        xmlns="http://www.w3.org/2000/svg"
-                                                                        viewBox="3 3 18 18" aria-hidden="true"
-                                                                        focusable="false">
-                                                                        <path
-                                                                            d="M20.83,9.15l-6-.52L12.46,3.08h-.92L9.18,8.63l-6,.52L2.89,10l4.55,4L6.08,19.85l.75.55L12,17.3l5.17,3.1.75-.55L16.56,14l4.55-4Z">
-                                                                        </path>
-                                                                    </svg></span>
-                                                                <span class="wt-icon wt-nudge-b-1 wt-icon--smallest"
-                                                                    data-rating="2"><svg
-                                                                        xmlns="http://www.w3.org/2000/svg"
-                                                                        viewBox="3 3 18 18" aria-hidden="true"
-                                                                        focusable="false">
-                                                                        <path
-                                                                            d="M20.83,9.15l-6-.52L12.46,3.08h-.92L9.18,8.63l-6,.52L2.89,10l4.55,4L6.08,19.85l.75.55L12,17.3l5.17,3.1.75-.55L16.56,14l4.55-4Z">
-                                                                        </path>
-                                                                    </svg></span>
-                                                                <span class="wt-icon wt-nudge-b-1 wt-icon--smallest"
-                                                                    data-rating="3"><svg
-                                                                        xmlns="http://www.w3.org/2000/svg"
-                                                                        viewBox="3 3 18 18" aria-hidden="true"
-                                                                        focusable="false">
-                                                                        <path
-                                                                            d="M20.83,9.15l-6-.52L12.46,3.08h-.92L9.18,8.63l-6,.52L2.89,10l4.55,4L6.08,19.85l.75.55L12,17.3l5.17,3.1.75-.55L16.56,14l4.55-4Z">
-                                                                        </path>
-                                                                    </svg></span>
-                                                                <span class="wt-icon wt-nudge-b-1 wt-icon--smallest"
-                                                                    data-rating="4"><svg
-                                                                        xmlns="http://www.w3.org/2000/svg"
-                                                                        viewBox="3 3 18 18" aria-hidden="true"
-                                                                        focusable="false">
-                                                                        <path
-                                                                            d="M20.83,9.15l-6-.52L12.46,3.08h-.92L9.18,8.63l-6,.52L2.89,10l4.55,4L6.08,19.85l.75.55L12,17.3l5.17,3.1.75-.55L16.56,14l4.55-4Z">
-                                                                        </path>
-                                                                    </svg></span>
-                                                            </span>
-                                                        </span>
-
-                                                    </a>
-                                                </span>
-
+                            <div class="box -radius-all">
+                                <div class="rating-detailed--has-no-ratings">
+                                    <div class="MuiGrid-root MuiGrid-container MuiGrid-direction-xs-column mui-p2asnn">
+                                        <span class="MuiTypography-root MuiTypography-text MuiTypography-alignLeft mui-1d3vavr-templateTitle">
+                                            About this Template
+                                        </span>
+                                        <div class="MuiBox-root mui-1uc6yu5-iconBox">
+                                            <div class="MuiBox-root mui-k008qs"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium mui-10dohqv" focusable="false" aria-hidden="true" viewBox="0 0 32 32" data-testid="Illustrations.svgIcon">
+                                                    <path d="M16 21.6c1.2-.267 2.933-.667 4.933-2.667 4.933-4.933 7.733-10 7.867-10.267l.533-1.333-4-4L24 3.866c-.267.133-5.2 2.8-10.267 7.867-2 2-2.267 3.733-2.533 4.933-2.533 1.2-3.467 4.667-3.867 6.267l-.533 2.8 2.533-.533c1.733-.4 5.467-1.067 6.667-3.6zm-.4-8c3.6-3.6 7.733-6.267 9.067-6.8l1.2 1.2c-.533 1.2-3.2 5.333-6.8 9.067-1.6 1.6-3.2 2-3.733 2l-1.733-1.733c0-.533.4-2.133 2-3.733zm-3.467 5.467l1.467 1.467c-.933 1.067-2.133 1.733-3.733 2.133.533-1.467 1.2-2.667 2.267-3.6zM2.667 30h24l2.667-2.667h-24L2.667 30z">
+                                                    </path>
+                                                </svg>
+                                                <h6 class="MuiTypography-root MuiTypography-body1 MuiTypography-alignCenter mui-usehnw-iconText">
+                                                    100% fully customizable
+                                                </h6>
+                                            </div>
+                                            <div class="MuiBox-root mui-k008qs"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium mui-10dohqv" focusable="false" aria-hidden="true" viewBox="0 0 32 32" data-testid="ArrowDown.svgIcon">
+                                                    <path d="M23.067 16.533l-5.733 5.733V5.999h-2.667v16.267l-5.733-5.733L7.067 18.4 16 27.333l8.933-8.933z">
+                                                    </path>
+                                                </svg>
+                                                <h6 class="MuiTypography-root MuiTypography-body1 MuiTypography-alignCenter mui-usehnw-iconText">
+                                                    Edit and download on the go
+                                                </h6>
+                                            </div>
+                                            <div class="MuiBox-root mui-k008qs"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium mui-10dohqv" focusable="false" aria-hidden="true" viewBox="0 0 32 32" data-testid="Collections.svgIcon">
+                                                    <path d="M16 9.333v-4H2.667v21.333H24c2.946 0 5.333-2.388 5.333-5.333v-12zm10.667 12C26.667 22.806 25.473 24 24 24H5.333V8h8v2.667c0 .736.597 1.333 1.333 1.333h12z">
+                                                    </path>
+                                                </svg>
+                                                <h6 class="MuiTypography-root MuiTypography-body1 MuiTypography-alignCenter mui-usehnw-iconText">
+                                                    Share and publish anywhere</h6>
+                                            </div>
+                                            <div class="MuiBox-root mui-k008qs"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium mui-10dohqv" focusable="false" aria-hidden="true" viewBox="0 0 32 32" data-testid="Blog.svgIcon">
+                                                    <path d="M14.8 4.133H3.6v11.2h11.2v-11.2zm-2.533 8.8H6.134V6.666h6.267v6.267zm10.666 2.534c3.067 0 5.6-2.533 5.6-5.6s-2.533-5.6-5.6-5.6-5.6 2.4-5.6 5.467 2.533 5.733 5.6 5.733zm0-8.8C24.666 6.667 26 8.134 26 9.734s-1.467 3.067-3.067 3.067-3.067-1.467-3.067-3.067 1.333-3.067 3.067-3.067zM2.667 29.2h14.267L9.867 16.667 2.667 29.2zm4.266-2.533l2.8-4.933 2.8 4.933h-5.6zM22.8 16.133l-6.533 6.533 3.2 6.533H26l3.2-6.533-6.4-6.533zm1.733 10.534h-3.467L19.333 23.2l3.467-3.467 3.467 3.467-1.733 3.467z">
+                                                    </path>
+                                                </svg>
+                                                <h6 class="MuiTypography-root MuiTypography-body1 MuiTypography-alignCenter mui-usehnw-iconText">
+                                                    No special software required, edit online</h6>
+                                            </div>
+                                            <div class="MuiBox-root mui-k008qs"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium mui-10dohqv" focusable="false" aria-hidden="true" viewBox="0 0 32 32" data-testid="Rotate.svgIcon">
+                                                    <path d="M28 17.333C28 10 22 4 14.667 4 12.4 4 10.4 4.533 8.534 5.6L6.667 2.667l-2.667 8h8l-2-2.933c1.467-.667 3.067-1.067 4.667-1.067 5.867 0 10.667 4.8 10.667 10.667h2.667z">
+                                                    </path>
+                                                    <path d="M4 28h13.333c2.933 0 5.333-2.4 5.333-5.333v-9.333H3.999v14.667zm2.667-2.667V16H20v6.667c0 1.467-1.2 2.667-2.667 2.667H6.666z">
+                                                    </path>
+                                                </svg>
+                                                <h6 class="MuiTypography-root MuiTypography-body1 MuiTypography-alignCenter mui-usehnw-iconText">
+                                                    Instant access to your template</h6>
                                             </div>
                                         </div>
                                     </div>
-
                                 </div>
-                                
-                                <div class="purchase-form__button">
-                                    Buy Now With
-                                    <div id="smart-button-container">
-                                        <div style="text-align: center;">
-                                            <div id="paypal-button-container"></div>
-                                        </div>
+                            </div>
+
+                            <div class="box -radius-all">
+                                <div class="meta-attributes " data-view="CondenseItemInfoPanel">
+                                    <table class="meta-attributes__table" cellspacing="0" cellpadding="0" border="0">
+                                        <tbody>
+                                            <!-- <tr>
+                                                        <td class="meta-attributes__attr-name">Last Update</td>
+                                                        <td class="meta-attributes__attr-detail">
+                                                            <time class="updated" datetime="2021-01-05T10:16:16+11:00">
+                                                                {{ $template->updatedAt }}
+                                                            </time>
+                                                        </td>
+                                                    </tr> -->
+                                            <!-- <tr>
+                                                        <td class="meta-attributes__attr-name">Created</td>
+                                                        <td class="meta-attributes__attr-detail">
+                                                            <span>
+                                                                {{ $template->createdAt }}
+                                                            </span>
+                                                        </td>
+                                                    </tr> -->
+                                            <tr>
+                                                <td class="meta-attributes__attr-name">{{ __('product.category') }}</td>
+                                                <td class="meta-attributes__attr-detail">
+                                                    <!-- <a rel="nofollow" href="/attributes/print-dimensions/4x4"> -->
+                                                    <a rel="nofollow" href="{{ $breadcrumb->url }}">
+                                                        {{ $breadcrumb->name }}
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="meta-attributes__attr-name">{{ __('product.format') }}</td>
+                                                <td class="meta-attributes__attr-detail">
+                                                    <!-- <a rel="nofollow" href="/attributes/print-dimensions/4x4"> -->
+                                                    {{ $template->format }}
+                                                    <!-- </a> -->
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="meta-attributes__attr-name">{{ __('product.dimensions') }}</td>
+                                                <td class="meta-attributes__attr-detail">
+                                                    <!-- <a rel="nofollow" href="/attributes/print-dimensions/4x4"> -->
+                                                    {{ $template->width }}x{{ $template->height }} {{ $template->measureUnits }}
+                                                    <!-- </a> -->
+                                                </td>
+                                            </tr>
+                                            @if( isset($template->keywords[$language_code]) && sizeof($template->keywords[$language_code]) > 0 )
+                                            <tr>
+                                                <td class="meta-attributes__attr-name">Tags</td>
+                                                <td>
+                                                    <span class="meta-attributes__attr-tags">
+                                                        @foreach($template->keywords[$language_code] as $tag)
+                                                        <a title="artist flyer" rel="nofollow" href="/artist%20flyer-graphics">{{ $tag }}</a>,
+                                                        @endforeach
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            @endif
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            @if(is_array($colors) && sizeof($colors) > 0)
+                                <div class="box -radius-all">
+                                    <div class="rating-detailed--has-no-ratings">
+                                        <strong>{{ __('product.colors') }}</strong> &nbsp;&nbsp;
+                                        <ul class="DM08FA">
+                                            @foreach( $colors as $hex_color )
+                                                <li class="Gu5L1Q" style="background-color: {{ $hex_color }};">
+                                                    <div class="_-pFsfA">{{ $hex_color }}</div>
+                                                </li>
+                                            @endforeach
+                                        </ul>
                                     </div>
                                 </div>
-                                <a class="wt-btn wt-btn--outline wt-width-full wt-display-flex-xs wt-align-items-center wt-justify-content-center wt-line-height-tight wt-p-xs-0 t-heading"
-                                    rel="nofollow" title="Add to Cart"
-                                    href="{{ 
-                                                                route('editor.demoTemplate',[
-                                                                'country' => $country,
-                                                                'template_key' => $template->_id
-                                                            ] )
-                                                        }}">
-                                    Try Demo
-                                </a>
-                                <a class="wt-btn wt-btn--outline wt-width-full wt-display-flex-xs wt-align-items-center wt-justify-content-center wt-line-height-tight wt-p-xs-0 t-heading" rel="nofollow" title="Add to Cart" href="{{ 
-                                                                route('code.validate.form',[
-                                                                'country' => $country,
-                                                                'product_id' => $template->_id,
-                                                                'ref' => url()->full()
-                                                            ] )
-                                                        }}">
-                                    Use Code
-                                </a>
-                                <p class="t-body -size-s" itemprop="description">
-                                    <!-- The size of this template is 5x7in. Click “Use This Template“, start your own design. Then you can change the text and images as you wish. After that, preview and save your work, your design will be ready to print, share or download. -->
-                                </p>
-                            </div>
+                            @endif
                         </div>
-                    </div>
-                </div>
-
-                <div class="box -radius-all">
-                    <div class="rating-detailed--has-no-ratings">
-                        <div class="MuiGrid-root MuiGrid-container MuiGrid-direction-xs-column mui-p2asnn">
-                            <span class="MuiTypography-root MuiTypography-text MuiTypography-alignLeft mui-1d3vavr-templateTitle">
-                                About this Template
-                            </span>
-                            <div class="MuiBox-root mui-1uc6yu5-iconBox">
-                                <div class="MuiBox-root mui-k008qs"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium mui-10dohqv" focusable="false" aria-hidden="true" viewBox="0 0 32 32" data-testid="Illustrations.svgIcon">
-                                        <path d="M16 21.6c1.2-.267 2.933-.667 4.933-2.667 4.933-4.933 7.733-10 7.867-10.267l.533-1.333-4-4L24 3.866c-.267.133-5.2 2.8-10.267 7.867-2 2-2.267 3.733-2.533 4.933-2.533 1.2-3.467 4.667-3.867 6.267l-.533 2.8 2.533-.533c1.733-.4 5.467-1.067 6.667-3.6zm-.4-8c3.6-3.6 7.733-6.267 9.067-6.8l1.2 1.2c-.533 1.2-3.2 5.333-6.8 9.067-1.6 1.6-3.2 2-3.733 2l-1.733-1.733c0-.533.4-2.133 2-3.733zm-3.467 5.467l1.467 1.467c-.933 1.067-2.133 1.733-3.733 2.133.533-1.467 1.2-2.667 2.267-3.6zM2.667 30h24l2.667-2.667h-24L2.667 30z">
-                                        </path>
-                                    </svg>
-                                    <h6 class="MuiTypography-root MuiTypography-body1 MuiTypography-alignCenter mui-usehnw-iconText">
-                                        100% fully customizable
-                                    </h6>
-                                </div>
-                                <div class="MuiBox-root mui-k008qs"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium mui-10dohqv" focusable="false" aria-hidden="true" viewBox="0 0 32 32" data-testid="ArrowDown.svgIcon">
-                                        <path d="M23.067 16.533l-5.733 5.733V5.999h-2.667v16.267l-5.733-5.733L7.067 18.4 16 27.333l8.933-8.933z">
-                                        </path>
-                                    </svg>
-                                    <h6 class="MuiTypography-root MuiTypography-body1 MuiTypography-alignCenter mui-usehnw-iconText">
-                                        Edit and download on the go
-                                    </h6>
-                                </div>
-                                <div class="MuiBox-root mui-k008qs"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium mui-10dohqv" focusable="false" aria-hidden="true" viewBox="0 0 32 32" data-testid="Collections.svgIcon">
-                                        <path d="M16 9.333v-4H2.667v21.333H24c2.946 0 5.333-2.388 5.333-5.333v-12zm10.667 12C26.667 22.806 25.473 24 24 24H5.333V8h8v2.667c0 .736.597 1.333 1.333 1.333h12z">
-                                        </path>
-                                    </svg>
-                                    <h6 class="MuiTypography-root MuiTypography-body1 MuiTypography-alignCenter mui-usehnw-iconText">
-                                        Share and publish anywhere</h6>
-                                </div>
-                                <div class="MuiBox-root mui-k008qs"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium mui-10dohqv" focusable="false" aria-hidden="true" viewBox="0 0 32 32" data-testid="Blog.svgIcon">
-                                        <path d="M14.8 4.133H3.6v11.2h11.2v-11.2zm-2.533 8.8H6.134V6.666h6.267v6.267zm10.666 2.534c3.067 0 5.6-2.533 5.6-5.6s-2.533-5.6-5.6-5.6-5.6 2.4-5.6 5.467 2.533 5.733 5.6 5.733zm0-8.8C24.666 6.667 26 8.134 26 9.734s-1.467 3.067-3.067 3.067-3.067-1.467-3.067-3.067 1.333-3.067 3.067-3.067zM2.667 29.2h14.267L9.867 16.667 2.667 29.2zm4.266-2.533l2.8-4.933 2.8 4.933h-5.6zM22.8 16.133l-6.533 6.533 3.2 6.533H26l3.2-6.533-6.4-6.533zm1.733 10.534h-3.467L19.333 23.2l3.467-3.467 3.467 3.467-1.733 3.467z">
-                                        </path>
-                                    </svg>
-                                    <h6 class="MuiTypography-root MuiTypography-body1 MuiTypography-alignCenter mui-usehnw-iconText">
-                                        No special software required, edit online</h6>
-                                </div>
-                                <div class="MuiBox-root mui-k008qs"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium mui-10dohqv" focusable="false" aria-hidden="true" viewBox="0 0 32 32" data-testid="Rotate.svgIcon">
-                                        <path d="M28 17.333C28 10 22 4 14.667 4 12.4 4 10.4 4.533 8.534 5.6L6.667 2.667l-2.667 8h8l-2-2.933c1.467-.667 3.067-1.067 4.667-1.067 5.867 0 10.667 4.8 10.667 10.667h2.667z">
-                                        </path>
-                                        <path d="M4 28h13.333c2.933 0 5.333-2.4 5.333-5.333v-9.333H3.999v14.667zm2.667-2.667V16H20v6.667c0 1.467-1.2 2.667-2.667 2.667H6.666z">
-                                        </path>
-                                    </svg>
-                                    <h6 class="MuiTypography-root MuiTypography-body1 MuiTypography-alignCenter mui-usehnw-iconText">
-                                        Instant access to your template</h6>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="box -radius-all">
-                    <div class="meta-attributes " data-view="CondenseItemInfoPanel">
-                        <table class="meta-attributes__table" cellspacing="0" cellpadding="0" border="0">
-                            <tbody>
-                                <!-- <tr>
-                                            <td class="meta-attributes__attr-name">Last Update</td>
-                                            <td class="meta-attributes__attr-detail">
-                                                <time class="updated" datetime="2021-01-05T10:16:16+11:00">
-                                                    {{ $template->updatedAt }}
-                                                </time>
-                                            </td>
-                                        </tr> -->
-                                <!-- <tr>
-                                            <td class="meta-attributes__attr-name">Created</td>
-                                            <td class="meta-attributes__attr-detail">
-                                                <span>
-                                                    {{ $template->createdAt }}
-                                                </span>
-                                            </td>
-                                        </tr> -->
-                                <tr>
-                                    <td class="meta-attributes__attr-name">{{ __('product.category') }}</td>
-                                    <td class="meta-attributes__attr-detail">
-                                        <!-- <a rel="nofollow" href="/attributes/print-dimensions/4x4"> -->
-                                        <a rel="nofollow" href="{{ $breadcrumb->url }}">
-                                            {{ $breadcrumb->name }}
-                                        </a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="meta-attributes__attr-name">{{ __('product.format') }}</td>
-                                    <td class="meta-attributes__attr-detail">
-                                        <!-- <a rel="nofollow" href="/attributes/print-dimensions/4x4"> -->
-                                        {{ $template->format }}
-                                        <!-- </a> -->
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="meta-attributes__attr-name">{{ __('product.dimensions') }}</td>
-                                    <td class="meta-attributes__attr-detail">
-                                        <!-- <a rel="nofollow" href="/attributes/print-dimensions/4x4"> -->
-                                        {{ $template->width }}x{{ $template->height }} {{ $template->measureUnits }}
-                                        <!-- </a> -->
-                                    </td>
-                                </tr>
-                                @if( isset($template->keywords[$language_code]) && sizeof($template->keywords[$language_code]) > 0 )
-                                <tr>
-                                    <td class="meta-attributes__attr-name">Tags</td>
-                                    <td>
-                                        <span class="meta-attributes__attr-tags">
-                                            @foreach($template->keywords[$language_code] as $tag)
-                                            <a title="artist flyer" rel="nofollow" href="/artist%20flyer-graphics">{{ $tag }}</a>,
-                                            @endforeach
-                                        </span>
-                                    </td>
-                                </tr>
-                                @endif
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div class="box -radius-all">
-                    <div class="rating-detailed--has-no-ratings">
-                        <strong>{{ __('product.colors') }}</strong> &nbsp;&nbsp;
-                        <ul class="DM08FA">
-                            @foreach( $colors as $hex_color )
-                                <li class="Gu5L1Q" style="background-color: {{ $hex_color }};">
-                                    <div class="_-pFsfA">{{ $hex_color }}</div>
-                                </li>
-                            @endforeach
-                        </ul>
-                    </div>
-                </div>
-            </div>
                     </div>
                 </div>
             </div>

@@ -390,6 +390,8 @@ class ContentController extends Controller
             'title',
             'preview_image',
             'slug',
+            'sales',
+            'stars',
             'format',
             'categories',
             'mainCategory',
@@ -398,6 +400,7 @@ class ContentController extends Controller
             'height',
             'forSubscribers',
             'measureUnits',
+            'studioName',
             'createdAt',
             'updatedAt'
         ])
