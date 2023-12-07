@@ -140,8 +140,8 @@ class ContentController extends Controller
         // $customerId = $request->input('customer_id');
         // print_r($request->all());
         // exit;
-        if ($request->userId) {
-            return $request->userId;
+        if ($request->customerId) {
+            return $request->customerId;
         }
 
         return false;
@@ -177,7 +177,6 @@ class ContentController extends Controller
         }
         
         list($category_obj, $breadcrumbs_str, $menu) = array_map('json_decode', Redis::mget([$category_redis_key, $category_redis_key, 'wayak:' . $country . ':menu']));
-        
         
         $breadcrumbs_obj = $breadcrumbs_str;
         self::getBreadCrumbs($breadcrumbs_obj);

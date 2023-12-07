@@ -9,6 +9,7 @@ import requests
 # os.environ['_BARD_API_KEY'] = "cghW7kByc5YYcD7dOnznChWJMugE4pul0c1-9c8MW3pPX6aTFYE2TkHbtIxD7RCYg2WnMg."
 
 # Initialize a reusable session object
+token = 'dwhW7r3ffeq_01nyIcrACWtwX0ssCfXDXvKu8FxJmPfCk-ydF4u5n_ijWz_QiVsRtBSpgg.'
 session = requests.Session()
 session.headers = {
     "Host": "bard.google.com",
@@ -50,7 +51,7 @@ def get_image_description():
     prompt_text = data.get('prompt_text')
     if not file_name or not prompt_text:
         return jsonify({'error': 'file_name and prompt_text are required'}), 400
-    try:
+    # try:
         with open(f"./images/{file_name}", "rb") as f:
             image_data = f.read()
         string = '''
@@ -59,7 +60,7 @@ def get_image_description():
         Given a product image, you are tasked with creating metadata for it. Please follow the guidelines below:
 
         Provide your response in a JSON format, adhering strictly to the structure specified. Exclude any extraneous details.
-        For "title",avoid including personal details and create something that is both captivating and appealing to the sale of the product.
+        Detail event, occasion, colors, objects, animals, ensuring these elements are echoed in "title", create something that is both captivating and appealing to the sale of the product.
         Translate the "title" into the languages "es", "fr", "pt", and "en", and place them under the "localizedTitle" field using their respective ISO 639-1 language codes.
         Populate the "keywords" field with single-word descriptors related to the color, occasion, theme, and event evident in the image. Ensure you list at least 5 keywords.
         Translate all the keywords into the languages "es", "fr", "pt", and "en", maintaining the structure shown in the example.
@@ -86,8 +87,8 @@ def get_image_description():
         bard_answer = bard.ask_about_image(single_quote_string, image_data)
         extracted_json_results = extract_json(bard_answer['content'])
         return jsonify(extracted_json_results)
-    except FileNotFoundError:
-        return jsonify({'error': f'File {file_name} not found in /images directory'}), 404
+    # except FileNotFoundError:
+    #     return jsonify({'error': f'File {file_name} not found in /images directory'}), 404
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)

@@ -260,4 +260,147 @@
     });
 </script>
 
+<script>
+    $(document).ready(function() {
+        let customerId = getCustomerId();
+        
+        // Function to create HTML for a single slider item
+        function createSliderItem(item) {
+            return `
+                <div class="slider-item">
+                    <div class="title-card-container">
+                        <div class="slider-refocus title-card">
+                            <div class="ptrack-content">
+                                <a class="slider-refocus" href="http://localhost:8001/us/template/${item.slug}?customerId=${ customerId }">
+                                    <div class="boxart-size-16x9 boxart-container boxart-rounded">
+                                        <img class="boxart-image boxart-image-in-padded-container" src="${item.preview_image_url}" alt="${item.title}">
+                                        <div class="fallback-text-container" aria-hidden="true">
+                                            <p class="fallback-text">${item.title}</p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+        }
+    
+        // Function to create a complete slider
+        function createSlider(sliderData) {
+            
+            console.log(sliderData);
+
+            let sliderItems = sliderData.items.map(createSliderItem).join('');
+            return `
+                <div class="rowContainer rowContainer_title_card" id="${sliderData.slider_id}">
+                    <div class="ptrack-container">
+                        <div class="rowContent slider-hover-trigger-layer">
+                            <div class="slider">
+                                <span class="handle handlePrev active slick-arrow" tabindex="0" role="button" aria-label="See previous titles">
+                                    <b class="indicator-icon icon-leftCaret"></b>
+                                </span>
+                                <div class="dotClass"></div>
+                                <div class="sliderMask showPeek">
+                                    <div class="sliderContent row-with-x-columns" data-slider-id="${sliderData.slider_id}">
+                                        ${sliderItems}
+                                    </div>
+                                </div>
+                                <span class="handle handleNext active" tabindex="0" role="button" aria-label="See more titles">
+                                    <b class="indicator-icon icon-rightCaret"></b>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+        }
+
+        // Function to create HTML for a single slider item
+        function createSliderContainer(searchURL, sliderTitle, sliderData) {
+            let newSliderHtml = createSlider(sliderData);
+            return `
+            <div class="lolomoRow lolomoRow_title_card ltr-0 template-carousel" data-list-context="similars">
+                <h2 class="rowHeader ltr-0">
+                    <a class="rowTitle ltr-0" href="${ searchURL }?customerId=${ customerId }">
+                        <span class="row-header-title">
+                            ${ sliderTitle }
+                        </span>
+                        <span class="aro-row-header">
+                            <span class="see-all-link">Explore All</span>
+                            <span class="aro-row-chevron icon-akiraCaretRight"></span>
+                        </span>
+                    </a>
+                </h2>
+                ${ newSliderHtml }
+            </div>`;
+        }
+    
+        // AJAX request to get new sliders
+        function loadSliders() {
+            $.ajax({
+                url: '/us/carousels?customerId='+customerId, // Replace with your API URL
+                method: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    // var sliders_content = $('#appMountPoint > div > div > div > div > div > div');
+                    var sliders_content = $('#appMountPoint > div > div > div > div > div > div > div:nth-child(2)');
+                    response.forEach(function(sliderData) {
+                        // console.log(sliderData);
+                        
+                        let searchURL = '/' + sliderData.search_term;
+                        let newSliderHtml = createSliderContainer(searchURL, sliderData.title, sliderData);
+                        // Append the new slider to the body or a specific div
+                        console.log("Append the new slider to the body or a specific div");
+                        
+                        // console.log(newSliderHtml);
+                        
+                        $(sliders_content).append(newSliderHtml);
+                        
+                        // Reinitialize slick on the new slider
+                        $(`[data-slider-id="${sliderData.slider_id}"]`).slick({
+                            lazyLoad: 'ondemand',
+                            // variableWidth: true,
+                            slidesToShow: 6,
+                            slidesToScroll: 4,
+                            dots: false,
+                            appendDots: $('#' + sliderData.slider_id + ' > div > div > div > div.dotClass'),
+                            dotsClass: 'pagination-indicator',
+                            // infinite: true,
+                            prevArrow: $('#' + sliderData.slider_id + ' > div > div > div > span.handle.handlePrev'),
+                            nextArrow: $('#' + sliderData.slider_id + ' > div > div > div > span.handle.handleNext'),
+                            responsive: [{
+                                    breakpoint: 1024,
+                                    settings: {
+                                        slidesToShow: 4,
+                                        slidesToScroll: 4
+                                    }
+                                },
+                                {
+                                    breakpoint: 600,
+                                    settings: {
+                                        slidesToShow: 3,
+                                        slidesToScroll: 3
+                                    }
+                                },
+                                {
+                                    breakpoint: 480,
+                                    settings: {
+                                        slidesToShow: 2,
+                                        slidesToScroll: 2
+                                    }
+                                }
+                            ]
+                        });
+                    });
+                },
+                error: function(error) {
+                    console.log('Error loading sliders:', error);
+                }
+            });
+        }
+    
+        // Load sliders when document is ready
+        loadSliders();
+    });    
+</script>
+
 @endsection

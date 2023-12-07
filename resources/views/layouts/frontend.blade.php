@@ -382,45 +382,6 @@
             window.location.href = logoutUrl;
         }
     </script>
-
-    <script>
-
-        function updateAnchorTags() {
-            // Check if localStorage contains the key "customerId"
-            if (localStorage.getItem('customerId')) {
-                // Get userId from localStorage
-                let userId = localStorage.getItem('customerId');
-
-                // Select all the relevant anchor tags
-                let anchors = document.querySelectorAll('a');
-
-                // Loop through each anchor tag and modify the href attribute
-                anchors.forEach(anchor => {
-                    let href = anchor.getAttribute('href');
-                    // Check if href is not null and then modify it
-                    if (href) {
-                        // Check if the URL already has parameters
-                        if (href.includes('?')) {
-                            // If yes, append the userId with an ampersand
-                            href += `&userId=${userId}`;
-                        } else {
-                            // If no, append the userId with a question mark
-                            href += `?userId=${userId}`;
-                        }
-                        // Set the modified href back on the anchor tag
-                        anchor.setAttribute('href', href);
-                    }
-                });
-            }
-        }
-
-        // // Ensure the function is called once the page is fully loaded
-        document.addEventListener('DOMContentLoaded', function() {
-            updateAnchorTags();
-        });
-
-    </script>
-
     <script>
         
         // Debounce function: Ensures that the given function is not called until after the specified time has elapsed since the last time it was called
@@ -689,6 +650,44 @@
             });
 
         });
+    </script>
+
+    <script>
+
+        function updateAnchorTags() {
+            // Check if localStorage contains the key "customerId"
+            if (localStorage.getItem('customerId')) {
+                // Get customerId from localStorage
+                let customerId = localStorage.getItem('customerId');
+
+                // Select all the relevant anchor tags
+                let anchors = document.querySelectorAll('a');
+
+                // Loop through each anchor tag and modify the href attribute
+                anchors.forEach(anchor => {
+                    let href = anchor.getAttribute('href');
+                    // Check if href is not null and then modify it
+                    if (href) {
+                        // Check if the URL already has parameters
+                        if (href.includes('?')) {
+                            // If yes, append the customerId with an ampersand
+                            href += `&customerId=${customerId}`;
+                        } else {
+                            // If no, append the customerId with a question mark
+                            href += `?customerId=${customerId}`;
+                        }
+                        // Set the modified href back on the anchor tag
+                        anchor.setAttribute('href', href);
+                    }
+                });
+            }
+        }
+
+        // // Ensure the function is called once the page is fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            updateAnchorTags();
+        });
+
     </script>
 
     <div id="footer" class="site-footer js-site-footer" role="contentinfo">

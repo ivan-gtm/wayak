@@ -44,7 +44,7 @@ services:
       context: .cloud/docker/bard/
       dockerfile: Dockerfile
     environment:
-      _BARD_API_KEY: "cghW7kByc5YYcD7dOnznChWJMugE4pul0c1-9c8MW3pPX6aTFYE2TkHbtIxD7RCYg2WnMg."
+      _BARD_API_KEY: "dwhW7r3ffeq_01nyIcrACWtwX0ssCfXDXvKu8FxJmPfCk-ydF4u5n_ijWz_QiVsRtBSpgg."
     volumes:
       - .cloud/bard/app:/app/code/
       - /Users/daniel/Documents/GitHub/wayak/public/design/template:/app/images/

@@ -9,7 +9,7 @@ use App\Models\Template;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 
-class CreateCarousel extends Command
+class RecomendatorCarousels extends Command
 {
     /**
      * The name and signature of the console command.
@@ -45,14 +45,16 @@ class CreateCarousel extends Command
         $customerId = $this->argument('customerId');
 
         $this->buildCarouselPopularCategories();
-        // $this->buildCarouselTrendingNow();
-        // $this->buildFavoritesCarousels($customerId);
-        // $this->buildSearchBasedCarousels($customerId);
-        // $this->buildRecentlyViewedProductsCarousel($customerId);
+        $this->buildCarouselTrendingProducts();
+        
+        $this->buildFavoritesCarousels($customerId);
+        $this->buildSearchBasedCarousels($customerId);
+        $this->buildRecentlyViewedProductsCarousel($customerId);
+        // popular categories
     }
 
     // Global user preferences
-    function buildCarouselTrendingNow()
+    function buildCarouselTrendingProducts()
     {
         try {
             // Fetch all template views
@@ -102,12 +104,16 @@ class CreateCarousel extends Command
             }
 
             // Construct the carousel JSON object
-            $carousel = [
+            $carousel[] = [
                 'slider_id' => Str::random(5),
                 'title' => 'Trending Now',
                 'search_term' => 'Favorites',
                 'items' => $carouselItems
             ];
+
+            // echo "<pre>";
+            // print_r($carousel);
+            // exit;
 
             // Store the JSON object in Redis
             $redisCarouselKey = 'wayak:' . $country . ':home:carousels:trending';
@@ -179,12 +185,12 @@ class CreateCarousel extends Command
             $carousels[] = [
                 'slider_id' => Str::random(5),
                 'title' => $categoryName,
-                'search_term' => 'Favorites',
+                'search_term' => 'Popular Categories',
                 'items' => $carouselItems
             ];
         }
 
-        print_r($carousels);
+        // print_r($carousels);
 
         // Store the JSON object in Redis
         $redisCarouselKey = 'wayak:' . $country . ':home:carousels:trending-categories';
@@ -193,12 +199,10 @@ class CreateCarousel extends Command
         $this->info('Carousel created successfully ');
     }
 
-
-
     function buildFavoritesCarousels($customerId)
     {
-
         $language_code = 'en';
+        $country = 'us';
         $favoriteProductIds = $this->getFavorites($customerId);
         $products = Template::whereIn('_id', $favoriteProductIds)->get([
             'title',
@@ -233,12 +237,12 @@ class CreateCarousel extends Command
         }
 
         // Construct the carousel JSON object
-        $carousel = [
+        $carousel = [[
             'slider_id' => Str::random(5),
             'title' => 'Favorites',
-            'search_term' => 'Favorites',
+            'link' => route('user.favorites',['customerId' => $customerId, 'country' => $country]),
             'items' => $carouselItems
-        ];
+        ]];
 
         // Store the JSON object in Redis
         $redisCarouselKey = "wayak:user:{$customerId}:carousels:favorites";
@@ -246,12 +250,12 @@ class CreateCarousel extends Command
 
         $this->info('Carousel created successfully for customer: ' . $customerId);
 
-        return 0;
+        return true;
     }
 
     function getFavorites($customerId)
     {
-        $collections = Redis::keys('wayak:user:favorites:' . $customerId . ':*');
+        $collections = Redis::keys('wayak:user:' . $customerId . ':favorites:*');
         $favorites = [];
 
         foreach ($collections as $collection_key) {
@@ -284,8 +288,7 @@ class CreateCarousel extends Command
         // uasort($serachHistoryArray, function ($a, $b) {
         //     return $b['count'] <=> $a['count'];
         // });
-
-
+        
         // Sort the product history based on "lastSearched" date in descending order
         uasort($serachHistoryArray, function ($a, $b) {
             return $b['lastSearched'] <=> $a['lastSearched'];
@@ -383,12 +386,12 @@ class CreateCarousel extends Command
         })->toArray();
 
         // Construct and store carousel JSON
-        Redis::set("wayak:user:{$customerId}:carousels:product-history", json_encode([
+        Redis::set("wayak:user:{$customerId}:carousels:product-history", json_encode([[
             'slider_id' => Str::random(5),
             'title' => 'Recently viewed products',
             'search_term' => 'recently viewed',
             'items' => $carouselItems
-        ]));
+        ]]));
 
         $this->info('Carousel created successfully for customer: ' . $customerId);
 

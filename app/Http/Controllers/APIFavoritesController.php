@@ -140,9 +140,9 @@ class APIFavoritesController extends Controller
 
     public function getFavorites(Request $request)
     {
-        $userId = $request->input('userId');
+        $customerId = $request->input('customerId');
 
-        $collections = Redis::keys('wayak:user:favorites:' . $userId . ':*');
+        $collections = Redis::keys('wayak:user:favorites:' . $customerId . ':*');
         $favorites = [];
 
         foreach ($collections as $collection) {

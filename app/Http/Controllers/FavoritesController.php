@@ -18,7 +18,7 @@ class FavoritesController extends Controller
         // $this->getFavorites();
         // $country = 'us';
         $validator = Validator::make($request->all(), [
-            'userId' => 'required|string|alpha_num|min:10|max:10', // Assuming clientId is between 8 and 20 characters
+            'customerId' => 'required|string|alpha_num|min:10|max:10', // Assuming clientId is between 8 and 20 characters
         ]);
 
         if ($validator->fails()) {
@@ -35,8 +35,8 @@ class FavoritesController extends Controller
         $user = Auth::user();
         if($user){
             $customerId = $user->customer_id;
-        } elseif(isset($request->userId)) {
-            $customerId = $request->userId;
+        } elseif(isset($request->customerId)) {
+            $customerId = $request->customerId;
         } else {
             abort(404);
         }

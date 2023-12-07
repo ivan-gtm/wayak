@@ -15,6 +15,7 @@ use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\FavoritesController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AutocompleteController;
+use App\Http\Controllers\RecommendationController;
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\SalesManagerController;
@@ -253,10 +254,13 @@ Route::get('/{country}/user/favorites', [FavoritesController::class, 'showFavori
 Route::prefix('favorites')->group(function () {
     // Add favorite
     Route::post('/add', [FavoritesController::class, 'addFavorite']);
-
+    
     // Remove favorite
     Route::delete('/remove', [FavoritesController::class, 'removeFavorite']);
 });
+
+// recommendator
+Route::get('/{country}/carousels', [RecommendationController::class, 'getUserCarousels'])->name('recommendator.carousels'); // beta
 
 Route::group(['middleware' => ['auth']], function() {
     // Logout Routes
