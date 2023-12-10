@@ -76,7 +76,7 @@ class FavoritesController extends Controller
                 $templates[] = $template;
             }
     
-            $total_documents = Template::whereIn('_id', ['gmnftcCJWK'])->count();
+            $total_documents = Template::whereIn('_id', $favorites)->count();
             $last_page = ceil($total_documents / $per_page);
         }
                 

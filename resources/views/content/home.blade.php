@@ -217,8 +217,8 @@
         $.each(sliders_content, function(i, slider) {
             var id = $(slider).attr('data-slider-id');
 
-            console.log("NEW SLIDER");
-            console.log('#' + id + ' > div > div > div > span.handle.handlePrev');
+            // console.log("NEW SLIDER");
+            // console.log('#' + id + ' > div > div > div > span.handle.handlePrev');
 
             $(slider).slick({
                 lazyLoad: 'ondemand',
@@ -258,9 +258,7 @@
         });
 
     });
-</script>
 
-<script>
     $(document).ready(function() {
         let customerId = getCustomerId();
         
@@ -288,7 +286,7 @@
         // Function to create a complete slider
         function createSlider(sliderData) {
             
-            console.log(sliderData);
+            // console.log(sliderData);
 
             let sliderItems = sliderData.items.map(createSliderItem).join('');
             return `
@@ -344,14 +342,14 @@
                     // var sliders_content = $('#appMountPoint > div > div > div > div > div > div');
                     var sliders_content = $('#appMountPoint > div > div > div > div > div > div > div:nth-child(2)');
                     response.forEach(function(sliderData) {
-                        // console.log(sliderData);
+                        // // console.log(sliderData);
                         
                         let searchURL = '/' + sliderData.search_term;
                         let newSliderHtml = createSliderContainer(searchURL, sliderData.title, sliderData);
                         // Append the new slider to the body or a specific div
-                        console.log("Append the new slider to the body or a specific div");
+                        // console.log("Append the new slider to the body or a specific div");
                         
-                        // console.log(newSliderHtml);
+                        // // console.log(newSliderHtml);
                         
                         $(sliders_content).append(newSliderHtml);
                         
@@ -393,7 +391,7 @@
                     });
                 },
                 error: function(error) {
-                    console.log('Error loading sliders:', error);
+                    // console.log('Error loading sliders:', error);
                 }
             });
         }

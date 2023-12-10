@@ -22,49 +22,7 @@
 @endsection
 
 @section('css')
-<style>
-    /* Style for notifications */
-    .notification {
-        position: fixed;
-        bottom: 10px;
-        right: 10px;
-        background-color: #444;
-        color: #fff;
-        border-radius: 5px;
-        padding: 10px;
-        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        width: 320px;
-        opacity: 0;
-        transform: translateY(50px);
-        transition: opacity 0.4s ease, transform 0.4s ease;
-        z-index: 2147483647;
-    }
 
-    .notification-content {
-        flex: 1;
-    }
-
-    .notification-content a {
-        color: #FFD700;
-        text-decoration: none;
-    }
-
-    .notification-close {
-        background: none;
-        border: none;
-        color: #fff;
-        cursor: pointer;
-        font-size: 18px;
-        margin-left: 10px;
-    }
-
-    .notification-close:focus {
-        outline: none;
-    }
-</style>
 <style>
     /* STYLE FOR LOGIN FORM  */
 
@@ -191,7 +149,6 @@
     </div>
 </div>
 
-
 <div itemscope itemtype="https://schema.org/Product">
     <meta itemprop="sku" content="{{ $template->_id }}" />
     <div itemprop="brand" itemtype="http://schema.org/Brand" itemscope>
@@ -248,9 +205,9 @@
                                                             <span class="wt-screen-reader-only">Price:</span>
                                                             <span>
                                                                 @if(isset($sale) && $sale != null )
-                                                                MX${{ $template->prices['price'] }}
+                                                                    US${{ $template->prices['price'] }}
                                                                 @else
-                                                                MX${{ $template->prices['original_price'] }}
+                                                                    US${{ $template->prices['original_price'] }}
                                                                 @endif
                                                             </span>
                                                         </p>
@@ -258,7 +215,7 @@
                                                             <div class="wt-display-flex-xs wt-text-caption wt-text-gray">
                                                                 <div class="wt-text-strikethrough wt-mr-xs-1">
                                                                     <span class="wt-screen-reader-only">Original Price:</span>
-                                                                    MX${{ $template->prices['original_price'] }}
+                                                                    US${{ $template->prices['original_price'] }}
                                                                 </div>
                                                                 <div class="wt-mr-xs-1">
                                                                     ({{ $template->prices['discount_percent'] }}% Off)

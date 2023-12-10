@@ -40,7 +40,7 @@ class AutocompleteController extends Controller
 
     public function search(Request $request)
     {
-        $query = $request->input('prefix');
+        $query = strtolower($request->input('prefix'));
         
         // Retrieve terms from the inverted index
         $results = Redis::sMembers('wayak:us:index:' . $query);
