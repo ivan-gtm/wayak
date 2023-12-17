@@ -22,19 +22,20 @@ class RecommendationController extends Controller
             abort(404);
         }
         
-        $customerId = $request->customerId;
         // $favorites = Redis::get("wayak:user:$customerId:carousels:favorites");
-        
-        $productHistory = json_decode(Redis::get("wayak:user:$customerId:carousels:product-history"));
-        $favorites = json_decode(Redis::get("wayak:user:$customerId:carousels:favorites"));
-        $searchTerm = json_decode(Redis::get("wayak:user:$customerId:carousels:search"));
+        $customerId = $request->customerId;
+
+        $productHistory = json_decode(Redis::get("wayak:user:$customerId:carousels:product-history"), true) ?? [];
+        $favorites = json_decode(Redis::get("wayak:user:$customerId:carousels:favorites"), true) ?? [];
+        $searchTerm = json_decode(Redis::get("wayak:user:$customerId:carousels:search"), true) ?? [];
 
         $country = 'us';
         $redisCarouselKey = 'wayak:' . $country . ':home:carousels:trending-categories';
-        $trendingCategories = json_decode(Redis::get($redisCarouselKey));
+        $trendingCategories = json_decode(Redis::get($redisCarouselKey), true) ?? [];
 
         $redisTrendingProductsKey = 'wayak:' . $country . ':home:carousels:trending';
-        $trendingProducts = json_decode(Redis::get($redisTrendingProductsKey));
+        $trendingProducts = json_decode(Redis::get($redisTrendingProductsKey), true) ?? [];
+
 
         // $searchTerm = Redis::get(, $slug);
 

@@ -1098,25 +1098,20 @@
 
 <script src="https://www.paypal.com/sdk/js?client-id=sb&enable-funding=venmo&currency=USD" data-sdk-integration-source="button-factory"></script>
 <script>
-    function storePurchase(customerId, templateId) {
-        // Define the URL for the store endpoint
-        const apiUrl = '/us/user/purchases/store'; // Adjust the URL as needed
-    
-        // Get the CSRF token value from the Laravel Blade template
+    function storePurchase(customerId, templateId, redirectUrl) {
+        const apiUrl = '/us/user/purchases/store';
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-    
-        // Create a request body with the customer ID and template IDs
+        
         const requestBody = {
             customerId: customerId,
             templateId: templateId,
         };
-    
-        // Make a POST request to the store endpoint
+
         fetch(apiUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrfToken, // Include the CSRF token in the headers
+                'X-CSRF-TOKEN': csrfToken,
             },
             body: JSON.stringify(requestBody),
         })
@@ -1128,13 +1123,14 @@
         })
         .then(data => {
             console.log('Purchase stored successfully:', data);
-            // You can perform additional actions here, such as updating the UI.
+            // Redirect the user
+            window.location.href = redirectUrl + "?customerId=" + encodeURIComponent(customerId);
         })
         .catch(error => {
             console.error('There was an error storing the purchase:', error);
-            // Handle the error and provide user feedback as needed.
         });
     }
+
     
     function initPayPalButton() {
         paypal.Buttons({
@@ -1162,20 +1158,23 @@
                 return actions.order.capture().then(function(orderData) {
 
                     // Full available details
-                    console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
+                    // console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
 
+                    
                     // Show a success message within this page, e.g.
                     // let element = document.getElementById('paypal-button-container');
                     // element.innerHTML = '';
                     // element.innerHTML = '<h3>Thank you for your payment!</h3>';
-
-                    const customerId = getCustomerId();
+                    
                     const metaElement = document.querySelector('meta[name="product-id"]');
                     const productId = metaElement.getAttribute('content');
-                    storePurchase(customerId, productId);
+                    const customerId = getCustomerId();
                     
-                    // Or go to another URL:  
-                    actions.redirect('{{ route('editor.openTemplate', [ 'country' => $country, 'template_key' => $template->_id ]) }}');
+                    // storePurchase(customerId, productId);
+                    var redirectUrl = "{{ route('editor.openTemplate', [ 'country' => $country, 'template_key' => $template->_id ]) }}";
+                    storePurchase(customerId, productId, redirectUrl)
+                    
+                    // actions.redirect("?customerId="+customerId);
 
                 });
             },
