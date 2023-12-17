@@ -217,9 +217,17 @@ class LoginController extends Controller
             return back()->withErrors(['email' => 'We can\'t find a user with that e-mail address.']);
         }
 
+        // echo "<pre>";
+        // print_r($request->all());
+        // exit;
+
         // Reset the password
-        $user->password = Hash::make($request->password);
-        $user->save();
+        // $user->password = Hash::make($request->password);
+        // $user->save();
+
+        DB::table('users')
+                    ->where('email', $passwordReset->email )
+                    ->update([ 'password' => Hash::make($request->password) ]);
 
         // Delete the token
         DB::table('password_resets')->where('token', $request->reset_token)->delete();

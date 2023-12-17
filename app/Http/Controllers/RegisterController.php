@@ -54,30 +54,23 @@ class RegisterController extends Controller
     {
         $userData = $request->validated();
         $userData['customer_id'] = $request->input('customerId');
+        $userData['verification_token'] = $this->generateVerificationToken();
         
         // echo "<pre>";
         // print_r($userData);
         // exit;
 
         $user = User::create($userData);
-        // $user = User::create($request->validated());
         
-
-        
-        auth()->login($user);
-
-
-        $user->verification_token = $this->generateVerificationToken();
+        // $user = User::create($request->validated());        
+        // auth()->login($user);
 
         $this->sendVerificationEmail($user);
 
         // Generate a verification code (you can also use your generateVerificationToken function)
         $verificationCode = rand(100000, 999999);
 
-        // Store the code in your database (or cache)
-        // ...
-
-        // // Send the verification SMS
+        // Send the verification SMS
         // $smsStatus = $this->sendVerificationSms($user, $verificationCode);
 
         return redirect('/')->with('success', "Account successfully registered.");
@@ -98,6 +91,28 @@ class RegisterController extends Controller
         }
 
         return 'Email sent successfully';
+    }
+
+    public function verifyEmail($verificationToken)
+    {
+        // Find the user by the verification token
+        $user = User::where('verification_token', $verificationToken)->first();
+
+        if (!$user) {
+            // No user was found with this verification token
+            return redirect('/')->with('error', 'Invalid verification link.');
+        }
+
+        // Update the user's verification status
+        $user->email_verified_at = now();
+        $user->verification_token = null; // Clear the verification token
+        $user->save();
+
+        // Optionally, automatically log the user in
+        auth()->login($user);
+
+        // Redirect to a verified page or with a success message
+        return redirect('/')->with('success', 'Email successfully verified.');
     }
 
     public function generateVerificationToken()

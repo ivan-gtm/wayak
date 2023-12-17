@@ -237,6 +237,7 @@ Route::group(['middleware' => ['guest']], function() {
     // Register Routes
     Route::get('/register', [RegisterController::class,'show'])->name('register.show');
     Route::post('/register', [RegisterController::class,'register'])->name('register.perform');
+    Route::get('/verify-email/{verificationToken}', [RegisterController::class,'verifyEmail']);
 
     // Login Routes
     Route::get('/login', [LoginController::class,'show'])->name('login.show');
