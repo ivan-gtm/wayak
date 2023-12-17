@@ -8,6 +8,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CodeController;
 use App\Http\Controllers\ProductHistoryController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\UserPurchaseController;
 
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
@@ -248,18 +249,35 @@ Route::group(['middleware' => ['guest']], function() {
     Route::post('password/reset', [LoginController::class,'reset'])->name('password.update');
 });
 
-// FAVORITES
-// Get all favorites for a client
-Route::get('/{country}/user/favorites', [FavoritesController::class, 'showFavorites'])->name('user.favorites'); // beta
-Route::prefix('favorites')->group(function () {
-    // Add favorite
-    Route::post('/add', [FavoritesController::class, 'addFavorite']);
-    
-    // Remove favorite
-    Route::delete('/remove', [FavoritesController::class, 'removeFavorite']);
-});
+// Purchases
+    // Show the list of purchases and show details for a specific purchase
+    Route::get('/{country}/user/purchases', [UserPurchaseController::class, 'index'])->name('user.purchases');
 
-// recommendator
+    // Storing a purchase
+    Route::post('/{country}/user/purchases/store', [UserPurchaseController::class, 'store']);
+
+    
+    // Mostrar los detalles de una compra específica.
+    // Route::get('/user-purchases/{id}', [UserPurchaseController::class, 'show']);
+
+    // // Optionally, add routes for creating and storing purchases
+    // Route::get('/user-purchases/create', [UserPurchaseController::class, 'create']);
+    
+    // Almacenar una nueva compra realizada por el usuario en la base de datos.
+    // Route::post('/user-purchases', [UserPurchaseController::class, 'store']);
+
+// FAVORITES
+    // Get all favorites for a client
+    Route::get('/{country}/user/favorites', [FavoritesController::class, 'showFavorites'])->name('user.favorites');
+    Route::prefix('favorites')->group(function () {
+        // Add favorite
+        Route::post('/add', [FavoritesController::class, 'addFavorite']);
+        
+        // Remove favorite
+        Route::delete('/remove', [FavoritesController::class, 'removeFavorite']);
+    });
+
+// Recommendator
 Route::get('/{country}/carousels', [RecommendationController::class, 'getUserCarousels'])->name('recommendator.carousels'); // beta
 
 Route::group(['middleware' => ['auth']], function() {

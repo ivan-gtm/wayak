@@ -388,34 +388,41 @@
                                                 </div>
 
                                             </div>
-                                            
-                                            <div class="purchase-form__button">
-                                                Buy Now With
-                                                <div id="smart-button-container">
-                                                    <div style="text-align: center;">
-                                                        <div id="paypal-button-container"></div>
+                                            @if($isPurchased)
+                                                <a class="wt-btn wt-btn--outline wt-width-full wt-display-flex-xs wt-align-items-center wt-justify-content-center wt-line-height-tight wt-p-xs-0 t-heading"
+                                                    rel="nofollow" title="Add to Cart"
+                                                    href="{{ route('editor.openTemplate', [ 'country' => $country, 'template_key' => $template->_id ]) }}">
+                                                    Open Template
+                                                </a>
+                                            @else
+                                                <div class="purchase-form__button">
+                                                    Buy Now With
+                                                    <div id="smart-button-container">
+                                                        <div style="text-align: center;">
+                                                            <div id="paypal-button-container"></div>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <a class="wt-btn wt-btn--outline wt-width-full wt-display-flex-xs wt-align-items-center wt-justify-content-center wt-line-height-tight wt-p-xs-0 t-heading"
-                                                rel="nofollow" title="Add to Cart"
-                                                href="{{ 
-                                                                            route('editor.demoTemplate',[
-                                                                            'country' => $country,
-                                                                            'template_key' => $template->_id
-                                                                        ] )
-                                                                    }}">
-                                                Try Demo
-                                            </a>
-                                            <a class="wt-btn wt-btn--outline wt-width-full wt-display-flex-xs wt-align-items-center wt-justify-content-center wt-line-height-tight wt-p-xs-0 t-heading" rel="nofollow" title="Add to Cart" href="{{ 
-                                                                            route('code.validate.form',[
-                                                                            'country' => $country,
-                                                                            'product_id' => $template->_id,
-                                                                            'ref' => url()->full()
-                                                                        ] )
-                                                                    }}">
-                                                Use Code
-                                            </a>
+                                                <a class="wt-btn wt-btn--outline wt-width-full wt-display-flex-xs wt-align-items-center wt-justify-content-center wt-line-height-tight wt-p-xs-0 t-heading"
+                                                    rel="nofollow" title="Add to Cart"
+                                                    href="{{ 
+                                                                                route('editor.demoTemplate',[
+                                                                                'country' => $country,
+                                                                                'template_key' => $template->_id
+                                                                            ] )
+                                                                        }}">
+                                                    Try Demo
+                                                </a>
+                                                <a class="wt-btn wt-btn--outline wt-width-full wt-display-flex-xs wt-align-items-center wt-justify-content-center wt-line-height-tight wt-p-xs-0 t-heading" rel="nofollow" title="Add to Cart" href="{{ 
+                                                                                route('code.validate.form',[
+                                                                                'country' => $country,
+                                                                                'product_id' => $template->_id,
+                                                                                'ref' => url()->full()
+                                                                            ] )
+                                                                        }}">
+                                                    Use Code
+                                                </a>
+                                            @endif
                                             <p class="t-body -size-s" itemprop="description">
                                                 <!-- The size of this template is 5x7in. Click “Use This Template“, start your own design. Then you can change the text and images as you wish. After that, preview and save your work, your design will be ready to print, share or download. -->
                                             </p>
@@ -1091,6 +1098,44 @@
 
 <script src="https://www.paypal.com/sdk/js?client-id=sb&enable-funding=venmo&currency=USD" data-sdk-integration-source="button-factory"></script>
 <script>
+    function storePurchase(customerId, templateId) {
+        // Define the URL for the store endpoint
+        const apiUrl = '/us/user/purchases/store'; // Adjust the URL as needed
+    
+        // Get the CSRF token value from the Laravel Blade template
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    
+        // Create a request body with the customer ID and template IDs
+        const requestBody = {
+            customerId: customerId,
+            templateId: templateId,
+        };
+    
+        // Make a POST request to the store endpoint
+        fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken, // Include the CSRF token in the headers
+            },
+            body: JSON.stringify(requestBody),
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Purchase stored successfully:', data);
+            // You can perform additional actions here, such as updating the UI.
+        })
+        .catch(error => {
+            console.error('There was an error storing the purchase:', error);
+            // Handle the error and provide user feedback as needed.
+        });
+    }
+    
     function initPayPalButton() {
         paypal.Buttons({
             style: {
@@ -1124,9 +1169,13 @@
                     // element.innerHTML = '';
                     // element.innerHTML = '<h3>Thank you for your payment!</h3>';
 
+                    const customerId = getCustomerId();
+                    const metaElement = document.querySelector('meta[name="product-id"]');
+                    const productId = metaElement.getAttribute('content');
+                    storePurchase(customerId, productId);
+                    
                     // Or go to another URL:  
-                    actions.redirect(' {{ route('editor.openTemplate', [ 'country' => $country, 'template_key' => $template->_id ]) }}');
-
+                    actions.redirect('{{ route('editor.openTemplate', [ 'country' => $country, 'template_key' => $template->_id ]) }}');
 
                 });
             },
@@ -1173,13 +1222,13 @@
 
     @if($sale != null)
 
-    var date = '{{ $sale['sale_ends_at'] }}';
-    var remainingSeconds = remainingSecondsUntilUtcDate(date);
-    console.log('Remaining seconds until ' + date + ': ' + remainingSeconds);
+        var date = '{{ $sale['sale_ends_at'] }}';
+        var remainingSeconds = remainingSecondsUntilUtcDate(date);
+        console.log('Remaining seconds until ' + date + ': ' + remainingSeconds);
 
-    // let secondsRemaining = 3600; // 1 hour
-    let elementToUpdate = document.getElementById("countdown");
-    countdown(remainingSeconds, elementToUpdate);
+        // let secondsRemaining = 3600; // 1 hour
+        let elementToUpdate = document.getElementById("countdown");
+        countdown(remainingSeconds, elementToUpdate);
 
     @endif
 </script>

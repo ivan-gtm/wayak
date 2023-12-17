@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 // Source: https://codeanddeploy.com/blog/laravel/laravel-8-authentication-login-and-registration-with-username-or-email
 class LoginController extends Controller
@@ -86,7 +87,7 @@ class LoginController extends Controller
     {
         $country = 'us';
         $locale = $this->getLocaleByCountry($country);
-
+        
         App::setLocale($locale);
 
         // Validate the token
@@ -107,28 +108,57 @@ class LoginController extends Controller
             return redirect('password/reset')->withErrors(['email' => 'The password reset token has expired.']);
         }
 
+        // password_resets
+        $user = User::where('email', $tokenData->email)->first();
+        if (!$user) {
+            return back()->withErrors(['email' => 'We can\'t find a user with that e-mail address.']);
+        }
+
         $menu = json_decode(Redis::get('wayak:' . $country . ':menu'));
         $sale = Redis::hgetall('wayak:' . $country . ':config:sales');
 
         return view('auth.passwords.reset', [
             'country' => $country, 'menu' => $menu, 'sale' => $sale, 'search_query' => null,
-            'token' => $token, 'email' => $request->email
+            'token' => $token, 'email' => $request->email,
+            'customer_id' => $user->customer_id
         ]);
     }
 
 
-    public function showResetForm()
+    public function showResetForm(Request $request)
     {
         $country = 'us';
+        $validator = Validator::make($request->all(), [
+            'customerId' => 'required|string|alpha_num|min:10|max:10', // Assuming clientId is between 8 and 20 characters
+        ]);
+
+        if ($validator->fails()) {
+            abort(404); // Unprocessable Entity
+        }
+        
         $locale = $this->getLocaleByCountry($country);
 
         App::setLocale($locale);
+
+        if( Auth::check() && isset($user->customer_id) ) {
+            $user = Auth::user();
+            $customer_id =  $user->customer_id;
+        } elseif( isset($request->customerId) ) {
+            $customer_id = isset($request->customer_id) ? $request->customer_id : null;
+        }
 
         $menu = json_decode(Redis::get('wayak:' . $country . ':menu'));
         $sale = Redis::hgetall('wayak:' . $country . ':config:sales');
 
         return view('auth.passwords.email')->with(
-            ['country' => $country, 'menu' => $menu, 'sale' => $sale, 'search_query' => null]
+            [
+                'country' => $country,
+                'customer_id' => $customer_id,
+                'menu' => $menu,
+                'sale' => $sale,
+                'customer_id' => isset($user->customer_id) ? $user->customer_id : null,
+                'search_query' => null
+            ]
         );
     }
 

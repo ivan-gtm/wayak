@@ -22,6 +22,9 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\App;
+use App\Services\UserPurchaseService;
+// use Illuminate\Support\Facades\Response;
+
 
 use Barryvdh\DomPDF\Facade as PDF;
 // use Image;
@@ -33,6 +36,13 @@ ini_set('memory_limit', -1);
 
 class EditorController extends Controller
 {
+	protected $userPurchaseService;
+
+    public function __construct(UserPurchaseService $userPurchaseService)
+    {
+        $this->userPurchaseService = $userPurchaseService;
+    }
+
 	function home()
 	{
 		return redirect()->action(
@@ -43,7 +53,7 @@ class EditorController extends Controller
 
 	function demoTemplate($country, $template_key)
 	{
-		
+
 		if ($country == 'mx') {
 			$language_code = 'es';
 		} else {
@@ -216,7 +226,7 @@ class EditorController extends Controller
 		$template_urls = [];
 		$templates = DB::table('d_templates')
 			->select('id', 'template_id')
-		->where('status', '=', 3)
+			->where('status', '=', 3)
 			->orderBy('id', 'DESC')
 			->limit(2)
 			->get();
@@ -464,7 +474,7 @@ class EditorController extends Controller
 	{
 		$template_id_query = DB::table('templates')
 			->select('template_id')
-		->where('template_id', '=', $template_id)
+			->where('template_id', '=', $template_id)
 			->first();
 
 		// echo "<pre>";
@@ -603,9 +613,9 @@ class EditorController extends Controller
 
 		$images_query = DB::table('images')
 			->select('template_id')
-		->where('template_id', '=', $template_id)
-		->where('filename', '=', $file_name)
-		->first();
+			->where('template_id', '=', $template_id)
+			->where('filename', '=', $file_name)
+			->first();
 
 		// If this image does not exists on db
 		if (isset($images_query->template_id) == false) {
@@ -622,9 +632,9 @@ class EditorController extends Controller
 
 		$svg_query = DB::table('images')
 			->select('template_id')
-		->where('template_id', '=', $template_id)
-		->where('filename', '=', $file_name)
-		->first();
+			->where('template_id', '=', $template_id)
+			->where('filename', '=', $file_name)
+			->first();
 
 		// If font id does not exists on db
 		if (isset($svg_query->template_id) == false) {
@@ -639,9 +649,9 @@ class EditorController extends Controller
 		// Check if font/template relationship already exist
 		$relationship_query = DB::table('template_has_fonts')
 			->select('template_id')
-		->where('template_id', '=', $template_id)
-		->where('font_id', '=', $font_id)
-		->first();
+			->where('template_id', '=', $template_id)
+			->where('font_id', '=', $font_id)
+			->first();
 
 		// Create relationship between font and template, if it does not exists
 		if (isset($relationship_query->template_id) == false) {
@@ -650,8 +660,8 @@ class EditorController extends Controller
 
 		$font_query = DB::table('fonts')
 			->select('font_id')
-		->where('font_id', '=', $font_id)
-		->first();
+			->where('font_id', '=', $font_id)
+			->first();
 
 		// If font id does not exists on db
 		if (isset($font_query->font_id)) {
@@ -782,14 +792,14 @@ class EditorController extends Controller
 
 		$thumbnail = DB::table('thumbnails')
 			->select('id')
-		->where('template_id', '=', $template_info['template_id'])
-		->where('language_code', '=', $template_info['language_code'])
-		->first();
+			->where('template_id', '=', $template_info['template_id'])
+			->where('language_code', '=', $template_info['language_code'])
+			->first();
 
 		if (isset($thumbnail->id) != false) {
 			DB::table('thumbnails')
-			->where('template_id', '=', $template_info['template_id'])
-			->where('language_code', '=', $template_info['language_code'])
+				->where('template_id', '=', $template_info['template_id'])
+				->where('language_code', '=', $template_info['language_code'])
 				->update([
 					'filename' => $template_info['filename'],
 					'dimentions' => $template_info['dimentions'],
@@ -817,8 +827,8 @@ class EditorController extends Controller
 	{
 		$thumbnail = DB::table('thumbnails')
 			->select('id')
-		->where('template_id', '=', $template_info['template_id'])
-		->first();
+			->where('template_id', '=', $template_info['template_id'])
+			->first();
 
 		if (isset($thumbnail->id) == false) {
 			DB::table('thumbnails')->insert([
@@ -841,9 +851,9 @@ class EditorController extends Controller
 
 		$thumbnail = DB::table('thumbnails')
 			->select('filename')
-		->where('template_id', '=', $template_id)
-		->where('language_code', '=', $language_code)
-		->first();
+			->where('template_id', '=', $template_id)
+			->where('language_code', '=', $language_code)
+			->first();
 
 		if (isset($thumbnail->filename)) {
 
@@ -865,78 +875,83 @@ class EditorController extends Controller
 
 	function getTemplateThumbnails(Request $request)
 	{
-		// echo "<pre>";
-		// print_r( $request->all() );
-		// // print_r( $request->demo_templates );
+		$demoTemplates = $request->demo_templates;
+		$languageCode = $request->language_code;
+
+		// Fetch template IDs
+		$templateIds = Redis::exists('temp:template:relation:' . $demoTemplates) ?
+			Redis::get('temp:template:relation:' . $demoTemplates) :
+			$demoTemplates;
+
+		if (!$templateIds) {
+			return Response::json(['success' => false, 'message' => 'Template IDs not found.']);
+		}
+
+		// Fetch thumbnail
+		$thumbnail = DB::table('thumbnails')
+			->select(['template_id', 'filename', 'title', 'dimentions'])
+			->where('language_code', '=', $languageCode)
+			->whereIn('template_id', explode(',', $templateIds))
+			->first();
+
+		if (!$thumbnail) {
+			return Response::json(['success' => false, 'message' => 'Thumbnail not found.']);
+		}
+
+		// Determine image URL
+		$imgUrl = App::environment('local') ?
+			url('design/template/' . $thumbnail->template_id . '/thumbnails/' . $languageCode . '/' . $thumbnail->filename) :
+			Storage::disk('s3')->url('design/template/' . $thumbnail->template_id . '/thumbnails/' . $languageCode . '/' . $thumbnail->filename);
+
+		// Construct response data
+		$responseData = [
+			'success' => true,
+			'data' => [
+				[
+					'template_id' => $demoTemplates,
+					'order_id' => '0',
+					'uid' => mt_rand(100000, 999999),
+					'template_name' => $this->escapeForJson($thumbnail->title),
+					// 'canvas_thumbnail' => '',
+					// 'canvas_json' => '',
+					// 'original_thumbnail' => '',
+					// 'original_json' => '',
+					'tags' => 'pampas grass',
+					'format' => 'new',
+					// 'preview_s3key' => 'thumbs/401481_1604309596_preview.jpeg',
+					// 'original_preview_s3key' => 'thumbs/401481_1604309596_preview.jpeg',
+					// 'original_thumb_s3key' => 'thumbs/401481_1604309596.png',
+					// 'thumb_s3key' => 'thumbs/401481_1604309596.png',
+					// 'options' => '{"width":480,"height":672,"metrics":"in","type":"single","instructionsId":"","scriptVersion":4}',
+					// 'canvas_json_s3url' => 'https://templett.s3.us-west-1.amazonaws.com/templates/5378270.json',
+					// 'original_json_s3url' => 'https://templett.s3.us-west-1.amazonaws.com/templates/5378270_original.json',
+					'status' => 'active',
+					// 'creation_date' => null,
+					// 'expiration_date' => null,
+					// 'granted_by_uid' => '0',
+					'download_number' => '0',
+					'width' => 5,
+					'height' => 7,
+					'metrics' => 'in',
+					'temp_source' => $imgUrl
+				]
+			]
+		];
+
+		return response()->json($responseData);
+	}
+
+
+	function escapeForJson($string)
+	{
+		// Use json_encode to escape the string
+		$escapedString = json_encode($string);
+		// Strip the surrounding quotes added by json_encode
+		// $escapedString = trim($escapedString, '"');
+		// echo $escapedString;
 		// exit;
 
-		// get mercado pago relationship
-		if (Redis::exists('temp:template:relation:' . $request->demo_templates)) {
-			$template_ids = Redis::get('temp:template:relation:' . $request->demo_templates);
-		} else {
-			$template_ids = $request['demo_templates'];
-		}
-
-		$thumbnails_html = '';
-
-		if (isset($template_ids)) {
-
-			$thumbnail = DB::table('thumbnails')
-				->select(['template_id', 'filename', 'title', 'dimentions'])
-				->where('language_code', '=', $request->language_code)
-				->whereRAW('template_id IN(\'' . $template_ids . '\')')
-				->first();
-
-			// 	foreach($template_thumbnails as $thumbnail) {
-			if (App::environment() == 'local') {
-				$img_url = url('design/template/' . $thumbnail->template_id . '/thumbnails/' . $request->language_code . '/' . $thumbnail->filename);
-			} else {
-				$img_url = Storage::disk('s3')->url('design/template/' . $thumbnail->template_id . '/thumbnails/' . $request->language_code . '/' . $thumbnail->filename);
-			}
-			//     	$thumbnails_html .= '<div class="col-xs-6 thumb" id="'.$request->demo_templates.'"><a class="thumbnail" data-target="'.$request->demo_templates.'"><span class="thumb-overlay"><h3>'.$thumbnail->title.'</h3></span><div class="expired-notice" style="display:none;">EXPIRED</div><img class="tempImage img-responsive" src="'.$img_url.'" alt="" style=""></a><div class="badge-container"><span class="badge dims">'.$thumbnail->dimentions.'</span><span class="badge tempId">ID: '.$request->demo_templates.'</span><i class="fa fa-trash-o deleteTemp" id="'.$request->demo_templates.'"></i></div></div>';
-			//     }
-		}
-
-		// $response = array(
-		// 	'err' => 0,
-		//     'data' => $thumbnails_html
-		// );
-
-		// return json_encode($response);
-
-		echo '{
-			"success": true,
-			"data": [{
-				"template_id": "' . $request->demo_templates . '",
-				"order_id": "0",
-				"uid": "401481",
-				"template_name": "' . $thumbnail->title . '",
-				"canvas_thumbnail": "",
-				"canvas_json": "",
-				"original_thumbnail": "",
-				"original_json": "",
-				"tags": "pampas grass",
-				"format": "new",
-				"preview_s3key": "thumbs\/401481_1604309596_preview.jpeg",
-				"original_preview_s3key": "thumbs\/401481_1604309596_preview.jpeg",
-				"original_thumb_s3key": "thumbs\/401481_1604309596.png",
-				"thumb_s3key": "thumbs\/401481_1604309596.png",
-				"options": "{\"width\":480,\"height\":672,\"metrics\":\"in\",\"type\":\"single\",\"instructionsId\":\"\",\"scriptVersion\":4}",
-				"canvas_json_s3url": "https:\/\/templett.s3.us-west-1.amazonaws.com\/templates\/5378270.json",
-				"original_json_s3url": "https:\/\/templett.s3.us-west-1.amazonaws.com\/templates\/5378270_original.json",
-				"status": "active",
-				"creation_date": null,
-				"expiration_date": null,
-				"granted_by_uid": "0",
-				"download_number": "0",
-				"width": 5,
-				"instructionsId": 0,
-				"height": 7,
-				"metrics": "in",
-				"temp_source": ' . json_encode($img_url) .
-		'
-			}]
-		}';
+		return $escapedString;
 	}
 
 	function loadAdditionalAssets()
@@ -1127,9 +1142,9 @@ class EditorController extends Controller
 			}
 
 			$font_families = DB::Table('fonts')
-			->select(['font_id', 'name'])
-			->whereRAW('font_id IN(' . $templates . ')')
-			->get();
+				->select(['font_id', 'name'])
+				->whereRAW('font_id IN(' . $templates . ')')
+				->get();
 
 
 			// header("Content-type: text/css");
@@ -1139,12 +1154,12 @@ class EditorController extends Controller
 				$response .= '@font-face {
 					font-family:\'' . $font->font_id . '\';
 					src:url(\'' . $font_url .
-				'\') format(\'woff\');
+					'\') format(\'woff\');
 				}';
 			}
 
 			return (new Response($response, 200))
-			->header('Content-Type', "text/css");
+				->header('Content-Type', "text/css");
 		}
 	}
 
@@ -1207,7 +1222,7 @@ class EditorController extends Controller
 		// dompdf/dompdf/src/Adapter/CPDF.php
 		$pdf = PDF::loadView('pdf_view', $data)
 			->setPaper('a4', 'landscape')
-		->save(public_path('invitation.pdf'));
+			->save(public_path('invitation.pdf'));
 
 		// $file_to_save = public_path('invitation.pdf');
 		// file_put_contents($file_to_save, $pdf->output());
@@ -1265,7 +1280,26 @@ class EditorController extends Controller
 		]);
 	}
 
-	function openTemplate($country, $template_key)
+	private function getCustomerId(Request $request)
+    {
+        // Cache authenticated user
+        $user = auth()->user();
+
+        if ($user) {
+            return $user->customer_id;
+        }
+
+        // $customerId = $request->input('customer_id');
+        // print_r($request->all());
+        // exit;
+        if ($request->customerId) {
+            return $request->customerId;
+        }
+
+        return false;
+    }
+
+	function openTemplate($country, Request $request, $template_key)
 	{
 		if ($country == 'mx') {
 			$language_code = 'es';
@@ -1276,6 +1310,13 @@ class EditorController extends Controller
 		$purchase_code = rand(1111, 9999);
 
 		$original_template_key = $template_key;
+
+		// http://localhost:8001/us/template/open/sjilZYwA1V?customerId=gq9mm31pti
+		$customerId = $this->getCustomerId($request);
+		if($this->userPurchaseService->isTemplateIdInPurchases($customerId, $template_key) == false) {
+            abort(404);
+        }
+
 		$temporal_customer_key = 'temp:' . $purchase_code;
 
 		// Register action on edit template button

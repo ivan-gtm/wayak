@@ -49,11 +49,11 @@
                                     <div class="">
                                         <div class="search-grid-container">
                                             @foreach($templates as $template)
-                                                <a href="{{ route( 'template.productDetail', [ 'country' => $country, 'slug' => $template->slug ] ) }}">
+                                                <a href="{{ route('editor.openTemplate', [ 'country' => $country, 'template_key' => $template->_id ]) }}">
                                                     <figure>
                                                         <img alt="{{ $template->title }}" crossorigin="anonymous" loading="lazy" data-categ="invitations" data-value="{{ $template->_id }}" src="{{ str_replace('_carousel','_product_preview',$template->preview_image) }}" class="itemImg">
                                                         <figcaption>
-                                                            <a href="{{ route( 'template.productDetail', [ 'country' => $country, 'slug' => $template->slug ] ) }}">
+                                                            <a href="{{ route('editor.openTemplate', [ 'country' => $country, 'template_key' => $template->_id ]) }}">
                                                                 <div class="dMnq_Lr8">
                                                                     <span>
                                                                         {{ $template->title }}
@@ -63,10 +63,10 @@
                                                             <div class="_n0J0gGK">
                                                                 <div class="d6YhEXPR">
                                                                     <div class="utcowRMZ">
-                                                                        <a href="{{ route( 'template.productDetail', [ 'country' => $country, 'slug' => $template->slug ] ) }}">
+                                                                        <a href="{{ route('editor.openTemplate', [ 'country' => $country, 'template_key' => $template->_id ]) }}">
                                                                             By
                                                                         </a>
-                                                                        <a href="{{ route( 'template.productDetail', [ 'country' => $country, 'slug' => $template->slug ] ) }}">
+                                                                        <a href="{{ route('editor.openTemplate', [ 'country' => $country, 'template_key' => $template->_id ]) }}">
                                                                             {{ $template->studioName }}
                                                                         </a>
                                                                     </div>

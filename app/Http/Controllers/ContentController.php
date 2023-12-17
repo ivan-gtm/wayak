@@ -12,6 +12,7 @@ use App\Traits\LocaleTrait;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Auth;
+use App\Services\UserPurchaseService;
 
 use App\Models\Template;
 use Storage;
@@ -19,6 +20,12 @@ use Storage;
 class ContentController extends Controller
 {
     use LocaleTrait;
+    protected $userPurchaseService;
+
+    public function __construct(UserPurchaseService $userPurchaseService)
+    {
+        $this->userPurchaseService = $userPurchaseService;
+    }
 
     public function showHome()
     {
@@ -326,9 +333,8 @@ class ContentController extends Controller
             $analyticsController->registerCategoryVisitByUser( substr($template->mainCategory, 1), $user->customer_id );
         }
 
-        // echo "<pre>";
-        // print_r($sale);
-        // exit;
+        $customerId = $this->getCustomerId($request);
+        $isPurchased = $this->userPurchaseService->isTemplateIdInPurchases($customerId, $template_id);
 
         return view('content.product-detail', [
             'country' => $country,
@@ -342,8 +348,9 @@ class ContentController extends Controller
             'template' => $template,
             'colors' => $colors,
             'logged_id' => $logged_id,
-            'customer_id' => isset($user->customer_id) ? $user->customer_id : null,
+            'customer_id' => $customerId,
             'isFavorite' => $isFavorite,
+            'isPurchased' => $isPurchased,
             'related_templates' => $related_templates
         ]);
     }

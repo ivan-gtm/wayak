@@ -208,32 +208,38 @@
                                         class="wt-tooltip__trigger wt-tooltip__trigger--icon-only wt-btn wt-btn--transparent wt-btn--icon reduced-margin-xs header-button"
                                         data-favorites-nav-link="" aria-labelledby="ge-tooltip-label-favorites">
 
-                                        <span class="etsy-icon"><svg xmlns="http://www.w3.org/2000/svg"
+                                        <span class="etsy-icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
                                                 viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                                                 <path fill-rule="evenodd" clip-rule="evenodd"
                                                     d="M20.877 12.52c.054-.076.103-.157.147-.239A6 6 0 0 0 12 4.528a6 6 0 0 0-9.024 7.753c.044.082.093.162.147.24l.673.961a6 6 0 0 0 .789.915L12 21.422l7.415-7.025c.293-.278.557-.584.789-.915l.673-.961Zm-14.916.425L12 18.667l6.04-5.722c.195-.185.371-.39.525-.61l.673-.961a.335.335 0 0 0 .044-.087 4 4 0 1 0-7.268-2.619v.003L12 8.667l-.013.004v-.002a3.975 3.975 0 0 0-1.237-2.574 4 4 0 0 0-6.031 5.193c.009.03.023.058.043.086l.673.961a4 4 0 0 0 .526.61Z">
                                                 </path>
-                                            </svg></span>
+                                            </svg>
+                                        </span>
                                     </a>
 
                                     <span id="ge-tooltip-label-favorites" role="tooltip"
-                                        data-favorites-label-tooltip="">Favorites</span>
+                                        data-favorites-label-tooltip="">
+                                        Favorites
+                                    </span>
                                 </span>
                             </li>
-                            <li style="display: none;">
+                            
+                            <li>
                                 <span class="wt-tooltip wt-tooltip--bottom-left wt-tooltip--disabled-touch"
                                     data-wt-tooltip="" data-header-cart-button="">
                                     <a data-header-cart-nav-anchor="" aria-label="Cart"
-                                        href="https://www.etsy.com/cart?ref=hdr-cart"
+                                        href="{{ route('user.purchases',['country' => $country]) }}?ref=hdr-cart"
                                         class="wt-tooltip__trigger wt-tooltip__trigger--icon-only wt-btn wt-btn--transparent wt-btn--icon header-button">
-                                        <span id="mini-cart-description" class="wt-screen-reader-only">Cart preview
-                                            displayed</span>
-                                        <span
-                                            class="wt-z-index-1 wt-no-wrap wt-display-none ge-cart-badge wt-badge wt-badge--notificationPrimary wt-badge--small wt-badge--outset-top-right"
+                                        <span id="mini-cart-description" class="wt-screen-reader-only">
+                                            Cart preview displayed
+                                        </span>
+                                        <span class="wt-z-index-1 wt-no-wrap wt-display-none ge-cart-badge wt-badge wt-badge--notificationPrimary wt-badge--small wt-badge--outset-top-right"
                                             data-selector="header-cart-count" aria-hidden="true">
                                             0
                                         </span>
-                                        <span class="wt-icon"><svg xmlns="http://www.w3.org/2000/svg"
+                                        <span class="wt-icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
                                                 viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                                                 <path fill-rule="evenodd" clip-rule="evenodd"
                                                     d="m5.766 5-.618-3H1v2h2.518l2.17 10.535L6.18 17h14.306l2.4-12H5.767ZM7.82 15l-1.6-8h14.227l-1.6 8H7.82Z">
@@ -241,8 +247,13 @@
                                                 <path
                                                     d="M10.666 20.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm8.334 0a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z">
                                                 </path>
-                                            </svg></span>
+                                            </svg>
+                                        </span>
                                     </a>
+                                    <span id="ge-tooltip-label-favorites" role="tooltip"
+                                        data-favorites-label-tooltip="">
+                                        Purchases
+                                    </span>
                                     <div id="mini-cart"></div>
                                 </span>
                             </li>
