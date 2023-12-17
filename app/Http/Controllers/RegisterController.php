@@ -6,17 +6,17 @@ use App\Models\User;
 use App\Http\Requests\RegisterRequest;
 use App\Traits\LocaleTrait;
 
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\App;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Str;
-
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
+use Exception;
 use Aws\Exception\AwsException;
 use Aws\Sns\SnsClient;
 use Aws\Ses\SesClient;
 use Aws\Ses\Exception\SesException;
-
 
 class RegisterController extends Controller
 {
@@ -55,43 +55,49 @@ class RegisterController extends Controller
         $userData = $request->validated();
         $userData['customer_id'] = $request->input('customerId');
         $userData['verification_token'] = $this->generateVerificationToken();
-        
-        // echo "<pre>";
-        // print_r($userData);
-        // exit;
-
-        $user = User::create($userData);
-        
-        // $user = User::create($request->validated());        
-        // auth()->login($user);
-
-        $this->sendVerificationEmail($user);
-
-        // Generate a verification code (you can also use your generateVerificationToken function)
-        $verificationCode = rand(100000, 999999);
-
-        // Send the verification SMS
-        // $smsStatus = $this->sendVerificationSms($user, $verificationCode);
-
-        return redirect('/')->with('success', "Account successfully registered.");
+    
+        DB::beginTransaction();
+    
+        try {
+            $user = User::create($userData);
+    
+            $emailStatus = $this->sendVerificationEmail($user);
+    
+            if ($emailStatus !== true) {
+                throw new Exception('Failed to send verification email.');
+            }
+    
+            DB::commit();
+            return redirect('/')->with('success', 'Account successfully registered. Please check your email to verify.');
+    
+        } catch (Exception $e) {
+            DB::rollBack();
+            return redirect('/')->with('error', $e->getMessage());
+        }
     }
-
+    
     public function sendVerificationEmail($user)
     {
         $verificationLink = url('/verify-email/' . $user->verification_token);
 
-        Mail::send('emails.auth.verify', ['user' => $user, 'verificationLink' => $verificationLink], function ($message) use ($user) {
-            $message->from(config('mail.from.address'), config('mail.from.name'));
-            $message->to($user->email);
-            $message->subject('243859 is your verification code');
-        });
+        try {
+            Mail::send('emails.auth.verify', ['user' => $user, 'verificationLink' => $verificationLink], function ($message) use ($user) {
+                $message->from(config('mail.from.address'), config('mail.from.name'));
+                $message->to($user->email);
+                $message->subject('Please verify your email');
+            });
 
-        if (Mail::failures()) {
-            return 'Email not sent.';
+            if (Mail::failures()) {
+                throw new Exception('Email not sent.');
+            }
+
+            return true;
+        } catch (Exception $e) {
+            report($e);
+            return false;
         }
-
-        return 'Email sent successfully';
     }
+
 
     public function verifyEmail($verificationToken)
     {

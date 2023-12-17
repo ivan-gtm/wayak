@@ -87,7 +87,7 @@ class LoginController extends Controller
     {
         $country = 'us';
         $locale = $this->getLocaleByCountry($country);
-        
+
         App::setLocale($locale);
 
         // Validate the token
@@ -135,15 +135,15 @@ class LoginController extends Controller
         if ($validator->fails()) {
             abort(404); // Unprocessable Entity
         }
-        
+
         $locale = $this->getLocaleByCountry($country);
 
         App::setLocale($locale);
 
-        if( Auth::check() && isset($user->customer_id) ) {
+        if (Auth::check()) {
             $user = Auth::user();
             $customer_id =  $user->customer_id;
-        } elseif( isset($request->customerId) ) {
+        } elseif (isset($request->customerId)) {
             $customer_id = isset($request->customer_id) ? $request->customer_id : null;
         }
 
@@ -184,7 +184,7 @@ class LoginController extends Controller
         ]);
 
         // Send the token to the user's email (this is a basic example, you'd use a queued job for better performance)
-        Mail::send('emails.password', ['token' => $token], function ($message) use ($request) {
+        Mail::send('emails.password', ['token' => $token,'customerId' => $user->customer_id], function ($message) use ($request) {
             $message->to($request->email);
             $message->subject('Password Reset Request');
         });
@@ -201,6 +201,8 @@ class LoginController extends Controller
             'password' => 'required|string|confirmed|min:8',
         ]);
 
+        $errors = [];
+
         // Verify if the token is valid and not older than 60 minutes
         $passwordReset = DB::table('password_resets')
             ->where('token', $request->reset_token)
@@ -208,26 +210,24 @@ class LoginController extends Controller
             ->first();
 
         if (!$passwordReset) {
-            return back()->withErrors(['reset_token' => 'This password reset token is invalid or has expired.']);
+            $errors['reset_token'] = 'This password reset token is invalid or has expired.';
         }
 
         // Check if the user exists
-        $user = User::where('email', $passwordReset->email)->first();
-        if (!$user) {
-            return back()->withErrors(['email' => 'We can\'t find a user with that e-mail address.']);
+        $user = User::where('email', $passwordReset->email ?? '')->first();
+        if (!$passwordReset || !$user) {
+            $errors['email'] = 'We can\'t find a user with that e-mail address.';
         }
 
-        // echo "<pre>";
-        // print_r($request->all());
-        // exit;
+        // If there are any errors, return with them
+        if (!empty($errors)) {
+            return back()->withErrors($errors);
+        }
 
         // Reset the password
-        // $user->password = Hash::make($request->password);
-        // $user->save();
-
         DB::table('users')
-                    ->where('email', $passwordReset->email )
-                    ->update([ 'password' => Hash::make($request->password) ]);
+            ->where('email', $passwordReset->email)
+            ->update(['password' => Hash::make($request->password)]);
 
         // Delete the token
         DB::table('password_resets')->where('token', $request->reset_token)->delete();

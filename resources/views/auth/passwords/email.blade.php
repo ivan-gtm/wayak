@@ -776,7 +776,7 @@
                                             <b class="text-best">5</b>
                                         </span>
                                     </div> -->
-                                    <div class="login_footer form-group mb-50">
+                                    <!-- <div class="login_footer form-group mb-50">
                                         <div class="chek-form">
                                             <div class="custome-checkbox">
                                                 <input class="form-check-input" type="checkbox" name="checkbox" id="exampleCheckbox1" value="">
@@ -784,7 +784,7 @@
                                             </div>
                                         </div>
                                         <a class="text-muted" href="#">Learn more</a>
-                                    </div>
+                                    </div> -->
                                     <div class="form-group">
                                         <button type="submit" class="btn btn-heading btn-block hover-up">Reset password</button>
                                     </div>
