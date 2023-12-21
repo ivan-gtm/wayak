@@ -159,7 +159,7 @@ fabric.Dpattern.fromObject = function(object, callback) {
     new fabric.Dpattern(object,callback)
 }
 ;
-var canvasScale = 1, currentcanvasid = 0, canvasindex = 0, pageindex = 0, canvasarray = [], isdownloadpdf = !1, isupdatetemplate = !1, issaveastemplate = !1, totalsvgs = 0, convertedsvgs = 0, loadedtemplateid = 0, activeObjectCopy, keystring = "", remstring = "", savestatecount = 0, stopProcess = !1, templatesloading = !1, backgroundsLoading = !1, elementsLoading = !1, textsLoading = !1, rotationStep = 1, properties_to_save = Array("format", "patternSourceCanvas", "bgImg", "src", "svg_custom_paths", "hidden", "cwidth", "cheight", "locked", "selectable", "editable", "bg", "logoid", "evented", "id", "bgsrc", "bgScale", "lockMovementX", "lockMovementY"), isMac = navigator.platform.toUpperCase().indexOf("MAC") >= 0, isSafari = /Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor), isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor), s_history = !1, previewSvg, offsetTemplates = 0, offsetRelatedProducts = 0, offsetTexts = 0, offsetElements = 0, offsetBackgrounds = 0, template_type, geofilterBackground, instructionsId, svg_custom_data = [], localStorageKey = "templett.design", templateOptions, backgroundPromise, duplicatedTemplateId, lastShadowBlur, lastShadowHorizontalOffset, lastShadowVerticalOffset, lastShadowColor, historyTable, $fontUTF8Symbols = {}, $useKeepSvgGroups = !1, dontLoadFonts = [], DEBUG = !1, $copyOnePageAcrossSheet = !1;
+var canvasScale = 1, currentcanvasid = 0, canvasindex = 0, pageindex = 0, canvasarray = [], isdownloadpdf = !1, isupdatetemplate = !1, issaveastemplate = !1, totalsvgs = 0, convertedsvgs = 0, loadedtemplateid = 0, activeObjectCopy, keystring = "", remstring = "", savestatecount = 0, stopProcess = !1, templatesloading = !1, backgroundsLoading = !1, elementsLoading = !1, textsLoading = !1, rotationStep = 1, properties_to_save = Array("format", "patternSourceCanvas", "bgImg", "src", "svg_custom_paths", "hidden", "cwidth", "cheight", "locked", "selectable", "editable", "bg", "logoid", "evented", "id", "bgsrc", "bgScale", "lockMovementX", "lockMovementY"), isMac = navigator.platform.toUpperCase().indexOf("MAC") >= 0, isSafari = /Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor), isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor), s_history = !1, previewSvg, offsetTemplates = 0, offsetRelatedProducts = 0, offsetTexts = 0, offsetElements = 0, offsetBackgrounds = 0, template_type, geofilterBackground, instructionsId, svg_custom_data = [], localStorageKey = "wayak.design", templateOptions, backgroundPromise, duplicatedTemplateId, lastShadowBlur, lastShadowHorizontalOffset, lastShadowVerticalOffset, lastShadowColor, historyTable, $fontUTF8Symbols = {}, $useKeepSvgGroups = !1, dontLoadFonts = [], DEBUG = !1, $copyOnePageAcrossSheet = !1;
 fabric.Object.NUM_FRACTION_DIGITS = 10,
 InfiniteScroll.prototype.loadNextPage = function() {
     if (!this.isLoading && this.canLoad) {
@@ -259,7 +259,12 @@ var $spectrum_options = {
         $(this).data("previous-color", color.toRgbString().replace(/\s/g, ""))
     }
 };
+
 function keepSvgGroups(objects, svgElements, allSvgElements, options) {
+    if (DEBUG) {
+        console.log("keepSvgGroups()");
+    }
+
     if (void 0 !== $useKeepSvgGroups && !$useKeepSvgGroups)
         return fabric.util.groupSVGElements(objects, options);
     var $svgGroups = {}
@@ -278,19 +283,12 @@ function keepSvgGroups(objects, svgElements, allSvgElements, options) {
     }
     return fabric.util.groupSVGElements(loadedObjects, options)
 }
-function getGradientTypeofObject($object) {
-    if (!$object)
-        return !1;
-    if ($object.fill && "object" !== _typeof($object.fill))
-        return !1;
-    var $gradientDirection = !1;
-    return $object.fill instanceof fabric.Gradient && (0 !== $object.fill.coords.y2 && ($gradientDirection = "linear-gradient-v-fill"),
-    0 !== $object.fill.coords.x2 && ($gradientDirection = "linear-gradient-h-fill"),
-    0 !== $object.fill.coords.x2 && 0 !== $object.fill.coords.y2 && ($gradientDirection = "linear-gradient-d-fill"),
-    void 0 !== $object.fill.coords.r1 && ($gradientDirection = "radial-gradient-fill"),
-    $gradientDirection)
-}
+
 function applyGradient($color1, $color2, $direction, $object) {
+    if (DEBUG) {
+        console.log("applyGradient()");
+    }
+
     if ($object || ($object = canvas.getActiveObject()),
     !$object)
         return !1;
@@ -353,7 +351,12 @@ function applyGradient($color1, $color2, $direction, $object) {
     DEBUG && console.log("applyGradient() ", $direction, $color1, $color2),
     !0
 }
+
 function applyGradient2(element, object) {
+    if (DEBUG) {
+        console.log("applyGradient2()");
+    }
+
     if ("object" === _typeof(element.fill) && "linear" == element.fill.type) {
         var gradientParams = getGlobalGradient(element.fill.colorStops, element.fill.coords, "linear");
         object.setGradient("fill", gradientParams),
@@ -367,7 +370,12 @@ function applyGradient2(element, object) {
         canvas.renderAll()
     }
 }
+
 function getGlobalGradient(colorStops, coords, direction) {
+    if (DEBUG) {
+        console.log("getGlobalGradient()");
+    }
+
     if (!colorStops)
         return !1;
     var type = "linear";
@@ -390,100 +398,19 @@ function getGlobalGradient(colorStops, coords, direction) {
         colorStops: colorValues
     }, coords)
 }
+
 function getOffsetKey(index, length) {
+    if (DEBUG) {
+        console.log("getOffsetKey()");
+    }
     return 0 == index ? 0 : index == length - 1 ? 1 : 1 / (length - 1) * index
 }
-function switchFillType($filltype, $color1, $color2, $target) {
-    var $colorSelectorBox;
-    DEBUG && console.log("switchFillType() $target: ", $target),
-    DEBUG && console.log("switchFillType() $filltype: ", $filltype),
-    $colorSelectorBox = $target ? $($target).parents(".colorSelectorBox") : $(".colorSelectorBox"),
-    $filltype || ($filltype = $(".toolbar-top").find(".fill-type.active").attr("id")),
-    $($colorSelectorBox).find(".fill-type").removeClass("active"),
-    $($colorSelectorBox).find("#" + $filltype).addClass("active"),
-    "pattern-fill" === $filltype ? ($(".patternFillGroup").show(),
-    $("#colorSelector").hide()) : ($(".patternFillGroup").hide(),
-    $("#colorSelector").show()),
-    $color1 && "string" == typeof $color1 && !$color2 && ($color2 = ("000000" + ("0xffffff" ^ $color1.replace("#", "0x")).toString(16)).slice(-6)),
-    "color-fill" === $filltype && ($($colorSelectorBox).find("#colorSelector2").hide(),
-    $($colorSelectorBox).find("#colorSelector").css({
-        "background-color": $color1,
-        padding: "17px 19px"
-    }),
-    $colorSelectorBox.hasClass("group") && ($colorSelectorBox.find(".sp-preview").css({
-        "background-color": $color1,
-        padding: "17px 19px"
-    }),
-    $colorSelectorBox.find(".sp-light").css({
-        width: "40px"
-    }),
-    $colorSelectorBox.find(".dynamiccolorpicker2").spectrum("destroy").hide())),
-    ["linear-gradient-h-fill", "linear-gradient-v-fill", "linear-gradient-d-fill", "radial-gradient-fill"].indexOf($filltype) > -1 && ($($colorSelectorBox).find("#colorSelector2").show(),
-    $color1 && "string" == typeof $color1 && $color2 && ($($colorSelectorBox).find("#colorSelector,#colorSelector2").css({
-        "background-color": "transparent",
-        padding: "17px 10px"
-    }),
-    $colorSelectorBox.hasClass("group") && ($colorSelectorBox.find(".sp-light,.sp-preview").css({
-        "background-color": "transparent"
-    }),
-    $colorSelectorBox.find(".sp-light").css({
-        padding: "17px 10px",
-        width: "20px"
-    })),
-    $($colorSelectorBox).css({
-        "background-image": "-webkit-linear-gradient(to right, " + $color1 + ", " + $color2 + ")"
-    }),
-    $($colorSelectorBox).css({
-        "background-image": "-moz-linear-gradient(to right, " + $color1 + ", " + $color2 + ")"
-    }),
-    $($colorSelectorBox).css({
-        "background-image": "-ms-linear-gradient(to right, " + $color1 + ", " + $color2 + ")"
-    }),
-    $($colorSelectorBox).css({
-        "background-image": "-o-linear-gradient(to right, " + $color1 + ", " + $color2 + ")"
-    }),
-    $($colorSelectorBox).css({
-        "background-image": "linear-gradient(to right, " + $color1 + ", " + $color2 + ")"
-    }),
-    $($colorSelectorBox).css({
-        height: "36px"
-    })))
-}
-function isSvg($object) {
-    return DEBUG && console.log("isSvg()"),
-    $object || ($object = canvas.getActiveObject()),
-    !!$object && (!!$object.src && !!/\.sv?g/i.test($object.src))
-}
-function isElement($object) {
-    var $return = !1;
-    if (!$object)
-        return !1;
-    if (void 0 !== $object.svg_custom_paths)
-        return !0;
-    var $objects = $object.objects || $object._objects;
-    return $objects && $.each($objects, function($i, $o) {
-        if ("path" === $o.type || "path-group" === $o.type)
-            return $return = !0,
-            !1;
-        "group" === $o.type && $.each($o.getObjects(), function($chi, $ch) {
-            if ("path" === $ch.type || "path-group" === $ch.type)
-                return $return = !0,
-                !1
-        })
-    }),
-    $return
-}
-function isTextsGroup() {
-    if (!canvas.getActiveObject())
-        return !1;
-    var $return = !0;
-    return canvas.getActiveObject()._objects || ($return = !1),
-    canvas.getActiveObject()._objects && $.each(canvas.getActiveObject()._objects, function($i, $o) {
-        /text/.test($o.type) || ($return = !1)
-    }),
-    $return
-}
+
 function isImagesGroup($object) {
+    if (DEBUG) {
+        console.log("isImagesGroup()");
+    }
+
     if ($object || ($object = canvas.getActiveObject()),
     !$object)
         return !1;
@@ -496,36 +423,12 @@ function isImagesGroup($object) {
     }),
     $return
 }
-function save_history($force) {
-    canvas.$history || (canvas.$history = [],
-    canvas.$h_pos = -1);
-    s_history && setTimeout(function() {
-        canvas.cwidth = 96 * $("#loadCanvasWid").val(),
-        canvas.cheight = 96 * $("#loadCanvasHei").val();
-        var $data = canvas.toDatalessJSON(["locked"])
-          , $c_state = JSON.stringify($data);
-        (canvas.$history[canvas.$h_pos] != $c_state || $force) && (canvas.$history[++canvas.$h_pos] = $c_state,
-        canvas.$history.length - 1 > canvas.$h_pos && (canvas.$history = canvas.$history.slice(0, canvas.$h_pos + 1))),
-        canvas.$history.length > 100 && (canvas.$history = canvas.$history.slice(-100),
-        canvas.$h_pos = canvas.$history.length - 1),
-        DEBUG && console.log("saved. history length: " + canvas.$history.length + " history position: " + canvas.$h_pos),
-        $("#redo").hide(),
-        $("#undo").show(),
-        $("#autosave").data("saved", "no"),
-        document.getElementById("autosave").checked && canvas.$history.length % 9 == 0 && loadedtemplateid && ($.toast({
-            text: "Auto saving template...",
-            icon: "success",
-            position: "top-right",
-            hideAfter: 2e3
-        }),
-        isupdatetemplate = !0,
-        s_history = !1,
-        canvas.discardActiveObject().renderAll(),
-        processSVGs(!0),
-        $("#autosave").data("saved", "yes"))
-    }, 10)
-}
+
 function history_redo() {
+    if (DEBUG) {
+        console.log("history_redo()");
+    }
+
     canvas.$history.length > 0 && canvas.$history[canvas.$h_pos + 1] ? (s_history = !1,
     canvas.loadFromJSON(canvas.$history[--canvas.$h_pos], function() {
         setCanvasWidthHeight(canvas.cwidth * canvas.getZoom(), canvas.cheight * canvas.getZoom()),
@@ -538,7 +441,12 @@ function history_redo() {
     s_history = !0,
     $("#undo").show()) : $("#redo").hide()
 }
+
 function history_undo() {
+    if (DEBUG) {
+        console.log("history_undo()");
+    }
+
     canvas.$history[canvas.$h_pos - 1] && (s_history = !1,
     canvas.loadFromJSON(canvas.$history[--canvas.$h_pos], function() {
         setCanvasWidthHeight(canvas.cwidth * canvas.getZoom(), canvas.cheight * canvas.getZoom()),
@@ -553,14 +461,24 @@ function history_undo() {
     canvas.$h_pos < 1 && ($("#undo").hide(),
     $("#autosave").data("saved", "yes"))
 }
+
 function dataURItoBlob(dataURI) {
+    if (DEBUG) {
+        console.log("dataURItoBlob()");
+    }
+
     for (var byteString = atob(dataURI.split(",")[1]), mimeString = dataURI.split(",")[0].split(":")[1].split(";")[0], ab = new ArrayBuffer(byteString.length), ia = new Uint8Array(ab), i = 0; i < byteString.length; i++)
         ia[i] = byteString.charCodeAt(i);
     return new Blob([ab],{
         type: mimeString
     })
 }
+
 function setJpegDPI(dataURI) {
+    if (DEBUG) {
+        console.log("setJpegDPI()");
+    }
+
     var raw = atob(dataURI.split(",")[1])
       , mimeString = dataURI.split(",")[0]
       , HEX = "";
@@ -574,7 +492,12 @@ function setJpegDPI(dataURI) {
     }).join("")),
     mimeString + "," + base64
 }
+
 function setPngDPI(dataURI) {
+    if (DEBUG) {
+        console.log("setPngDPI()");
+    }
+
     var raw = atob(dataURI.split(",")[1])
       , mimeString = dataURI.split(",")[0]
       , HEX = "";
@@ -588,34 +511,12 @@ function setPngDPI(dataURI) {
     }).join("")),
     mimeString + "," + base64
 }
-function addFontToFabric(fontid) {
-    if (fontid) {
-        var path = window.location.origin;
-        path || (path = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ":" + window.location.port : "")),
-        getFontFilename(fontid).then(function(fontFilename) {
-            fabric.fontPaths[fontid] = fontFilename
-        })
-    }
-}
-function getFontFilename(fontid) {
-    return new Promise(function(resolve, reject) {
-        var url = appUrl + "editor/get-woff-font-url?font_id=" + fontid;
-        $.getJSON(url).done(function(data) {
-            data.success ? resolve(data.url) : console.log("An error occurred while receiving the font filename: " + answer.msg)
-        })
-    }
-    )
-}
-function IsJsonString(str) {
-    try {
-        JSON.parse(str)
-    } catch (e) {
-        return console.log(e),
-        !1
-    }
-    return !0
-}
+
 function autoSave($element) {
+    if (DEBUG) {
+        console.log("autoSave()");
+    }
+
     var $key = $($element).attr("id")
       , $val = $($element).is(":checked")
       , url = appUrl + "design/actions/saveSettings.php";
@@ -624,7 +525,12 @@ function autoSave($element) {
         value: $val
     })
 }
+
 function loadSettings() {
+    if (DEBUG) {
+        console.log("loadSettings()");
+    }
+
     var url = appUrl + "editor/load-settings";
     $.getJSON(url).done(function($answer) {
         0 == $answer.err && $answer.data.forEach(function($setting, i) {
@@ -632,7 +538,12 @@ function loadSettings() {
         })
     })
 }
+
 function addGrid(lcanvas) {
+    if (DEBUG) {
+        console.log("addGrid()");
+    }
+
     if (void 0 === lcanvas && (lcanvas = canvasarray[currentcanvasid]),
     $("#gridbtn").hasClass("active")) {
         for (var n = lcanvas._objects.length; lcanvas._objects[--n]; )
@@ -673,129 +584,12 @@ function addGrid(lcanvas) {
     lcanvas.renderAll(),
     $("#gridbtn").html("Hide Grid").addClass("active")
 }
-function getFonts2($o, $fontFamily) {
-    return DEBUG && console.log("getFonts2() fontFamily: " + $fontFamily),
-    new Promise(function(resolve, reject) {
-        $fontFamily ? dontLoadFonts.indexOf($fontFamily) > -1 ? (resolve({
-            object: $o,
-            font: $fontFamily
-        }),
-        setupSymbolsPanel($fontFamily)) : (WebFontConfig = {
-            custom: {
-                families: [$fontFamily],
-                urls: [appUrl + "editor/get-css-fonts?templates=" + JSON.stringify($fontFamily)]
-            },
-            testStrings: {
-                fontFamily: "AB"
-            },
-            active: function(a) {},
-            loading: function() {
-                DEBUG && console.log("loading")
-            },
-            inactive: function(f) {
-                DEBUG && console.log("inactive")
-            },
-            fontloading: function(f) {
-                DEBUG && console.log("fontloading " + f)
-            },
-            fontactive: function(f) {
-                DEBUG && console.log("fontactive " + f),
-                resolve({
-                    object: $o,
-                    font: f
-                }),
-                addFontToFabric(f),
-                dontLoadFonts.push(f),
-                setupSymbolsPanel(f)
-            },
-            fontinactive: function(f) {
-                DEBUG && console.log("fontinactive" + f),
-                reject({
-                    object: $o,
-                    font: f
-                })
-            }
-        },
-        WebFont.load(WebFontConfig)) : resolve({
-            object: $o,
-            font: ""
-        })
-    }
-    )
-}
-function getFonts(e, fontFamily) {
-    void 0 === fontFamily && (fontFamily = e.fontFamily);
-    var families = [];
-    "group" == e.type && e.forEachObject(function(child, i) {
-        child.fontFamily && dontLoadFonts.indexOf(child.fontFamily) < 0 && families.push(child.fontFamily),
-        $.isEmptyObject(child.styles) || $.each(child.styles, function($i, $line) {
-            $.each($line, function($i, $style) {
-                void 0 !== $style.fontFamily && dontLoadFonts.indexOf($style.fontFamily) < 0 && families.push($style.fontFamily)
-            })
-        })
-    }),
-    e.fontFamily && (dontLoadFonts.indexOf(e.fontFamily) < 0 && (DEBUG && console.log(e.fontFamily),
-    families.push(e.fontFamily)),
-    $.isEmptyObject(e.styles) || $.each(e.styles, function($i, $line) {
-        $.each($line, function($i, $style) {
-            void 0 !== $style.fontFamily && dontLoadFonts.indexOf($style.fontFamily) < 0 && families.push($style.fontFamily)
-        })
-    })),
-    families.length ? (families = families.filter(function(value, index, self) {
-        return self.indexOf(value) === index
-    }),
-    WebFontConfig = {
-        custom: {
-            families: families,
-            urls: [appUrl + "editor/get-css-fonts?templates=" + JSON.stringify(families)]
-        },
-        testStrings: {
-            fontFamily: "AB"
-        },
-        active: function(a) {},
-        loading: function() {
-            DEBUG && console.log("loading")
-        },
-        inactive: function() {
-            DEBUG && console.log("inactive")
-        },
-        fontloading: function(f) {
-            DEBUG && console.log("fontloading " + f)
-        },
-        fontactive: function(f) {
-            DEBUG && console.log(a),
-            "group" == e.type ? (e.forEachObject(function(ch) {
-                -1 != ["textbox", "text", "i-text"].indexOf(ch.type) && f === ch.fontFamily && (fabric.charWidthsCache[f] = {},
-                ch.__lineWidths = [],
-                e.dirty = !0,
-                ch.initDimensions())
-            }),
-            e._restoreObjectsState(),
-            fabric.util.resetObjectTransform(e),
-            e._calcBounds(),
-            e._updateObjectsCoords(),
-            e.setCoords()) : (e.__lineWidths = [],
-            e.initDimensions()),
-            DEBUG && console.log("font: " + f + " loaded"),
-            fabric.charWidthsCache[f] = {},
-            addFontToFabric(f),
-            canvasarray[currentcanvasid].renderAll(),
-            dontLoadFonts.push(f),
-            e.dirty = !0,
-            canvas.renderAll()
-        },
-        fontinactive: function() {
-            DEBUG && console.log("fontinactive")
-        }
-    },
-    WebFont.load(WebFontConfig)) : ("group" == e.type && (e._restoreObjectsState(),
-    fabric.util.resetObjectTransform(e),
-    e._calcBounds(),
-    e._updateObjectsCoords(),
-    e.setCoords()),
-    canvasarray[currentcanvasid].renderAll())
-}
+
 function scale_canvas_to(width, height, $canvas) {
+    if (DEBUG) {
+        console.log("scale_canvas_to()");
+    }
+
     s_history = !1;
     var canvas = $canvas || canvasarray[currentcanvasid]
       , width_scalefactor = width / canvas.get("width")
@@ -810,7 +604,12 @@ function scale_canvas_to(width, height, $canvas) {
     s_history = !0,
     save_history()
 }
+
 function set_canvas_size(width, height) {
+    if (DEBUG) {
+        console.log("set_canvas_size()");
+    }
+
     var canvas = canvasarray[currentcanvasid];
     width = parseInt(width),
     height = parseInt(height),
@@ -820,7 +619,12 @@ function set_canvas_size(width, height) {
     canvas.backgroundImage && set_canvas_bg(canvas.backgroundImage._element.src)),
     canvas.setDimensions()
 }
+
 function set_canvas_bg(img_url) {
+    if (DEBUG) {
+        console.log("set_canvas_bg()");
+    }
+
     var canvas = canvasarray[currentcanvasid];
     fabric.Image.fromURL(img_url, function(img) {
         img.set({
@@ -836,7 +640,12 @@ function set_canvas_bg(img_url) {
         })
     })
 }
+
 function trim_canvas() {
+    if (DEBUG) {
+        console.log("trim_canvas()");
+    }
+
     var canvas = canvasarray[currentcanvasid]
       , x = canvas.get("width")
       , y = canvas.get("height")
@@ -858,7 +667,12 @@ function trim_canvas() {
     canvas.height = height,
     setCanvasWidthHeight(width - x, height - y)
 }
+
 function zoomIt(factor, $canvas, $forceScale) {
+    if (DEBUG) {
+        console.log("zoomIt()");
+    }
+
     ($canvas = $canvas || canvasarray[currentcanvasid]).setHeight($canvas.get("height") * factor),
     $canvas.setWidth($canvas.get("width") * factor);
     var objects = $canvas.getObjects();
@@ -876,7 +690,12 @@ function zoomIt(factor, $canvas, $forceScale) {
     $canvas.bgsrc && setCanvasBg($canvas, $canvas.bgsrc, "", $canvas.bgScale),
     $canvas.renderAll()
 }
+
 function addheadingText() {
+    if (DEBUG) {
+        console.log("addheadingText()");
+    }
+
     if (hasCanvas()) {
         s_history = !1;
         var headingTxt = new fabric.Textbox("Heading",{
@@ -905,7 +724,12 @@ function addheadingText() {
         save_history()
     }
 }
+
 function addText() {
+    if (DEBUG) {
+        console.log("addText()");
+    }
+
     if (hasCanvas()) {
         s_history = !1;
         var txtBox = new fabric.Textbox("This is a text box",{
@@ -936,7 +760,12 @@ function addText() {
         save_history()
     }
 }
+
 function addvLine() {
+    if (DEBUG) {
+        console.log("addvLine()");
+    }
+
     s_history = !1;
     var line = new fabric.Line([50, 50, 50, 200],{
         scaleX: canvasScale,
@@ -970,7 +799,12 @@ function addvLine() {
     s_history = !0,
     save_history()
 }
+
 function addhLine() {
+    if (DEBUG) {
+        console.log("addhLine()");
+    }
+
     s_history = !1;
     var line = new fabric.Line([50, 50, 50, 200],{
         scaleX: canvasScale,
@@ -1005,7 +839,12 @@ function addhLine() {
     s_history = !0,
     save_history()
 }
+
 function addBorder() {
+    if (DEBUG) {
+        console.log("addBorder()");
+    }
+
     s_history = !1;
     var border = new fabric.Rect({
         stroke: "rgb(0,0,0)",
@@ -1039,7 +878,12 @@ function addBorder() {
     s_history = !0,
     save_history()
 }
+
 function addPNGToCanvas(imagepath) {
+    if (DEBUG) {
+        console.log("addPNGToCanvas()");
+    }
+
     s_history = !1,
     fabric.Image.fromURL(imagepath, function(image) {
         var $imageSizes = image.getOriginalSize();
@@ -1061,7 +905,12 @@ function addPNGToCanvas(imagepath) {
         crossOrigin: "Anonymous"
     })
 }
+
 function addJsonToCanvas(url) {
+    if (DEBUG) {
+        console.log("addJsonToCanvas()");
+    }
+
     s_history = !1,
     $.get(url, function(json) {
         for (var objects = json.objects, i = 0; i < objects.length; i++) {
@@ -1082,7 +931,12 @@ function addJsonToCanvas(url) {
     s_history = !0,
     save_history()
 }
+
 function addSVGToCanvas(logosvgimg, svgoptions) {
+    if (DEBUG) {
+        console.log("addSVGToCanvas()");
+    }
+
     DEBUG && console.log("addSVGToCanvas"),
     s_history = !1,
     fabric.loadSVGFromURL(logosvgimg, function(objects, options, svgElements, allSvgElements) {
@@ -1131,7 +985,12 @@ function addSVGToCanvas(logosvgimg, svgoptions) {
         })
     })
 }
+
 function addUploadedSVGToCanvas(svgimg) {
+    if (DEBUG) {
+        console.log("addUploadedSVGToCanvas()");
+    }
+
     s_history = !1;
     var svgImgPath = "./uploads/" + svgimg;
     fabric.loadSVGFromURL(svgImgPath, function(objects, options, svgElements, allSvgElements) {
@@ -1154,7 +1013,12 @@ function addUploadedSVGToCanvas(svgimg) {
         save_history()
     })
 }
+
 function setControlsVisibility(object) {
+    if (DEBUG) {
+        console.log("addUploadedSVGToCanvas()");
+    }
+
     object.locked && !0 === object.locked || (object.setControlsVisibility({
         tl: !0,
         tr: !0,
@@ -1167,73 +1031,11 @@ function setControlsVisibility(object) {
     }),
     object.hasControls = !0)
 }
-function addCanvasToPage(dupflag, pageid, jsonarray) {
-    s_history = !1;
-    var rows = document.getElementById("numOfcanvasrows").value
-      , cols = document.getElementById("numOfcanvascols").value;
-    $(".deletecanvas").css("display", "block");
-    var rc = parseInt(rows) * parseInt(cols) * parseInt(pageid)
-      , dupcount = 0;
-    $("#page" + pageindex).append("<table></table>");
-    for (var i = 1; i <= rows; i++) {
-        $("#page" + pageindex).find("table").last().append('<tr id="row' + i + '"></tr>');
-        for (var j = 1; j <= cols; j++)
-            if (addNewCanvas(i),
-            dupflag) {
-                var currentcanvasjson = canvasarray[rc + dupcount].toDatalessJSON(properties_to_save);
-                canvas.loadFromJSON(currentcanvasjson, function($srcCanvasId, $desCanvasId) {
-                    setTimeout(function() {
-                        canvasarray[$srcCanvasId].forEachObject(function($o, $i) {
-                            "group" === $o.type && normalizeSvgScale($o, canvasarray[$desCanvasId]._objects[$i])
-                        })
-                    }, 10)
-                }(rc + dupcount, currentcanvasid)),
-                dupcount++
-            }
-    }
-    for (i = 0; canvasarray[i]; )
-        canvasarray[i].setDimensions(),
-        canvasarray[i++].renderAll();
-    var pagenumbericon = $("#pagenumber").clone(!0).prop("id", "pagenumber" + pageindex)
-      , dupcanvicon = $("#duplicatecanvas").clone(!0).prop("id", "duplicatecanvas" + pageindex)
-      , delcanvicon = $("#deletecanvas").clone(!0).prop("id", "deletecanvas" + pageindex);
-    if (pagenumbericon.appendTo("#page" + pageindex),
-    dupcanvicon.appendTo("#page" + pageindex),
-    delcanvicon.appendTo("#page" + pageindex),
-    "geofilter" == template_type || "geofilter2" == template_type) {
-        var arrowleft = $(".background-arrow-right").clone(!0)
-          , arrowright = $(".background-arrow-left").clone(!0);
-        arrowleft.appendTo("#page" + pageindex),
-        arrowright.appendTo("#page" + pageindex)
-    }
-    var pages = $(".page:visible");
-    $.each(pages, function(key, page) {
-        adjustIconPos($(page).prop("id").replace("page", ""))
-    }),
-    $("#addnewpagebutton").show(),
-    $("#saveimage").show(),
-    $("#savetemplate").show(),
-    $(".download-menu").show(),
-    $(".download-dropdown").show(),
-    $(".zoom-control").show(),
-    $("#options").show(),
-    $("#choose-img").hide(),
-    $(".sidebar-elements li:not(#relatedProductsPane) a").removeClass("invisible"),
-    canvasindex > 10 ? $(".download-jpeg-menu-item").hide() : $(".download-jpeg-menu-item").show(),
-    s_history = !0,
-    updatePageNumbers(),
-    demo_as_id && "geofilter" != template_type && "geofilter2" != template_type && setDemoOverlay(),
-    "geofilter2" == template_type && setGeofilterOverlay()
-}
-function setCanvasSize() {
-    var width = document.getElementById("loadCanvasWid").value
-      , height = document.getElementById("loadCanvasHei").value;
-    setCanvasWidthHeight(width *= 96, height *= 96),
-    adjustIconPos(pageindex),
-    $("#canvaswh_modal").modal("hide"),
-    $(".deletecanvas").css("display", "none")
-}
+
 function addFileToCanvas(imagefile) {
+    if (DEBUG) {
+        console.log("addFileToCanvas()");
+    }
     fabric.util.loadImage("./uploads/" + imagefile, function(img) {
         var object = new fabric.Cropzoomimage(img,{
             scaleX: canvasScale / 2,
@@ -1251,47 +1053,12 @@ function addFileToCanvas(imagefile) {
         crossOrigin: ""
     })
 }
-function setCanvasBg(lcanvas, bgsrc, bgcolor, scalex, id, setZoom) {
-    backgroundPromise = new Promise(function(resolve, reject) {
-        if (setZoom = setZoom || 0,
-        scalex || ($("#bgscale").val(100),
-        scalex = .32 / fabric.devicePixelRatio),
-        bgcolor)
-            $("#bgcolorselect").spectrum("set", bgcolor),
-            lcanvas.backgroundImage = "",
-            lcanvas.setBackgroundColor(bgcolor, function() {
-                lcanvas.renderAll(),
-                lcanvas.bgsrc = ""
-            }),
-            resolve();
-        else if (bgsrc) {
-            $("#bgcolorselect").spectrum("set", ""),
-            lcanvas.bgsrc = bgsrc,
-            lcanvas.bgScale = scalex;
-            $("#loadCanvasWid").val(),
-            $("#loadCanvasHei").val();
-            var scale = parseFloat($("#zoomperc").data("scaleValue"));
-            getBg(lcanvas, scalex * scale).then(function($bg) {
-                lcanvas.setBackgroundColor($bg, function() {
-                    if (lcanvas.bgImg) {
-                        var $sc = scalex * scale / 3.125 / fabric.devicePixelRatio;
-                        lcanvas.bgImg.scale($sc),
-                        setZoom && autoZoom()
-                    }
-                    lcanvas.renderAll(),
-                    resolve()
-                })
-            }).catch(function($res) {
-                reject($res),
-                console.log($res)
-            }),
-            save_history()
-        } else
-            resolve()
-    }
-    )
-}
+
 function deleteCanvasBg(lcanvas) {
+    if (DEBUG) {
+        console.log("deleteCanvasBg()");
+    }
+
     lcanvas.backgroundImage = "",
     lcanvas.backgroundColor = "",
     lcanvas.bgsrc = "",
@@ -1299,7 +1066,12 @@ function deleteCanvasBg(lcanvas) {
     lcanvas.renderAll(),
     save_history()
 }
+
 function setStyle(object, styleName, value) {
+    if (DEBUG) {
+        console.log("setStyle()");
+    }
+
     if (object && object.setSelectionStyles && object.isEditing) {
         var style = {};
         style[styleName] = value,
@@ -1329,6 +1101,7 @@ function setStyle(object, styleName, value) {
     canvas.renderAll(),
     save_history()
 }
+
 $("body").on("click", ".fill-type", function(e) {
     e.preventDefault();
     var $color1, $color2, $activeObject = canvas.getActiveObject(), $colorSelectorBox = $(this).parents(".colorSelectorBox"), $filltype = $(this).attr("id"), $cpicker = $colorSelectorBox.find(".dynamiccolorpicker"), $cpicker2 = $colorSelectorBox.find(".dynamiccolorpicker2.showElement"), $oldFilltype = $colorSelectorBox.data("gradient-type");
@@ -1730,6 +1503,10 @@ $("#changecharspacing").slider().on("slide", function(e) {
 });
 var deleteitembtn = document.getElementById("deleteitem");
 function deleteItem() {
+    if (DEBUG) {
+        console.log("deleteItem()");
+    }
+
     var activeObject = canvas.getActiveObject();
     if (activeObject) {
         if ("activeSelection" === activeObject.type && activeObject._objects) {
@@ -1872,26 +1649,12 @@ leftIndentSwitch && (leftIndentSwitch.onclick = function() {
 }
 );
 var rightIndentSwitch = document.getElementById("rightindent");
-function changeObjectColor(hex) {
-    DEBUG && console.log("changeObjectColor");
-    var obj = canvas.getActiveObject();
-    if (obj)
-        if (obj.paths)
-            for (var i = 0; i < obj.paths.length; i++)
-                obj.paths[i].set("fill", hex);
-        else
-            setStyle(obj, "fill", hex);
-    obj && obj._objects && obj.forEachObject(function(object) {
-        if (object.paths)
-            for (var i = 0; i < object.paths.length; i++)
-                object.paths[i].set("fill", hex);
-        else
-            setStyle(object, "fill", hex)
-    }),
-    canvas.renderAll(),
-    save_history(1)
-}
+
 function changeStrokeColor(hex) {
+    if (DEBUG) {
+        console.log("changeStrokeColor()");
+    }
+
     DEBUG && console.log(changeStrokeColor);
     var obj = canvas.getActiveObject();
     if (obj) {
@@ -1917,179 +1680,35 @@ function changeStrokeColor(hex) {
     canvas.renderAll(),
     save_history()
 }
-function setCanvasWidthHeight(width, height) {
-    if (width)
-        for (var i = 0; i <= canvasindex; i++) {
-            if (canvasarray[i])
-                canvasarray[i].width = width,
-                (canvasDOM = document.getElementById("canvas" + i)).style.width = width / 1 + "px",
-                canvasDOM.width = width,
-                (elem = document.getElementsByClassName("upper-canvas")[i]).style.width = width / 1 + "px",
-                elem.width = width,
-                (elem = document.getElementsByClassName("canvas-container")[i]).style.width = width / 1 + "px",
-                elem.width = width,
-                (elem = document.getElementsByClassName("canvascontent")[i]).style.width = width / 1 + "px",
-                elem.width = width,
-                (elem = document.getElementById("divcanvas" + i)).style.width = width / 1 + "px",
-                elem.width = width,
-                0,
-                canvasarray[i].calcOffset(),
-                canvasarray[i].renderAll(),
-                canvasarray[i].setDimensions()
-        }
-    if (height)
-        for (i = 0; i <= canvasindex; i++) {
-            var canvasDOM, elem;
-            if (canvasarray[i])
-                canvasarray[i].height = height,
-                (canvasDOM = document.getElementById("canvas" + i)).style.height = height / 1 + "px",
-                canvasDOM.height = height,
-                (elem = document.getElementsByClassName("upper-canvas")[i]).style.height = height / 1 + "px",
-                elem.height = height,
-                (elem = document.getElementsByClassName("canvas-container")[i]).style.height = height / 1 + "px",
-                elem.height = height,
-                (elem = document.getElementsByClassName("canvascontent")[i]).style.height = height / 1 + "px",
-                elem.height = height,
-                (elem = document.getElementById("divcanvas" + i)).style.height = height / 1 + "px",
-                elem.height = height,
-                0,
-                canvasarray[i].calcOffset(),
-                canvasarray[i].renderAll(),
-                canvasarray[i].setDimensions()
-        }
-    $("#canvaswidth").val(""),
-    $("#canvaswidth").val(Math.round(width)),
-    $("#canvasheight").val(""),
-    $("#canvasheight").val(Math.round(height))
-}
-function setZoom(newZoomLevel) {
-    if (void 0 === newZoomLevel && (newZoomLevel = parseFloat(jQuery("#zoomperc").data("scaleValue")) || 1),
-    newZoomLevel < .2 && (newZoomLevel = .1),
-    "geofilter" == template_type || "geofilter2" == template_type) {
-        newZoomLevel = newZoomLevel > 1 ? 1 : newZoomLevel;
-        var marginLeft = $("#phone").width() / 2 * newZoomLevel - 1.5
-          , top = ("geofilter2" == template_type ? -63 : -260) * newZoomLevel + 63;
-        $("#phone").css({
-            transform: "scale(" + newZoomLevel + ")",
-            marginLeft: "-" + marginLeft + "px",
-            top: top + "px"
-        });
-        var borderRadius = "geofilter2" == template_type ? 100 * newZoomLevel : 5;
-        setTimeout(function() {
-            $(".canvas-background").css("border-radius", borderRadius + "px")
-        }, 0)
-    }
-    var $n = 0
-      , $new_width = 96 * document.getElementById("loadCanvasWid").value * newZoomLevel
-      , $new_height = 96 * document.getElementById("loadCanvasHei").value * newZoomLevel;
-    for (setCanvasWidthHeight($new_width, $new_height); canvasarray[$n]; )
-        $("#divcanvas" + $n).is(":visible") && (canvasarray[$n].setZoom(newZoomLevel),
-        canvasarray[$n].setDimensions({
-            width: $new_width,
-            height: $new_height
-        }),
-        canvasarray[$n].bgImg && canvasarray[$n].bgImg.scale(canvasarray[$n].bgScale * newZoomLevel / 3.125 / fabric.devicePixelRatio),
-        canvasarray[$n].renderAll(),
-        adjustIconPos($n)),
-        $n++;
-    $("#zoomperc").html(Math.round(100 * newZoomLevel) + "%").data("scaleValue", newZoomLevel),
-    demo_as_id && "geofilter" != template_type && "geofilter2" != template_type && setDemoOverlay()
-}
+
 function updateDpatternsScale() {
+    if (DEBUG) {
+        console.log("updateDpatternsScale()");
+    }
+
     arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : canvas
 }
-function setDemoOverlay() {
-    scale = $("#zoomperc").data("scaleValue");
-	var uri = appUrl + "assets/img/demo_overlay.svg";
-    fabric.Image.fromURL(uri, function(img) {
-        img.scaleToWidth(50 * scale),
-        img.angle = 315,
-        img.top = 50 * scale,
-        img.left = 20 * scale,
-        patternSourceCanvas = new fabric.StaticCanvas,
-        patternSourceCanvas.add(img);
-        for (var pattern = new fabric.Pattern({
-            source: function() {
-                return patternSourceCanvas.setDimensions({
-                    width: 80 * scale,
-                    height: 80 * scale
-                }),
-                patternSourceCanvas.renderAll(),
-                patternSourceCanvas.getElement()
-            },
-            repeat: "repeat"
-        }), n = 0; canvasarray[n]; )
-            $("#divcanvas" + n).is(":visible") && canvasarray[n].setOverlayColor(pattern, function() {
-                canvasarray[n].renderAll()
-            }),
-            n++
-    })
-}
+
 function setGeofilterOverlay() {
+    if (DEBUG) {
+        console.log("setGeofilterOverlay()");
+    }
+
     canvas.setOverlayImage("/design/assets/img/geofilter_overlay.svg", canvas.renderAll.bind(canvas))
 }
+
 function removeGeofilterOverlay() {
+    if (DEBUG) {
+        console.log("removeGeofilterOverlay()");
+    }
     canvas.setOverlayImage(null, canvas.renderAll.bind(canvas))
 }
-function setCanvasZoom(canvasId) {
-    var newZoomLevel = parseFloat($("#zoomperc").data("scaleValue")) || 1;
-    if (newZoomLevel < .2 && (newZoomLevel = .1),
-    "geofilter" == template_type || "geofilter2" == template_type) {
-        newZoomLevel = newZoomLevel > 1 ? 1 : newZoomLevel;
-        var marginLeft = $("#phone").width() / 2 * newZoomLevel - 1.5
-          , top = ("geofilter2" == template_type ? -63 : -260) * newZoomLevel + 63;
-        $("#phone").css({
-            transform: "scale(" + newZoomLevel + ")",
-            marginLeft: "-" + marginLeft + "px",
-            top: top + "px"
-        });
-        var borderRadius = "geofilter2" == template_type ? 100 * newZoomLevel : 5;
-        setTimeout(function() {
-            $(".canvas-background").css("border-radius", borderRadius + "px")
-        }, 0)
-    }
-    var canvasDOM, elem, width = 96 * document.getElementById("loadCanvasWid").value * newZoomLevel, height = 96 * document.getElementById("loadCanvasHei").value * newZoomLevel;
-    canvasarray[canvasId].width = width,
-    (canvasDOM = document.getElementById("canvas" + canvasId)).style.width = width / 1 + "px",
-    canvasDOM.width = width,
-    (elem = document.getElementsByClassName("upper-canvas")[canvasId]).style.width = width / 1 + "px",
-    elem.width = width,
-    (elem = document.getElementsByClassName("canvas-container")[canvasId]).style.width = width / 1 + "px",
-    elem.width = width,
-    (elem = document.getElementsByClassName("canvascontent")[canvasId]).style.width = width / 1 + "px",
-    elem.width = width,
-    (elem = document.getElementById("divcanvas" + canvasId)).style.width = width / 1 + "px",
-    elem.width = width,
-    canvasarray[canvasId].calcOffset(),
-    canvasarray[canvasId].renderAll(),
-    canvasarray[canvasId].setDimensions(),
-    canvasarray[canvasId].height = height,
-    (canvasDOM = document.getElementById("canvas" + canvasId)).style.height = height / 1 + "px",
-    canvasDOM.height = height,
-    (elem = document.getElementsByClassName("upper-canvas")[canvasId]).style.height = height / 1 + "px",
-    elem.height = height,
-    (elem = document.getElementsByClassName("canvas-container")[canvasId]).style.height = height / 1 + "px",
-    elem.height = height,
-    (elem = document.getElementsByClassName("canvascontent")[canvasId]).style.height = height / 1 + "px",
-    elem.height = height,
-    (elem = document.getElementById("divcanvas" + canvasId)).style.height = height / 1 + "px",
-    elem.height = height,
-    canvasarray[canvasId].calcOffset(),
-    canvasarray[canvasId].renderAll(),
-    canvasarray[canvasId].setDimensions(),
-    $("#canvaswidth").val(""),
-    $("#canvaswidth").val(Math.round(width)),
-    $("#canvasheight").val(""),
-    $("#canvasheight").val(Math.round(height)),
-    canvasarray[canvasId].setZoom(newZoomLevel),
-    canvasarray[canvasId].setDimensions({
-        width: width,
-        height: height
-    }),
-    adjustIconPos(canvasId),
-    $("#zoomperc").html(Math.round(100 * newZoomLevel) + "%").data("scaleValue", newZoomLevel)
-}
+
 function zoomTo($scale_value) {
+    if (DEBUG) {
+        console.log("zoomTo()");
+    }
+
     $scale_value < .2 && ($scale_value = .1);
     var $container = jQuery("#canvasbox-tab");
     $container.css({
@@ -2193,7 +1812,12 @@ var newTemplateTagsEdit = $("#newTemplateTags").tagsField({
     labelColumnClass: "control-label",
     divColumnClass: ""
 });
+
 function resetNewTemplateForm() {
+    if (DEBUG) {
+        console.log("resetNewTemplateForm()");
+    }
+
     $(".metric_block").show(),
     $("input[name=metric_units1]").val(["in"]),
     $("#canvaswh_modal").find(".canvas_size_inches").attr("class", "canvas_size_inches active"),
@@ -2204,67 +1828,7 @@ function resetNewTemplateForm() {
     $("#numOfcanvasrows").val("1"),
     $("#numOfcanvascols").val("1")
 }
-function setWorkspace() {
-    $("#addnewpagebutton").show(),
-    $("#productImageDownload").hide(),
-    $("#downloadPDF").parent().show(),
-    $("#downloadJPEG").parent().show(),
-    $("#downloadAsPNG").parent().show(),
-    $(".bgPane").parent().show(),
-    $(".duplicatecanvas").css("visibility", "visible"),
-    $("#options").show(),
-    $("#background").hide(),
-    $("#phone").hide(),
-    $(".background-arrow").hide(),
-    $("#addnewpagebutton").text(" + Add a Blank Page"),
-    $("#convertToDoublesided").hide(),
-    $("#convertToSingle").hide(),
-    $("#convertGeofilterToNewSize").hide(),
-    $("#addrow").hide(),
-    $("#deleterow").hide(),
-    $("#addcolumn").hide(),
-    $("#deletecolumn").hide(),
-    "custom" == template_type ? ($("#addrow").show(),
-    $("#deleterow").show(),
-    $("#addcolumn").show(),
-    $("#deletecolumn").show()) : "doublesided" == template_type ? ($("#addnewpagebutton").text(" + Add a Back Side"),
-    2 == $(".divcanvas:visible").length && ($("#addnewpagebutton").hide(),
-    $(".duplicatecanvas").css("visibility", "hidden"))) : "geofilter" == template_type ? ($("#addnewpagebutton").hide(),
-    $("#downloadPDF").parent().hide(),
-    $("#downloadJPEG").parent().hide(),
-    $(".bgPane").parent().hide(),
-    $(".duplicatecanvas").css("visibility", "hidden"),
-    $("#canvasSize").hide(),
-    $("#gridbtn").hide(),
-    $("#convertGeofilterToNewSize").show(),
-    $("#background").show(),
-    $("#phone").show(),
-    $("#canvas0").addClass("canvas-background"),
-    $(".background-arrow").show(),
-    setGeofilterBackground(geofilterBackground)) : "geofilter2" == template_type ? ($("#addnewpagebutton").hide(),
-    $("#downloadPDF").parent().hide(),
-    $("#downloadJPEG").parent().hide(),
-    $(".bgPane").parent().hide(),
-    $(".duplicatecanvas").css("visibility", "hidden"),
-    $("#options").hide(),
-    $("#background").show(),
-    $("#phone").show(),
-    $("#canvas0").addClass("canvas-background"),
-    $(".background-arrow").show(),
-    setGeofilterBackground(geofilterBackground)) : "product_image" == template_type && ($("#addnewpagebutton").hide(),
-    $(".download-menu").hide(),
-    $("#productImageDownload").show(),
-    $(".duplicatecanvas").css("visibility", "hidden")),
-    "single" == template_type && $(".divcanvas:visible").length <= 2 || "custom" == template_type && $(".divcanvas:visible").length <= 2 && 1 == $("#numOfcanvasrows").val() && 1 == $("#numOfcanvascols").val() ? $("#convertToDoublesided").show() : "doublesided" == template_type && $("#convertToSingle").show(),
-    ["doublesided", "geofilter", "geofilter2", "product_image"].includes(template_type) || ($(".pagenumber:visible").length >= 36 ? ($(".duplicatecanvas").addClass("disabled"),
-    $("#addnewpagebutton").hide(),
-    $("#pageLimitMessage").show()) : ($(".duplicatecanvas").removeClass("disabled"),
-    $("#addnewpagebutton").show(),
-    $("#pageLimitMessage").hide())),
-    canvasarray[0].cwidth / 96 * (canvasarray[0].cheight / 96) > 100 && ($("#addnewpagebutton").hide(),
-    $(".duplicatecanvas").css("visibility", "hidden")),
-    setTimeout(checkDpatterns, 100)
-}
+
 $("#savetemplate").click(function() {
     loadedtemplateid <= 0 ? (issaveastemplate = !0,
     isupdatetemplate = !1,
@@ -2672,6 +2236,10 @@ var registerDownload = function(type) {
     }).fail(function() {})
 };
 function downloadImageProxy($options) {
+    if (DEBUG) {
+        console.log("downloadImageProxy()");
+    }
+
     $options || ($options = {});
     var $canvases = $options.canvases || canvasarray
       , $readyCanvases = $options.readyCanvases || []
@@ -2704,6 +2272,10 @@ function downloadImageProxy($options) {
     })
 }
 function toggleHiddenStatusOfObjects() {
+    if (DEBUG) {
+        console.log("toggleHiddenStatusOfObjects()");
+    }
+
     for (var $i = 0; canvasarray[$i]; )
         canvasarray[$i].forEachObject(function($o) {
             $o.hidden && ($o.visible ? $o.visible = !1 : $o.visible = !0)
@@ -2716,6 +2288,7 @@ var globalRow = 0
   , toastMsg = null
   , pdfRequestId = "";
 $("#downloadAsPDF").click(function() {
+    var docUserId = 123123123;
     if (ajaxRequestRef && ajaxRequestRef.abort(),
     demo_as_id > 0)
         $.toast({
@@ -2968,6 +2541,10 @@ var checkSavePaper = function(fn) {
     $("#pdf-preview-div .loading-spin").hide()
 };
 function getTemplateThumbnail() {
+    if (DEBUG) {
+        console.log("getTemplateThumbnail()");
+    }
+
     var firstcanvas = canvasarray[currentcanvasid]
       , initialZoom = firstcanvas.getZoom()
       , isEmptyBackground = !1;
@@ -2989,6 +2566,10 @@ function getTemplateThumbnail() {
     dataURL
 }
 function saveAsTemplateFile() {
+    if (DEBUG) {
+        console.log("saveAsTemplateFile()");
+    }
+
     issaveastemplate = !1,
     s_history = !1;
     var $metrics = $("input[name=metric_units1]:checked").val()
@@ -3039,7 +2620,12 @@ function saveAsTemplateFile() {
         s_history = !0
     })
 }
+
 function normalizeSvgScale($src, $dest) {
+    if (DEBUG) {
+        console.log("normalizeSvgScale()");
+    }
+
     if (!$src || !$dest)
         return !1;
     if (!$src._objects || !$dest._objects)
@@ -3075,7 +2661,12 @@ function normalizeSvgScale($src, $dest) {
     $dest.setCoords(),
     !0
 }
+
 function getTemplateJson() {
+    if (DEBUG) {
+        console.log("getTemplateJson");
+    }
+
     var jsonCanvasArray = []
       , width = document.getElementById("loadCanvasWid").value
       , height = document.getElementById("loadCanvasHei").value
@@ -3112,80 +2703,7 @@ function getTemplateJson() {
         }
     return JSON.stringify(jsonCanvasArray).replace(/"backgroundImage":{.*?}/gi, '"backgroundImage":""')
 }
-function updateTemplate(updateOriginal) {
-    return DEBUG && console.log("updateTemplate"),
-    new Promise(function(resolve, reject) {
-        if (stopProcess)
-            reject();
-        else {
-            var updateOriginal = updateOriginal || 0;
-            if (s_history = !1,
-            totalsvgs == convertedsvgs && 0 != loadedtemplateid) {
-                isupdatetemplate = !1;
-                var jsonData = getTemplateJson();
-                if (!IsJsonString(jsonData))
-                    return $.toast({
-                        text: "An error occurred while saving the template",
-                        icon: "error",
-                        loader: !1,
-                        position: "top-right"
-                    }),
-                    void reject();
-                var metrics = $("input[name=metric_units1]:checked").val()
-                  , pngdataURL = getTemplateThumbnail()
-                  , crc = crc32(jsonData)
-                  , url = appUrl + "editor/template/update";
-                $.ajax({
-                    type: "POST",
-                    url: url,
-                    headers: {
-                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
-                    },
-                    data: {
-                        _token: $('meta[name="csrf-token"]').attr('content'),
-                        language_code: language_code,
-                        templateid: loadedtemplateid,
-                        pngimageData: pngdataURL,
-                        jsonData: jsonData,
-                        metrics: metrics,
-                        crc: crc,
-                        design_as_id: design_as_id,
-                        type: template_type,
-                        geofilterBackground: geofilterBackground,
-                        instructionsId: instructionsId,
-                        updateOriginal: updateOriginal
-                    },
-                    dataType: "json"
-                }).done(function(answer) {
-                    appSpinner.hide();
-                    var icon = answer.err ? "error" : "success"
-                      , text = answer.err ? answer.msg : "Template saved";
-                    $.toast({
-                        text: text,
-                        icon: icon,
-                        loader: !1,
-                        position: "top-right"
-                    }),
-                    answer.err || ("customer" == currentUserRole && getTemplates2(0, ""),
-                    $("#autosave").data("saved", "yes")),
-                    s_history = !0,
-                    resolve()
-                }).fail(function() {
-                    appSpinner.hide(),
-                    $.toast({
-                        heading: "Error saving template",
-                        text: "Please try again",
-                        icon: "error",
-                        loader: !1,
-                        position: "top-right",
-                        hideAfter: 5e3
-                    })
-                })
-            }
-        }
-    }
-    )
-}
+
 $("#progressModal").on("shown.bs.modal", function(e) {
     $("#savePaper").is(":checked") ? $("input#savecrop").is(":checked") && 1 === globalCol && 1 === globalRow ? createBleedForPDF({
         callback: removeDeletedCanvasesProxy
@@ -3193,13 +2711,19 @@ $("#progressModal").on("shown.bs.modal", function(e) {
         callback: rasterizeObjectsProxy
     }) : removeDeletedCanvases(canvasarray, rasterizeObjectsProxy)
 });
+
 var newTextTagsEdit = $("#newTextTags").tagsField({
     label: "Tags",
     id: "text_tags",
     labelColumnClass: "control-label",
     divColumnClass: ""
 });
+
 function saveFromSelection(callback) {
+    if (DEBUG) {
+        console.log("saveFromSelection");
+    }
+
     if (newTextTagsEdit.validate())
         if ("undefined" != typeof canvas) {
             var actobj = canvas.getActiveObject()
@@ -3247,7 +2771,12 @@ function saveFromSelection(callback) {
             $("#alertModal").modal("show"),
             $("#responceMessage").html("Please select the object you wish to save.")
 }
+
 function saveAsText(pngdataURL, jsonData) {
+    if (DEBUG) {
+        console.log("saveAsText");
+    }
+
     var $tags = JSON.parse(newTextTagsEdit.getTags()).join(",")
       , filename = $("#textname").val()
       , url = appUrl + "design/savetext.php";
@@ -3278,7 +2807,12 @@ function saveAsText(pngdataURL, jsonData) {
         }
     })
 }
+
 function saveAsElement(pngdataURL, jsonData) {
+    if (DEBUG) {
+        console.log("saveAsElement");
+    }
+
     var filename = $("#elmtname").val()
       , $tags = JSON.parse(newElementTagsEdit.getTags()).join(",");
     appSpinner.show();
@@ -3310,69 +2844,24 @@ function saveAsElement(pngdataURL, jsonData) {
         }
     })
 }
+
 function proceed_savetemplate() {
+    if (DEBUG) {
+        console.log("proceed_savetemplate");
+    }
+    
     $("#savetemplate_modal").is(":visible") && !newTemplateTagsEdit.validate() || ($("#savetemplate_modal").modal("hide"),
     appSpinner.show(),
     $("#saveastemplate").show(),
     canvas.discardActiveObject().renderAll(),
     processSVGs())
 }
-function downloadImage() {
-    $("#publishModal").modal("hide"),
-    appSpinner.show();
-    var cwidth = document.getElementById("loadCanvasWid").value
-      , cheight = document.getElementById("loadCanvasHei").value
-      , cols = document.getElementById("numOfcanvascols").value
-      , rows = document.getElementById("numOfcanvasrows").value;
-    setZoom(1),
-    cwidth *= 96,
-    cheight *= 96;
-    var buffer = document.getElementById("outputcanvas")
-      , buffer_context = buffer.getContext("2d");
-    buffer.width = parseInt(cwidth) * parseInt(cols);
-    var hiddencanvascount = parseInt(cols) * parseInt(rows) * (pageindex + 1) - $(".divcanvas:visible").length;
-    buffer.height = parseInt(cheight) * (parseInt(rows) * (pageindex + 1) - hiddencanvascount / parseInt(cols));
-    for (var writtenpages = 0, processpages = 0, rowcount = 0, colcount = 0, i = 0; i < canvasindex; i++)
-        canvasarray[i] && (canvasarray[i].discardActiveObject().renderAll(),
-        $("#divcanvas" + i).is(":visible") && (processpages++,
-        colcount >= cols && (colcount = 0,
-        rowcount++),
-        w = cwidth * colcount,
-        colcount++,
-        function(li, c, r) {
-            var img = new Image;
-            img.onload = function() {
-                if (buffer_context.drawImage(this, c, r),
-                ++writtenpages == processpages) {
-                    var canvasele = document.getElementById("outputcanvas")
-                      , id = loadedtemplateid;
-                    0 === loadedtemplateid && (id = "new");
-                    var filename = "wayak_" + id + ".png"
-                      , img = canvasele.toDataURL({
-                        format: "png",
-                        quality: 1
-                    })
-                      , url = appUrl + "design/saveimage.php";
-                    $.post(url, {
-                        file: filename,
-                        data: img
-                    }).done(function($answer) {
-                        $answer.length > 1 && ($("#autosave").data("saved", "yes"),
-                        window.location.href = appUrl + "design/downloadfile.php?file=" + $answer + "&filename=" + filename)
-                    }).always(function() {
-                        appSpinner.hide(),
-                        setZoom($("#zoomperc").data("oldScaleValue"))
-                    })
-                }
-            }
-            ,
-            img.src = canvasarray[li].toDataURL({
-                format: "png",
-                multiplier: 1 / fabric.devicePixelRatio
-            })
-        }(i, w, cheight * rowcount)))
-}
+
 function makeObjectNotSelectable($object) {
+    if (DEBUG) {
+        console.log("makeObjectNotSelectable");
+    }
+
     return $object || ($object = canvas.getActiveObject()),
     !!$object && ($object.set("locked", !0),
     /text/.test($object.type) && $object.set("editable", !1),
@@ -3380,7 +2869,12 @@ function makeObjectNotSelectable($object) {
     canvas.setActiveObject($object),
     !0)
 }
+
 function makeObjectSelectable($object) {
+    if (DEBUG) {
+        console.log("makeObjectSelectable");
+    }
+
     return $object || ($object = canvas.getActiveObject()),
     !!$object && ($object.set("locked", !1),
     /text/.test($object.type) && $object.set("editable", !0),
@@ -3403,7 +2897,12 @@ function makeObjectSelectable($object) {
     canvas.setActiveObject($object),
     !0)
 }
+
 function savesvg(svgobj) {
+    if (DEBUG) {
+        console.log("savesvg");
+    }
+
     var lsvgobj;
     tempcanvas.clear(),
     (lsvgobj = svgobj).clone(function(clone) {
@@ -3441,47 +2940,16 @@ function savesvg(svgobj) {
     isdownloadpdf && downloadDocument(),
     isupdatetemplate && updateTemplate()
 }
+
 var savecrop = !1
   , $svgs = 0
   , $additionalHeight = 0;
-function getBg($obj, scalex) {
-    return DEBUG && console.log("getBg()"),
-    DEBUG && console.log("scaleX", scalex),
-    new Promise(function(resolve, reject) {
-        if (void 0 !== $obj) {
-            window.$obj = $obj;
-            var bgsrc = $obj.bgsrc
-              , $zoom = $obj.getZoom() || 1;
-            bgsrc && fabric.Image.fromURL(bgsrc, function(img3) {
-                img3.get("width") > img3.get("height") ? img3.scaleToHeight($obj.get("height") / $zoom) : img3.scaleToWidth($obj.get("width") / $zoom);
-                var patternSourceCanvas = new fabric.StaticCanvas;
-                patternSourceCanvas.add(img3),
-                patternSourceCanvas.renderAll(),
-                $obj.bgImg = img3,
-                $obj.patternSourceCanvas = patternSourceCanvas;
-                var pattern = new fabric.Pattern({
-                    source: function() {
-                        return $obj.patternSourceCanvas.setDimensions({
-                            width: $obj.bgImg.get("width") * $obj.bgImg.get("scaleX"),
-                            height: $obj.bgImg.get("height") * $obj.bgImg.get("scaleY")
-                        }),
-                        $obj.patternSourceCanvas.renderAll(),
-                        $obj.patternSourceCanvas.getElement()
-                    },
-                    repeat: "repeat"
-                });
-                resolve(pattern)
-            }, {
-                crossOrigin: "anonymous"
-            }),
-            !bgsrc && $obj.backgroundColor && resolve($obj.backgroundColor),
-            bgsrc || $obj.backgroundColor || resolve("")
-        } else
-            reject("canvas or object is not exist")
-    }
-    )
-}
+
 function createBgPatternWithBleed($obj) {
+    if (DEBUG) {
+        console.log("createBgPatternWithBleed()");
+    }
+    
     return DEBUG && console.log("createBgPatternWithBleed()"),
     new Promise(function(resolve, reject) {
         if (void 0 !== $obj) {
@@ -3527,7 +2995,12 @@ function createBgPatternWithBleed($obj) {
     }
     )
 }
+
 function getBg2($obj, scalex) {
+    if (DEBUG) {
+        console.log("getBg2()");
+    }
+
     return new Promise(function(resolve, reject) {
         if (void 0 !== $obj) {
             var $bgsrc = $obj.bgsrc
@@ -3585,7 +3058,12 @@ function getBg2($obj, scalex) {
     }
     )
 }
+
 function createBleed($options) {
+    if (DEBUG) {
+        console.log("createBleed()");
+    }
+
     $options || ($options = {});
     var $canvases = $options.canvases || canvasarray
       , $canvasesWithBleed = $options.canvasesWithBleed || []
@@ -3622,7 +3100,11 @@ function createBleed($options) {
         object.setCoords()
     })
 }
+
 function removeDeletedCanvasesProxy($options) {
+    if (DEBUG) {
+        console.log("removeDeletedCanvasesProxy()");
+    }
     DEBUG && console.log("removeDeletedCanvasesProxy $canvases:"),
     $options || ($options = {});
     var $canvases = $options.canvases || canvasarray;
@@ -3632,7 +3114,12 @@ function removeDeletedCanvasesProxy($options) {
         callback: removeDeletedCanvases
     })
 }
+
 function createBleedForPDF($options) {
+    if (DEBUG) {
+        console.log("createBleedForPDF()");
+    }
+
     DEBUG && console.log("createBleedForPDF"),
     $options || ($options = {});
     var $canvases = $options.canvases || canvasarray
@@ -3670,76 +3157,12 @@ function createBleedForPDF($options) {
         object.setCoords()
     })
 }
-function downloadImage3($options) {
-    $options || ($options = {});
-    var $canvases = $options.canvases || canvasarray
-      , i = $options.i || 0
-      , $format = $options.format || "jpeg"
-      , $zip = $options.zip || new JSZip;
-    "jpg" === $format && ($format = "jpeg");
-    var filename = "wayak_" + (i + 1) + "." + $format
-      , id = loadedtemplateid;
-    "jpeg" === $format && ($canvases[i].backgroundColor || $canvases[i].set({
-        backgroundColor: "#ffffff"
-    })),
-    $canvases[i].setDimensions();
-    var metrics = $("input[name=metric_units1]:checked").val()
-      , multiplier = 1;
-    ("jpeg" == $format || "png" == $format && "px" == metrics && !/geofilter/.test(template_type)) && (multiplier = 3.125);
-    var dataURL = $canvases[i].toDataURL({
-        format: $format,
-        quality: 1,
-        multiplier: multiplier / fabric.devicePixelRatio,
-        enableRetinaScaling: 1
-    });
-    if (dataURL = $canvases[i].toDataURL({
-        format: $format,
-        quality: 1,
-        multiplier: multiplier / fabric.devicePixelRatio,
-        enableRetinaScaling: 1
-    }),
-    "jpeg" == $format ? dataURL = setJpegDPI(dataURL) : "png" == $format && "geofilter" != template_type && "geofilter2" != template_type && (dataURL = setPngDPI(dataURL)),
-    dataURL = dataURL.split("base64,")[1],
-    $zip.file(filename, dataURL, {
-        base64: !0
-    }),
-    $canvases[++i])
-        downloadImage3({
-            canvases: $canvases,
-            i: i,
-            format: $format,
-            zip: $zip
-        });
-    else {
-        0 === loadedtemplateid && (id = "new");
-        filename = "wayak_" + id + ".zip";
-        isMac && isSafari ? $zip.generateAsync({
-            type: "base64"
-        }).then(function(content) {
-            var url = appUrl + "design/savezip.php";
-            $.post(url, {
-                file: filename,
-                data: content
-            }).done(function($answer) {
-                var $parsedAnswer = JSON.parse($answer);
-                $parsedAnswer.err ? saveAs(content, filename) : window.location.href = appUrl + "design/downloadfile.php?file=" + $parsedAnswer.msg + "&filename=" + filename
-            }).fail(function() {
-                saveAs(content, filename)
-            }).always(function() {
-                appSpinner.hide(),
-                setZoom($("#zoomperc").data("oldScaleValue"))
-            })
-        }) : $zip.generateAsync({
-            type: "blob"
-        }).then(function(blob) {
-            appSpinner.hide(),
-            setZoom($("#zoomperc").data("oldScaleValue")),
-            saveAs(blob, filename)
-        }),
-        toggleHiddenStatusOfObjects()
-    }
-}
+
 function downloadImage2($options) {
+    if (DEBUG) {
+        console.log("downloadImage2()");
+    }
+
     $options || ($options = {});
     var $canvases = $options.canvases || canvasarray
       , $format = $options.format || "jpeg";
@@ -3798,7 +3221,12 @@ function downloadImage2($options) {
     setZoom($("#zoomperc").data("oldScaleValue")),
     toggleHiddenStatusOfObjects()
 }
+
 function removeDeletedCanvases($canvases, $callback) {
+    if (DEBUG) {
+        console.log("removeDeletedCanvases()");
+    }
+
     $canvases = $canvases || canvasarray;
     for (var $i = 0, $newArray = []; $i < $canvases.length; )
         $("#divcanvas" + $i).is(":visible") && $canvases[$i] && $newArray.push($canvases[$i]),
@@ -3809,7 +3237,11 @@ function removeDeletedCanvases($canvases, $callback) {
         canvases: $newArray
     })
 }
+
 function groupCanvasesOfOnePage($options) {
+    if (DEBUG) {
+        console.log("groupCanvasesOfOnePage()");
+    }
     $options || ($options = {});
     var $canvases = $options.canvases || canvasarray
       , i = $options.i || 0
@@ -4008,7 +3440,11 @@ function groupCanvasesOfOnePage($options) {
         localI: $localI
     })
 }
+
 function optimizeCanvasesOnPage($canvases, $paperWidthIn, $paperHeightIn) {
+    if (DEBUG) {
+        console.log("optimizeCanvasesOnPage()");
+    }
     $canvases = $canvases || canvasarray;
     var $cmp = 0;
     $("input#savecrop").is(":checked") && ($cmp = 12),
@@ -4042,13 +3478,23 @@ function optimizeCanvasesOnPage($canvases, $paperWidthIn, $paperHeightIn) {
     }
     downloadDocument($canvases)
 }
+
 function copyOnePageAcrossSheet() {
+    if (DEBUG) {
+        console.log("copyOnePageAcrossSheet()");
+    }
+
     $copyOnePageAcrossSheet = !0,
     $("input#savecrop").is(":checked") ? createBleedForPDF({
         callback: removeDeletedCanvasesProxy
     }) : removeDeletedCanvases(canvasarray)
 }
+
 function downloadOptimized($canvases, i, $paperWidthPx, $paperHeightPx, $amountOfColumnsOnPage, $amountOfRowsOnPage) {
+    if (DEBUG) {
+        console.log("downloadOptimized()");
+    }
+
     if (i > 1e3)
         DEBUG && console.log("too deep recursion. exiting");
     else {
@@ -4138,7 +3584,12 @@ function downloadOptimized($canvases, i, $paperWidthPx, $paperHeightPx, $amountO
         })
     }
 }
+
 function addBackgroundLayer(canvas, tcanvas) {
+    if (DEBUG) {
+        console.log("addBackgroundLayer()");
+    }
+
     return DEBUG && console.log("addBackgroundLayer()"),
     new Promise(function(resolve, reject) {
         var rows = parseInt($("#numOfcanvasrows").val())
@@ -4227,7 +3678,12 @@ function addBackgroundLayer(canvas, tcanvas) {
     }
     )
 }
+
 function rasterizeObjectsProxy($options) {
+    if (DEBUG) {
+        console.log("rasterizeObjectsProxy()");
+    }
+
     $options || ($options = {});
     var $canvases = $options.canvases || canvasarray
       , $readyCanvases = $options.readyCanvases || []
@@ -4248,7 +3704,12 @@ function rasterizeObjectsProxy($options) {
         DEBUG && console.log($res)
     })
 }
+
 function rasterizeObjects(canvas) {
+    if (DEBUG) {
+        console.log("rasterizeObjects()");
+    }
+
     return DEBUG && console.log("rasterizeObjects()"),
     new Promise(function(resolve, reject) {
         var objcanvas = new fabric.StaticCanvas;
@@ -4269,7 +3730,12 @@ function rasterizeObjects(canvas) {
     }
     )
 }
+
 function downloadDocument($canvases, i) {
+    if (DEBUG) {
+        console.log("downloadDocument()");
+    }
+
     void 0 === $canvases && ($canvases = canvasarray),
     void 0 === i && (i = 0);
     var cwidth = $canvases[i].get("width")
@@ -4477,7 +3943,12 @@ function downloadDocument($canvases, i) {
         setZoom($("#zoomperc").data("oldScaleValue"))) : downloadDocument($canvases, i)
     }, 0)
 }
+
 function fixSVGText(str) {
+    if (DEBUG) {
+        console.log("fixSVGText()");
+    }
+
     for (var svg = (new DOMParser).parseFromString(str, "image/svg+xml").documentElement, tspans = svg.querySelectorAll("tspan"), i = 0; i < tspans.length; i++) {
         var ts = tspans[i]
           , parent = ts.parentNode
@@ -4499,8 +3970,13 @@ function fixSVGText(str) {
     var result = (new XMLSerializer).serializeToString(svg);
     return result = (result = (result = result.replace(new RegExp("FONT-FAMILY","g"), "font-family")).replace(new RegExp("FONT-SIZE","g"), "font-size")).replace(new RegExp("FONT-WEIGHT","g"), "font-weight")
 }
+
 var pdfProccess = !1;
 function proceedPDF2(svg, $width, $height) {
+    if (DEBUG) {
+        console.log("proceedPDF2()");
+    }
+
     var cropWidth = arguments.length > 3 && void 0 !== arguments[3] ? arguments[3] : 0
       , cropBottom = arguments.length > 4 && void 0 !== arguments[4] ? arguments[4] : 0;
     registerDownload("PDF", {
@@ -4576,13 +4052,23 @@ function proceedPDF2(svg, $width, $height) {
         }))
     })
 }
+
 function downloadPdf() {
+    if (DEBUG) {
+        console.log("downloadPdf()");
+    }
+
     isdownloadpdf = !1;
     for (var jsonCanvasArray = [], i = 0; i < canvasindex; i++)
         $("#divcanvas" + i).is(":visible") && jsonCanvasArray.push(canvasarray[i].toSVG());
     proceedPDF(jsonCanvasArray)
 }
+
 function proceedPDF(jsonCanvasArray) {
+    if (DEBUG) {
+        console.log("proceedPDF()");
+    }
+
     $("input#savecrop").is(":checked") && (savecrop = !0);
     var id = loadedtemplateid;
     0 === loadedtemplateid && (id = "new");
@@ -4624,17 +4110,7 @@ function proceedPDF(jsonCanvasArray) {
         }
     })
 }
-function processSVGs(disablespinner) {
-    DEBUG && console.log("processSVGs"),
-    totalsvgs = 0,
-    convertedsvgs = 0,
-    $("#publishModal").modal("hide"),
-    $("#pdfdownloadModal").modal("hide"),
-    disablespinner || appSpinner.show(),
-    isdownloadpdf && downloadDocument(),
-    issaveastemplate && saveAsTemplateFile(),
-    isupdatetemplate && updateTemplate()
-}
+
 $("#addCategory").click(function() {
     $("#Addcategoryodal").modal("show")
 }),
@@ -4688,7 +4164,12 @@ $("#redirect-admin-design-as").on("click", function(e) {
 }),
 Dropzone.autoDiscover = !1;
 var wrapperDz = null, files, bgfiles;
+
 function deleteTemplate(id) {
+    if (DEBUG) {
+        console.log("deleteTemplate()");
+    }
+
     if (appSpinner.show(),
     "" != id) {
         var url = appUrl + "design/actions/deleteTemplate.php";
@@ -4708,7 +4189,12 @@ function deleteTemplate(id) {
         $("#alertModal").modal("show"),
         $("#responceMessage").html("Please select the Template(s), you wish to delete.")
 }
+
 function deleteText($id) {
+    if (DEBUG) {
+        console.log("deleteText()");
+    }
+
     if (appSpinner.show(),
     $id) {
         var url = appUrl + "design/actions/deleteText.php";
@@ -4733,7 +4219,12 @@ function deleteText($id) {
         })
     }
 }
+
 function deleteElement($id) {
+    if (DEBUG) {
+        console.log("deleteElement()");
+    }
+
     if (appSpinner.show(),
     $id) {
         var url = appUrl + "admin/Elements/delete-element";
@@ -4758,7 +4249,12 @@ function deleteElement($id) {
         })
     }
 }
+
 function deleteBg($id) {
+    if (DEBUG) {
+        console.log("deleteBg()");
+    }
+
     if (appSpinner.show(),
     $id) {
         var url = appUrl + "design/actions/deleteBg.php";
@@ -4783,7 +4279,12 @@ function deleteBg($id) {
         })
     }
 }
+
 function deleteImage(id) {
+    if (DEBUG) {
+        console.log("deleteImage()");
+    }
+
     if (appSpinner.show(),
     id) {
         var url = appUrl + "admin/Elements/delete-images";
@@ -4808,7 +4309,12 @@ function deleteImage(id) {
         })
     }
 }
+
 function readIMG(input) {
+    if (DEBUG) {
+        console.log("readIMG()");
+    }
+
     if (DEBUG && console.log(input.files[0]),
     input.files && input.files[0]) {
         var reader = new FileReader;
@@ -4829,10 +4335,21 @@ function readIMG(input) {
         reader.readAsDataURL(input.files[0])
     }
 }
+
 function prepareUpload(event) {
+    if (DEBUG) {
+        console.log("prepareUpload()");
+    }
+
     files = event.target.files
 }
+
 function uploadimage() {
+    if (DEBUG) {
+        console.log("uploadimage()");
+    }
+
+    prepareUpload
     var data = new FormData;
     $.each(files, function(key, value) {
         data.append("element_img", value)
@@ -4851,7 +4368,12 @@ function uploadimage() {
         }
     })
 }
+
 function readBGIMG(input) {
+    if (DEBUG) {
+        console.log("readBGIMG()");
+    }
+
     if ($this = this,
     input.files && input.files[0]) {
         var reader = new FileReader;
@@ -4863,10 +4385,20 @@ function readBGIMG(input) {
         reader.readAsDataURL(input.files[0])
     }
 }
+
 function prepareBGUpload(event) {
+    if (DEBUG) {
+        console.log("prepareBGUpload()");
+    }
+
     bgfiles = event.target.files
 }
+
 function uploadBgimage() {
+    if (DEBUG) {
+        console.log("uploadBgimage()");
+    }
+
     var data = new FormData;
     $.each(bgfiles, function(key, value) {
         data.append("bg_img", value)
@@ -4885,253 +4417,23 @@ function uploadBgimage() {
         }
     })
 }
+
 function addNewCanvasPage(dupflag, pageid) {
+    if (DEBUG) {
+        console.log("addNewCanvasPage()");
+    }
+
     pageindex++,
     $("#canvaspages").append("<div class='page' id='page" + pageindex + "'></div>"),
     addCanvasToPage(dupflag, pageid),
     setWorkspace()
 }
-function addNewCanvas($rowid) {
-    savestatecount = 0,
-    $("#page" + pageindex).find("tr#row" + $rowid).append("<td align='center' id='divcanvas" + canvasindex + "' onmousedown='javascript:selectCanvas(this.id);' onClick='javascript:selectCanvas(this.id);' oncontextmenu='javascript:selectCanvas(this.id);' class='divcanvas'><div class='canvascontent' ><canvas id='canvas" + canvasindex + "' class='canvas'></canvas></div></td>"),
-    canvas = new fabric.Canvas("canvas" + canvasindex,{
-        enableRetinaScaling: !0
-    }),
-    canvas.index = 0,
-    canvas.state = [],
-    canvas.rotationCursor = 'url("assets/img/rotatecursor2.png") 10 10, crosshair',
-    canvas.backgroundColor = "",
-    canvas.selectionColor = "rgba(255,255,255,0.3)",
-    canvas.selectionBorderColor = "rgba(0,0,0,0.1)",
-    canvas.hoverCursor = "pointer",
-    canvas.perPixelTargetFind = !0,
-    canvas.preserveObjectStacking = !0,
-    canvas.targetFindTolerance = 10,
-    canvasarray.push(canvas);
-    document.getElementById("loadCanvasWid").value,
-    document.getElementById("loadCanvasHei").value;
-    setCanvasZoom(canvasarray.length - 1),
-    initCanvasEvents(canvas),
-    initAligningGuidelines(canvas),
-    initCenteringGuidelines(canvas),
-    initKeyboardEvents(),
-    canvas.calcOffset(),
-    canvas.renderAll(),
-    currentcanvasid = canvasindex,
-    canvasindex++,
-    save_history(),
-    $("#bgcolorselect").spectrum("set", "")
-}
-function selectCanvas(id) {
-    if (id = id.replace("divcanvas", ""),
-    currentcanvasid != parseInt(id)) {
-        canvas.discardActiveObject().renderAll();
-        for (var i = 0; i < canvasindex; i++)
-            $("#canvas" + i).css("box-shadow", "");
-        if ("geofilter" != template_type && "geofilter2" != template_type && $("#canvas" + id).css("box-shadow", "0px 0px 10px #888888"),
-        currentcanvasid != parseInt(id)) {
-            currentcanvasid = parseInt(id);
-            var tempcanvas = canvasarray[parseInt(id)];
-            tempcanvas && (canvas = tempcanvas);
-            var obj = canvas.getActiveObject();
-            obj && canvas.setActiveObject(obj);
-            for (var n = canvas._objects.length; canvas._objects[--n]; )
-                "text" === canvas._objects[n].type && !1 === canvas._objects[n].selectable && canvas.remove(canvas._objects[n]);
-            $("#bgscale").slider("setValue", 100 * canvas.bgScale),
-            canvas.renderAll(),
-            canvas.backgroundColor ? $("#bgcolorselect").spectrum("set", canvas.backgroundColor) : $("#bgcolorselect").spectrum("set", "")
-        }
-    }
-}
-function autoZoom() {
-    var $canvas_box_height = $("#page0").height()
-      , $canvas_box_width = $("#page0").width()
-      , $window_height = $(window).height()
-      , $window_width = $(window).width()
-      , $sidebar_width = $(".am-left-sidebar").width();
-    $canvas_box_width < $window_width - $sidebar_width && $canvas_box_height < $window_height - 60 ? setZoom(1) : $canvas_box_width > $window_width - $sidebar_width ? setZoom(1 / ($canvas_box_width / ($window_width - $sidebar_width - 300))) : ($canvas_box_height > $window_height - 60 || 1 / ($canvas_box_height / ($window_height - 60)) <= 1) && setZoom(1 / ($canvas_box_height / ($window_height - 60)))
-}
-function adjustIconPos(id) {
-    var p = $("#page" + id).find("table");
-    if (p.length) {
-        parseFloat(jQuery("#zoomperc").data("scaleValue"));
-        var position = p.position()
-          , width = p.outerWidth()
-          , $top = (p.outerHeight() / 2 || 0) - 20;
-        "geofilter" != template_type && "geofilter2" != template_type || ($(".background-arrow-right").css({
-            position: "absolute",
-            top: $top - 15 + "px",
-            left: position.left + width + 60 + "px"
-        }).show(),
-        $(".background-arrow-left").css({
-            position: "absolute",
-            top: $top - 15 + "px",
-            left: position.left - 127 + "px"
-        }).show()),
-        $("#pagenumber" + id).css({
-            position: "absolute",
-            top: $top + "px",
-            left: position.left + width + 30 + "px"
-        }).show(),
-        $top += 25,
-        "doublesided" == template_type && 2 == $(".divcanvas:visible").length || ($("#duplicatecanvas" + id).css({
-            position: "absolute",
-            top: $top + "px",
-            left: position.left + width + 10 + "px"
-        }).show(),
-        $top += 25),
-        $("#deletecanvas" + id).css({
-            position: "absolute",
-            top: $top + "px",
-            left: position.left + width + 10 + "px"
-        }).show(),
-        1 == $(".page:visible").length && $(".deletecanvas").css("display", "none"),
-        $(".duplicatecanvas, .deletecanvas").css("left", position.left + (width + 30))
-    }
-}
-function openTemplate(jsons) {
-    if (DEBUG && console.log("openTemplate()"),
-    savestatecount = 0,
-    s_history = !1,
-    !IsJsonString(jsons))
-        return appSpinner.hide(),
-        $.toast({
-            text: "Something went wrong",
-            icon: "error",
-            hideAfter: 2e3,
-            loader: !1,
-            position: "top-right"
-        }),
-        !1;
-    var jsonCanvasArray = JSON.parse(jsons);
-    if (jsonCanvasArray && !(jsonCanvasArray.length <= 0)) {
-        var wh = jsonCanvasArray[0];
-        wh = JSON.parse(wh),
-        document.getElementById("loadCanvasWid").value = parseFloat(wh.width / 96),
-        document.getElementById("loadCanvasHei").value = parseFloat(wh.height / 96),
-        document.getElementById("numOfcanvasrows").value = parseInt(wh.rows),
-        document.getElementById("numOfcanvascols").value = parseInt(wh.cols);
-        var rc = parseInt(wh.rows) * parseInt(wh.cols);
-        $("#canvaspages").html(""),
-        pageindex = 0,
-        canvasindex = 0,
-        canvasarray = [];
-        for (var i = 0; i < (jsonCanvasArray.length - 1) / rc; i++)
-            pageindex = i,
-            $("#canvaspages").append("<div class='page' id='page" + pageindex + "'></div>"),
-            addCanvasToPage(!1, i, jsonCanvasArray);
-        setCanvasSize(),
-        i = 1;
-        for (var families = []; jsonCanvasArray[i]; )
-            jsonCanvasArray[i].objects && jsonCanvasArray[i].objects.forEach(function(o, i) {
-                o.fontFamily && (dontLoadFonts.indexOf(o.fontFamily) < 0 && (families.push(o.fontFamily),
-                $("body").append('<div class="font-test" style="font-family: ' + o.fontFamily + '"></div>'),
-                dontLoadFonts.push(o.fontFamily)),
-                addFontToFabric(o.fontFamily)),
-                $.isEmptyObject(o.styles) || $.each(o.styles, function($i, $line) {
-                    $.each($line, function($i, $style) {
-                        void 0 !== $style.fontFamily && dontLoadFonts.indexOf($style.fontFamily) < 0 && families.push($style.fontFamily)
-                    })
-                })
-            }),
-            i++;
-        return 0 == families.length ? proceedOpenTemplate(jsonCanvasArray) : (families = _toConsumableArray(new Set(families)),
-        WebFontConfig = {
-            custom: {
-                families: families,
-                urls: [appUrl + "editor/get-css-fonts?templates=" + JSON.stringify(families)]
-            },
-            active: function() {
-                DEBUG && console.log("all fonts are loaded"),
-                proceedOpenTemplate(jsonCanvasArray)
-            },
-            fontinactive: function(f) {
-                DEBUG && console.log("Font failed to load: " + f)
-            },
-            inactive: function() {
-                $.toast({
-                    text: "Fonts have failed to load. Please refresh the browser.",
-                    icon: "error",
-                    hideAfter: !1,
-                    loader: !1,
-                    position: "top-right"
-                }),
-                proceedOpenTemplate(jsonCanvasArray)
-            }
-        },
-        WebFont.load(WebFontConfig)),
-        !0
-    }
-}
-function proceedOpenTemplate(jsonCanvasArray) {
-    s_history = !1;
-    for (var i = 0; i < canvasindex; i++)
-        !function(lcanvas, json) {
-            if (json) {
-                svg_custom_data = [],
-                DEBUG && console.log("proceedOpenTemplate() json: ", json),
-                DEBUG && console.log("svg_custom_data: ", svg_custom_data);
-                var json_without_svg = {
-                    backgroundImage: json.backgroundImage,
-                    bgColor: json.background,
-                    cheight: json.cheight,
-                    cwidth: json.cwidth,
-                    objects: []
-                };
-                lcanvas.clear(),
-                json.backgroundImage = "";
-                var $bgsrc = ""
-                  , $scale = 1
-                  , $bgcolor = json.background;
-                if (json.bgScale && ($scale = json.bgScale),
-                json.bgsrc && ($bgsrc = json.bgsrc),
-                $bgcolor && "string" == typeof $bgcolor && !$bgsrc && (setCanvasBg(lcanvas, "", $bgcolor, 1, i),
-                $("#bgcolorselect").spectrum("set", canvas.backgroundColor)),
-                $bgsrc && (lcanvas.bgsrc = $bgsrc,
-                lcanvas.bgScale = $scale,
-                $("#bgscale").slider("setValue", 100 * $scale),
-                setCanvasBg(lcanvas, $bgsrc, "", $scale, i, !0),
-                $("#bgcolorselect").spectrum("set", "")),
-                json.objects) {
-                    var json_objects = json.objects
-                      , counter = 0;
-                    0 == json_objects.length && i + 1 >= canvasindex && afterLoadTemplate(),
-                    $.each(json_objects, function(object_i, object) {
-                        DEBUG && console.log("obj: ", object),
-                        object.selectable = !0,
-                        object.backgroundColor = "",
-                        "image" === object.type && object.bg ? (json_without_svg.objects[json_without_svg.objects.length] = object,
-                        json.bgsrc || ($bgsrc = object.src,
-                        object.visible = !1),
-                        $scale = 1) : void 0 !== object.svg_custom_paths && isSvg(object) ? (DEBUG && console.log("object.svg_custom_paths: ", object.svg_custom_paths),
-                        svg_custom_data[object_i] = object) : json_without_svg.objects[json_without_svg.objects.length] = object,
-                        counter++,
-                        json_objects.length == counter && (DEBUG && console.log("counter: ", counter),
-                        json = JSON.stringify(json),
-                        DEBUG && console.log("svg_custom_data: ", svg_custom_data),
-                        loadObjectOnCanvasFromJSON(lcanvas, json_without_svg, svg_custom_data, i))
-                    })
-                }
-            } else
-                afterLoadJSON(lcanvas, i);
-            savestatecount = 0
-        }(canvasarray[i], jsonCanvasArray[i + 1]);
-    return initKeyboardEvents(),
-    $("#canvaspages .page").length > 1 && $(".deletecanvas").show(),
-    $("#savetemplate").show(),
-    $("#saveastemplate").show(),
-    $(".download-menu").show(),
-    $("#undo").hide(),
-    $("#bgscale").slider("setValue", 100 * canvas.bgScale),
-    $(".sidebar-elements li:not(#relatedProductsPane) a").removeClass("invisible"),
-    canvasindex > 10 ? $(".download-jpeg-menu-item").hide() : $(".download-jpeg-menu-item").show(),
-    setWorkspace(),
-    updatePageNumbers(),
-    getBgimages2(0, ""),
-    demo_as_id,
-    !0
-}
+
 function loadObjectOnCanvasFromJSON(lcanvas, json, svg_custom_data12, i) {
+    if (DEBUG) {
+        console.log("loadObjectOnCanvasFromJSON()");
+    }
+
     DEBUG && console.log("loadObjectOnCanvasFromJSON() json", json),
     lcanvas.renderOnAddRemove = !1,
     lcanvas.loadFromJSON(json, function() {
@@ -5314,24 +4616,12 @@ function loadObjectOnCanvasFromJSON(lcanvas, json, svg_custom_data12, i) {
     }),
     demo_as_id && setDemoOverlay()
 }
-function checkIfGroupsNeedsSVGLoading(lcanvas, i) {
-    DEBUG && console.log("checkIfGroupsNeedsSVGLoading()"),
-    $.each(lcanvas._objects, function(index, object) {
-        if ("group" === object.type) {
-            var $need_svg_loading = !1;
-            $.each(object._objects, function(i, child) {
-                "group" === child.type && void 0 !== child.svg_custom_paths && ($need_svg_loading = !0)
-            }),
-            $need_svg_loading && (DEBUG && console.log("checkIfGroupsNeedsSVGLoading(): $need_svg_loading", $need_svg_loading),
-            loadSVGForGroupMembers({
-                canvas: lcanvas,
-                index: index
-            }))
-        }
-    }),
-    afterLoadJSON(lcanvas, i)
-}
+
 function loadSVGForGroupMembers($options) {
+    if (DEBUG) {
+        console.log("loadSVGForGroupMembers()");
+    }
+
     $options || ($options = {});
     var $canvas = $options.canvas || canvas
       , $index = $options.index || 0;
@@ -5366,146 +4656,8 @@ function loadSVGForGroupMembers($options) {
         }($index, i)
     })
 }
-function afterLoadJSON(lcanvas, i) {
-    lcanvas.renderOnAddRemove = !0;
-    for (var n = lcanvas._objects.length; lcanvas._objects[--n]; ) {
-        if (lcanvas._objects[n].bg && lcanvas.remove(lcanvas._objects[n]),
-        /text/.test(lcanvas._objects[n].type) && ("top" !== lcanvas._objects[n].originY || "center" !== lcanvas._objects[n].originX)) {
-            var $point = lcanvas._objects[n].getPointByOrigin("center", "top");
-            lcanvas._objects[n].set({
-                originX: "center",
-                originY: "top",
-                left: $point.x,
-                top: $point.y
-            }),
-            lcanvas._objects[n].setCoords()
-        }
-        "image" !== lcanvas._objects[n].type || lcanvas._objects[n].width && lcanvas._objects[n].height && lcanvas._objects[n].src || lcanvas.remove(lcanvas._objects[n])
-    }
-    lcanvas.setDimensions(),
-    lcanvas.renderAll(),
-    canvasarray.length == i + 1 && afterLoadTemplate()
-    $('#template-status').val('Template Loaded');
-}
-function saveHistoryForAllCanvases() {
-    s_history = !0,
-    autoZoom();
-    for (var $c = 0; canvasarray[$c]; )
-        canvas = canvasarray[$c],
-        save_history(1),
-        $c++;
-    $("#undo").hide(),
-    $("#autosave").data("saved", "yes")
-}
-function initKeyboardEvents() {
-    $("#canvaspages").keyup(function(e) {
-        switch (DEBUG && console.log("keyup"),
-        DEBUG && console.log(e.key, e.keyCode),
-        e.keyCode) {
-        case 17:
-            remstring = "ctrl ";
-            break;
-        case 67:
-            remstring = " c";
-            break;
-        case 88:
-            remstring = " x";
-            break;
-        case 86:
-            remstring = " v";
-            break;
-        case 90:
-            remstring = " z"
-        }
-        DEBUG && console.log("keystring: ", keystring),
-        -1 != keystring.indexOf(remstring) && (keystring = keystring.replace(remstring, ""))
-    }),
-    $("#canvaspages").keydown(function(e) {
-        if (DEBUG && console.log("keydown"),
-        DEBUG && console.log("keystring: ", keystring),
-        90 !== e.keyCode && 17 !== e.keyCode && 91 !== e.keyCode) {
-            if (e.target && "INPUT" == e.target.nodeName)
-                return !1;
-            var activeobject = canvas.getActiveObject();
-            if (!activeobject && !activeObjectCopy)
-                return;
-            if (activeobject && activeobject.isEditing)
-                return;
-            if (activeobject && activeobject.locked && !0 === activeobject.locked)
-                return
-        }
-        switch (DEBUG && console.log("switch"),
-        e.keyCode) {
-        case 8:
-            e.preventDefault(),
-            deleteItem();
-            break;
-        case 17:
-            e.preventDefault(),
-            keystring = "ctrl";
-            break;
-        case 91:
-            e.preventDefault(),
-            keystring = "cmd";
-            break;
-        case 173:
-        case 109:
-            return e.preventDefault(),
-            !e.ctrlKey && !e.metaKey || objManip("zoomBy-z", -10);
-        case 61:
-        case 107:
-            return !e.ctrlKey && !e.metaKey || demo.objManip("zoomBy-z", 10);
-        case 37:
-            if (activeobject.lockMovementX) {
-                e.preventDefault();
-                break
-            }
-            return e.shiftKey ? objManip("zoomBy-x", -1) : e.ctrlKey || e.metaKey ? objManip("angle", -1) : objManip("left", -1);
-        case 39:
-            if (activeobject.lockMovementX) {
-                e.preventDefault();
-                break
-            }
-            return e.shiftKey ? objManip("zoomBy-x", 1) : e.ctrlKey || e.metaKey ? objManip("angle", 1) : objManip("left", 1);
-        case 38:
-            if (activeobject.lockMovementY) {
-                e.preventDefault();
-                break
-            }
-            return e.shiftKey ? objManip("zoomBy-y", -1) : !(!e.ctrlKey && !e.metaKey) || objManip("top", -1);
-        case 40:
-            if (activeobject.lockMovementY) {
-                e.preventDefault();
-                break
-            }
-            return e.shiftKey ? objManip("zoomBy-y", 1) : !(!e.ctrlKey && !e.metaKey) || objManip("top", 1);
-        case 67:
-            e.preventDefault(),
-            "ctrl c" != (keystring += " c") && "cmd c" != keystring || copyobjs();
-            break;
-        case 88:
-            e.preventDefault(),
-            "ctrl x" != (keystring += " x") && "cmd x" != keystring || cutobjs();
-            break;
-        case 86:
-            e.preventDefault(),
-            "ctrl v" != (keystring += " v") && "cmd v" != keystring || pasteobjs();
-            break;
-        case 90:
-            e.preventDefault(),
-            keystring += " z",
-            DEBUG && console.log("keystring: ", keystring),
-            "ctrl z" != keystring && "cmd z" != keystring || (DEBUG && console.log("history_undo"),
-            history_undo());
-            break;
-        case 46:
-            e.preventDefault(),
-            deleteItem()
-        }
-        return canvas.renderAll(),
-        !0
-    })
-}
+
+
 $(function() {
     $("#addElement").click(function() {
         newElementTagsEdit.clean(),
@@ -5920,7 +5072,12 @@ var checkUploadedBg = function checkUploadedBg(ids) {
         })
     }, 3e3)
 };
+
 function sortUnorderedList(ul, sortDescending) {
+    if (DEBUG) {
+        console.log("sortUnorderedList()");
+    }
+
     if ("string" == typeof ul && (ul = document.getElementById(ul)),
     ul) {
         for (var lis = ul.getElementsByTagName("LI"), vals = [], i = 0, l = lis.length; i < l; i++)
@@ -5935,104 +5092,7 @@ function sortUnorderedList(ul, sortDescending) {
     } else
         alert("The UL object is null!")
 }
-function loadTemplate(templateid) {
-    var checkUnsaved = !(arguments.length > 1 && void 0 !== arguments[1]) || arguments[1];
-    if (stopProcess = !0,
-    s_history = !1,
-    "yes" !== $("#autosave").data("saved") && 0 === demo_as_id && checkUnsaved)
-        return $("#unsavedChanges").data("newtemplate", 0),
-        $("#unsavedChanges").data("templateid", templateid),
-        void $("#unsavedChanges").modal("show");
-    setZoom(1),
-    appSpinner.show(),
-    loadedtemplateid = templateid;
-    var url = appUrl + "editor/load-template";
-    $.ajax({
-        url: url,
-        type: "get",
-        data: {
-            language_code: language_code,
-            id: templateid,
-            design_as_id: design_as_id,
-            demo_as_id: demo_as_id,
-            demo_templates: demo_templates
-        },
-        dataType: "json",
-        success: function(data) {
-            if (0 == data.err) {
-                if (geofilterBackground = 0,
-                template_type = "custom",
-                data.options.length) {
-                    var options = JSON.parse(data.options);
-                    template_type = options.type,
-                    instructionsId = options.instructionsId,
-                    "geofilter" != template_type && "geofilter2" != template_type || !options.geofilterBackground || (geofilterBackground = options.geofilterBackground),
-                    templateOptions = options
-                }
-                if (savestatecount = 0,
-                !openTemplate(data.data))
-                    return;
-                $("input[name=metric_units]").val([data.metrics]),
-                $("input[name=metric_units1]").val([data.metrics]),
-                "px" == data.metrics ? ($(".canvas_size_pixels").addClass("active"),
-                $(".canvas_size_inches").removeClass("active"),
-                $(".canvas_size_mm").removeClass("active")) : "in" == data.metrics ? ($(".canvas_size_inches").addClass("active"),
-                $(".canvas_size_pixels").removeClass("active"),
-                $(".canvas_size_mm").removeClass("active")) : "mm" == data.metrics && ($(".canvas_size_pixels").removeClass("active"),
-                $(".canvas_size_inches").removeClass("active"),
-                $(".canvas_size_mm").addClass("active")),
-                canvas.calcOffset(),
-                canvas.renderAll(),
-                $("#autosave").data("saved", "yes"),
-                stopProcess = !1,
-                data.instructions ? ($("#instructions").html(data.instructions),
-                $("#instructions-button").show()) : $("#instructions-button").hide(),
-                0 == demo_as_id || setDemoOverlay(),
-                initMasonry_related(loadedtemplateid),
-                loadTemplates_related(),
-                initMasonry_bg()
-            } else
-                appSpinner.hide(),
-                $.toast({
-                    text: data.msg,
-                    icon: "error",
-                    loader: !1,
-                    position: "top-right"
-                })
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-            switch (appSpinner.hide(),
-            jqXHR.status) {
-            case 400:
-                var excp = $.parseJSON(jqXHR.responseText).error;
-                DEBUG && console.log("UnableToComplyException:" + excp.message, "warning");
-                break;
-            case 500:
-                excp = $.parseJSON(jqXHR.responseText).error;
-                DEBUG && console.log("PanicException:" + excp.message, "panic");
-                break;
-            default:
-                DEBUG && console.log("HTTP status=" + jqXHR.status + "," + textStatus + "," + errorThrown + "," + jqXHR.responseText)
-            }
-            $.toast({
-                text: "Something went wrong",
-                icon: "error",
-                hideAfter: 2e3,
-                loader: !1,
-                position: "top-right"
-            })
-        }
-    }),
-    $("#downloads-remaining-text").hide();
-    var urlDownloadsRemaining = appUrl + "editor/get-remaining-downloads/" + templateid;
-    $.ajax({
-        url: urlDownloadsRemaining,
-        type: "GET",
-        dataType: "json"
-    }).done(function(data) {
-        data.success && data.remaining && data.remaining > 0 && showDownloadsRemaining(data.remaining)
-    }).fail(function() {})
-}
+
 $("#unsaved_changes_commit").click(function(e) {
     e.preventDefault();
     var $templateid = $("#unsavedChanges").data("templateid")
@@ -6061,7 +5121,12 @@ var showDownloadsRemaining = function(remaining) {
     0 == remaining && $("#downloads-remaining-text").siblings().hide()
 }
   , templateIdToRevert = 0;
+
 function checkAllowRevertTemplate(templateId) {
+    if (DEBUG) {
+        console.log("checkAllowRevertTemplate()");
+    }
+
     var url = appUrl + "editor/check-allow-revert-template?templateId=" + templateId;
     $.ajax({
         url: url,
@@ -6080,10 +5145,18 @@ function checkAllowRevertTemplate(templateId) {
         })
     })
 }
+
 function showRevertTemplate() {
+    if (DEBUG) {
+        console.log("showRevertTemplate()");
+    }
     $("#revertTemplateModal").modal("show")
 }
+
 function revertTemplate() {
+    if (DEBUG) {
+        console.log("revertTemplate()");
+    }
     appSpinner.show(),
     templateIdToRevert = loadedtemplateid;
     var url = appUrl + "design/app/revert-template";
@@ -6115,7 +5188,12 @@ function revertTemplate() {
         })
     })
 }
+
 function loadText(textid) {
+    if (DEBUG) {
+        console.log("loadText()");
+    }
+
     if (hasCanvas()) {
         appSpinner.show();
         var url = appUrl + "design/loadtext.php";
@@ -6150,7 +5228,12 @@ function loadText(textid) {
         })
     }
 }
+
 function loadElement(elementid) {
+    if (DEBUG) {
+        console.log("loadElement()");
+    }
+
     DEBUG && console.log("loadElement"),
     DEBUG && console.log(elementid),
     appSpinner.show();
@@ -6198,6 +5281,7 @@ function loadElement(elementid) {
         }
     })
 }
+
 var objectFlipHorizontalSwitch = document.getElementById("objectfliphorizontal");
 objectFlipHorizontalSwitch && (objectFlipHorizontalSwitch.onclick = function() {
     var activeObject = canvas.getActiveObject();
@@ -6277,7 +5361,12 @@ $("#ungroup").click(function() {
         $("#group").show()
     }
 });
+
 var ChangeOpacity = function() {
+    if (DEBUG) {
+        console.log("ChangeOpacity()");
+    }
+
     var activeObject = canvas.getActiveObject();
     if (activeObject) {
         var $opacity = co.getValue();
@@ -6288,7 +5377,12 @@ var ChangeOpacity = function() {
     }
 }
   , co = $("#changeopacity").slider().on("change", ChangeOpacity).data("slider");
+
 function ChangeStrokeWidth(e) {
+    if (DEBUG) {
+        console.log("ChangeStrokeWidth()");
+    }
+    
     DEBUG && console.log("ChangeStrokeWidth"),
     s_history = !1;
     var activeObject = canvas.getActiveObject();
@@ -6307,6 +5401,7 @@ function ChangeStrokeWidth(e) {
     activeObject.setCoords(),
     canvas.renderAll()
 }
+
 $("#changestrokewidth").slider().on("slide", ChangeStrokeWidth).data("slider"),
 $("#changestrokewidth").slider().on("slideStop", function(e) {
     s_history = !0,
@@ -6329,6 +5424,10 @@ var ChangeBorderWH = function() {
 }
   , cbwh = $("#changeborderwh").slider().on("slide", ChangeBorderWH).data("slider");
 function ChangeShadowColor(color) {
+    if (DEBUG) {
+        console.log("ChangeShadowColor()");
+    }
+
     var activeObject = canvas.getActiveObject();
     activeObject && activeObject.shadow && (activeObject.shadow.color = color.toString()),
     lastShadowColor = color.toString(),
@@ -6467,13 +5566,25 @@ sendLayerToBackSwitch && (sendLayerToBackSwitch.onclick = function() {
 }
 );
 var bringLayerToFrontSwitch = document.getElementById("bringtofront");
+
 function rgbToHex(r, g, b) {
+    if (DEBUG) {
+        console.log("rgbToHex()");
+    }
     return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)
 }
+
 function onlyUnique(value, index, self) {
+    if (DEBUG) {
+        console.log("onlyUnique()");
+    }
     return self.indexOf(value) === index
 }
+
 function selectallobjs() {
+    if (DEBUG) {
+        console.log("selectallobjs()");
+    }
     canvas.discardActiveObject();
     var objs = canvas.getObjects().map(function(o) {
         return o.set("active", !0)
@@ -6487,7 +5598,12 @@ function selectallobjs() {
     canvas.setActiveObject(group),
     canvas.requestRenderAll()
 }
+
 function cutobjs() {
+    if (DEBUG) {
+        console.log("cutobjs()");
+    }
+
     var $activeObject = canvas.getActiveObject();
     $activeObject && $activeObject.clone(function(cloned) {
         activeObjectCopy = cloned,
@@ -6502,7 +5618,12 @@ function cutobjs() {
         canvas.requestRenderAll()
     }, properties_to_save)
 }
+
 function copyobjs() {
+    if (DEBUG) {
+        console.log("copyobjs()");
+    }
+
     var $activeObject = canvas.getActiveObject();
     $activeObject && $activeObject.clone(function(cloned) {
         activeObjectCopy = cloned,
@@ -6512,7 +5633,12 @@ function copyobjs() {
         }))
     }, properties_to_save)
 }
+
 function pasteobjs($inPlace) {
+    if (DEBUG) {
+        console.log("pasteobjs()");
+    }
+
     activeObjectCopy && activeObjectCopy.clone(function(clonedObj) {
         canvas.discardActiveObject(),
         clonedObj.set({
@@ -6542,14 +5668,28 @@ function pasteobjs($inPlace) {
         canvas.requestRenderAll()
     }, properties_to_save)
 }
+
 function toSVG() {
+    if (DEBUG) {
+        console.log("toSVG()");
+    }
+
     window.open("data:image/svg+xml;utf8," + encodeURIComponent(canvas.toSVG()))
 }
 function resizeDownCanvas() {
+    if (DEBUG) {
+        console.log("resizeDownCanvas()");
+    }
+
     canvasScale = Math.round(10 * canvasScale) / 10,
     Math.round(canvas.width) - 20 >= $(".am-content").width() && resizeDownCanvas()
 }
+
 function hasCanvas() {
+    if (DEBUG) {
+        console.log("hasCanvas()");
+    }
+
     return !!canvasarray.length || ($.toast({
         text: "Please load a template first",
         icon: "warning",
@@ -6869,7 +6009,12 @@ $color_selector_options.move = function(color) {
 $("#colorSelector").spectrum($color_selector_options);
 var $color_selector2_options = $spectrum_options;
 function getCatimages2($offset, $tags) {}
+
 function getUploadedImages($offset) {
+    if (DEBUG) {
+        console.log("getUploadedImages()");
+    }
+
     $(".uploaded_images_list");
     var url = appUrl + "editor/get-additional-assets/?offset=" + $offset;
     $.getJSON(url).done(function(data) {
@@ -6883,6 +6028,7 @@ function getUploadedImages($offset) {
         $("#myAwesomeDropzone").removeClass("dz-clickable")))
     })
 }
+
 function getBgimages2($offset, $tags) {}
 function getTemplates2($offset, $tags) {}
 $color_selector2_options.change = function(color) {
@@ -7161,6 +6307,10 @@ var relatedProductPage = 0
 function getRelatedProducts(templateId, page) {}
 function getTexts2($offset, $tags) {}
 function handleFileSelect(evt) {
+    if (DEBUG) {
+        console.log("handleFileSelect()");
+    }
+
     $("ul.navbar-nav>li.dropdown").removeClass("open");
     for (var f, files = evt.target.files, i = 0; f = files[i]; i++)
         if (-1 != f.name.indexOf(".ype")) {
@@ -7172,7 +6322,12 @@ function handleFileSelect(evt) {
             reader.readAsText(f)
         }
 }
+
 function handleContextmenu(e) {
+    if (DEBUG) {
+        console.log("handleContextmenu()");
+    }
+
     e.preventDefault(),
     $(".custom-menu").find(".flatten").hide(),
     $(".custom-menu").find(".unflatten").hide(),
@@ -7188,14 +6343,22 @@ function handleContextmenu(e) {
         left: e.pageX + "px"
     })
 }
+
 function flatten() {
+    if (DEBUG) {
+        console.log("flatten()");
+    }
     var $objects = canvas.getActiveObjects();
     $objects && ($.each($objects, function($i, $o) {
         makeObjectNotSelectable($o)
     }),
     canvas.renderAll())
 }
+
 function unflatten() {
+    if (DEBUG) {
+        console.log("unflatten()");
+    }
     var $objects = canvas.getActiveObjects();
     $objects && $.each($objects, function($i, $o) {
         makeObjectSelectable($o)
@@ -7438,43 +6601,61 @@ textlowercaseSwitch && (textlowercaseSwitch.onclick = function() {
 );
 var textcapitalizeSwitch = document.getElementById("textcapitalize");
 function capitalizeFirstAllWords(str) {
+    if (DEBUG) {
+        console.log("capitalizeFirstAllWords()");
+    }
+
     for (var pieces = str.split(" "), i = 0; i < pieces.length; i++) {
         var j = pieces[i].charAt(0).toUpperCase();
         pieces[i] = j + pieces[i].substr(1)
     }
     return pieces.join(" ")
 }
-function updatePageNumbers() {
-    "doublesided" == template_type ? ($(".pagenumber").css("visibility", "visible"),
-    $(".pagenumber:visible").each(function(i, obj) {
-        $(this).text(["Front", "Back"][i])
-    })) : $(".pagenumber:visible").length > 1 ? ($(".pagenumber:visible").each(function(i, obj) {
-        $(this).text(i + 1)
-    }),
-    $(".pagenumber").css("visibility", "visible")) : $(".pagenumber").css("visibility", "hidden")
-}
+
 function setGeofilterBackground(index) {
+    if (DEBUG) {
+        console.log("setGeofilterBackground()");
+    }
+
     background = 0 == index ? "none" : "url(/design/assets/img/" + geofilterBackgrounds[index].filename + ")",
     $("#canvas0").fadeTo("fast", .3, function() {
         $("#canvas0").css("background-image", background)
     }).fadeTo("fast", 1)
 }
+
 function nextBackground() {
+    if (DEBUG) {
+        console.log("nextBackground()");
+    }
+
     ++geofilterBackground == geofilterBackgrounds.length && (geofilterBackground = 0),
     setGeofilterBackground(geofilterBackground)
 }
+
 function prevBackground() {
+    if (DEBUG) {
+        console.log("prevBackground()");
+    }
     --geofilterBackground < 0 && (geofilterBackground = geofilterBackgrounds.length - 1),
     setGeofilterBackground(geofilterBackground)
 }
+
 function showDeleteModal(title, message, message2, callback, id) {
+    if (DEBUG) {
+        console.log("showDeleteModal()");
+    }
     $("#deleteModalTitle").html(title),
     $("#deleteModalMessage").html(message),
     $("#deleteModalMessage2").html(message2),
     $("#deleteModal").modal("show"),
     $("#proceedDelete").attr("onclick", callback + "(" + id + ")")
 }
+
 function convertToDoublesided() {
+    if (DEBUG) {
+        console.log("convertToDoublesided()");
+    }
+
     template_type = "doublesided",
     setWorkspace(),
     updatePageNumbers();
@@ -7489,7 +6670,12 @@ function convertToDoublesided() {
         hideAfter: 2e3
     })
 }
+
 function convertToSingle() {
+    if (DEBUG) {
+        console.log("convertToSingle()");
+    }
+
     template_type = "single",
     setWorkspace(),
     updatePageNumbers();
@@ -7504,7 +6690,12 @@ function convertToSingle() {
         hideAfter: 2e3
     })
 }
+
 function convertGeofilterToNewSize() {
+    if (DEBUG) {
+        console.log("convertGeofilterToNewSize()");
+    }
+
     template_type = "geofilter2",
     $("#loadCanvasHeightPx").val(2340),
     $("#loadCanvasHei").val(24.375),
@@ -7519,12 +6710,18 @@ function convertGeofilterToNewSize() {
         hideAfter: 2e3
     })
 }
+
 function trackRelatedProducts(listing_id) {
+    if (DEBUG) {
+        console.log("trackRelatedProducts()");
+    }
+
     appUrl;
     $.get("/trackRelatedProducts.php", {
         listing_id: listing_id
     })
 }
+
 textcapitalizeSwitch && (textcapitalizeSwitch.onclick = function() {
     var activeObject = canvas.getActiveObject();
     activeObject && (activeObject._objects && "activeSelection" === activeObject.type ? activeObject.forEachObject(function(e) {
@@ -7608,7 +6805,12 @@ var makeCRCTable = function() {
         crc = crc >>> 8 ^ crcTable[255 & (crc ^ str.charCodeAt(i))];
     return (-1 ^ crc) >>> 0
 };
+
 function optimizeCanvasesOnPage2($paperWidthIn, $paperHeightIn, $canvasWidth, $canvasHeight, $isCropNeeded) {
+    if (DEBUG) {
+        console.log("optimizeCanvasesOnPage2()");
+    }
+
     var $cmp = 0;
     $isCropNeeded && ($cmp = 12),
     "a4" === $(".paper-size.active").find('input[name="paperSize"]').val() && ($paperWidthIn = 8.267,
@@ -7658,7 +6860,12 @@ function optimizeCanvasesOnPage2($paperWidthIn, $paperHeightIn, $canvasWidth, $c
         offsetY: ($pHeight - $amountOfRowsOnPage * $canvasHeight - $cmp * ($amountOfRowsOnPage + 1)) / 2
     }
 }
+
 function loadInstructions(templateId) {
+    if (DEBUG) {
+        console.log("loadInstructions()");
+    }
+
     $("#instructions").html("<p>Loading...</p>");
     var url = appUrl + "design/actions/getInstructions.php";
     $.getJSON(url, {
@@ -7674,6 +6881,10 @@ function loadInstructions(templateId) {
     })
 }
 function convertToNewPxFormat() {
+    if (DEBUG) {
+        console.log("convertToNewPxFormat()");
+    }
+
     canvasarray.forEach(function(canv) {
         canv.cwidth = (.32 * templateOptions.width).toFixed(2),
         canv.cheight = (.32 * templateOptions.height).toFixed(2),
@@ -7694,19 +6905,12 @@ function convertToNewPxFormat() {
     updateTemplate(1),
     setZoom(3.125 * parseFloat($("#zoomperc").data("scaleValue")))
 }
-function afterLoadTemplate() {
-    Promise.all([backgroundPromise]).then(function() {
-        saveHistoryForAllCanvases(),
-        selectCanvas("divcanvas0"),
-        "geofilter" != template_type && "geofilter2" != template_type && ("px" == templateOptions.metrics && setZoom(1),
-        autoZoom(),
-        demo_as_id && setDemoOverlay()),
-        "geofilter2" == template_type && setGeofilterOverlay(),
-        "geofilter" == template_type || "geofilter2" == template_type || templateOptions.scriptVersion && !(templateOptions.scriptVersion < 4) || "px" != templateOptions.metrics || demo_as_id ? appSpinner.hide() : convertToNewPxFormat(),
-        setWorkspace()
-    })
-}
+
 function showDuplicateTemplateModal() {
+    if (DEBUG) {
+        console.log("showDuplicateTemplateModal()");
+    }
+
     $("#duplicateTemplateModal").modal("show"),
     $("#duplicateTemplateModal p").html("In order to add another template to your account,         we'll need to first save the one you're working on. Then we'll create another template         based on this one and add it to your account. Ready?"),
     $(".proceedDuplicateTemplateFooter").addClass("active"),
@@ -7788,7 +6992,12 @@ $("#object-grayscale").checkboxradio({
 $("#object-scale,#object-hue,#object-brightness,#object-contrast,#object-saturation,#object-blur").slider();
 var $filter_multiplier_hue = 50
   , $filter_multiplier = 100;
+
 function getPropertiesOfObject(event, ui) {
+    if (DEBUG) {
+        console.log("getPropertiesOfObject()");
+    }
+
     s_history = !1;
     var $obj = canvas.getActiveObject();
     if ($("#object-properties").find(".may-be-disabled").addClass("editor-disabled"),
@@ -7861,7 +7070,12 @@ try {
     fabric.filterBackend = fabric.initFilterBackend()
 }
 var $filters = ["Grayscale", "Invert", "Remove-color", "Sepia", "Brownie", "Brightness", "Contrast", "HueSaturation", "Noise", "Vintage", "Pixelate", "Blur", "Sharpen", "Emboss", "Technicolor", "Polaroid", "Blend-color", "Gamma", "Kodachrome", "Blackwhite", "Blend-image", "Hue", "Resize"];
+
 function applyFilter($filter, $property, $value, $obj) {
+    if (DEBUG) {
+        console.log("applyFilter()");
+    }
+
     if ($obj || ($obj = canvas.getActiveObject()),
     $obj && void 0 !== $obj.filters) {
         var $index = -1;
@@ -7875,6 +7089,10 @@ function applyFilter($filter, $property, $value, $obj) {
     }
 }
 function getFilterValue($filter, $obj) {
+    if (DEBUG) {
+        console.log("getFilterValue()");
+    }
+
     if ($obj || ($obj = canvas.getActiveObject()),
     $obj) {
         var $return = !1;
@@ -7888,6 +7106,10 @@ function getFilterValue($filter, $obj) {
     }
 }
 function resetFilter($filter, $obj) {
+    if (DEBUG) {
+        console.log("resetFilter()");
+    }
+
     $obj || ($obj = canvas.getActiveObject()),
     $obj && void 0 !== _typeof($filter) && ($.each($obj.filters, function($i, $f) {
         this.type == $filter && $obj.filters.splice($i, 1)
@@ -7896,9 +7118,18 @@ function resetFilter($filter, $obj) {
     canvas.renderAll())
 }
 function showFontUploadModal() {
+    if (DEBUG) {
+        console.log("showFontUploadModal()");
+    }
+
     $("#fontUpload").click()
 }
+
 function uploadFont() {
+    if (DEBUG) {
+        console.log("uploadFont()");
+    }
+
     appSpinner.show();
     var data = new FormData;
     data.append("file", $("#fontUpload").prop("files")[0]);
@@ -7937,7 +7168,12 @@ function uploadFont() {
         }
     })
 }
+
 function saveFontDetails() {
+    if (DEBUG) {
+        console.log("saveFontDetails()");
+    }
+
     if ($("#fontDetailsModal").modal("hide"),
     $("#fontOriginalName").val() != $("#fontDisplayName").val()) {
         appSpinner.show();
@@ -7988,6 +7224,7 @@ function saveFontDetails() {
             position: "top-right"
         })
 }
+
 $("body").on("click", ".filter-reset-all", function(e) {
     e.preventDefault();
     var $obj = canvas.getActiveObject();
@@ -8029,7 +7266,8 @@ var AppSpinner = function() {
     }
 }
   , appSpinner = new AppSpinner;
-function updatePatternFill($s) {
+
+  function updatePatternFill($s) {
     var $ao = canvas.getActiveObject();
     $ao && ($ao.fill.update({
         scale: $s.value / 100 * .32 / fabric.devicePixelRatio
@@ -8302,114 +7540,115 @@ $("#font-dropdown").on("hide.bs.dropdown", function(e) {
 $(".left-sidebar-dropdown-menu").on("hide.bs.dropdown", function(e) {
     $(".left-sidebar-dropdown-menu .dropdown-menu li").removeClass("active")
 });
-// var webSocketConn = !1
-//   , countConnection = 0;
-// function wsConection() {
-//     var conn = new WebSocket(wsDir);
-//     conn.onopen = function(e) {
-//         console.log("connected to WS"),
-//         webSocketConn = !0,
-//         countConnection++,
-//         conn.send(JSON.stringify({
-//             type: "id",
-//             userId: docUserId
-//         })),
-//         keepConnection()
-//     }
-//     ,
-//     conn.onclose = function(event) {
-//         conn.close(),
-//         webSocketConn = !1,
-//         reConnectWS()
-//     }
-//     ;
-//     var reConnectWS = function() {
-//         !webSocketConn && countConnection > 0 && setTimeout(function() {
-//             wsConection()
-//         }, 1e3)
-//     }
-//       , keepConnection = function keepConnection() {
-//         setTimeout(function() {
-//             keepConnection(),
-//             webSocketConn && conn && conn.send(JSON.stringify({
-//                 type: "id",
-//                 userId: docUserId
-//             }))
-//         }, 2e4)
-//     };
-//     conn.onmessage = function(msg) {
-//         var msgObj = JSON.parse(msg.data);
-//         msgObj.userId == docUserId && processWsMsg(msgObj)
-//     }
-//     ;
-//     var processWsMsg = function(msgObj) {
-//         switch (msgObj.type) {
-//         case "preview-svg":
-//             showPreviewPdf(msgObj);
-//             break;
-//         case "download-pdf":
-//             processDownloadButton(msgObj, "pdf");
-//             break;
-//         case "download-png":
-//             processDownloadButton(msgObj, "png");
-//             break;
-//         case "download-jpeg":
-//             processDownloadButton(msgObj, "jpeg");
-//             break;
-//         case "user-notification":
-//             var text = msgObj.msg;
-//             text.type && "background" == text.type ? "Finished" == text.text ? (toastInstance && (toastInstance.reset(),
-//             toastInstance = null),
-//             $.toast({
-//                 text: "Background added",
-//                 icon: "success",
-//                 loader: !1,
-//                 position: "top-right",
-//                 hideAfter: 4e3
-//             }),
-//             $("#uploadBgButton").prop("disabled", !1),
-//             initMasonry_element(),
-//             loadTemplates_element()) : updateToastMsg({
-//                 text: text.text,
-//                 icon: "info",
-//                 loader: !1,
-//                 position: "top-right",
-//                 hideAfter: !1
-//             }) : text.type && "element" == text.type && "Finished" == text.text ? (toastInstance && (toastInstance.reset(),
-//             toastInstance = null),
-//             $.toast({
-//                 text: "Elements added",
-//                 icon: "success",
-//                 loader: !1,
-//                 position: "top-right",
-//                 hideAfter: 4e3
-//             }),
-//             $("#uploadButton").prop("disabled", !1),
-//             $("#uploadCancelButton").click(),
-//             initMasonry_element(),
-//             loadTemplates_element()) : -1 != text.text.indexOf("Finished") ? (toastInstance && (toastInstance.reset(),
-//             toastInstance = null),
-//             $.toast({
-//                 text: text.text,
-//                 icon: "warning",
-//                 loader: !1,
-//                 position: "top-right",
-//                 hideAfter: 4e3
-//             }),
-//             $("#uploadButton").prop("disabled", !1),
-//             $("#uploadCancelButton").click(),
-//             initMasonry_element(),
-//             loadTemplates_element()) : updateToastMsg({
-//                 text: text.text,
-//                 icon: "info",
-//                 loader: !1,
-//                 position: "top-right",
-//                 hideAfter: !1
-//             })
-//         }
-//     }
-// }
-// wsConection();
+var webSocketConn = !1
+  , countConnection = 0;
+function wsConection() {
+    var wsDir = 'wss://game.example.com/ws/updates';
+    var conn = new WebSocket(wsDir);
+    conn.onopen = function(e) {
+        console.log("connected to WS"),
+        webSocketConn = !0,
+        countConnection++,
+        conn.send(JSON.stringify({
+            type: "id",
+            userId: docUserId
+        })),
+        keepConnection()
+    }
+    ,
+    conn.onclose = function(event) {
+        conn.close(),
+        webSocketConn = !1,
+        reConnectWS()
+    }
+    ;
+    var reConnectWS = function() {
+        !webSocketConn && countConnection > 0 && setTimeout(function() {
+            wsConection()
+        }, 1e3)
+    }
+      , keepConnection = function keepConnection() {
+        setTimeout(function() {
+            keepConnection(),
+            webSocketConn && conn && conn.send(JSON.stringify({
+                type: "id",
+                userId: docUserId
+            }))
+        }, 2e4)
+    };
+    conn.onmessage = function(msg) {
+        var msgObj = JSON.parse(msg.data);
+        msgObj.userId == docUserId && processWsMsg(msgObj)
+    }
+    ;
+    var processWsMsg = function(msgObj) {
+        switch (msgObj.type) {
+        case "preview-svg":
+            showPreviewPdf(msgObj);
+            break;
+        case "download-pdf":
+            processDownloadButton(msgObj, "pdf");
+            break;
+        case "download-png":
+            processDownloadButton(msgObj, "png");
+            break;
+        case "download-jpeg":
+            processDownloadButton(msgObj, "jpeg");
+            break;
+        case "user-notification":
+            var text = msgObj.msg;
+            text.type && "background" == text.type ? "Finished" == text.text ? (toastInstance && (toastInstance.reset(),
+            toastInstance = null),
+            $.toast({
+                text: "Background added",
+                icon: "success",
+                loader: !1,
+                position: "top-right",
+                hideAfter: 4e3
+            }),
+            $("#uploadBgButton").prop("disabled", !1),
+            initMasonry_element(),
+            loadTemplates_element()) : updateToastMsg({
+                text: text.text,
+                icon: "info",
+                loader: !1,
+                position: "top-right",
+                hideAfter: !1
+            }) : text.type && "element" == text.type && "Finished" == text.text ? (toastInstance && (toastInstance.reset(),
+            toastInstance = null),
+            $.toast({
+                text: "Elements added",
+                icon: "success",
+                loader: !1,
+                position: "top-right",
+                hideAfter: 4e3
+            }),
+            $("#uploadButton").prop("disabled", !1),
+            $("#uploadCancelButton").click(),
+            initMasonry_element(),
+            loadTemplates_element()) : -1 != text.text.indexOf("Finished") ? (toastInstance && (toastInstance.reset(),
+            toastInstance = null),
+            $.toast({
+                text: text.text,
+                icon: "warning",
+                loader: !1,
+                position: "top-right",
+                hideAfter: 4e3
+            }),
+            $("#uploadButton").prop("disabled", !1),
+            $("#uploadCancelButton").click(),
+            initMasonry_element(),
+            loadTemplates_element()) : updateToastMsg({
+                text: text.text,
+                icon: "info",
+                loader: !1,
+                position: "top-right",
+                hideAfter: !1
+            })
+        }
+    }
+}
+wsConection();
 var toastInstance = null
   , updateToastMsg = function(objectParameters) {
     null == toastInstance ? (objectParameters.afterHidden = function() {
@@ -8914,6 +8153,10 @@ function getItemHTML_image(product) {
     return '<div data-id="' + product.id + '" class="dz-preview dz-processing dz-image-preview dz-success dz-complete thumb"><div class="dz-image"><img data-dz-thumbnail="" alt="' + product.filename + '" src="' + product.img + '"></div> \x3c!-- <div class="dz-details"> <div class="dz-filename"><span data-dz-name="">' + product.filename + "</span></div>  </div> --\x3e" + deleteBtn + "</div>"
 }
 function loadTemplates_image() {
+    if (DEBUG) {
+        console.log("loadTemplates_image()");
+    }
+
     infinites[type_image].infiniteScroll("loadNextPage"),
     setTimeout(function() {
         masonrys[type_image] && (masonrys[type_image].layout(),
@@ -8931,650 +8174,7 @@ function loadReadMore(container, loadFunctionName) {
     html_load += "</div>",
     $(container).after(html_load)
 }
-function initCanvasEvents(lcanvas) {
-    var selectedObject;
-    lcanvas && (canvas = lcanvas);
-    var localStorageKey = "templett.design";
-    function objectSelected(e, $action) {
-        if (s_history = !1,
-        (selectedObject = e.target ? e.target : canvas.getActiveObject()) && ("created" !== $action || "activeSelection" === selectedObject.type)) {
-            for (var i = 0; i <= canvasindex; i++)
-                $("#canvas" + i).css("box-shadow", "");
-            if ("geofilter" !== template_type && "geofilter2" !== template_type && $("#canvas" + currentcanvasid).css("box-shadow", "0px 0px 10px #888888"),
-            e.target.hidden ? $("#hideobject").html("<i class='fa fa-eye'></i>&nbsp; Unhide object in pdf/png") : $("#hideobject").html("<i class='fa fa-eye'></i>&nbsp; Hide object in pdf/png"),
-            $(".tools-top").addClass("toolbar-show"),
-            console.log("Show Toolbar"),
-            !e.target || "false" !== e.target.selectable) {
-                selectedObject.set({
-                    transparentCorners: !1,
-                    borderDashArray: [4, 2],
-                    cornerStrokeColor: "#ffffff",
-                    borderColor: "#4dd7fa",
-                    cornerColor: "#4dd7fa",
-                    cornerSize: 8,
-                    minScaleLimit: 0,
-                    padding: 5,
-                    lockScalingFlip: !0
-                });
-                var $toolbar_top = $(".toolbar-top");
-                if ($toolbar_top.find("#shadowGroup").show(),
-                $toolbar_top.find("#deleteitem").show(),
-                $toolbar_top.find("#showmoreoptions").show(),
-                $toolbar_top.find("#clone").show(),
-                $toolbar_top.find(".bringforward").show(),
-                $toolbar_top.find(".sendbackward").show(),
-                $toolbar_top.find("#showObjectProperties").hide(),
-                $toolbar_top.find("#showColors").hide().removeClass("expanded"),
-                $(".patternFillTab").hide(),
-                $("#group").hide(),
-                $("#ungroup").hide(),
-                $("#strokegroup").hide(),
-                $("#alignbtns").hide(),
-                $("#alignbtns a").removeClass("active"),
-                selectedObject.selectionBackgroundColor = "rgba(255,255,255,0.25)",
-                setControlsVisibility(selectedObject),
-                selectedObject.locked && !0 === selectedObject.locked || (selectedObject.lockMovementY ? (selectedObject.hasControls = !1,
-                selectedObject.set({
-                    borderColor: "#ff0000"
-                })) : (selectedObject.hasControls = !0,
-                selectedObject.set({
-                    borderColor: "#4dd7fa"
-                })),
-                "activeSelection" === selectedObject.type || "group" === selectedObject.type ? ($("#addremovestroke").hide(),
-                selectedObject.set({
-                    transparentCorners: !1,
-                    borderColor: "#f9a24c",
-                    cornerColor: "#f9a24c",
-                    cornerSize: 8,
-                    minScaleLimit: 0,
-                    padding: 5,
-                    borderDashArray: [4, 2]
-                })) : $("#addremovestroke").show()),
-                "image" === selectedObject.type && $toolbar_top.find("#showObjectProperties").show(),
-                "textbox" === selectedObject.type || "text" === selectedObject.type || "i-text" === selectedObject.type || isTextsGroup()) {
-                    var fontFamily, fontSize;
-                    if ($(".textelebtns").show(),
-                    "bold" === selectedObject.fontWeight ? $("#fontbold").addClass("active") : $("#fontbold").removeClass("active"),
-                    "italic" === selectedObject.fontStyle ? $("#fontitalic").addClass("active") : $("#fontitalic").removeClass("active"),
-                    "underline" === selectedObject.underline ? $("#fontunderline").addClass("active") : $("#fontunderline").removeClass("active"),
-                    $("#alignbtns").show(),
-                    "left" === selectedObject.textAlign ? $("#objectalignleft").addClass("active") : $("#objectalignleft").removeClass("active"),
-                    "center" === selectedObject.textAlign ? $("#objectaligncenter").addClass("active") : $("#objectaligncenter").removeClass("active"),
-                    "right" === selectedObject.textAlign ? $("#objectalignright").addClass("active") : $("#objectalignright").removeClass("active"),
-                    "i-text" === selectedObject.type && (multiline = selectedObject._textLines.length,
-                    multiline > 1 ? $("#lineheight").show() : 1 === multiline && $("#lineheight").hide()),
-                    $("#objectflipvertical").hide(),
-                    $("#objectfliphorizontal").hide(),
-                    $("#objectalignleft").html("<i class='fa fa-align-left'></i>"),
-                    $("#objectaligncenter").html("<i class='fa fa-align-center'></i>"),
-                    $("#objectalignright").html("<i class='fa fa-align-right'></i>"),
-                    selectedObject.selectionColor = "rgba(0, 123, 240, 0.3)",
-                    selectedObject.editingBorderColor = "#4dd7fa",
-                    isTextsGroup()) {
-                        $("#showObSymbolsPanel").hide(),
-                        $("#textstylebtns").hide(),
-                        $("#font-symbols").dialog("close");
-                        var fonts = []
-                          , sizes = [];
-                        selectedObject.forEachObject(function(object) {
-                            fonts.push(object.fontFamily),
-                            sizes.push(object.fontSize / 1.3)
-                        }),
-                        fonts = _toConsumableArray(new Set(fonts)),
-                        sizes = _toConsumableArray(new Set(sizes)),
-                        fontFamily = 1 === fonts.length ? fonts[0] : "",
-                        fontSize = 1 === sizes.length ? sizes[0].toFixed(0) : "-"
-                    } else
-                        $("#showObSymbolsPanel").show(),
-                        fontFamily = selectedObject.fontFamily || "font7",
-                        fontSize = "textbox" === selectedObject.type ? (selectedObject.fontSize * selectedObject.scaleX / 1.3).toFixed(0) : Math.round(selectedObject.fontSize / 1.3) || 36;
-                    var fontDisplayName = $("#fonts-dropdown").find('a[data-ff="' + fontFamily + '"]').parent().find("span").text();
-                    fontDisplayName || (fontDisplayName = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"),
-                    $("#font-selected").html('<span style="overflow:hidden"><a href="#" style="font-family: ' + fontFamily + '" >' + fontDisplayName + '</a>&nbsp;&nbsp;<span class="caret"></span></span>'),
-                    $("#fontsize").val(fontSize),
-                    setupSymbolsPanel(fontFamily),
-                    $("#font-dropdown").on("shown.bs.dropdown", function() {
-                        $("#fontSearch").focus(),
-                        $("#fonts-dropdown").scrollTop($('#fonts-dropdown li a[data-ff="' + fontFamily + '"]').position().top - $("#fonts-dropdown li:first").position().top),
-                        $("#fonts-dropdown li a").removeClass("font-selected"),
-                        $('#fonts-dropdown li a[data-ff="' + fontFamily + '"]').addClass("font-selected")
-                    })
-                } else
-                    $(".textelebtns").hide(),
-                    $("#objectflipvertical").show(),
-                    $("#objectfliphorizontal").show(),
-                    $("#objectalignleft").html("<span class='glyphicon glyphicon-object-align-left'></span>"),
-                    $("#objectaligncenter").html("<span class='glyphicon glyphicon-object-align-vertical'></span>"),
-                    $("#objectalignright").html("<span class='glyphicon glyphicon-object-align-right'></span>");
-                "activeSelection" === selectedObject.type && selectedObject._objects && ($("#group").show(),
-                $("#alignbtns").show()),
-                "group" === selectedObject.type && ($("#ungroup").show(),
-                $("#strokegroup").show()),
-                selectedObject.get("stroke") ? ($("#colorStrokeSelector").css("backgroundColor", selectedObject.stroke),
-                $("#strokegroup").show()) : $("#strokegroup").hide();
-                var ar = [37, 38, 39, 40];
-                $(document).keydown(function(e) {
-                    var key = e.which;
-                    return !($.inArray(key, ar) > -1) || (e.preventDefault(),
-                    !1)
-                }),
-                $("#dynamiccolorpickers").html("");
-                var $gradientType = getGradientTypeofObject(selectedObject);
-                if (!1 !== $gradientType) {
-                    DEBUG && console.log("getGradientTypeofObject: ", $gradientType);
-                    var $color1 = selectedObject.fill.colorStops[0].color
-                      , $color2 = selectedObject.fill.colorStops[1].color;
-                    switchFillType($gradientType, $color1, $color2)
-                } else
-                    "string" == typeof selectedObject.fill && switchFillType("color-fill", selectedObject.fill),
-                    selectedObject.fill instanceof fabric.Dpattern && ($(".patternFillGroup").show(),
-                    $(".patternFillGroup").find(".patternFillPreview").attr("data-currentsrc", selectedObject.fill.src).css("background-image", "url(" + selectedObject.fill.toDataURL({
-                        width: selectedObject.fill.width * selectedObject.fill.scale,
-                        height: selectedObject.fill.height * selectedObject.fill.scale,
-                        mulitplier: fabric.devicePixelRatio,
-                        quality: .6
-                    }) + ")"),
-                    $(".colorSelectorBox.single").find("#colorSelector,#colorSelector2").hide(),
-                    $(".colorSelectorBox.single").find(".dropdown-menu.fill-type-dropdown").find(".fill-type").removeClass("active").parent().find(".fill-type.pattern-fill").addClass("active"));
-                var $validTagsRegExp = /^(path|circle|polygon|polyline|ellipse|rect|line)\b/i;
-                if ("activeSelection" === selectedObject.type || "group" === selectedObject.type || isElement(selectedObject)) {
-                    var colorarray = []
-                      , allObjects = []
-                      , groupObjects = [];
-                    void 0 === selectedObject.svg_custom_paths && (selectedObject.svg_custom_paths = []),
-                    selectedObject._objects && (groupObjects = selectedObject._objects),
-                    selectedObject._objects || groupObjects.push(selectedObject);
-                    for (i = 0; i < groupObjects.length; i++)
-                        if (DEBUG && console.log("selectedObject groupObjects[i]", groupObjects[i], groupObjects[i].type),
-                        "group" === groupObjects[i].type)
-                            for (var objects = groupObjects[i].getObjects(), n = 0; n < objects.length; n++) {
-                                if ("group" === objects[n].type)
-                                    objects[n].forEachObject(function($child, $i) {
-                                        var colorString = $child.fill;
-                                        if (void 0 !== colorString) {
-                                            var $o = {};
-                                            $o[n] = $i,
-                                            $child.group_index = $o,
-                                            allObjects.push($child),
-                                            "string" == typeof colorString && colorString && ($child.fill = "#" + new fabric.Color(colorString).toHex()),
-                                            isImagesGroup(objects[n]) || colorarray.push($child.fill)
-                                        }
-                                    });
-                                else
-                                    void 0 !== (colorString = objects[n].fill) && (objects[n].group_index = n,
-                                    allObjects.push(objects[n]),
-                                    "string" == typeof colorString && colorString && (objects[n].fill = "#" + new fabric.Color(colorString).toHex()),
-                                    colorarray.push(objects[n].fill))
-                            }
-                        else if ("textbox" === groupObjects[i].type || "text" === groupObjects[i].type || "i-text" === groupObjects[i].type || isTextsGroup()) {
-                            var colorString;
-                            void 0 !== (colorString = groupObjects[i].fill) && ("string" == typeof colorString ? (groupObjects[i].fill = "#" + new fabric.Color(colorString).toHex(),
-                            allObjects.push(groupObjects[i])) : allObjects.push(groupObjects[i]),
-                            colorarray.push(groupObjects[i].fill))
-                        } else
-                            $validTagsRegExp.test(groupObjects[i].type) && (DEBUG && console.log("groupObjects[i].fill: ", groupObjects[i].fill),
-                            void 0 !== groupObjects[i].fill && (colorarray.push(groupObjects[i].fill),
-                            allObjects.push(groupObjects[i])));
-                    $validTagsRegExp.test(selectedObject.type) && (colorarray.push(selectedObject.fill),
-                    allObjects.push(selectedObject));
-                    var flags = []
-                      , output = []
-                      , l = (colorarray = colorarray.filter(onlyUnique)).length;
-                    for (i = 0; i < l; i++)
-                        if (DEBUG && console.log("colorarray[" + i + "]", colorarray[i]),
-                        "object" === _typeof(colorarray[i]) && colorarray[i].colorStops) {
-                            if (flags[colorarray[i].colorStops[0].color + colorarray[i].colorStops[1].color])
-                                continue;
-                            flags[colorarray[i].colorStops[0].color + colorarray[i].colorStops[1].color] = !0,
-                            output.push(colorarray[i])
-                        } else
-                            output.push(colorarray[i]);
-                    colorarray = output,
-                    DEBUG && console.log("output", output),
-                    colorarray.length && $(".colorSelectorBox.single").hide(),
-                    $(".colorSelectorBox.single").find("#colorSelector2").hide();
-                    var colorpickerhtml = "";
-                    for (i = 0; i < colorarray.length; i++) {
-                        if ("string" == typeof colorarray[i]) {
-                            var $color = colorarray[i];
-                            "Black" === $color && ($color = "#000000"),
-                            colorpickerhtml += '<div class="btn-group colorSelectorBox group" data-gradient-type="color-fill">',
-                            colorpickerhtml += '<input type="text" class="btn btn-default dynamiccolorpicker" title="Color Picker" value="' + $color + '" />',
-                            colorpickerhtml += '<button type="button" class="filltype btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="caret"></span><span class="sr-only">Toggle Dropdown</span></button>',
-                            colorpickerhtml += "</div>"
-                        }
-                        if ("object" === _typeof(colorarray[i])) {
-                            if (colorarray[i]instanceof fabric.Gradient) {
-                                var $gradientDirection;
-                                $color1 = "#" + new fabric.Color(colorarray[i].colorStops[0].color).toHex(),
-                                $color2 = "#" + new fabric.Color(colorarray[i].colorStops[1].color).toHex();
-                                0 !== colorarray[i].coords.y2 && ($gradientDirection = "linear-gradient-v-fill"),
-                                0 !== colorarray[i].coords.x2 && ($gradientDirection = "linear-gradient-h-fill"),
-                                0 !== colorarray[i].coords.x2 && 0 !== colorarray[i].coords.x2 && ($gradientDirection = "linear-gradient-d-fill"),
-                                void 0 === colorarray[i].coords.r1 && void 0 === colorarray[i].coords.r2 || ($gradientDirection = "radial-gradient-fill"),
-                                $color1 && (colorpickerhtml += '<div class="btn-group colorSelectorBox group" data-gradient-type="' + $gradientDirection + '">',
-                                colorpickerhtml += '<input type="text" class="btn btn-default dynamiccolorpicker" title="Color Picker" value="' + $color1 + '" />',
-                                colorpickerhtml += '<input type="text" class="btn btn-default dynamiccolorpicker2 showElement" title="Color Picker" value="' + $color2 + '"/>',
-                                colorpickerhtml += '<button type="button" class="filltype btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="caret"></span><span class="sr-only">Toggle Dropdown</span></button>',
-                                colorpickerhtml += "</div>")
-                            }
-                            if (colorarray[i]instanceof fabric.Dpattern) {
-                                var $template = $(".patternFillLabel").first().clone()
-                                  , $dropdown = $(".colorSelectorBox.single").find(".dropdown-menu.fill-type-dropdown").clone();
-                                $dropdown.find(".fill-type").removeClass("active").parent().find(".fill-type.pattern-fill").addClass("active"),
-                                $template.find(".patternFillPreview").attr("data-currentsrc", colorarray[i].src).css("background-image", "url(" + colorarray[i].toDataURL({
-                                    mulitplier: fabric.devicePixelRatio,
-                                    width: colorarray[i].width * colorarray[i].scale,
-                                    height: colorarray[i].height * colorarray[i].scale,
-                                    quality: .6
-                                }) + ")"),
-                                colorpickerhtml += '<div class="dpattern-holder btn btn-default">',
-                                colorpickerhtml += '<div class="wrapper">',
-                                colorpickerhtml += $template.get(0).outerHTML,
-                                colorpickerhtml += "</div>",
-                                colorpickerhtml += '<div class="wrapper">',
-                                colorpickerhtml += '<button type="button" class="filltype btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="caret"></span><span class="sr-only">Toggle Dropdown</span></button>',
-                                colorpickerhtml += $dropdown.get(0).outerHTML,
-                                colorpickerhtml += "</div>",
-                                colorpickerhtml += "</div>"
-                            }
-                        }
-                    }
-                    DEBUG && console.log("selectedObject allObjects: ", allObjects),
-                    $("#dynamiccolorpickers").html(colorpickerhtml);
-                    var objinitcolor = "";
-                    if ($(".dynamiccolorpicker").spectrum({
-                        containerClassName: "dynamic-fill",
-                        showAlpha: !1,
-                        showPalette: !0,
-                        preferredFormat: "hex",
-                        hideAfterPaletteSelect: !0,
-                        showSelectionPalette: !0,
-                        localStorageKey: localStorageKey,
-                        showInput: !0,
-                        showInitial: !0,
-                        allowEmpty: !0,
-                        showButtons: !0,
-                        maxSelectionSize: 24,
-                        togglePaletteMoreText: "Show advanced",
-                        togglePaletteLessText: "Hide advanced",
-                        change: function(color) {
-                            DEBUG && console.log("color: ", color);
-                            var local_store = window.localStorage[localStorageKey];
-                            -1 === local_store.search(color) && (window.localStorage[localStorageKey] = local_store + ";" + color);
-                            var newcolorVal = color.toRgbString()
-                              , $oldcolorval = $(this).data("previous-color")
-                              , $cb = $(this).parents(".colorSelectorBox")
-                              , $cpicker2 = $cb.find(".dynamiccolorpicker2")
-                              , $filltype = $cb.data("gradient-type")
-                              , $color2 = "";
-                            $cpicker2.length && "color-fill" !== $filltype ? ($color2 = $cpicker2.spectrum("get").toRgbString().replace(/\s/g, ""),
-                            newcolorVal = color.toRgbString().replace(/\s/g, "")) : $oldcolorval = "#" + new fabric.Color($oldcolorval).toHex(),
-                            DEBUG && console.log(".dynamiccolorpicker: ", newcolorVal, $oldcolorval, $color1);
-                            for (var i = 0; i < allObjects.length; i++) {
-                                if (DEBUG && console.log(".dynamiccolorpicker i: ", i),
-                                void 0 !== allObjects[i].group_index && void 0 !== allObjects[i].group.svg_custom_paths && allObjects[i].fill && objinitcolor.toLowerCase() === allObjects[i].fill.toString().toLowerCase()) {
-                                    var path_data = {
-                                        index: allObjects[i].group_index,
-                                        action: "fill",
-                                        color_value: newcolorVal
-                                    };
-                                    allObjects[i].group.svg_custom_paths[allObjects[i].group_index] = path_data
-                                }
-                                "color-fill" === $filltype ? allObjects[i].fill && $oldcolorval.toLowerCase() === tinycolor(allObjects[i].fill).toHexString() && (allObjects[i].fill = newcolorVal,
-                                allObjects[i].dirty = !0,
-                                switchFillType($filltype, newcolorVal, $color2, $(this)),
-                                allObjects[i].group && void 0 !== allObjects[i].group.svg_custom_paths && (allObjects[i].group.svg_custom_paths[i] = {
-                                    index: i,
-                                    action: "fill",
-                                    color_value: newcolorVal
-                                })) : !allObjects[i].fill || "object" !== _typeof(allObjects[i].fill) || "linear" !== allObjects[i].fill.type && "radial" !== allObjects[i].fill.type || allObjects[i].fill.colorStops[0].color === $oldcolorval && allObjects[i].fill.colorStops[1].color === $color2 && (allObjects[i].fill.colorStops[0].color = newcolorVal,
-                                allObjects[i].dirty = !0,
-                                switchFillType($filltype, newcolorVal, $color2, $(this)),
-                                allObjects[i].group && void 0 !== allObjects[i].group.svg_custom_paths && (allObjects[i].group.svg_custom_paths[i] = {
-                                    index: i,
-                                    action: "fill",
-                                    color_value: allObjects[i].fill
-                                }))
-                            }
-                            canvas.getActiveObject() && (canvas.getActiveObject().dirty = !0),
-                            canvas.getActiveObject()._objects && !canvas.getActiveObject().isEmptyObject && canvas.getActiveObject().forEachObject(function(o) {
-                                o.dirty = !0
-                            }),
-                            selectedObject.set("dirty", !0),
-                            canvas.renderAll(),
-                            save_history()
-                        },
-                        beforeShow: function(color) {
-                            $(".dynamic-fill .sp-palette-toggle").addClass("btn btn-default"),
-                            $(this).spectrum("set", color)
-                        },
-                        show: function(color) {
-                            objinitcolor = color.toRgbString().replace(/\s/g, ""),
-                            $(this).data("previous-color", objinitcolor)
-                        }
-                    }),
-                    colorarray && colorarray.length > 6) {
-                        for (var $previewColors = Array(), $c = 0; $c < colorarray.length; $c++) {
-                            var $curColor = "#ffffff";
-                            "object" === _typeof(colorarray[$c]) ? colorarray[$c]instanceof fabric.Gradient && ($curColor = "#" + new fabric.Color(colorarray[$c].colorStops[0].color).toHex()) : $curColor = colorarray[$c],
-                            $curColor && $previewColors.push($curColor)
-                        }
-                        $previewColors.map(function($curColor, $i) {
-                            return $("#showColors").find(".color-" + $i++).css("background", $curColor)
-                        }),
-                        $("#dynamiccolorpickers").hide(),
-                        $("#showColors").show()
-                    } else
-                        $("#dynamiccolorpickers").show();
-                    $(".colorSelectorBox.group").each(function($i, $cb) {
-                        var $dropdown = $(".colorSelectorBox.single").find(".dropdown-menu.fill-type-dropdown").clone();
-                        $($cb).append($dropdown);
-                        var $cPicker2 = $($cb).find(".dynamiccolorpicker2");
-                        if ($($cPicker2).hasClass("showElement")) {
-                            $($cPicker2).spectrum({
-                                containerClassName: "dynamic-fill",
-                                showAlpha: !1,
-                                showPalette: !0,
-                                preferredFormat: "hex",
-                                hideAfterPaletteSelect: !0,
-                                showSelectionPalette: !0,
-                                localStorageKey: localStorageKey,
-                                showInput: !0,
-                                showInitial: !0,
-                                allowEmpty: !0,
-                                showButtons: !0,
-                                maxSelectionSize: 24,
-                                togglePaletteMoreText: "Show advanced",
-                                togglePaletteLessText: "Hide advanced",
-                                change: function(color) {
-                                    DEBUG && console.log("color: ", color);
-                                    var local_store = window.localStorage[localStorageKey];
-                                    -1 === local_store.search(color) && (window.localStorage[localStorageKey] = local_store + ";" + color);
-                                    var newcolorVal = color.toRgbString().replace(/\s/g, "")
-                                      , $oldcolorval = $(this).data("previous-color")
-                                      , $cb = $(this).parents(".colorSelectorBox")
-                                      , $color1 = $cb.find(".dynamiccolorpicker").spectrum("get").toRgbString().replace(/\s/g, "");
-                                    DEBUG && console.log(".dynamiccolorpicker2: ", newcolorVal, $oldcolorval, $color1);
-                                    for (var i = 0; i < allObjects.length; i++) {
-                                        if (void 0 !== allObjects[i].group_index && void 0 !== allObjects[i].group.svg_custom_paths && allObjects[i].fill && objinitcolor.toLowerCase() === allObjects[i].fill.toString().toLowerCase()) {
-                                            var path_data = {
-                                                index: allObjects[i].group_index,
-                                                action: "fill",
-                                                color_value: newcolorVal
-                                            };
-                                            allObjects[i].group.svg_custom_paths[allObjects[i].group_index] = path_data
-                                        }
-                                        if (allObjects[i].fill && "object" === _typeof(allObjects[i].fill) && ("linear" === allObjects[i].fill.type || "radial" === allObjects[i].fill.type))
-                                            if (allObjects[i].fill.colorStops[0].color === $color1 && allObjects[i].fill.colorStops[1].color === $oldcolorval)
-                                                DEBUG && console.log("yep, our boy"),
-                                                allObjects[i].fill.colorStops[1].color = newcolorVal,
-                                                allObjects[i].dirty = !0,
-                                                switchFillType($cb.data("gradient-type"), $color1, newcolorVal, $(this))
-                                    }
-                                    canvas.getActiveObject() && (canvas.getActiveObject().dirty = !0),
-                                    selectedObject.set("dirty", !0),
-                                    objinitcolor = newcolorVal,
-                                    canvas.renderAll(),
-                                    save_history()
-                                },
-                                beforeShow: function(color) {
-                                    $(".dynamic-fill .sp-palette-toggle").addClass("btn btn-default"),
-                                    $(this).spectrum("set", color)
-                                },
-                                show: function(color) {
-                                    objinitcolor = color.toRgbString().replace(/\s/g, ""),
-                                    $(this).data("previous-color", objinitcolor)
-                                }
-                            });
-                            var $color1 = $($cb).find(".dynamiccolorpicker").spectrum("get").toHexString() || "#000000"
-                              , $color2 = $($cb).find(".dynamiccolorpicker2").spectrum("get").toHexString() || "#ffffff";
-                            switchFillType($($cb).data("gradient-type"), $color1, $color2, $($cb).find(".dynamiccolorpicker2"))
-                        } else
-                            $($cb).find(".fill-type").removeClass("active"),
-                            $($cb).find("#color-fill").addClass("active")
-                    })
-                } else
-                    $(".colorSelectorBox.single").show();
-                "line" === selectedObject.type && selectedObject.setControlsVisibility({
-                    bl: !1,
-                    br: !1,
-                    tl: !1,
-                    tr: !1,
-                    ml: !1,
-                    mr: !1
-                }),
-                "line" !== selectedObject.type && "image" !== selectedObject.type || $(".colorSelectorBox.single").hide(),
-                "rect" === selectedObject.type ? $("#objectborderwh").show() : $("#objectborderwh").hide(),
-                "" === selectedObject.fill || "rgba(0,0,0,0)" === selectedObject.fill ? ($("#colorSelector, #dynamiccolorpickers .sp-preview").css("background-image", 'url("assets/img/transbg.png")'),
-                $("#colorSelector, #dynamiccolorpickers .sp-preview").css("background-color", "#ffffff")) : ($("#colorSelector").css("background-color", selectedObject.fill),
-                $("#colorSelector").css("background-image", "none")),
-                $(".color-fill .sp-clear, .dynamic-fill .sp-clear").click(function() {
-                    console.log("here"),
-                    $(".sp-container.color-fill, .sp-container.dynamic-fill").addClass("sp-hidden"),
-                    selectedObject.set("fill", "rgba(0,0,0,0)"),
-                    canvas.renderAll(),
-                    save_history()
-                }),
-                $(".color-stroke .sp-clear").click(function() {
-                    $(".sp-container.color-stroke").addClass("sp-hidden"),
-                    selectedObject.set("stroke", ""),
-                    canvas.renderAll(),
-                    save_history()
-                }),
-                !0 === selectedObject.locked && (selectedObject.setControlsVisibility({
-                    bl: !1,
-                    br: !1,
-                    tl: !1,
-                    tr: !1,
-                    ml: !1,
-                    mr: !1,
-                    mt: !1,
-                    mtr: !1,
-                    mb: !1
-                }),
-                selectedObject.set({
-                    lockMovementY: !0,
-                    lockMovementX: !0,
-                    borderColor: "#cccccc"
-                }),
-                $toolbar_top.find(".textelebtns").hide(),
-                $toolbar_top.find("#alignbtns").hide(),
-                $toolbar_top.find("#clone").hide(),
-                $toolbar_top.find(".bringforward").hide(),
-                $toolbar_top.find(".sendbackward").hide(),
-                $toolbar_top.find("#ungroup").hide(),
-                $toolbar_top.find("#shadowGroup").hide(),
-                $toolbar_top.find("#deleteitem").hide(),
-                $toolbar_top.find("#showmoreoptions").hide(),
-                $toolbar_top.find("#showObjectProperties").hide(),
-                $toolbar_top.find(".patternFillGroup").hide()),
-                selectedObject.dirty = !0,
-                canvas.renderAll(),
-                s_history = !0
-            }
-        }
-    }
-    function deselectLockedObject(e) {
-        (selectedObject = canvas.getActiveObject()) && selectedObject._objects && $.each(selectedObject.getObjects(), function(i, o) {
-            o && o.locked && !0 === o.locked && selectedObject.removeWithUpdate(o)
-        })
-    }
-    void 0 === window.localStorage[localStorageKey] && (window.localStorage[localStorageKey] = ";"),
-    canvas.observe("object:selected", function(e) {
-        objectSelected(e, "selected")
-    }),
-    canvas.observe("selection:updated", function(e) {
-        objectSelected(e, "updated")
-    }),
-    canvas.observe("selection:created", function(e) {
-        objectSelected(e, "created")
-    }),
-    canvas.observe("selection:cleared", function(e) {
-        $(".sp-container.color-fill, .sp-container.dynamic-fill").addClass("sp-hidden")
-    }),
-    canvas.observe("selection:updated", deselectLockedObject),
-    canvas.observe("selection:created", deselectLockedObject),
-    canvas.observe("object:moving", function(e) {
-        $(".tools-top").removeClass("toolbar-show"),
-        e.target.setCoords()
-    }),
-    canvas.observe("object:rotating", function(e) {
-        e.e.shiftKey ? e.target.snapAngle = 0 : e.target.snapAngle = 5;
-        var $angle = parseInt(e.target.angle % 360);
-        $(".rotation_info_block").html($angle + "°").show()
-    }),
-    canvas.observe("object:scaling", function(e) {
-        e.target && /text/.test(e.target.type) && e.target && e.target.scaleX === e.target.scaleY && $("#fontsize").val((e.target.fontSize * e.target.scaleX / 1.3).toFixed(0)),
-        e.target.setCoords();
-        document.getElementById("loadCanvasHei").value
-    }),
-    canvas.observe("object:modified", function(e) {
-        if (DEBUG && console.log("object is modified"),
-        $(".tools-top").addClass("toolbar-show"),
-        s_history = !0,
-        save_history(),
-        e.target && /text/.test(e.target.type)) {
-            var scaleX = e.target.scaleX
-              , scaleY = e.target.scaleY;
-            if (e.target && scaleX === scaleY) {
-                if (e.target.fontSize *= scaleX,
-                e.target.fontSize = e.target.fontSize.toFixed(0),
-                e.target.width *= scaleX,
-                e.target.height *= scaleY,
-                e.target.fill instanceof fabric.Dpattern) {
-                    var $newscale = e.target.fill.scale * scaleX;
-                    e.target.fill.update({
-                        scale: $newscale
-                    })
-                }
-                e.target.scaleX = 1,
-                e.target.scaleY = 1,
-                e.target.setCoords(),
-                $("#fontsize").val((e.target.fontSize / 1.3).toFixed(0))
-            }
-            !isTextsGroup() && e.target.fill && "object" === _typeof(e.target.fill) && ("linear" === e.target.fill.type ? e.target.fill.coords.x1 < 0 ? (e.target.fill.coords.x1 = -e.target.width,
-            e.target.fill.coords.x2 = e.target.width,
-            e.target.fill.coords.y1 = -e.target.height,
-            e.target.fill.coords.y2 = e.target.height) : (0 !== e.target.fill.coords.x1 && (e.target.fill.coords.x1 = e.target.width),
-            0 !== e.target.fill.coords.x2 && (e.target.fill.coords.x2 = e.target.width),
-            0 !== e.target.fill.coords.y1 && (e.target.fill.coords.y1 = e.target.height),
-            0 !== e.target.fill.coords.y2 && (e.target.fill.coords.y2 = e.target.height)) : "radial" === e.target.fill.type && void 0 !== e.target.fill.coords.r1 && (e.target.fill.coords.r2 = e.target.width > e.target.height ? e.target.width / 2 : e.target.height / 2,
-            e.target.fill.coords.x1 = e.target.width / 2,
-            e.target.fill.coords.x2 = e.target.width / 2,
-            e.target.fill.coords.y1 = e.target.height / 2,
-            e.target.fill.coords.y2 = e.target.height / 2))
-        }
-    }),
-    canvas.observe("object:added", function(e) {
-        if (e.target.isUngrouping)
-            delete e.target.isUngrouping;
-        else {
-            var add_object = e.target
-              , color = "group" === add_object.type ? "#f9a24c" : "#4dd7fa";
-            add_object.set({
-                transparentCorners: !1,
-                borderDashArray: [4, 2],
-                cornerStrokeColor: "#ffffff",
-                borderColor: color,
-                cornerColor: color,
-                cornerSize: 8,
-                minScaleLimit: 0,
-                padding: 5,
-                lockScalingFlip: !0
-            }),
-            getFonts(e.target),
-            save_history(),
-            canvas.renderAll()
-        }
-    }),
-    canvas.observe("mouse:up", function(e) {
-        canvas.renderAll()
-    }),
-    canvas.observe("mouse:up", function(e) {
-        if (e.target && /text/.test(e.target.type) && e.target.isEditing) {
-            DEBUG && console.log("style at positon", e.target.getStyleAtPosition());
-            var styleAtPosition = e.target.getStyleAtPosition();
-            if ($("#fontsize").val((e.target.fontSize / 1.3).toFixed(0)),
-            void 0 !== styleAtPosition.fill ? $("#colorSelector").css("backgroundColor", styleAtPosition.fill) : $("#colorSelector").css("backgroundColor", e.target.fill),
-            void 0 !== styleAtPosition.fontWeight ? "bold" === styleAtPosition.fontWeight ? $("#fontbold").addClass("active") : $("#fontbold").removeClass("active") : "bold" === e.target.fontWeight ? $("#fontbold").addClass("active") : $("#fontbold").removeClass("active"),
-            void 0 !== styleAtPosition.fontStyle ? "italic" === styleAtPosition.fontStyle ? $("#fontitalic").addClass("active") : $("#fontitalic").removeClass("active") : "italic" === e.target.fontStyle ? $("#fontitalic").addClass("active") : $("#fontitalic").removeClass("active"),
-            void 0 !== styleAtPosition.underline ? "underline" === styleAtPosition.underline ? $("#fontunderline").addClass("active") : $("#fontunderline").removeClass("active") : "italic" === e.target.underline ? $("#fontunderline").addClass("active") : $("#fontunderline").removeClass("active"),
-            void 0 !== styleAtPosition.fontFamily) {
-                var fontDisplayName = $("#fonts-dropdown").find('a[data-ff="' + styleAtPosition.fontFamily + '"]').parent().find("span").text();
-                DEBUG && console.log("fontDisplayName", fontDisplayName),
-                $("#font-selected").html('<span style="overflow:hidden"><a href="#" style="font-family: ' + styleAtPosition.fontFamily + '" >' + fontDisplayName + '</a>&nbsp;&nbsp;<span class="caret"></span></span>'),
-                $("#font-dropdown").on("shown.bs.dropdown", function() {
-                    $("#fontSearch").focus(),
-                    $("#fonts-dropdown").scrollTop($('#fonts-dropdown li a[data-ff="' + styleAtPosition.fontFamily + '"]').position().top - $("#fonts-dropdown li:first").position().top),
-                    $("#fonts-dropdown li a").removeClass("font-selected"),
-                    $('#fonts-dropdown li a[data-ff="' + styleAtPosition.fontFamily + '"]').addClass("font-selected")
-                })
-            } else {
-                var fontid = e.target.fontFamily || "font7";
-                fontDisplayName = $("#fonts-dropdown").find('a[data-ff="' + fontid + '"]').parent().find("span").text();
-                $("#font-selected").html('<span style="overflow:hidden"><a href="#" style="font-family: ' + e.target.fontFamily + '" >' + fontDisplayName + '</a>&nbsp;&nbsp;<span class="caret"></span></span>'),
-                $("#font-dropdown").on("shown.bs.dropdown", function() {
-                    $("#fontSearch").focus(),
-                    $("#fonts-dropdown").scrollTop($('#fonts-dropdown li a[data-ff="' + e.target.fontFamily + '"]').position().top - $("#fonts-dropdown li:first").position().top),
-                    $("#fonts-dropdown li a").removeClass("font-selected"),
-                    $('#fonts-dropdown li a[data-ff="' + e.target.fontFamily + '"]').addClass("font-selected")
-                })
-            }
-        }
-    }),
-    canvas.observe("text:editing:entered", function(e) {
-        DEBUG && console.log("text:editing:entered first"),
-        selectedObject.hasControls = !0,
-        $("#group").hide(),
-        $("#ungroup").hide(),
-        $("#strokegroup").hide(),
-        $("#clone").hide(),
-        $("#showmoreoptions").hide(),
-        $("#shadowGroup").hide(),
-        e.target.set({
-            cursorColor: e.target.fill
-        });
-        var $scale_value = parseFloat(jQuery("#zoomperc").data("scaleValue")) || 1
-          , bodyRect = document.body.getBoundingClientRect()
-          , offsetRect = (e.target.canvas.upperCanvasEl.getBoundingClientRect().top - bodyRect.top) / $scale_value;
-        e.target.hiddenTextarea.style.cssText = "position: fixed !important; top: " + offsetRect + "px !important; left: 0px; opacity: 0; width: 0px; height: 0px; z-index: -999;"
-    }),
-    canvas.on("mouse:over", function(e) {
-        e.target && "line" === e.target.type && (e.target.padding = 5,
-        e.target.setCoords(),
-        canvas.renderAll())
-    }),
-    canvas.observe("text:editing:exited", function(e) {
-        DEBUG && console.log("text:editing:exited"),
-        "" == e.target.text && setTimeout(function() {
-            return canvas.remove(e.target)
-        }, 0),
-        $("#group").show(),
-        $("#ungroup").show(),
-        $("#strokegroup").show(),
-        $("#clone").show(),
-        $("#showmoreoptions").show(),
-        $("#shadowGroup").show()
-    }),
-    $("body").mousedown(function(e) {
-        var actobj = canvas.getActiveObject();
-        actobj || ($(".tools-top").removeClass("toolbar-show"),
-        $(".patternFillTab").hide(),
-        $(".patternFillPreview").removeClass("open"),
-        "LI" !== e.target.nodeName && $(".custom-menu").hide()),
-        $("#filltype, .filltype, #strokedropdown").click(function() {
-            $(".sp-container.color-fill, .sp-container.dynamic-fill, .sp-container.color-stroke").addClass("sp-hidden")
-        }),
-        actobj && "image" === actobj.type && 0 !== $(e.target).closest(".ui-dialog").length || $("#object-properties").dialog("close"),
-        actobj && (/text/.test(actobj.type) || 0 !== $(e.target).closest(".ui-dialog").length) || $("#font-symbols").dialog("close"),
-        "CANVAS" !== e.target.nodeName && "DIV" === e.target.nodeName && "sp-preview" !== e.target.className && !$(e.target).hasClass("sp-clear") && e.target.className.indexOf("sp-light") < 0 && "sp-container" !== e.target.className && e.target.className.indexOf("ui-dialog") < 0 && $(".dpattern-holder").has(e.target).length < 1 && $(".patternFillTab").has(e.target).length < 1 && $("#font-symbols").has(e.target).length < 1 && (canvas.discardActiveObject().renderAll(),
-        $(".tools-top").removeClass("toolbar-show"),
-        $(".patternFillTab").hide(),
-        $(".patternFillPreview").removeClass("open"),
-        $("#font-symbols").dialog("close"))
-    })
-}
+
 $(aContainer_image).on("load.infiniteScroll", function(event, response) {
     var data = JSON.parse(response)
       , itemsHTML = (data = data.images).map(getItemHTML_image).join("")
