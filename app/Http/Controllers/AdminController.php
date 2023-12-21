@@ -74,7 +74,7 @@ class AdminController extends Controller
         return $modelo_id;
     }
 
-    function thumbnailGeneration(){
+    function thumbnailGeneration(Request $request){
         $language_code = 'en';
         $country_code = 'mx';
         
@@ -93,8 +93,6 @@ class AdminController extends Controller
                 thumbnails,templates
             WHERE
                 thumbnails.template_id = templates.template_id
-                AND templates.source = 'templett'
-                AND templates.status = 5
                 AND thumbnails.language_code = 'en'
                 AND thumbnails.thumbnail_ready IS NULL
             LIMIT 2000") 

@@ -65,10 +65,21 @@ class LoginController extends Controller
         }
 
         $user = Auth::getProvider()->retrieveByCredentials($credentials);
+
+        // Check if the user's email is verified
+        if (is_null($user->email_verified_at)) {
+            $errorResponse = ['success' => false, 'message' => trans('auth.email_not_verified')];
+
+            return $request->expectsJson()
+                ? response()->json($errorResponse, 401)
+                : redirect()->back()->withInput($request->only('email', 'remember'))->withErrors($errorResponse);;
+        }
+
         Auth::login($user);
 
         return $this->authenticated($request, $user);
     }
+
 
 
     protected function authenticated(Request $request, $user)
@@ -184,7 +195,7 @@ class LoginController extends Controller
         ]);
 
         // Send the token to the user's email (this is a basic example, you'd use a queued job for better performance)
-        Mail::send('emails.password', ['token' => $token,'customerId' => $user->customer_id], function ($message) use ($request) {
+        Mail::send('emails.password', ['token' => $token, 'customerId' => $user->customer_id], function ($message) use ($request) {
             $message->to($request->email);
             $message->subject('Password Reset Request');
         });
