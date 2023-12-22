@@ -2404,7 +2404,7 @@ function setWorkspace() {
     }
 
     function managePageLimits() {
-        // If current template has mor than 36 pages, hide the add new page button
+        // If current template has more than 36 pages, hide the add new page button
         const pageLimitReached = $(".pagenumber:visible").length >= 36;
         if (pageLimitReached || (canvasarray[0].cwidth / 96 * (canvasarray[0].cheight / 96) > 100)) {
             setVisibility(".duplicatecanvas", "hidden");
@@ -2424,4 +2424,104 @@ function setWorkspace() {
     managePageLimits();
 
     setTimeout(checkDpatterns, 100);
+}
+
+function getTemplateJson() {
+    logDebug("MIGRATED:: getTemplateJson");
+
+    let jsonCanvasArray = [];
+    const templateDimensions = getTemplateDimensions();
+    jsonCanvasArray.push(templateDimensions);
+
+    logDebug(`Canvas Index: ${canvasindex}`);
+    logDebug(`Initial JSON Canvas Array: ${jsonCanvasArray}`);
+
+    for (let i = 0; i < canvasindex; i++) {
+        if (canvasarray[i]) {
+            processObjectCanvas(canvasarray[i], jsonCanvasArray, i);
+        }
+    }
+    return formatFinalJson(jsonCanvasArray);
+}
+
+function logDebug(message) {
+    if (DEBUG) {
+        console.log(message);
+    }
+}
+
+function getTemplateDimensions() {
+    const width = (96 * parseFloat(document.getElementById("loadCanvasWid").value)).toFixed(2);
+    const height = (96 * parseFloat(document.getElementById("loadCanvasHei").value)).toFixed(2);
+    const rows = document.getElementById("numOfcanvasrows").value;
+    const cols = document.getElementById("numOfcanvascols").value;
+
+    return `{"width": ${width}, "height": ${height}, "rows": ${rows}, "cols": ${cols}}`;
+}
+
+function processObjectCanvas(canvas, jsonCanvasArray, index) {
+    const tempData = JSON.parse(JSON.stringify(canvas.toDatalessJSON(properties_to_save)));
+
+    tempData.objects.forEach((object, objectIndex) => {
+        logDebug(`Processing object ${objectIndex}:`, object);
+        processObjectObject(object);
+    });
+
+    canvas.discardActiveObject().renderAll();
+
+    if ($("#divcanvas" + index).is(":visible")) {
+        jsonCanvasArray.push(tempData);
+    }
+}
+
+function processObjectObject(object) {
+    if (isSvgObject(object)) {
+        processSvgObject(object);
+    }
+
+    resetObjectPaths(object);
+    removeDpatternSource(object);
+}
+
+function isSvgObject(object) {
+    return object.type === 'path' && object.fill && object.svg_custom_paths;
+}
+
+function processSvgObject(object) {
+    if (object.objects && $useKeepSvgGroups) {
+        object.objects.forEach(child => {
+            if (child.svg_custom_paths && child.svg_custom_paths.length) {
+                object.svg_custom_paths = object.svg_custom_paths || [];
+                object.svg_custom_paths = {
+                    svg_custom_paths: child.svg_custom_paths
+                };
+            }
+        });
+    }
+}
+
+function resetObjectPaths(object) {
+    if (object.type === 'path' && object.svg_custom_paths && object.svg_custom_paths.length === 1) {
+        delete object.svg_custom_paths;
+    }
+
+    object.path = [];
+    object.objects = [];
+    if (object._objects !== undefined) {
+        object._objects = [];
+    }
+}
+
+function removeDpatternSource(object) {
+    if (typeof object.fill === 'object' && object.fill.type === 'Dpattern') {
+        delete object.fill.source;
+    }
+
+    if (object.objects) {
+        object.objects.forEach(child => removeDpatternSource(child));
+    }
+}
+
+function formatFinalJson(jsonCanvasArray) {
+    return JSON.stringify(jsonCanvasArray).replace(/"backgroundImage":{.*?}/gi, '"backgroundImage":""');
 }

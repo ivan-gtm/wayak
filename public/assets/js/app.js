@@ -2049,44 +2049,7 @@ $("#showHistory").click(function() {
 //         })
 //     }
 // };
-$("#downloadAsPNG").click(function() {
-    registerDownload("PNG", void 0, function(func) {
-        demo_as_id > 0 ? $.toast({
-            text: "Not allowed in demo mode",
-            icon: "error",
-            loader: !1,
-            position: "top-right"
-        }) : (canvas.discardActiveObject().renderAll(),
-        appSpinner.show(),
-        $("#zoomperc").data("oldScaleValue", $("#zoomperc").data("scaleValue")),
-        setZoom(1),
-        removeDeletedCanvases(canvasarray, function($options) {
-            1 === $options.canvases.length ? "geofilter" == template_type || "geofilter2" == template_type ? (downloadImage2({
-                canvases: $options.canvases,
-                format: "png"
-            }),
-            func()) : downloadImageProxy({
-                canvases: $options.canvases,
-                callback: function($options) {
-                    downloadImage2({
-                        canvases: $options.canvases,
-                        format: "png"
-                    }),
-                    func()
-                }
-            }) : downloadImageProxy({
-                canvases: $options.canvases,
-                callback: function($options) {
-                    downloadImage3({
-                        canvases: $options.canvases,
-                        format: "png"
-                    }),
-                    func()
-                }
-            })
-        }))
-    })
-});
+
 // $("#downloadAsJPEG, #downloadProductImage").click(function() {
 //     if (ajaxRequestRef && ajaxRequestRef.abort(),
 //     demo_as_id > 0)
@@ -2156,50 +2119,6 @@ $("#downloadAsPNG").click(function() {
 //         })
 //     }
 // });
-
-$("#downloadAsJPEG").click(function() {
-    registerDownload("JPEG", {
-        saveBleed: $("input#savebleed").is(":checked")
-    }, function(func) {
-        toggleHiddenStatusOfObjects(),
-        demo_as_id > 0 ? $.toast({
-            text: "Not allowed in demo mode",
-            icon: "error",
-            loader: !1,
-            position: "top-right"
-        }) : (canvas.discardActiveObject().renderAll(),
-        appSpinner.show(),
-        $("#zoomperc").data("oldScaleValue", $("#zoomperc").data("scaleValue")),
-        setZoom(1),
-        removeDeletedCanvases(canvasarray, function($options) {
-            $("#savebleed").is(":checked") ? createBleed({
-                canvases: $options.canvases,
-                callback: function($options) {
-                    downloadImageProxy({
-                        canvases: $options.canvases
-                    })
-                }
-            }) : 1 === $options.canvases.length ? downloadImageProxy({
-                canvases: $options.canvases,
-                callback: function($options) {
-                    downloadImage2({
-                        canvases: $options.canvases,
-                        format: "jpeg"
-                    })
-                }
-            }) : downloadImageProxy({
-                canvases: $options.canvases,
-                callback: function($options) {
-                    downloadImage3({
-                        canvases: $options.canvases,
-                        format: "jpeg"
-                    })
-                }
-            }),
-            func()
-        }))
-    })
-});
 
 $('[name="jpegRadioDensity"]').click(function() {
     300 == $('[name="jpegRadioDensity"]:checked').val() ? $("#div-jpeg-bleed").show() : $("#div-jpeg-bleed").hide()
@@ -2287,78 +2206,7 @@ var globalRow = 0
   , globalCol = 0
   , toastMsg = null
   , pdfRequestId = "";
-$("#downloadAsPDF").click(function() {
-    var docUserId = 123123123;
-    if (ajaxRequestRef && ajaxRequestRef.abort(),
-    demo_as_id > 0)
-        $.toast({
-            text: "Not allowed in demo mode",
-            icon: "error",
-            loader: !1,
-            position: "top-right"
-        });
-    else {
-        downloadPdfTimer(120),
-        canvas.discardActiveObject().renderAll();
-        var canvases = canvasarray;
-        globalRow = parseInt($("#numOfcanvasrows").val()),
-        globalCol = parseInt($("#numOfcanvascols").val());
-        var pages = $(".divcanvas:visible").length / document.getElementById("numOfcanvasrows").value / document.getElementById("numOfcanvascols").value
-          , canvasWidth = canvases[0].get("width") / canvases[0].getZoom()
-          , canvasHeight = canvases[0].get("height") / canvases[0].getZoom()
-          , bleed = $("#savebleedPdf").is(":checked")
-          , trimsMarks = $("#savecrop").is(":checked")
-          , savePaper = $("#savePaper").is(":checked")
-          , pageSize = "us-letter"
-          , metrics = $("input[name=metric_units1]:checked").val();
-        "a4" === $(".paper-size.active").find('input[name="paperSize"]').val() && (pageSize = "a4");
-        var templateJson = getTemplateJson()
-          , urlDocument = appUrl + "admin/Documents/download-pdf-file";
-        $.toast({
-            heading: "Creating PDF...",
-            text: "Please wait",
-            icon: "info",
-            loader: !1,
-            allowToastClose: !1,
-            position: "top-right",
-            hideAfter: !1,
-            stack: 1,
-            beforeShow: function() {
-                var tag = $(".jq-toast-single.jq-has-icon.jq-icon-info").first();
-                $(tag).removeClass("jq-icon-info"),
-                $(tag).addClass("toast-loader-icon")
-            }
-        }),
-        $.ajax({
-            url: urlDocument,
-            method: "POST",
-            data: {
-                webSocketConn: webSocketConn,
-                demoAsId: demo_as_id,
-                docUserId: docUserId,
-                templateId: loadedtemplateid,
-                templateJson: templateJson,
-                pages: pages,
-                canvasWidth: canvasWidth,
-                canvasHeight: canvasHeight,
-                rows: globalRow,
-                cols: globalCol,
-                bleed: bleed,
-                trimsMarks: trimsMarks,
-                savePaper: savePaper,
-                pageSize: pageSize,
-                pageType: template_type,
-                metrics: metrics
-            },
-            dataType: "json"
-        }).done(function(data) {
-            pdfRequestId = data.requestId,
-            pullingType = "pdf",
-            webSocketConn || (clearTimeout(referenceUpdates),
-            checkDocsUpdates(pdfRequestId))
-        })
-    }
-});
+
 var processDownloadButton = function(data, type) {
     if (clearTimeout(timerPdfRef),
     data.requestId == pdfRequestId) {
@@ -2660,48 +2508,6 @@ function normalizeSvgScale($src, $dest) {
     $dest.setPositionByOrigin($center, "center", "center"),
     $dest.setCoords(),
     !0
-}
-
-function getTemplateJson() {
-    if (DEBUG) {
-        console.log("getTemplateJson");
-    }
-
-    var jsonCanvasArray = []
-      , width = document.getElementById("loadCanvasWid").value
-      , height = document.getElementById("loadCanvasHei").value
-      , rows = document.getElementById("numOfcanvasrows").value
-      , cols = document.getElementById("numOfcanvascols").value
-      , wh = '{"width": ' + (width = (96 * width).toFixed(2)) + ', "height": ' + (height = (96 * height).toFixed(2)) + ', "rows": ' + rows + ', "cols": ' + cols + "}";
-    jsonCanvasArray.push(wh),
-    DEBUG && console.log(canvasindex),
-    DEBUG && console.log(jsonCanvasArray);
-    for (var i = 0; i < canvasindex; i++)
-        if (canvasarray[i]) {
-            var tempData = JSON.parse(JSON.stringify(canvasarray[i].toDatalessJSON(properties_to_save)));
-            $.each(tempData.objects, function(object_i, object) {
-                DEBUG && console.log("getTemplateJson() object", object),
-                isSvg(object) && (object.objects && $useKeepSvgGroups && $.each(object.objects, function($i, $child) {
-                    $child.svg_custom_paths && $child.svg_custom_paths.length && (object.svg_custom_paths || (object.svg_custom_paths = []),
-                    object.svg_custom_paths = {
-                        svg_custom_paths: $child.svg_custom_paths
-                    })
-                }),
-                object.path = [],
-                object.objects = []),
-                void 0 !== object._objects && (object._objects = []),
-                "path" == object.type && object.fill && object.svg_custom_paths && 1 == object.svg_custom_paths.length && delete object.svg_custom_paths,
-                function removeDpatternSource($o) {
-                    "object" === _typeof($o.fill) && "Dpattern" == $o.fill.type && delete $o.fill.source,
-                    $o.objects && $.each($o.objects, function($i, $child) {
-                        return removeDpatternSource($child)
-                    })
-                }(object)
-            }),
-            canvasarray[i].discardActiveObject().renderAll(),
-            $("#divcanvas" + i).is(":visible") && jsonCanvasArray.push(tempData)
-        }
-    return JSON.stringify(jsonCanvasArray).replace(/"backgroundImage":{.*?}/gi, '"backgroundImage":""')
 }
 
 $("#progressModal").on("shown.bs.modal", function(e) {
@@ -3057,48 +2863,6 @@ function getBg2($obj, scalex) {
             reject("canvas or object is not exist")
     }
     )
-}
-
-function createBleed($options) {
-    if (DEBUG) {
-        console.log("createBleed()");
-    }
-
-    $options || ($options = {});
-    var $canvases = $options.canvases || canvasarray
-      , $canvasesWithBleed = $options.canvasesWithBleed || []
-      , $callback = $options.callback || downloadImage2
-      , $i = $options.i || 0;
-    DEBUG && console.log("createBleed");
-    var $cwidth = parseInt($canvases[$i].get("width") + 24)
-      , $cheight = parseInt($canvases[$i].get("height") + 24)
-      , _el = fabric.util.createCanvasElement();
-    _el.width = $cwidth,
-    _el.height = $cheight,
-    $canvasesWithBleed[$i] = new fabric.StaticCanvas(_el),
-    $canvasesWithBleed[$i].setDimensions({
-        width: $cwidth,
-        height: $cheight
-    }),
-    $canvasesWithBleed[$i].loadFromJSON(JSON.stringify($canvases[$i].toDatalessJSON(properties_to_save)), function() {
-        $canvases[++$i] ? createBleed({
-            canvases: $canvases,
-            i: $i,
-            callback: $callback,
-            canvasesWithBleed: $canvasesWithBleed
-        }) : setTimeout(function() {
-            $callback({
-                canvases: $canvasesWithBleed
-            })
-        }, 100)
-    }, function(o, object) {
-        DEBUG && console.log("object's left: " + object.left + " object's top: " + object.top),
-        object.set({
-            left: object.left + 12,
-            top: object.top + 12
-        }),
-        object.setCoords()
-    })
 }
 
 function removeDeletedCanvasesProxy($options) {

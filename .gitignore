@@ -18,7 +18,6 @@ yarn-error.log
 /.cloud/mongodb/*
 **/.DS_Store
 php
-composer.lock
 public/adobe/*
 public/artory/*
 /public/canva/*
@@ -37,5 +36,4 @@ public/packtpub/*
 /public/product/preview-images/*
 /public/etsy_store/*
 /public/template-assets/thumbs/*
-._*
 composer.lock

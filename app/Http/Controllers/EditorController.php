@@ -1269,14 +1269,14 @@ class EditorController extends Controller
 			Redis::hset('analytics:btn:download', $template_key, 1);
 		}
 
-		Redis::del('code:' . $request->purchase_code);
-		Redis::del('temp:template:relation:temp:' . $request->purchase_code);
-		Redis::del('template:temp:' . $request->purchase_code . ':jsondata');
+		// Redis::del('code:' . $request->purchase_code);
+		// Redis::del('temp:template:relation:temp:' . $request->purchase_code);
+		// Redis::del('template:temp:' . $request->purchase_code . ':jsondata');
 
 		return response()->json([
 			'success' => true,
 			'limit' => 10,
-			'remaining' => 0
+			'remaining' => 10
 		]);
 	}
 
