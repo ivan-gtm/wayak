@@ -65,6 +65,24 @@ function processZipAndSave(zip, filename) {
     toggleHiddenStatusOfObjects();
 }
 
+function toggleHiddenStatusOfObjects() {
+    if (DEBUG) { // Assumes 'DEBUG' is globally accessible
+        console.log("MIGRATED:: toggleHiddenStatusOfObjects");
+    }
+
+    canvasarray.forEach(toggleObjectsVisibility); // Assumes 'canvasarray' is globally accessible
+}
+
+function toggleObjectsVisibility(canvas) {
+    canvas.forEachObject(object => {
+        if (object.hidden) {
+            object.visible = !object.visible;
+        }
+    });
+    canvas.renderAll();
+}
+
+
 function saveZipBase64(content, filename) {
     const url = `${appUrl}design/savezip.php`;
     $.post(url, { file: filename, data: content })
@@ -122,7 +140,7 @@ function downloadImage() {
             const posX = canvasWidth * colCount++;
             const posY = canvasHeight * rowCount;
 
-            processCanvas(i, posX, posY, () => {
+            processTmpDownloadCanvas(i, posX, posY, () => {
                 if (++writtenPages === processPages) {
                     saveCanvasImage();
                 }
@@ -131,7 +149,7 @@ function downloadImage() {
     }
 }
 
-function processCanvas(canvasIndex, posX, posY, callback) {
+function processTmpDownloadCanvas(canvasIndex, posX, posY, callback) {
     const img = new Image();
     img.onload = function () {
         const bufferContext = document.getElementById("outputcanvas").getContext("2d");
@@ -142,6 +160,9 @@ function processCanvas(canvasIndex, posX, posY, callback) {
 }
 
 function saveCanvasImage() {
+    if(DEBUG) {
+        console.log("MIGRATED:: saveCanvasImage()");
+    }
     const canvasElement = document.getElementById("outputcanvas");
     const id = loadedtemplateid === 0 ? "new" : loadedtemplateid;
     const filename = `wayak_${id}.png`;
@@ -505,15 +526,6 @@ function updateTemplate(updateOriginal = 0) {
     });
 }
 
-function showToast(text, icon) {
-    $.toast({
-        text: text,
-        icon: icon,
-        loader: false,
-        position: "top-right"
-    });
-}
-
 function sendTemplateUpdateRequest(url, jsonData, pngdataURL, metrics, crc, updateOriginal) {
     return new Promise((resolve, reject) => {
         $.ajax({
@@ -828,7 +840,9 @@ function updateInstructions(instructions) {
 }
 
 function initializeUIElements() {
-    if (demo_as_id === 0) setDemoOverlay();
+    if (demo_as_id > 0){
+        setDemoOverlay();
+    }
     initMasonry_related(loadedtemplateid);
     loadTemplates_related();
     initMasonry_bg();
@@ -991,14 +1005,6 @@ function isTextType(object) {
 function updateTextObject(textObject) {
     textObject.__lineWidths = [];
     textObject.initDimensions();
-}
-
-function resetGroupElement(group) {
-    group._restoreObjectsState();
-    fabric.util.resetObjectTransform(group);
-    group._calcBounds();
-    group._updateObjectsCoords();
-    group.setCoords();
 }
 
 function resetGroupElement(group) {
@@ -1308,6 +1314,7 @@ function determineGradientDirection(gradient) {
 function setDemoOverlay() {
     // If DEBUG is true, log that this function has been called
     if (DEBUG) {
+        console.log("demo>>" + demo_as_id);
         console.log("MIGRATED:: setDemoOverlay()");
     }
 
@@ -1474,7 +1481,7 @@ function setZoom(newZoomLevel) {
 
     // Update zoom percentage display and demo overlay if applicable
     updateZoomDisplay(newZoomLevel);
-    if (demo_as_id && !isGeoFilterTemplate(template_type)) {
+    if (demo_as_id > 0 && !isGeoFilterTemplate(template_type)) {
         setDemoOverlay();
     }
 }
@@ -1710,7 +1717,7 @@ function updateUIElements() {
     // Update page numbers, set demo overlay, and apply geofilter overlay if applicable
     updatePageNumbers();
 
-    if (demo_as_id && template_type !== "geofilter" && template_type !== "geofilter2") {
+    if (demo_as_id > 0 && template_type !== "geofilter" && template_type !== "geofilter2") {
         setDemoOverlay();
     }
 
@@ -1925,7 +1932,7 @@ function handleNonGeofilterTemplateActions() {
     }
     autoZoom();
 
-    if (demo_as_id) {
+    if (demo_as_id > 0) {
         setDemoOverlay();
     }
 }
@@ -2181,14 +2188,14 @@ function updatePageNumbers() {
         console.log("MIGRATED:: updatePageNumbers()");
     }
 
-    if (isDoubleSidedTemplate()) {
+    if (isDoubleSidedTemplateType()) {
         updateForDoubleSidedTemplate();
     } else {
         updateForSingleOrMultiplePages();
     }
 }
 
-function isDoubleSidedTemplate() {
+function isDoubleSidedTemplateType() {
     return template_type === "doublesided";
 }
 
@@ -2261,32 +2268,8 @@ function setCanvasSize() {
     hideCanvasSizeModal();
 }
 
-function applyCanvasDimensions(widthInput, heightInput) {
-    const widthInPixels = widthInput * 96;
-    const heightInPixels = heightInput * 96;
-    setCanvasWidthHeight(widthInPixels, heightInPixels);
-}
-
-function adjustIconsAfterResizing() {
-    adjustIconPos(pageindex);
-    $(".deletecanvas").css("display", "none");
-}
-
 function hideCanvasSizeModal() {
     $("#canvaswh_modal").modal("hide");
-}
-
-function setCanvasSize() {
-    if (DEBUG) {
-        console.log("MIGRATED:: setCanvasSize()");
-    }
-
-    const canvasWidthInput = document.getElementById("loadCanvasWid").value;
-    const canvasHeightInput = document.getElementById("loadCanvasHei").value;
-
-    applyCanvasDimensions(canvasWidthInput, canvasHeightInput);
-    adjustIconsAfterResizing();
-    hideCanvasSizeModal();
 }
 
 function applyCanvasDimensions(widthInput, heightInput) {
@@ -2298,10 +2281,6 @@ function applyCanvasDimensions(widthInput, heightInput) {
 function adjustIconsAfterResizing() {
     adjustIconPos(pageindex);
     $(".deletecanvas").css("display", "none");
-}
-
-function hideCanvasSizeModal() {
-    $("#canvaswh_modal").modal("hide");
 }
 
 function saveHistoryForAllCanvases() {
@@ -2524,4 +2503,48 @@ function removeDpatternSource(object) {
 
 function formatFinalJson(jsonCanvasArray) {
     return JSON.stringify(jsonCanvasArray).replace(/"backgroundImage":{.*?}/gi, '"backgroundImage":""');
+}
+
+/**
+ * Initiates the process to save the template.
+ */
+function proceed_savetemplate() {
+    logDebug("Entering proceed_savetemplate");
+
+    if (isSaveTemplateModalVisible()) {
+        handleVisibleSaveTemplateModal();
+    } else {
+        handleTemplateProcessing();
+    }
+}
+
+/**
+ * Checks if the save template modal is visible.
+ * @returns {boolean} - True if the modal is visible, otherwise false.
+ */
+function isSaveTemplateModalVisible() {
+    return $("#savetemplate_modal").is(":visible");
+}
+
+/**
+ * Handles the scenario when the save template modal is visible.
+ */
+function handleVisibleSaveTemplateModal() {
+    if (!newTemplateTagsEdit.validate()) { // Assumes 'newTemplateTagsEdit' is an object with a validate method
+        logDebug("Validation failed");
+        // You might want to handle the validation failure here (e.g., show an error message to the user)
+    } else {
+        handleTemplateProcessing();
+    }
+}
+
+/**
+ * Handles the processing of the template.
+ */
+function handleTemplateProcessing() {
+    $("#savetemplate_modal").modal("hide");
+    appSpinner.show(); // Assumes 'appSpinner' is an object with a show method
+    $("#saveastemplate").show();
+    canvas.discardActiveObject().renderAll(); // Assumes 'canvas' is a globally accessible fabric.js canvas instance
+    processSVGs(); // Assumes 'processSVGs' is a function defined elsewhere
 }

@@ -474,44 +474,6 @@ function dataURItoBlob(dataURI) {
     })
 }
 
-function setJpegDPI(dataURI) {
-    if (DEBUG) {
-        console.log("setJpegDPI()");
-    }
-
-    var raw = atob(dataURI.split(",")[1])
-      , mimeString = dataURI.split(",")[0]
-      , HEX = "";
-    for (i = 0; i < raw.length; i++) {
-        var _hex = raw.charCodeAt(i).toString(16);
-        HEX += 2 == _hex.length ? _hex : "0" + _hex
-    }
-    return HEX = (HEX = HEX.toUpperCase()).slice(0, 26) + "01012C012C" + HEX.slice(36),
-    base64 = btoa(HEX.match(/\w{2}/g).map(function(a) {
-        return String.fromCharCode(parseInt(a, 16))
-    }).join("")),
-    mimeString + "," + base64
-}
-
-function setPngDPI(dataURI) {
-    if (DEBUG) {
-        console.log("setPngDPI()");
-    }
-
-    var raw = atob(dataURI.split(",")[1])
-      , mimeString = dataURI.split(",")[0]
-      , HEX = "";
-    for (i = 0; i < raw.length; i++) {
-        var _hex = raw.charCodeAt(i).toString(16);
-        HEX += 2 == _hex.length ? _hex : "0" + _hex
-    }
-    return HEX = (HEX = HEX.toUpperCase()).slice(0, 70) + "00097048597300000EC400000EC401952B0E1B0000" + HEX.slice(70),
-    base64 = btoa(HEX.match(/\w{2}/g).map(function(a) {
-        return String.fromCharCode(parseInt(a, 16))
-    }).join("")),
-    mimeString + "," + base64
-}
-
 function autoSave($element) {
     if (DEBUG) {
         console.log("autoSave()");
@@ -2154,54 +2116,7 @@ var registerDownload = function(type) {
         })
     }).fail(function() {})
 };
-function downloadImageProxy($options) {
-    if (DEBUG) {
-        console.log("downloadImageProxy()");
-    }
 
-    $options || ($options = {});
-    var $canvases = $options.canvases || canvasarray
-      , $readyCanvases = $options.readyCanvases || []
-      , $callback = $options.callback || (1 === $canvases.length ? downloadImage2 : downloadImage3)
-      , $i = $options.i || 0
-      , tcanvas = new fabric.StaticCanvas;
-    tcanvas.setDimensions({
-        width: $canvases[$i].get("width"),
-        height: $canvases[$i].get("height")
-    }),
-    "string" != typeof $canvases[$i].backgroundColor && ($canvases[$i].backgroundColor = ""),
-    tcanvas.loadFromJSON(JSON.stringify($canvases[$i].toDatalessJSON(properties_to_save)), function() {
-        setCanvasBg($canvases[$i], $canvases[$i].bgsrc, "", $canvases[$i].bgScale),
-        addBackgroundLayer($canvases[$i], tcanvas).then(function(tcanvas) {
-            DEBUG && console.log("$i; " + $i),
-            DEBUG && console.log($canvases.length),
-            $readyCanvases[$i] = tcanvas,
-            $i++,
-            $readyCanvases.length >= $canvases.length || $i > $canvases.length ? $callback({
-                canvases: $readyCanvases
-            }) : downloadImageProxy({
-                canvases: $canvases,
-                readyCanvases: $readyCanvases,
-                i: $i,
-                callback: $callback
-            })
-        }).catch(function($res) {
-            DEBUG && console.log($res)
-        })
-    })
-}
-function toggleHiddenStatusOfObjects() {
-    if (DEBUG) {
-        console.log("toggleHiddenStatusOfObjects()");
-    }
-
-    for (var $i = 0; canvasarray[$i]; )
-        canvasarray[$i].forEachObject(function($o) {
-            $o.hidden && ($o.visible ? $o.visible = !1 : $o.visible = !0)
-        }),
-        canvasarray[$i].renderAll(),
-        $i++
-}
 var globalRow = 0
   , globalCol = 0
   , toastMsg = null
@@ -2388,6 +2303,7 @@ var checkSavePaper = function(fn) {
   , hideLoadingSpin = function() {
     $("#pdf-preview-div .loading-spin").hide()
 };
+
 function getTemplateThumbnail() {
     if (DEBUG) {
         console.log("getTemplateThumbnail()");
@@ -2413,6 +2329,7 @@ function getTemplateThumbnail() {
     setZoom(initialZoom),
     dataURL
 }
+
 function saveAsTemplateFile() {
     if (DEBUG) {
         console.log("saveAsTemplateFile()");
@@ -2651,18 +2568,6 @@ function saveAsElement(pngdataURL, jsonData) {
     })
 }
 
-function proceed_savetemplate() {
-    if (DEBUG) {
-        console.log("proceed_savetemplate");
-    }
-    
-    $("#savetemplate_modal").is(":visible") && !newTemplateTagsEdit.validate() || ($("#savetemplate_modal").modal("hide"),
-    appSpinner.show(),
-    $("#saveastemplate").show(),
-    canvas.discardActiveObject().renderAll(),
-    processSVGs())
-}
-
 function makeObjectNotSelectable($object) {
     if (DEBUG) {
         console.log("makeObjectNotSelectable");
@@ -2865,20 +2770,6 @@ function getBg2($obj, scalex) {
     )
 }
 
-function removeDeletedCanvasesProxy($options) {
-    if (DEBUG) {
-        console.log("removeDeletedCanvasesProxy()");
-    }
-    DEBUG && console.log("removeDeletedCanvasesProxy $canvases:"),
-    $options || ($options = {});
-    var $canvases = $options.canvases || canvasarray;
-    DEBUG && console.log($canvases),
-    rasterizeObjectsProxy({
-        canvases: $canvases,
-        callback: removeDeletedCanvases
-    })
-}
-
 function createBleedForPDF($options) {
     if (DEBUG) {
         console.log("createBleedForPDF()");
@@ -2920,70 +2811,6 @@ function createBleedForPDF($options) {
         }),
         object.setCoords()
     })
-}
-
-function downloadImage2($options) {
-    if (DEBUG) {
-        console.log("downloadImage2()");
-    }
-
-    $options || ($options = {});
-    var $canvases = $options.canvases || canvasarray
-      , $format = $options.format || "jpeg";
-    "jpg" === $format && ($format = "jpeg");
-    var id = loadedtemplateid;
-    0 === loadedtemplateid && (id = "new");
-    var filename = "wayak_" + id + "." + $format
-      , metrics = $("input[name=metric_units1]:checked").val()
-      , multiplier = 1;
-    ("jpeg" == $format || "png" == $format && "px" == metrics && !/geofilter/.test(template_type)) && (multiplier = 3.125);
-    for (var $i = 0; $i < $canvases.length; ) {
-        if ($canvases[$i]) {
-            "jpeg" == $format && ($canvases[$i].backgroundColor || $canvases[$i].set({
-                backgroundColor: "#ffffff"
-            })),
-            $canvases[$i].setDimensions(),
-            "geofilter2" == template_type && removeGeofilterOverlay();
-            var dataURL = $canvases[$i].toDataURL({
-                format: $format,
-                quality: 1,
-                multiplier: multiplier / fabric.devicePixelRatio,
-                enableRetinaScaling: 1
-            });
-            if (dataURL = $canvases[$i].toDataURL({
-                format: $format,
-                quality: 1,
-                multiplier: multiplier / fabric.devicePixelRatio,
-                enableRetinaScaling: 1
-            }),
-            "geofilter2" == template_type && setGeofilterOverlay(),
-            "jpeg" == $format ? dataURL = setJpegDPI(dataURL) : "png" == $format && "geofilter" != template_type && "geofilter2" != template_type && (dataURL = setPngDPI(dataURL)),
-            isMac && isSafari || "png" == $format && "geofilter" == template_type || "png" == $format && "geofilter2" == template_type) {
-                var url = appUrl + "design/saveimage.php";
-                $.post(url, {
-                    file: filename,
-                    data: dataURL,
-                    template_type: template_type
-                }).done(function($answer) {
-                    $answer.length > 1 && ($("#autosave").data("saved", "yes"),
-                    window.location.href = appUrl + "design/downloadfile.php?file=" + $answer + "&filename=" + filename)
-                }).fail(function() {
-                    var blob = dataURItoBlob(dataURL);
-                    saveAs(blob, filename)
-                }).always(function() {
-                    appSpinner.hide(),
-                    setZoom($("#zoomperc").data("oldScaleValue"))
-                })
-            } else {
-                appSpinner.hide();
-                var blob = dataURItoBlob(dataURL);
-                saveAs(blob, filename)
-            }
-        }
-        $i++
-    }
-    setZoom($("#zoomperc").data("oldScaleValue")),
-    toggleHiddenStatusOfObjects()
 }
 
 function removeDeletedCanvases($canvases, $callback) {
