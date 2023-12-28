@@ -990,38 +990,13 @@ class EditorController extends Controller
 
 		$template_ids = isset($request['id']) ? $request['id'] : null;
 		$language_code = isset($request['language_code']) ? $request['language_code'] : 'en';
-		// $language_code = 'es';
-
-		// $templates = Redis::keys('template:*');
+		
+		$array_final = $this->getJSONTemplate($template_ids, $language_code);
 
 		// echo "<pre>";
-		// foreach ($templates as $original_template_key) {
-		// 	$template_key = str_replace('template:', null, $original_template_key);
-		// 	$template_key = str_replace(':jsondata', null, $template_key);
-		// 	$new_template_key = str_replace('template:','template:en:',$original_template_key);
-
-		// 	Redis::rename($original_template_key , $new_template_key);
-
-		// 	// print_r("\n");
-		// 	// print_r( $template_key );
-		// 	// print_r("\n");
-		// 	// print_r( str_replace('template:','template:en:',$original_template_key) );
-		// 	// print_r("\n");
-		// }
+		// print_r($array_final);
 		// exit;
-
-		$array_final = $this->getJSONTemplate($template_ids, $language_code);
-		// $options = array(
-		// 	'width' => 200,
-		// 	'height' => 400,
-		// 	'metrics' => '9x7',
-		// 	'type' => '',
-		// 	'instructionsId' => '',
-		// 	'scriptVersion' => 4
-		// );
-
-		// $options = json_encode($options);
-
+		
 		return response()->json(
 			array(
 				'err' => 0,

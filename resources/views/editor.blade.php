@@ -253,6 +253,17 @@
                             <ul class="nav navbar-nav navbar-right am-icons-nav">
                                 <li style="top:20px; color:#333;font-weight: bold;">
                                     You are in a demo version. You will not be able to save the changes or download the image.
+                                    <button onclick="history.back()" style="
+                                        align-self: center;
+                                        background: #f73859;
+                                        border-radius: 25px;
+                                        color: #fff;
+                                        cursor: pointer;
+                                        font-size: 15px;
+                                        border: none;
+                                        margin-left: 16px;
+                                        padding: 2px 10px;
+                                    ">Go Back</button>
                                 </li>
                             </ul>
                         @endif

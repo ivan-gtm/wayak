@@ -1148,7 +1148,7 @@
                         "description": "Wayak Template",
                         "amount": {
                             "currency_code": "USD",
-                            "value": {{ $template->prices['original_price'] }}
+                            "value": {{ $template->prices['price'] }}
                         }
                     }]
                 });
