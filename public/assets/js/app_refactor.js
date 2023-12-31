@@ -2423,12 +2423,6 @@ function getTemplateJson() {
     return formatFinalJson(jsonCanvasArray);
 }
 
-function logDebug(message) {
-    if (DEBUG) {
-        console.log(message);
-    }
-}
-
 function getTemplateDimensions() {
     const width = (96 * parseFloat(document.getElementById("loadCanvasWid").value)).toFixed(2);
     const height = (96 * parseFloat(document.getElementById("loadCanvasHei").value)).toFixed(2);
@@ -2547,4 +2541,111 @@ function handleTemplateProcessing() {
     $("#saveastemplate").show();
     canvas.discardActiveObject().renderAll(); // Assumes 'canvas' is a globally accessible fabric.js canvas instance
     processSVGs(); // Assumes 'processSVGs' is a function defined elsewhere
+}
+
+
+/**
+ * Generates a thumbnail for the current template.
+ * @returns {string} - The data URL of the generated thumbnail.
+ */
+function getTemplateThumbnail() {
+    logDebug("Entering getTemplateThumbnail");
+
+    const firstCanvas = getFirstCanvas();
+    const initialZoom = getInitialZoom(firstCanvas);
+    const isEmptyBackground = checkIfBackgroundIsEmpty(firstCanvas);
+
+    prepareCanvasForThumbnail(firstCanvas, isEmptyBackground);
+    const dataURL = generateThumbnailDataURL(firstCanvas);
+    restoreCanvasState(firstCanvas, initialZoom, isEmptyBackground);
+
+    return dataURL;
+}
+
+/**
+ * Logs a message to the console if in DEBUG mode.
+ * @param {string} message - The message to log.
+ */
+function logDebug(message) {
+    if (DEBUG) { // Assumes 'DEBUG' is globally accessible
+        console.log(message);
+    }
+}
+
+/**
+ * Retrieves the first canvas from the global array.
+ * @returns {fabric.Canvas} - The first canvas object.
+ */
+function getFirstCanvas() {
+    return canvasarray[currentcanvasid]; // Assumes 'canvasarray' and 'currentcanvasid' are globally accessible
+}
+
+/**
+ * Gets the initial zoom level of the canvas.
+ * @param {fabric.Canvas} canvas - The canvas to retrieve the zoom from.
+ * @returns {number} - The zoom level.
+ */
+function getInitialZoom(canvas) {
+    return canvas.getZoom();
+}
+
+/**
+ * Checks if the canvas background is empty.
+ * @param {fabric.Canvas} canvas - The canvas to check.
+ * @returns {boolean} - True if the background is empty, otherwise false.
+ */
+function checkIfBackgroundIsEmpty(canvas) {
+    return !canvas.backgroundColor;
+}
+
+/**
+ * Prepares the canvas for thumbnail generation by setting the zoom and background color.
+ * @param {fabric.Canvas} canvas - The canvas to prepare.
+ * @param {boolean} isEmptyBackground - Indicates if the background is initially empty.
+ */
+function prepareCanvasForThumbnail(canvas, isEmptyBackground) {
+    setZoomForThumbnail();
+    if (isEmptyBackground) {
+        canvas.set({ backgroundColor: "#ffffff" });
+    }
+    if (template_type === "geofilter2") { // Assumes 'template_type' is globally accessible
+        removeGeofilterOverlay(); // Assumes this function is defined elsewhere
+    }
+}
+
+/**
+ * Generates the data URL for the canvas thumbnail.
+ * @param {fabric.Canvas} canvas - The canvas to generate the thumbnail for.
+ * @returns {string} - The data URL of the thumbnail.
+ */
+function generateThumbnailDataURL(canvas) {
+    return canvas.toDataURL({
+        format: "jpeg",
+        quality: 0.7
+    });
+}
+
+/**
+ * Restores the canvas to its initial state after generating the thumbnail.
+ * @param {fabric.Canvas} canvas - The canvas to restore.
+ * @param {number} initialZoom - The initial zoom level to restore to.
+ * @param {boolean} isEmptyBackground - Indicates if the background was initially empty.
+ */
+function restoreCanvasState(canvas, initialZoom, isEmptyBackground) {
+    if (template_type === "geofilter2") {
+        setGeofilterOverlay(); // Assumes this function is defined elsewhere
+    }
+    if (isEmptyBackground) {
+        canvas.set({ backgroundColor: "" });
+    }
+    setZoom(initialZoom);
+}
+
+/**
+ * Sets the zoom level of the canvas to fit the thumbnail size.
+ */
+function setZoomForThumbnail() {
+    const desiredThumbnailWidth = 800;
+    const canvasWidth = 96 * parseFloat(document.getElementById("loadCanvasWid").value);
+    setZoom(desiredThumbnailWidth / canvasWidth);
 }

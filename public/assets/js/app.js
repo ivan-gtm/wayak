@@ -1,4 +1,7 @@
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
+    if (DEBUG) {
+        console.log("asyncGeneratorStep()");
+    }
     try {
         var info = gen[key](arg)
           , value = info.value
@@ -2304,32 +2307,6 @@ var checkSavePaper = function(fn) {
     $("#pdf-preview-div .loading-spin").hide()
 };
 
-function getTemplateThumbnail() {
-    if (DEBUG) {
-        console.log("getTemplateThumbnail()");
-    }
-
-    var firstcanvas = canvasarray[currentcanvasid]
-      , initialZoom = firstcanvas.getZoom()
-      , isEmptyBackground = !1;
-    setZoom(350 / (96 * document.getElementById("loadCanvasWid").value)),
-    firstcanvas.backgroundColor || (isEmptyBackground = !0,
-    firstcanvas.set({
-        backgroundColor: "#ffffff"
-    })),
-    "geofilter2" == template_type && removeGeofilterOverlay();
-    var dataURL = firstcanvas.toDataURL({
-        format: "jpeg",
-        quality: .7
-    });
-    return "geofilter2" == template_type && setGeofilterOverlay(),
-    isEmptyBackground && firstcanvas.set({
-        backgroundColor: ""
-    }),
-    setZoom(initialZoom),
-    dataURL
-}
-
 function saveAsTemplateFile() {
     if (DEBUG) {
         console.log("saveAsTemplateFile()");
@@ -4619,6 +4596,9 @@ var newBgTagsEdit = $("#newBgTags").tagsField({
 //     !1
 // });
 var checkUploadedBg = function checkUploadedBg(ids) {
+    if (DEBUG) {
+        console.log("checkUploadedBg()");
+    }
     var ref = setTimeout(function() {
         $.ajax({
             method: "post",
@@ -6508,6 +6488,9 @@ function showDuplicateTemplateModal() {
     $(".loadDuplicatedTemplateFooter").removeClass("active")
 }
 function duplicateTemplate(el) {
+    if (DEBUG) {
+        console.log("duplicateTemplate()");
+    }
     loadedtemplateid && ($(el).html("Duplicating..."),
     $(el).attr("disabled", "disabled"),
     updateTemplate().then(function() {
@@ -6858,7 +6841,10 @@ var AppSpinner = function() {
 }
   , appSpinner = new AppSpinner;
 
-  function updatePatternFill($s) {
+function updatePatternFill($s) {
+    if (DEBUG) {
+        console.log("updatePatternFill()");
+    }
     var $ao = canvas.getActiveObject();
     $ao && ($ao.fill.update({
         scale: $s.value / 100 * .32 / fabric.devicePixelRatio
@@ -6867,6 +6853,9 @@ var AppSpinner = function() {
     canvas.renderAll())
 }
 function generatePatterns() {
+    if (DEBUG) {
+        console.log("generatePatterns()");
+    }
     var $offset = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : 0
       , $amount = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : 16
       , $keys = Object.keys(fabric.Color.colorNameMap)
@@ -6878,6 +6867,9 @@ function generatePatterns() {
     return $patterns
 }
 function getPatterns() {
+    if (DEBUG) {
+        console.log("getPatterns()");
+    }
     var $offset = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : 0
       , $tags = arguments.length > 1 ? arguments[1] : void 0;
     if ("undefined" == typeof patternsLoading || !patternsLoading) {
@@ -6916,11 +6908,17 @@ function getPatterns() {
     }
 }
 function changeDynamicPattern($object, $newSrc, $oldSrc) {
+    if (DEBUG) {
+        console.log("changeDynamicPattern()");
+    }
     $object._objects && !$object.isEmpty() ? $object._objects.map(function($c) {
         $c._objects && !$c.isEmpty() ? changeDynamicPattern($c, $newSrc, $oldSrc) : $c.fill && $c.fill instanceof fabric.Dpattern && $c.fill.src === $oldSrc && setDynamicPattern($c, $newSrc)
     }) : setDynamicPattern($object, $newSrc)
 }
 function setDynamicPattern($o, $src) {
+    if (DEBUG) {
+        console.log("setDynamicPattern()");
+    }
     $o.set("fill", new fabric.Dpattern({
         scale: .32 / fabric.devicePixelRatio,
         src: $src
@@ -6939,6 +6937,9 @@ function setDynamicPattern($o, $src) {
     canvas.renderAll()
 }
 function checkDpatterns() {
+    if (DEBUG) {
+        console.log("checkDpatterns()");
+    }
     for (var $i = 0; canvasarray[$i]; )
         $.each(canvasarray[$i]._objects, function(i, o) {
             !function restoreDpatternSource($o) {
@@ -6972,6 +6973,9 @@ function checkDpatterns() {
         $i++
 }
 function checkUTF8Symbols() {
+    if (DEBUG) {
+        console.log("checkUTF8Symbols()");
+    }
     var $font = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : ""
       , callback = arguments.length > 1 ? arguments[1] : void 0;
     if (!$font)
@@ -7007,6 +7011,9 @@ function checkUTF8Symbols() {
     })
 }
 function setupSymbolsPanel() {
+    if (DEBUG) {
+        console.log("setupSymbolsPanel()");
+    }
     var $font = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : ""
       , $text = canvas.getActiveObject();
     if ($text)
@@ -7134,6 +7141,9 @@ $(".left-sidebar-dropdown-menu").on("hide.bs.dropdown", function(e) {
 var webSocketConn = !1
   , countConnection = 0;
 function wsConection() {
+    if (DEBUG) {
+        console.log("wsConection()");
+    }
     var wsDir = 'wss://game.example.com/ws/updates';
     var conn = new WebSocket(wsDir);
     conn.onopen = function(e) {
@@ -7339,6 +7349,9 @@ var toastInstance = null
   , aMethod_element = "get-elements"
   , type_element = "element";
 function initMasonry_element() {
+    if (DEBUG) {
+        console.log("initMasonry_element()");
+    }
     null != $(aContainer_element).data("infiniteScroll") && ($(aContainer_element).html(""),
     $(aContainer_element).infiniteScroll().infiniteScroll("destroy"),
     $(aContainer_element).masonry().masonry("destroy")),
@@ -7371,11 +7384,17 @@ function initMasonry_element() {
     $(aContainer_element).next().find(".iscroll-button").show()
 }
 function getItemHTML_element(item) {
+    if (DEBUG) {
+        console.log("initMasonry_element()");
+    }
     var img = item.img
       , thumb = item.thumb;
     return '<div class="col-xs-4 thumb ' + item.isownitem + '" id="' + item.id + '"><a class="thumbnail" href="#"><img crossorigin="' + item.crossorigin + '" class="catImage img-responsive" data-imgsrc="' + img + '" src="' + thumb + '" alt=""></a>' + ("designer" != currentUserRole ? '<i class="fa fa-trash-o deleteElement" id="' + item.id + '"></i>' : "") + "</div>"
 }
 function loadTemplates_element() {
+    if (DEBUG) {
+        console.log("loadTemplates_element()");
+    }
     infinites[type_element].infiniteScroll("loadNextPage"),
     setTimeout(function() {
         masonrys[type_element].layout(),
@@ -7423,6 +7442,9 @@ var flag_scroll_templates_bg = !1
   , aMethod_bg = "get-backgrounds"
   , type_bg = "bg";
 function initMasonry_bg() {
+    if (DEBUG) {
+        console.log("initMasonry_bg()");
+    }
     null != $(aContainer_bg).data("infiniteScroll") && ($(aContainer_bg).html(""),
     $(aContainer_bg).infiniteScroll().infiniteScroll("destroy"),
     $(aContainer_bg).masonry().masonry("destroy")),
@@ -7455,10 +7477,17 @@ function initMasonry_bg() {
     $(aContainer_bg).next().find(".iscroll-button").show()
 }
 function getItemHTML_bg(item) {
+    if (DEBUG) {
+        console.log("getItemHTML_bg()");
+    }
     demo_as_id;
     return "superadmin" == currentUserRole || "administrator" == currentUserRole ? '<div class="col-xs-4 thumb ' + item.is_own_item + '" id="' + item.id + '"><a class="thumbnail bgImage" href="#" data-imgsrc="' + item.url + '"><img class="img-responsive" src="' + item.thumb + '" alt=""><span class="thumb-overlay"><h3>' + item.name + '</h3></span></a> <i class="fa fa-trash-o deleteBg" id="' + item.id + '"></i></div>' : '<div class="col-xs-4 thumb ' + item.is_own_item + '" id="' + item.id + '"><a class="thumbnail bgImage" href="#" data-imgsrc="' + item.url + '"><img class="img-responsive" src="' + item.thumb + '" alt=""><span class="thumb-overlay"><h3>' + item.name + "</h3></span></a></div>"
 }
 function loadTemplates_bg() {
+    if (DEBUG) {
+        console.log("loadTemplates_bg()");
+    }
+
     infinites[type_bg].infiniteScroll("loadNextPage"),
     setTimeout(function() {
         masonrys[type_bg].layout(),
@@ -7490,6 +7519,9 @@ var flag_scroll_templates_text = !1
   , aMethod_text = "get-texts"
   , type_text = "text";
 function initMasonry_text() {
+    if (DEBUG) {
+        console.log("initMasonry_text()");
+    }
     null != $(aContainer_text).data("infiniteScroll") && ($(aContainer_text).html(""),
     $(aContainer_text).infiniteScroll().infiniteScroll("destroy"),
     $(aContainer_text).masonry().masonry("destroy")),
@@ -7525,6 +7557,9 @@ function getItemHTML_text(item) {
     return '<div class="col-xs-6 thumb ' + item.isownitem + '" id="' + item.text_id + '"><a class="thumbnail" title="' + item.text_name + '" href="#" data-target="' + item.text_id + '"><img class="textImage img-responsive" src="' + item.text_thumbnail + '" alt=""></a><i class="fa fa-trash-o deleteText" id="' + item.text_id + '"></i></div>'
 }
 function loadTemplates_text() {
+    if (DEBUG) {
+        console.log("loadTemplates_text()");
+    }
     infinites[type_text].infiniteScroll("loadNextPage"),
     setTimeout(function() {
         masonrys[type_text].layout(),
@@ -7556,6 +7591,9 @@ var flag_scroll_templates_template = !1
   , aMethod_template = "get-thumbnails"
   , type_template = "template";
 function initMasonry_template() {
+    if (DEBUG) {
+        console.log("initMasonry_template()");
+    }
     null != $(aContainer_template).data("infiniteScroll") && ($(aContainer_template).html(""),
     $(aContainer_template).infiniteScroll().infiniteScroll("destroy"),
     $(aContainer_template).masonry().masonry("destroy")),
@@ -7589,6 +7627,9 @@ function initMasonry_template() {
     $('#template-status').val("Thumbs Loaded")
 }
 function getItemHTML_template($row) {
+    if (DEBUG) {
+        console.log("getItemHTML_template()");
+    }
     return $templates = '<div class="col-xs-6 thumb" id="' + $row.template_id + '">',
     $row.instructionsId && ($templates += '<a class="instructions-overlay" onclick="loadInstructions(' + $row.template_id + ')" data-toggle="modal" data-target="#sellerInstructions"><h3>Seller Instructions</h3></a>'),
     $templates += '<a class="thumbnail" data-target="' + $row.template_id + '">',
@@ -7605,6 +7646,9 @@ function getItemHTML_template($row) {
     $templates
 }
 function loadTemplates_template() {
+    if (DEBUG) {
+        console.log("loadTemplates_template()");
+    }
     infinites[type_template].infiniteScroll("loadNextPage"),
     setTimeout(function() {
         masonrys[type_template].layout()
@@ -7630,6 +7674,9 @@ $(aContainer_template).on("load.infiniteScroll", function(event, response) {
 });
 var flag_scroll_templates_related = !1, limit_related = 24, aContainer_related = "#related_products_container", aSearch_related = "", aMethod_related = "get-related-products", type_related = "related", templateId_related;
 function initMasonry_related(templateId) {
+    if (DEBUG) {
+        console.log("initMasonry_related()");
+    }
     templateId_related = templateId,
     null != $(aContainer_related).data("infiniteScroll") && ($(aContainer_related).html(""),
     $(aContainer_related).infiniteScroll().infiniteScroll("destroy"),
@@ -7662,6 +7709,9 @@ function initMasonry_related(templateId) {
     $(aContainer_related).next().find(".iscroll-button").show()
 }
 function getItemHTML_related(product) {
+    if (DEBUG) {
+        console.log("getItemHTML_related()");
+    }
     var newElement = $("<div/>");
     $(newElement).addClass("grid-item"),
     $(newElement).css("width", 140),
@@ -7678,6 +7728,9 @@ function getItemHTML_related(product) {
     $("<div/>").append(newElement).html()
 }
 function loadTemplates_related() {
+    if (DEBUG) {
+        console.log("loadTemplates_related()");
+    }
     infinites[type_related].infiniteScroll("loadNextPage"),
     setTimeout(function() {
         masonrys[type_related] && (masonrys[type_related].layout(),
@@ -7708,6 +7761,9 @@ $(aContainer_related).on("load.infiniteScroll", function(event, response) {
 });
 var flag_scroll_templates_image = !1, limit_image = 24, aContainer_image = ".uploaded_images_list", aSearch_image = "", aMethod_image = "get-uploaded-images", type_image = "image", templateId_image;
 function initMasonry_image(templateId) {
+    if (DEBUG) {
+        console.log("initMasonry_image()");
+    }
     templateId_image = templateId,
     null != $(aContainer_image).data("infiniteScroll") && ($(aContainer_image).html(""),
     $(aContainer_image).infiniteScroll().infiniteScroll("destroy"),
@@ -7740,6 +7796,9 @@ function initMasonry_image(templateId) {
     $(aContainer_image).next().find(".iscroll-button").show()
 }
 function getItemHTML_image(product) {
+    if (DEBUG) {
+        console.log("getItemHTML_image()");
+    }
     var deleteBtn = demo_as_id ? "" : '<i data-target="' + product.id + '" class="fa fa-trash-o deleteImage"></i>';
     return '<div data-id="' + product.id + '" class="dz-preview dz-processing dz-image-preview dz-success dz-complete thumb"><div class="dz-image"><img data-dz-thumbnail="" alt="' + product.filename + '" src="' + product.img + '"></div> \x3c!-- <div class="dz-details"> <div class="dz-filename"><span data-dz-name="">' + product.filename + "</span></div>  </div> --\x3e" + deleteBtn + "</div>"
 }
@@ -7758,6 +7817,9 @@ function loadTemplates_image() {
     }, 1500)
 }
 function loadReadMore(container, loadFunctionName) {
+    if (DEBUG) {
+        console.log("loadReadMore()");
+    }
     "page-load" == $(container).next().attr("class") && $(container).next().remove();
     var html_load = '<div class="page-load">';
     html_load += '<div class="loader-ellips"><img class="loading-spin" src="' + appUrl + 'design/assets/img/loader.svg"></div>',
