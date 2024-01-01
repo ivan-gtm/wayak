@@ -2563,16 +2563,6 @@ function getTemplateThumbnail() {
 }
 
 /**
- * Logs a message to the console if in DEBUG mode.
- * @param {string} message - The message to log.
- */
-function logDebug(message) {
-    if (DEBUG) { // Assumes 'DEBUG' is globally accessible
-        console.log(message);
-    }
-}
-
-/**
  * Retrieves the first canvas from the global array.
  * @returns {fabric.Canvas} - The first canvas object.
  */
@@ -2648,4 +2638,100 @@ function setZoomForThumbnail() {
     const desiredThumbnailWidth = 800;
     const canvasWidth = 96 * parseFloat(document.getElementById("loadCanvasWid").value);
     setZoom(desiredThumbnailWidth / canvasWidth);
+}
+
+/**
+ * Checks and restores Dpattern sources in all canvases.
+ */
+function checkDpatterns() {
+    logDebug("MIGRATED:: checkDpatterns");
+
+    canvasarray.forEach((canvas) => { // Assumes 'canvasarray' is globally accessible
+        processCanvasObjectsDPatterns(canvas);
+    });
+}
+
+/**
+ * Logs a debug message if in DEBUG mode.
+ * @param {string} message - The message to log.
+ */
+function logDebug(message) {
+    if (DEBUG) { // Assumes 'DEBUG' is globally accessible
+        console.log(message);
+    }
+}
+
+/**
+ * Processes each object in a canvas to restore Dpattern sources.
+ * @param {fabric.Canvas} canvas - The canvas whose objects are to be processed.
+ */
+function processCanvasObjectsDPatterns(canvas) {
+    canvas._objects.forEach((object) => {
+        restoreDpatternSource(object);
+    });
+}
+
+/**
+ * Recursively restores Dpattern source for the given object and its children.
+ * @param {fabric.Object} object - The fabric object to process.
+ */
+function restoreDpatternSource(object) {
+    if (object._objects) {
+        object._objects.forEach(restoreDpatternSource);
+    }
+
+    if (shouldRestoreDpattern(object)) {
+        const patternProperties = extractPatternProperties(object.fill);
+        createAndSetDpattern(object, patternProperties);
+    }
+}
+
+/**
+ * Determines if Dpattern should be restored for the object.
+ * @param {fabric.Object} object - The object to check.
+ * @returns {boolean} - True if Dpattern should be restored, false otherwise.
+ */
+function shouldRestoreDpattern(object) {
+    return typeof object.fill === 'object' && /pattern/.test(object.fill.type) && !(object.fill instanceof fabric.Dpattern); // Assumes 'fabric.Dpattern' is accessible
+}
+
+/**
+ * Extracts pattern properties from the given fill object.
+ * @param {Object} fill - The fill object to extract properties from.
+ * @returns {Object} - The extracted pattern properties.
+ */
+function extractPatternProperties(fill) {
+    const properties = {
+        repeat: fill.repeat,
+        crossOrigin: fill.crossOrigin,
+        offsetX: fill.offsetX,
+        offsetY: fill.offsetY,
+        patternTransform: fill.patternTransform ? fill.patternTransform.concat() : null,
+        padding: fill.padding,
+        scale: fill.scale,
+        src: fill.src,
+        width: fill.width,
+        height: fill.height
+    };
+    if (fill.source && typeof fill.source.src === 'string') {
+        properties.source = fill.source;
+    }
+    return properties;
+}
+
+/**
+ * Creates a Dpattern from the provided properties and sets it to the object's fill.
+ * @param {fabric.Object} object - The fabric object to set the fill for.
+ * @param {Object} patternProperties - The properties to create the Dpattern from.
+ */
+function createAndSetDpattern(object, patternProperties) {
+    fabric.Dpattern.fromObject(patternProperties, function (fill) {
+        object.set({
+            fill: fill,
+            dirty: true
+        });
+        if (object.canvas) {
+            object.canvas.renderAll();
+        }
+    });
 }

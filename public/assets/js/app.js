@@ -6936,42 +6936,7 @@ function setDynamicPattern($o, $src) {
     $o.dirty = !0,
     canvas.renderAll()
 }
-function checkDpatterns() {
-    if (DEBUG) {
-        console.log("checkDpatterns()");
-    }
-    for (var $i = 0; canvasarray[$i]; )
-        $.each(canvasarray[$i]._objects, function(i, o) {
-            !function restoreDpatternSource($o) {
-                if ($o._objects && $.each($o._objects, function($a, $child) {
-                    return restoreDpatternSource($child)
-                }),
-                "object" === _typeof($o.fill) && /pattern/.test($o.fill.type) && !($o.fill instanceof fabric.Dpattern)) {
-                    var $p = {
-                        repeat: $o.fill.repeat,
-                        crossOrigin: $o.fill.crossOrigin,
-                        offsetX: $o.fill.offsetX,
-                        offsetY: $o.fill.offsetY,
-                        patternTransform: $o.fill.patternTransform ? $o.fill.patternTransform.concat() : null,
-                        padding: $o.fill.padding,
-                        scale: $o.fill.scale,
-                        src: $o.fill.src,
-                        width: $o.fill.width,
-                        height: $o.fill.height
-                    };
-                    $o.fill.source && "string" == typeof $o.fill.source.src && ($p.source = $o.fill.source),
-                    fabric.Dpattern.fromObject($p, function(fill) {
-                        $o.set({
-                            fill: fill,
-                            dirty: !0
-                        }),
-                        $o.canvas.renderAll()
-                    })
-                }
-            }(o)
-        }),
-        $i++
-}
+
 function checkUTF8Symbols() {
     if (DEBUG) {
         console.log("checkUTF8Symbols()");
