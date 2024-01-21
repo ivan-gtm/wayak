@@ -430,7 +430,7 @@ function processFonts(jsonCanvasArray) {
     if (fontFamilies.length === 0) {
         proceedOpenTemplate(jsonCanvasArray);
     } else {
-        loadFonts(fontFamilies, jsonCanvasArray);
+        loadAllTemplateFonts(fontFamilies, jsonCanvasArray);
     }
 }
 
@@ -438,7 +438,7 @@ function extractFontFamilies(object, fontFamilies) {
     // Extract font families from the object
 }
 
-function loadFonts(families, jsonCanvasArray) {
+function loadAllTemplateFonts(families, jsonCanvasArray) {
     families = [...new Set(families)]; // Remove duplicates
     WebFontConfig = {
         // WebFontConfig setup
@@ -581,7 +581,7 @@ function save_history(forceSave = false) {
 
     if (s_history) {
         setTimeout(() => {
-            updateCanvasDimensions();
+            updateCanvasDimensionsHistory();
             const canvasState = JSON.stringify(canvas.toDatalessJSON(["locked"]));
 
             if (shouldSaveState(canvasState, forceSave)) {
@@ -602,7 +602,7 @@ function initializeCanvasHistory() {
     }
 }
 
-function updateCanvasDimensions() {
+function updateCanvasDimensionsHistory() {
     canvas.cwidth = 96 * $("#loadCanvasWid").val();
     canvas.cheight = 96 * $("#loadCanvasHei").val();
 }
@@ -1918,9 +1918,9 @@ function performPostLoadActions() {
     setWorkspace();
 }
 
-function isGeofilterTemplate() {
-    return template_type === "geofilter" || template_type === "geofilter2";
-}
+// function isGeofilterTemplate() {
+//     return template_type === "geofilter" || template_type === "geofilter2";
+// }
 
 function isGeofilter2Template() {
     return template_type === "geofilter2";
@@ -2251,7 +2251,7 @@ function setZoomToFitWidth(canvasWidth, maxWidth) {
 }
 
 function setZoomToFitHeight(canvasHeight, maxHeight) {
-    const zoomLevel = 1 / (canvasHeight / maxHeight);
+    var zoomLevel = 1 / (canvasHeight / maxHeight);
     setZoom(zoomLevel);
 }
 
@@ -2260,10 +2260,10 @@ function setCanvasSize() {
         console.log("MIGRATED:: setCanvasSize()");
     }
 
-    const canvasWidthInput = document.getElementById("loadCanvasWid").value;
-    const canvasHeightInput = document.getElementById("loadCanvasHei").value;
+    // var canvasWidthInput = document.getElementById("loadCanvasWid").value;
+    // var canvasHeightInput = document.getElementById("loadCanvasHei").value;
 
-    applyCanvasDimensions(canvasWidthInput, canvasHeightInput);
+    applyCanvasDimensions();
     adjustIconsAfterResizing();
     hideCanvasSizeModal();
 }
@@ -2272,10 +2272,12 @@ function hideCanvasSizeModal() {
     $("#canvaswh_modal").modal("hide");
 }
 
-function applyCanvasDimensions(widthInput, heightInput) {
-    const widthInPixels = widthInput * 96;
-    const heightInPixels = heightInput * 96;
-    setCanvasWidthHeight(widthInPixels, heightInPixels);
+function applyCanvasDimensions() {
+    const newWidth = 96 * document.getElementById("loadCanvasWid").value * calculateZoomLevel();
+    const newHeight = 96 * document.getElementById("loadCanvasHei").value * calculateZoomLevel();
+
+    setCanvasWidthHeight(newWidth, newHeight);
+    // setCanvasWidthHeight(widthInPixels, heightInPixels);
 }
 
 function adjustIconsAfterResizing() {
