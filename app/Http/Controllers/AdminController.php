@@ -76,7 +76,7 @@ class AdminController extends Controller
 
     function thumbnailGeneration(Request $request){
         $language_code = 'en';
-        $country_code = 'mx';
+        $country_code = 'us';
         
         $current_page = 1;
         if( isset($request->page) ) {
@@ -95,6 +95,7 @@ class AdminController extends Controller
                 thumbnails.template_id = templates.template_id
                 AND thumbnails.language_code = 'en'
                 AND thumbnails.thumbnail_ready IS NULL
+                AND thumbnails.status = 1
             LIMIT 2000") 
         );
 

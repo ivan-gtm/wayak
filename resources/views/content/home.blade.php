@@ -102,7 +102,7 @@
                                                                         <div class="slider-refocus title-card">
                                                                             <div class="ptrack-content">
                                                                                 <a href="{{ $menu->templates[$i]->url }}" data-cta-track="Display Fonts">
-                                                                                    <span class=" lazyloaded" style="" data-responsive="true">
+                                                                                    <span class=" lazyloaded" data-responsive="true">
                                                                                         <picture>
                                                                                             <source media="(min-width: 450px)" data-srcset="{{ asset('categories/en/'.$menu->templates[$i]->img) }} 1x, {{ asset('categories/en/'.$menu->templates[$i]->img) }} 2x" type="image/webp" srcset="{{ asset('categories/en/'.$menu->templates[$i]->img) }} 1x, {{ asset('categories/en/'.$menu->templates[$i]->img) }} 2x">
                                                                                             <source data-srcset="{{ asset('categories/en/'.$menu->templates[$i]->img) }} 1x, {{ asset('categories/en/'.$menu->templates[$i]->img) }} 2x" type="image/webp" srcset="{{ asset('categories/en/'.$menu->templates[$i]->img) }} 1x, {{ asset('categories/en/'.$menu->templates[$i]->img) }} 2x">
@@ -163,6 +163,7 @@
                                                                             <a class="slider-refocus" href="{{ 
                                                                                                 route( 'template.productDetail',[
                                                                                                     'country' => $country,
+                                                                                                    'coupon' => $coupon,
                                                                                                     'slug' => $template->slug
                                                                                                 ] )
                                                                                             }}">

@@ -204,14 +204,14 @@
                                                         <p class="wt-text-title-03 wt-mr-xs-1">
                                                             <span class="wt-screen-reader-only">Price:</span>
                                                             <span>
-                                                                @if(isset($sale) && $sale != null )
+                                                                @if(isset($sale) && $sale != null || isset($couponDetails) )
                                                                     US${{ $template->prices['price'] }}
                                                                 @else
                                                                     US${{ $template->prices['original_price'] }}
                                                                 @endif
                                                             </span>
                                                         </p>
-                                                        @if(isset($sale) && $sale != null )
+                                                        @if(isset($sale) && $sale != null || isset($couponDetails) )
                                                             <div class="wt-display-flex-xs wt-text-caption wt-text-gray">
                                                                 <div class="wt-text-strikethrough wt-mr-xs-1">
                                                                     <span class="wt-screen-reader-only">Original Price:</span>

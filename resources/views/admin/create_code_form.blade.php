@@ -91,25 +91,52 @@
                         <input type="hidden" name="type" value="{{ request('type') }}">
                         <input type="hidden" name="product_id" value="{{ request('product_id') }}">
                         <input type="hidden" name="category" value="{{ request('category') }}">
+
+                        <!-- Field to select the discount type -->
                         <div class="form-group">
-                            <label for="exampleInputEmail1">How many people will be able to redeem this code?</label>
+                            <label for="discountType">Discount Type</label>
+                            <select class="form-control" id="discountType" name="discount_type" required>
+                                <option value="">Select Discount Type</option>
+                                <option value="free">Make Product Free</option>
+                                <option value="percentage">Percentage Discount</option>
+                                <option value="fixed">Fixed Price</option>
+                            </select>
+                        </div>
+
+                        <!-- Percentage Discount Field -->
+                        <div class="form-group percentage-field" style="display:none;">
+                            <label for="percentageDiscount">Percentage Discount (Optional)</label>
+                            <input type="number" class="form-control" id="percentageDiscount" name="percentage_discount" placeholder="Enter discount percentage" min="1" max="100" step>
+                            <small id="percentageDiscountHelp" class="form-text text-muted">This will apply a discount on the regular product price if specified.</small>
+                        </div>
+
+                        <!-- Fixed Price Field -->
+                        <div class="form-group fixed-field" style="display:none;">
+                            <label for="fixedPrice">Fixed Price (Optional)</label>
+                            <input type="text" class="form-control" id="fixedPrice" name="fixed_price" placeholder="Enter fixed price for the product">
+                            <small id="fixedPriceHelp" class="form-text text-muted">This will override the final product price if specified.</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="numberOfRedeemers">How many people will be able to redeem this code?</label>
                             <input type="number" class="form-control" id="numberOfRedeemers" name="numberOfRedeemers" aria-describedby="emailHelp">
                         </div>
                         <div class="form-group">
-                            <label for="exampleFormControlSelect2">Select if people must be users of the platform.</label>
+                            <label for="userRequirement">Select if people must be users of the platform.</label>
                             <select multiple class="form-control" id="userRequirement" name="userRequirement">
                                 <option value="anonymous" selected>Anonymous</option>
                                 <option value="logged_in">Only Logged in users</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="exampleInputPassword1">Select until when the code is valid.</label>
-                            <input type="datetime-local" class="form-control" id="expires_at" name="expiresAt">
+                            <label for="expires_at">Select until when the code is valid.</label>
+                            <input type="datetime-local" class="form-control" id="expires_at" name="expiresAt" required>
                         </div>
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
                 </div>
             </div>
+
         @endif
 
         <div class="row">
@@ -148,10 +175,13 @@
                                 Some quick example text to build on the card title and make up the bulk of the card's content.
                             </p> -->
                             <h4 class="card-text text-center" style="font-size:15px">Type: {{ $item['type'] }}</h4>
+                            <h4 class="card-text text-center" style="font-size:15px">Discount Type: {{ $item['discountType'] }}</h4>
                             <h1 class="card-text text-center">{{ $item['code'] }}</h1>
                             <h3 class="card-text text-center" style="font-size:15px">Product: {{ $item['product_id'] }}</h3>
                             <h3 class="card-text text-center" style="font-size:15px">Category: {{ $item['category_id'] }}</h3>
                             <h3 class="card-text text-center" style="font-size:15px">number_of_redeemers: {{ $item['number_of_redeemers'] }}</h3>
+                            <h3 class="card-text text-center" style="font-size:15px">percentage_discount: {{ $item['percentage_discount'] }}</h3>
+                            <h3 class="card-text text-center" style="font-size:15px">fixed_price: {{ $item['fixed_price'] }}</h3>
                             <h3 class="card-text text-center" style="font-size:15px">user_requirement: {{ $item['user_requirement'] }}</h3>
                             <h3 class="card-text text-center" style="font-size:15px">expires_at: {{ $item['expires_at'] }}</h3>
                             @if(isset($item['template_img']))
@@ -177,6 +207,21 @@
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/js/bootstrap.min.js" integrity="sha384-5h4UG+6GOuV9qXh6HqOLwZMY4mnLPraeTrjT5v07o347pj6IkfuoASuGBhfDsp3d" crossorigin="anonymous"></script>
     -->
+    <script>
+    document.getElementById('discountType').addEventListener('change', function() {
+        var value = this.value;
+        var percentageField = document.querySelector('.percentage-field');
+        var fixedField = document.querySelector('.fixed-field');
+        percentageField.style.display = 'none';
+        fixedField.style.display = 'none';
+
+        if (value === 'percentage') {
+            percentageField.style.display = 'block';
+        } else if (value === 'fixed') {
+            fixedField.style.display = 'block';
+        }
+    });
+    </script>
 </body>
 
 </html>

@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\AdminCodeController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AdminCodeController;
 use App\Http\Controllers\ContentController;
 use App\Http\Controllers\EditorController;
 use App\Http\Controllers\CategoryController;
@@ -35,6 +35,8 @@ use App\Http\Controllers\TemplettScrapperController;
 use App\Http\Controllers\LinkedInController;
 
 Route::get('/api/demo-url', [AdminController::class, 'getTemplateObjects']);
+Route::get('/thumbnail-generation', [AdminController::class, 'thumbnailGeneration'])->name('admin.thumbnailGeneration');
+Route::get('/template/edit/{language_code}/{template_key}', [EditorController::class, 'adminTemplateEditor'])->name('admin.edit.template');
 
 Route::prefix('admin')->middleware('auth')->group(function () {
     // SCRAPPER
@@ -104,10 +106,9 @@ Route::prefix('admin')->middleware('auth')->group(function () {
             
         // TEMPORAL
             Route::get('/refactor', [AdminController::class, 'refactor'])->name('admin.keyrefactor');
-            Route::get('/thumbnail-generation', [AdminController::class, 'thumbnailGeneration'])->name('admin.thumbnailGeneration');
             
         // TEMPLATES TRANLATION
-            Route::get('/template/edit/{language_code}/{template_key}', [EditorController::class, 'adminTemplateEditor'])->name('admin.edit.template');
+            
 
             Route::get('/bulk-translate/{from}/{to}', [AdminController::class, 'bulkTranslate'])->name('admin.bulkTranslateText');
             Route::post('/bulk-translate/{from}/{to}', [AdminController::class, 'bulkTranslate'])->name('admin.bulkTranslate');

@@ -107,7 +107,7 @@
                                 <div class="">
                                     <div class="search-grid-container">
                                         @foreach($templates as $template)
-                                        <a href="{{ route( 'template.productDetail', [ 'country' => $country, 'slug' => $template->slug ] ) }}">
+                                        <a href="{{ route( 'template.productDetail', [ 'country' => $country, 'slug' => $template->slug, 'coupon' => $coupon ] ) }}">
                                             <figure>
                                                 <img alt="{{ $template->title }}" crossorigin="anonymous" loading="lazy" data-categ="invitations" data-value="{{ $template->_id }}" src="{{ str_replace('_carousel','_product_preview',$template->preview_image) }}" class="itemImg">
                                                 <figcaption>

@@ -34,56 +34,77 @@ class AdminCodeController extends Controller
     {
         $four_digit_code = rand(1000, 9999);
         $type = $request->input('type');
+        $discountType = $request->input('discount_type');
         $product_id = $request->input('product_id');
-        $category_id = ($type == 'product' || $type == 'any_type') ? null : $request->input('category');
-        $number_of_redeemers = $request->input('numberOfRedeemers',null);
-        $user_requirement = $request->input('userRequirement',null);
-        $expires_at = $request->input('expiresAt',null);
+        $category_id = ($type == 'product' || $type == 'category') ? $request->input('category') : null;
+        $fixed_price = $request->input('fixed_price', null);
+        $percentage_discount = $request->input('percentage_discount', null);
+        $number_of_redeemers = $request->input('numberOfRedeemers', null);
+        $user_requirement = $request->input('userRequirement', null);
+        $expires_at = $request->input('expiresAt', null);
+
+        if($discountType == 'free'){
+            $percentage_discount = 100;
+            $fixed_price = 0;
+        } elseif($discountType == 'percentage'){
+            $percentage_discount = intval($percentage_discount);
+            $fixed_price = 0;
+        } elseif($discountType == 'fixed'){
+            $percentage_discount = 0;
+            $fixed_price = number_format($fixed_price, 2);
+        }
 
         // Store the promotional code in Redis
         $promoKey = 'wayak:admin:template:code:' . $four_digit_code;
         Redis::hmset($promoKey, [
             'type' => $type,
+            'discountType' => $discountType,
             'product_id' => $product_id,
-            'category_id' => $category_id, 
+            'category_id' => $category_id,
+            'fixed_price' => $fixed_price,
+            'percentage_discount' => $percentage_discount,
             'number_of_redeemers' => $number_of_redeemers,
             'user_requirement' => $user_requirement,
             'expires_at' => $expires_at
         ]);
         Redis::expire($promoKey, self::EXPIRATION_TIME);  // Set an expiration for the promo code
 
-        // // Optionally, send a response to the user, e.g., redirecting back with a success message
-        // return redirect()->back()->with('success', 'Promotional code created successfully!');
+        // Fetch and return all created codes with their details
         $redis_codes = Redis::keys('wayak:admin:template:code:*');
-        $details = [];
         $codes = [];
-        
-        if(sizeof($redis_codes) > 0){
+
+        if (sizeof($redis_codes) > 0) {
             foreach ($redis_codes as $redis_key_code) {
-    
                 $details = Redis::hgetall($redis_key_code);
                 $details['code'] = $this->getCode($redis_key_code);
-    
+
                 if ($details['type'] == 'product') {
                     $details['template_img'] = $this->getThumbnailUrl($details['product_id']);
                 }
                 $codes[] = $details;
             }
         }
-        
+
         return redirect()->route('admin.code.manage', ['country' => $country])->with('success', 'Code created successfully!');
     }
 
-    function getCode($redis_key_code)
+    private function getCode($redis_key_code)
     {
-        // Use preg_match to extract digits
-        if (preg_match('/(\d+)/', $redis_key_code, $matches)) {
-            $digit_part = $matches[1];
-            return $digit_part;  // Outputs: 9177
-        }
-
-        return false;
+        // Assuming the code is the last part of the Redis key, separated by a colon
+        $parts = explode(':', $redis_key_code);
+        return end($parts); // Returns the last element from the parts array
     }
+
+    // function getCode($redis_key_code)
+    // {
+    //     // Use preg_match to extract digits
+    //     if (preg_match('/(\d+)/', $redis_key_code, $matches)) {
+    //         $digit_part = $matches[1];
+    //         return $digit_part;  // Outputs: 9177
+    //     }
+
+    //     return false;
+    // }
 
     function manageCodes($country)
     {

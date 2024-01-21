@@ -64,7 +64,7 @@
     @endif
 
     <header>
-        @if( $sale != null && $sale['status'] > 0)
+        @if( $sale != null && isset($sale['status']) && $sale['status'] > 0)
             @php
                 // Convert sale_ends_at to a Carbon instance for easy comparison
                 $saleEndsAt = \Carbon\Carbon::parse( $sale['sale_ends_at'] );

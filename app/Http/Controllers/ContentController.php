@@ -60,6 +60,7 @@ class ContentController extends Controller
             'menu' => $menu,
             'sale' => $sale,
             'search_query' => '',
+            'coupon' => '',
             'customer_id' => isset($user->customer_id) ? $user->customer_id : null,
             'carousels' => $carousels
         ]);
@@ -118,6 +119,16 @@ class ContentController extends Controller
 
         $menu = json_decode(Redis::get($redisPrefix . ':menu'));
         $sale = Redis::hgetall($redisPrefix . ':config:sales');
+        
+        $couponCode = $request->input('coupon', null);
+        if(isset($couponCode)){
+            $couponDetails = Redis::hgetall('wayak:admin:template:code:' . $request->coupon);
+            $sale['status'] = 1;
+            $sale['sale_ends_at'] = $couponDetails['expires_at'];
+            $sale['site_banner_txt'] = 'Coupon applied !';
+            $sale['site_banner_btn'] = 'Jjaja';
+        }
+
         if( Auth::check() ) {
             // User is logged in
             // $logged_id = Auth::id();
@@ -127,6 +138,7 @@ class ContentController extends Controller
         return view('content.home', [
             'language_code' => $locale,
             'country' => $country,
+            'coupon' => $couponCode,
             'menu' => $menu,
             'customer_id' => isset($user->customer_id) ? $user->customer_id : null,
             'sale' => $sale,
@@ -154,7 +166,7 @@ class ContentController extends Controller
         return false;
     }
     
-    public function showCategoryPage($country, $cat_lvl_1_slug = null, $cat_lvl_2_slug = null, $cat_lvl_3_slug = null, Request $request)
+    public function showCategoryPage($country, $catLevel1_slug = null, $catLevel2_slug = null, $catLevel3_slug = null, Request $request)
     {
 
         $locale = $this->getLocaleByCountry($country);
@@ -165,7 +177,7 @@ class ContentController extends Controller
 
         App::setLocale($locale);
 
-        $slugComponents = array_filter([$cat_lvl_1_slug, $cat_lvl_2_slug, $cat_lvl_3_slug]);
+        $slugComponents = array_filter([$catLevel1_slug, $catLevel2_slug, $catLevel3_slug]);
         $slug = '/' . implode('/', $slugComponents);
         $category_redis_key = 'wayak:' . $locale . ':categories:' . ltrim($slug, '/');
         
@@ -220,12 +232,22 @@ class ContentController extends Controller
             $templates[] = $template;
         }
 
+        
         $total_documents = Template::whereIn('categories', [$slug])->count();
         $last_page = ceil($total_documents / $per_page);
-
+        
         $sale = Redis::hgetall('wayak:' . $country . ':config:sales');
         $customer_id = null;
-
+        
+        $couponCode = $request->input('coupon', null);
+        if(isset($couponCode)){
+            $couponDetails = Redis::hgetall('wayak:admin:template:code:' . $request->coupon);
+            $sale['status'] = 1;
+            $sale['sale_ends_at'] = $couponDetails['expires_at'];
+            $sale['site_banner_txt'] = 'Coupon applied !';
+            $sale['site_banner_btn'] = 'Jjaja';
+        }
+        
         // User is logged in
         if( Auth::check() ) {
             $user = Auth::user();
@@ -237,6 +259,7 @@ class ContentController extends Controller
             'language_code' => $locale,
             'menu' => $menu,
             'sale' => $sale,
+            'coupon' => $couponCode,
             'customer_id' => $customer_id,
             'search_query' => '',
             'category_obj' => $category_obj,
@@ -303,9 +326,6 @@ class ContentController extends Controller
         $breadcrumbs_str = Redis::get('wayak:en:categories:' . $category_name);
         $breadcrumbs_obj = json_decode($breadcrumbs_str);
 
-        // echo $category_name;
-        // exit;
-
         self::getBreadCrumbs($breadcrumbs_obj);
 
         $url = "";
@@ -335,14 +355,47 @@ class ContentController extends Controller
 
         $customerId = $this->getCustomerId($request);
         $isPurchased = $this->userPurchaseService->isTemplateIdInPurchases($customerId, $template_id);
+        
+        $couponDetails = null;
+        if( isset($request->coupon) ) {
+            $couponCode = $request->coupon;
+            $couponDetails = Redis::hgetall('wayak:admin:template:code:' . $couponCode);
+
+            // echo "<pre>";
+            // print_r($couponDetails['expires_at']);
+            // exit;
+            
+            if( isset($couponDetails) && $couponDetails['discountType'] == "percentage" ){
+                
+                $prices = $template->prices; // Retrieve the current prices
+                $prices['price'] = number_format($template->prices['original_price'] - ($couponDetails['percentage_discount'] * $template->prices['original_price']) / 100 );
+                $prices['discount_percent'] = $couponDetails['percentage_discount'];
+                $template->prices = $prices; // Set the modified array back to the model
+                $sale['sale_ends_at'] = $couponDetails['expires_at'];
+                // $sale['status'] = 1;
+                // $sale['site_banner_txt'] = '';
+                // $sale['site_banner_btn'] = '';
+            } elseif( isset($couponDetails) && $couponDetails['discountType'] == "fixed") {
+                $prices = $template->prices; // Retrieve the current prices
+                $prices['price'] = $couponDetails['fixed_price'];
+                $prices['discount_percent'] = number_format(100-(($couponDetails['fixed_price']*100)/$prices['original_price']));
+                $template->prices = $prices; // Set the modified array back to the model
+                $sale['sale_ends_at'] = $couponDetails['expires_at'];
+                // $sale['status'] = 1;
+                // $sale['site_banner_txt'] = '';
+                // $sale['site_banner_btn'] = '';
+            }
+        }
 
         return view('content.product-detail', [
             'country' => $country,
             'preview_image' => $preview_image,
+            'couponDetails' => $couponDetails,
             'language_code' => $locale,
             'search_query' => $search_query,
             'menu' => $menu,
-            'sale' => $sale, // campaignDetails
+            'sale' => $sale, 
+            // campaignDetails
             'breadcrumbs' => $this->bread_array,
             'breadcrumb' => $breadcrumbs_obj,
             'template' => $template,
@@ -504,7 +557,7 @@ class ContentController extends Controller
                 $cat_params['country'] = $country;
 
                 for ($i = 1; $i <= $categorie_levels_size; $i++) {
-                    $cat_params['cat_lvl_' . $i] = $categorie_levels[$i - 1];
+                    $cat_params['catLevel' . $i] = $categorie_levels[$i - 1];
                 }
 
                 // echo "<pre>";

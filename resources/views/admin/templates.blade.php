@@ -89,13 +89,6 @@
                           GENERATE CODE
                         </a>
                       </div>
-                      <div class="col-12">
-                        <br>
-                        <a href="{{ route('plantilla.demo', [
-                          'modelo_mercado_pago' => $product_info['mercadopago'],
-                          'country' => $country,
-                        ] ) }}">VER DEMO</a>
-                      </div>
                     </div>
                 </div>
             @endforeach

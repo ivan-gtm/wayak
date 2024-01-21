@@ -283,8 +283,9 @@ class EditorController extends Controller
 		// echo "<pre>";
 		// print_r( $request->all() );
 		// exit;
-
-		if (strpos($template_id, 'temp') === false) { // Its a user template
+		
+		// Its temporal user template
+		if (strpos($template_id, 'temp') === false) { 
 
 			// echo "<pre>";
 			// print_r( $template_id );
@@ -739,6 +740,9 @@ class EditorController extends Controller
 			$img = \Image::make($decoded_image);
 			// exit;
 			$img_path = 'design/template/' . $template_id . '/thumbnails/' . $language_code . '/';
+			// echo $img_path;
+			// exit;
+
 			$path = public_path($img_path);
 
 			// print_r( $path );
@@ -770,7 +774,7 @@ class EditorController extends Controller
 			$full_minithumbnail_path = public_path($img_path . $rand_filename_id . '_thumbnail.jpg');
 			$img->save($full_minithumbnail_path);
 
-			$img->resize(null, 256, function ($constraint) {
+			$img->resize(null, 400, function ($constraint) {
 				$constraint->aspectRatio();
 			});
 
@@ -859,6 +863,8 @@ class EditorController extends Controller
 
 			$img_folder = 'design/template/' . $template_id . '/thumbnails/' . $language_code . '/';
 			$img_path = $img_folder . $thumbnail->filename;
+			
+			$this->emptyFolder($img_folder);
 
 			$thumbnail_path = public_path($img_path);
 			$mini_thumbnail_path = str_replace('_thumbnail.jpg', '_large.jpg', $thumbnail_path);
@@ -870,6 +876,22 @@ class EditorController extends Controller
 			if (is_file($mini_thumbnail_path)) {
 				unlink($mini_thumbnail_path);
 			}
+		}
+	}
+
+	function emptyFolder($dir) {
+		if (is_dir($dir)) {
+			$objects = scandir($dir);
+			foreach ($objects as $object) {
+				if ($object != "." && $object != "..") {
+					if (filetype($dir."/".$object) == "dir") {
+						$this->emptyFolder($dir."/".$object); // Recurse into subdirectories
+					} else {
+						unlink($dir."/".$object); // Delete files
+					}
+				}
+			}
+			reset($objects);
 		}
 	}
 
@@ -1015,7 +1037,7 @@ class EditorController extends Controller
 			'success' => true,
 			'msg' => 'No downloads remaining',
 			'limit' => 10,
-			'remaining' => 0
+			'remaining' => 10
 		]);
 	}
 
