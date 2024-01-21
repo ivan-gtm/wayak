@@ -467,183 +467,457 @@ function initCanvasEvents(lcanvas) {
             }
         }
     }
-    function deselectLockedObject(e) {
-        (selectedObject = canvas.getActiveObject()) && selectedObject._objects && $.each(selectedObject.getObjects(), function(i, o) {
-            o && o.locked && !0 === o.locked && selectedObject.removeWithUpdate(o)
-        })
+
+    function deselectLockedObject(event) {
+        var activeObject = canvas.getActiveObject();
+    
+        if (activeObject && activeObject._objects) {
+            activeObject.getObjects().forEach(function(object) {
+                if (object && object.locked === true) {
+                    activeObject.removeWithUpdate(object);
+                }
+            });
+        }
     }
-    void 0 === window.localStorage[localStorageKey] && (window.localStorage[localStorageKey] = ";"),
-    canvas.observe("object:selected", function(e) {
-        objectSelected(e, "selected")
+    
+    // Initialize local storage for the specified key if it doesn't exist
+    if (typeof window.localStorage[localStorageKey] === 'undefined') {
+        window.localStorage[localStorageKey] = ";";
+    }
+
+    // Add an event listener for when an object is selected on the canvas
+    canvas.observe("object:selected", function(event) {
+        objectSelected(event, "selected");
     });
+    
     canvas.observe("selection:updated", function(e) {
         objectSelected(e, "updated")
     });
     canvas.observe("selection:created", function(e) {
         objectSelected(e, "created")
     });
+
     canvas.observe("selection:cleared", function(e) {
         $(".sp-container.color-fill, .sp-container.dynamic-fill").addClass("sp-hidden")
     });
-    canvas.observe("selection:updated", deselectLockedObject),
-    canvas.observe("selection:created", deselectLockedObject),
-    canvas.observe("object:moving", function(e) {
-        $(".tools-top").removeClass("toolbar-show"),
-        e.target.setCoords()
+
+    canvas.observe("selection:updated", deselectLockedObject);
+    canvas.observe("selection:created", deselectLockedObject);
+    
+    canvas.observe("object:moving", function(event) {
+        // Hide the top toolbar
+        $(".tools-top").removeClass("toolbar-show");
+    
+        // Update the coordinates of the moving object
+        event.target.setCoords();
     });
-    canvas.observe("object:rotating", function(e) {
-        e.e.shiftKey ? e.target.snapAngle = 0 : e.target.snapAngle = 5;
-        var $angle = parseInt(e.target.angle % 360);
-        $(".rotation_info_block").html($angle + "°").show()
+        
+    canvas.observe("object:rotating", function(event) {
+        // Apply snapping logic
+        event.target.snapAngle = event.e.shiftKey ? 0 : 5;
+    
+        // Calculate and format the angle
+        var rotationAngle = parseInt(event.target.angle % 360);
+        var formattedAngle = rotationAngle + "°";
+    
+        // Update the rotation info on the UI
+        $(".rotation_info_block").html(formattedAngle).show();
     });
+        
+    function handleObjectScaling(event) {
+        if (isTextObject(event.target)) {
+            updateTextObjectFontSize(event.target);
+        }
+        setObjectCoordinates(event.target);
+        updateCanvasHeightInput();
+    }
+    
+    function isTextObject(target) {
+        return target && /text/.test(target.type) && target.scaleX === target.scaleY;
+    }
+    
+    function updateTextObjectFontSize(target) {
+        var newFontSize = (target.fontSize * target.scaleX / 1.3).toFixed(0);
+        $("#fontsize").val(newFontSize);
+    }
+    
+    function setObjectCoordinates(target) {
+        if (target) {
+            target.setCoords();
+        }
+    }
+    
+    function updateCanvasHeightInput() {
+        var canvasHeight = document.getElementById("loadCanvasHei").value;
+        // Perform any additional operations with canvasHeight if needed
+    }
+
     canvas.observe("object:scaling", function(e) {
-        e.target && /text/.test(e.target.type) && e.target && e.target.scaleX === e.target.scaleY && $("#fontsize").val((e.target.fontSize * e.target.scaleX / 1.3).toFixed(0)),
-        e.target.setCoords();
-        document.getElementById("loadCanvasHei").value
+        handleObjectScaling(e);
     });
-    canvas.observe("object:modified", function(e) {
-        if (DEBUG && console.log("object is modified"),
-        $(".tools-top").addClass("toolbar-show"),
-        s_history = !0,
-        save_history(),
-        e.target && /text/.test(e.target.type)) {
-            var scaleX = e.target.scaleX
-              , scaleY = e.target.scaleY;
-            if (e.target && scaleX === scaleY) {
-                if (e.target.fontSize *= scaleX,
-                e.target.fontSize = e.target.fontSize.toFixed(0),
-                e.target.width *= scaleX,
-                e.target.height *= scaleY,
-                e.target.fill instanceof fabric.Dpattern) {
-                    var $newscale = e.target.fill.scale * scaleX;
-                    e.target.fill.update({
-                        scale: $newscale
-                    })
-                }
-                e.target.scaleX = 1,
-                e.target.scaleY = 1,
-                e.target.setCoords(),
-                $("#fontsize").val((e.target.fontSize / 1.3).toFixed(0))
+    
+    function logModificationEvent() {
+        if (DEBUG) {
+            console.log("object is modified >> object:modified");
+        }
+    }
+    
+    function showToolbar() {
+        $(".tools-top").addClass("toolbar-show");
+    }
+    
+    function setHistoryFlagAndSave() {
+        s_history = true;
+        save_history(); // Assuming save_history is a global function
+    }
+    
+    function processObjectModification(target) {
+        if (isTextObject(target)) {
+            scaleTextObject(target);
+            updateTextObjectUI(target);
+            updateFillPatternScale(target);
+            resetObjectScaleAndCoords(target);
+        } else if (target.fill && typeof target.fill === "object") {
+            updateGradientFill(target);
+        }
+    }
+    
+    function isTextObject(target) {
+        return target && /text/.test(target.type);
+    }
+    
+    function scaleTextObject(target) {
+        var scaleX = target.scaleX, scaleY = target.scaleY;
+        if (scaleX === scaleY) {
+            target.fontSize *= scaleX;
+            target.fontSize = parseFloat(target.fontSize.toFixed(0));
+            target.width *= scaleX;
+            target.height *= scaleY;
+        }
+    }
+    
+    function updateTextObjectUI(target) {
+        if (target.scaleX === target.scaleY) {
+            $("#fontsize").val((target.fontSize / 1.3).toFixed(0));
+        }
+    }
+    
+    function updateFillPatternScale(target) {
+        if (target.fill instanceof fabric.Dpattern && target.scaleX === target.scaleY) {
+            var newScale = target.fill.scale * target.scaleX;
+            target.fill.update({ scale: newScale });
+        }
+    }
+    
+    function resetObjectScaleAndCoords(target) {
+        target.scaleX = 1;
+        target.scaleY = 1;
+        target.setCoords();
+    }
+    
+    function updateGradientFill(target) {
+        if (!isTextsGroup()) {
+            if (target.fill.type === "linear") {
+                updateLinearGradientCoords(target);
+            } else if (target.fill.type === "radial") {
+                updateRadialGradientCoords(target);
             }
-            !isTextsGroup() && e.target.fill && "object" === _typeof(e.target.fill) && ("linear" === e.target.fill.type ? e.target.fill.coords.x1 < 0 ? (e.target.fill.coords.x1 = -e.target.width,
-            e.target.fill.coords.x2 = e.target.width,
-            e.target.fill.coords.y1 = -e.target.height,
-            e.target.fill.coords.y2 = e.target.height) : (0 !== e.target.fill.coords.x1 && (e.target.fill.coords.x1 = e.target.width),
-            0 !== e.target.fill.coords.x2 && (e.target.fill.coords.x2 = e.target.width),
-            0 !== e.target.fill.coords.y1 && (e.target.fill.coords.y1 = e.target.height),
-            0 !== e.target.fill.coords.y2 && (e.target.fill.coords.y2 = e.target.height)) : "radial" === e.target.fill.type && void 0 !== e.target.fill.coords.r1 && (e.target.fill.coords.r2 = e.target.width > e.target.height ? e.target.width / 2 : e.target.height / 2,
-            e.target.fill.coords.x1 = e.target.width / 2,
-            e.target.fill.coords.x2 = e.target.width / 2,
-            e.target.fill.coords.y1 = e.target.height / 2,
-            e.target.fill.coords.y2 = e.target.height / 2))
         }
+    }
+    
+    function updateLinearGradientCoords(target) {
+        // Example implementation, adjust as needed
+        target.fill.coords.x1 = -target.width;
+        target.fill.coords.x2 = target.width;
+        target.fill.coords.y1 = -target.height;
+        target.fill.coords.y2 = target.height;
+    }
+    
+    function updateRadialGradientCoords(target) {
+        // Example implementation, adjust as needed
+        var maxDimension = Math.max(target.width, target.height);
+        target.fill.coords.r2 = maxDimension / 2;
+        target.fill.coords.x1 = target.width / 2;
+        target.fill.coords.x2 = target.width / 2;
+        target.fill.coords.y1 = target.height / 2;
+        target.fill.coords.y2 = target.height / 2;
+    }
+    
+    function isTextsGroup() {
+        // Implement according to your specific logic
+        // Example:
+        var activeObject = canvas.getActiveObject();
+        return activeObject && activeObject.type === 'group' &&
+            activeObject._objects.every(obj => obj.type === 'text');
+    }
+    
+    canvas.observe("object:modified", function (e) {
+        logModificationEvent();
+        showToolbar();
+        setHistoryFlagAndSave();
+        processObjectModification(e.target);
     });
-    canvas.observe("object:added", function(e) {
-        if (e.target.isUngrouping)
-            delete e.target.isUngrouping;
-        else {
-            var add_object = e.target
-              , color = "group" === add_object.type ? "#f9a24c" : "#4dd7fa";
-            add_object.set({
-                transparentCorners: !1,
-                borderDashArray: [4, 2],
-                cornerStrokeColor: "#ffffff",
-                borderColor: color,
-                cornerColor: color,
-                cornerSize: 8,
-                minScaleLimit: 0,
-                padding: 5,
-                lockScalingFlip: !0
-            }),
-            getFonts(e.target),
-            save_history(),
-            canvas.renderAll()
+    
+    canvas.observe("object:added", handleObjectAdded);
+
+    function handleObjectAdded(event) {
+        if (event.target.isUngrouping) {
+            removeUngroupingFlag(event.target);
+        } else {
+            processNewObject(event.target);
         }
-    });
+    }
+
+    function removeUngroupingFlag(target) {
+        delete target.isUngrouping;
+    }
+
+    function processNewObject(target) {
+        setTargetStyles(target);
+        getFonts(target); // Assuming getFonts is a function defined elsewhere in the script
+        save_history(); // Assuming save_history is a function defined elsewhere in the script
+        canvas.renderAll();
+    }
+
+    function setTargetStyles(target) {
+        var color = determineColor(target);
+        target.set({
+            transparentCorners: false,
+            borderDashArray: [4, 2],
+            cornerStrokeColor: "#ffffff",
+            borderColor: color,
+            cornerColor: color,
+            cornerSize: 8,
+            minScaleLimit: 0,
+            padding: 5,
+            lockScalingFlip: true
+        });
+    }
+
+    function determineColor(target) {
+        return target.type === "group" ? "#f9a24c" : "#4dd7fa";
+    }
+
+
     canvas.observe("mouse:up", function(e) {
         canvas.renderAll()
     });
-    canvas.observe("mouse:up", function(e) {
-        if (e.target && /text/.test(e.target.type) && e.target.isEditing) {
-            DEBUG && console.log("style at positon", e.target.getStyleAtPosition());
-            var styleAtPosition = e.target.getStyleAtPosition();
-            if ($("#fontsize").val((e.target.fontSize / 1.3).toFixed(0)),
-            void 0 !== styleAtPosition.fill ? $("#colorSelector").css("backgroundColor", styleAtPosition.fill) : $("#colorSelector").css("backgroundColor", e.target.fill),
-            void 0 !== styleAtPosition.fontWeight ? "bold" === styleAtPosition.fontWeight ? $("#fontbold").addClass("active") : $("#fontbold").removeClass("active") : "bold" === e.target.fontWeight ? $("#fontbold").addClass("active") : $("#fontbold").removeClass("active"),
-            void 0 !== styleAtPosition.fontStyle ? "italic" === styleAtPosition.fontStyle ? $("#fontitalic").addClass("active") : $("#fontitalic").removeClass("active") : "italic" === e.target.fontStyle ? $("#fontitalic").addClass("active") : $("#fontitalic").removeClass("active"),
-            void 0 !== styleAtPosition.underline ? "underline" === styleAtPosition.underline ? $("#fontunderline").addClass("active") : $("#fontunderline").removeClass("active") : "italic" === e.target.underline ? $("#fontunderline").addClass("active") : $("#fontunderline").removeClass("active"),
-            void 0 !== styleAtPosition.fontFamily) {
-                var fontDisplayName = $("#fonts-dropdown").find('a[data-ff="' + styleAtPosition.fontFamily + '"]').parent().find("span").text();
-                DEBUG && console.log("fontDisplayName", fontDisplayName),
-                $("#font-selected").html('<span style="overflow:hidden"><a href="#" style="font-family: ' + styleAtPosition.fontFamily + '" >' + fontDisplayName + '</a>&nbsp;&nbsp;<span class="caret"></span></span>'),
-                $("#font-dropdown").on("shown.bs.dropdown", function() {
-                    $("#fontSearch").focus(),
-                    $("#fonts-dropdown").scrollTop($('#fonts-dropdown li a[data-ff="' + styleAtPosition.fontFamily + '"]').position().top - $("#fonts-dropdown li:first").position().top),
-                    $("#fonts-dropdown li a").removeClass("font-selected"),
-                    $('#fonts-dropdown li a[data-ff="' + styleAtPosition.fontFamily + '"]').addClass("font-selected")
-                })
-            } else {
-                var fontid = e.target.fontFamily || "font7";
-                fontDisplayName = $("#fonts-dropdown").find('a[data-ff="' + fontid + '"]').parent().find("span").text();
-                $("#font-selected").html('<span style="overflow:hidden"><a href="#" style="font-family: ' + e.target.fontFamily + '" >' + fontDisplayName + '</a>&nbsp;&nbsp;<span class="caret"></span></span>'),
-                $("#font-dropdown").on("shown.bs.dropdown", function() {
-                    $("#fontSearch").focus(),
-                    $("#fonts-dropdown").scrollTop($('#fonts-dropdown li a[data-ff="' + e.target.fontFamily + '"]').position().top - $("#fonts-dropdown li:first").position().top),
-                    $("#fonts-dropdown li a").removeClass("font-selected"),
-                    $('#fonts-dropdown li a[data-ff="' + e.target.fontFamily + '"]').addClass("font-selected")
-                })
-            }
+
+    canvas.observe("mouse:up", handleMouseUpEvent);
+
+    function handleMouseUpEvent(event) {
+        if (isTextObjectBeingEdited(event.target)) {
+            logDebugStyle(event.target);
+            var styleAtPosition = event.target.getStyleAtPosition();
+
+            setFontSize(event.target);
+            setColorSelector(styleAtPosition, event.target);
+            toggleStyleButtons(styleAtPosition, event.target);
+            updateFontFamily(styleAtPosition, event.target);
         }
-    });
-    canvas.observe("text:editing:entered", function(e) {
-        DEBUG && console.log("text:editing:entered first"),
-        selectedObject.hasControls = !0,
-        $("#group").hide(),
-        $("#ungroup").hide(),
-        $("#strokegroup").hide(),
-        $("#clone").hide(),
-        $("#showmoreoptions").hide(),
-        $("#shadowGroup").hide(),
-        e.target.set({
-            cursorColor: e.target.fill
+    }
+
+    function isTextObjectBeingEdited(target) {
+        return target && /text/.test(target.type) && target.isEditing;
+    }
+
+    function logDebugStyle(target) {
+        if (DEBUG) {
+            console.log("style at position", target.getStyleAtPosition());
+        }
+    }
+
+    function setFontSize(target) {
+        $("#fontsize").val((target.fontSize / 1.3).toFixed(0));
+    }
+
+    function setColorSelector(style, target) {
+        var color = style.fill !== undefined ? style.fill : target.fill;
+        $("#colorSelector").css("backgroundColor", color);
+    }
+
+    function toggleStyleButtons(style, target) {
+        toggleButton("#fontbold", style.fontWeight, target.fontWeight, "bold");
+        toggleButton("#fontitalic", style.fontStyle, target.fontStyle, "italic");
+        toggleButton("#fontunderline", style.underline, target.underline, "underline");
+    }
+
+    function toggleButton(selector, styleProperty, targetProperty, expectedValue) {
+        if (styleProperty !== undefined) {
+            $(selector).toggleClass("active", styleProperty === expectedValue);
+        } else {
+            $(selector).toggleClass("active", targetProperty === expectedValue);
+        }
+    }
+
+    function updateFontFamily(style, target) {
+        var fontFamily = style.fontFamily !== undefined ? style.fontFamily : (target.fontFamily || "font7");
+        var fontDisplayName = getFontDisplayName(fontFamily);
+        updateFontDropdown(fontFamily, fontDisplayName);
+    }
+
+    function getFontDisplayName(fontFamily) {
+        return $("#fonts-dropdown").find('a[data-ff="' + fontFamily + '"]').parent().find("span").text();
+    }
+
+    function updateFontDropdown(fontFamily, displayName) {
+        var dropdownHtml = '<span style="overflow:hidden"><a href="#" style="font-family: ' + fontFamily + '" >' + displayName + '</a>&nbsp;&nbsp;<span class="caret"></span></span>';
+        $("#font-selected").html(dropdownHtml);
+        $("#font-dropdown").on("shown.bs.dropdown", function() {
+            handleFontDropdownShown(fontFamily);
         });
-        var $scale_value = parseFloat(jQuery("#zoomperc").data("scaleValue")) || 1
-          , bodyRect = document.body.getBoundingClientRect()
-          , offsetRect = (e.target.canvas.upperCanvasEl.getBoundingClientRect().top - bodyRect.top) / $scale_value;
-        e.target.hiddenTextarea.style.cssText = "position: fixed !important; top: " + offsetRect + "px !important; left: 0px; opacity: 0; width: 0px; height: 0px; z-index: -999;"
+    }
+
+    function handleFontDropdownShown(fontFamily) {
+        $("#fontSearch").focus();
+        var positionTop = $('#fonts-dropdown li a[data-ff="' + fontFamily + '"]').position().top;
+        var firstItemTop = $("#fonts-dropdown li:first").position().top;
+        $("#fonts-dropdown").scrollTop(positionTop - firstItemTop);
+        $("#fonts-dropdown li a").removeClass("font-selected");
+        $('#fonts-dropdown li a[data-ff="' + fontFamily + '"]').addClass("font-selected");
+    }
+
+    
+    canvas.observe("text:editing:entered", handleTextEditingEntered);
+
+    function handleTextEditingEntered(event) {
+        logDebugInfo("text:editing:entered first");
+
+        enableControlsForSelectedObject();
+
+        toggleUIElementsForEditing();
+
+        setCursorColorToFill(event.target);
+
+        adjustHiddenTextareaPosition(event.target);
+    }
+
+    function logDebugInfo(message) {
+        if (DEBUG) {
+            console.log(message);
+        }
+    }
+
+    function enableControlsForSelectedObject() {
+        selectedObject.hasControls = true;
+    }
+
+    function toggleUIElementsForEditing() {
+        $("#group, #ungroup, #strokegroup, #clone, #showmoreoptions, #shadowGroup").hide();
+    }
+
+    function setCursorColorToFill(target) {
+        target.set({ cursorColor: target.fill });
+    }
+
+    function adjustHiddenTextareaPosition(target) {
+        var scaleValue = parseFloat(jQuery("#zoomperc").data("scaleValue")) || 1;
+        var bodyRect = document.body.getBoundingClientRect();
+        var offsetRect = (target.canvas.upperCanvasEl.getBoundingClientRect().top - bodyRect.top) / scaleValue;
+
+        target.hiddenTextarea.style.cssText = "position: fixed !important; top: " + offsetRect + "px !important; left: 0px; opacity: 0; width: 0px; height: 0px; z-index: -999;";
+    }
+
+    
+    canvas.on("mouse:over", handleMouseOver);
+
+    function handleMouseOver(event) {
+        if (isLineObject(event.target)) {
+            enhanceTargetPadding(event.target);
+        }
+    }
+
+    function isLineObject(target) {
+        return target && target.type === "line";
+    }
+
+    function enhanceTargetPadding(target) {
+        target.padding = 5;
+        target.setCoords();
+        canvas.renderAll();
+    }
+
+    
+    // Assuming DEBUG is a global variable that controls debugging logs
+    canvas.observe("text:editing:exited", handleTextEditingExited);
+
+    function handleTextEditingExited(event) {
+        logDebugInfo("MIGRATED>> text:editing:exited");
+
+        removeEmptyText(event.target);
+
+        showTextEditingOptions();
+    }
+
+    function logDebugInfo(message) {
+        if (DEBUG) {
+            console.log(message);
+        }
+    }
+
+    function removeEmptyText(target) {
+        if (target.text === "") {
+            setTimeout(function() {
+                canvas.remove(target);
+            }, 0);
+        }
+    }
+
+    function showTextEditingOptions() {
+        $("#group, #ungroup, #strokegroup, #clone, #showmoreoptions, #shadowGroup").show();
+    }
+
+    $(document).ready(function() {
+        $("body").mousedown(handleMouseDown);
     });
-    canvas.on("mouse:over", function(e) {
-        e.target && "line" === e.target.type && (e.target.padding = 5,
-        e.target.setCoords(),
-        canvas.renderAll())
-    });
-    canvas.observe("text:editing:exited", function(e) {
-        DEBUG && console.log("text:editing:exited"),
-        "" == e.target.text && setTimeout(function() {
-            return canvas.remove(e.target)
-        }, 0),
-        $("#group").show(),
-        $("#ungroup").show(),
-        $("#strokegroup").show(),
-        $("#clone").show(),
-        $("#showmoreoptions").show(),
-        $("#shadowGroup").show()
-    });
-    $("body").mousedown(function(e) {
-        var actobj = canvas.getActiveObject();
-        actobj || ($(".tools-top").removeClass("toolbar-show"),
-        $(".patternFillTab").hide(),
-        $(".patternFillPreview").removeClass("open"),
-        "LI" !== e.target.nodeName && $(".custom-menu").hide()),
+    
+    function handleMouseDown(e) {
+        var activeObject = canvas.getActiveObject();
+    
+        if (!activeObject) {
+            handleNoActiveObject(e);
+        }
+    
+        bindClickEventsForFillAndStroke();
+    
+        handleCloseDialogs(activeObject, e);
+    
+        handleCanvasClicks(e);
+    }
+    
+    function handleNoActiveObject(e) {
+        $(".tools-top").removeClass("toolbar-show");
+        $(".patternFillTab").hide();
+        $(".patternFillPreview").removeClass("open");
+        if (e.target.nodeName !== "LI") {
+            $(".custom-menu").hide();
+        }
+    }
+    
+    function bindClickEventsForFillAndStroke() {
         $("#filltype, .filltype, #strokedropdown").click(function() {
-            $(".sp-container.color-fill, .sp-container.dynamic-fill, .sp-container.color-stroke").addClass("sp-hidden")
-        }),
-        actobj && "image" === actobj.type && 0 !== $(e.target).closest(".ui-dialog").length || $("#object-properties").dialog("close"),
-        actobj && (/text/.test(actobj.type) || 0 !== $(e.target).closest(".ui-dialog").length) || $("#font-symbols").dialog("close"),
-        "CANVAS" !== e.target.nodeName && "DIV" === e.target.nodeName && "sp-preview" !== e.target.className && !$(e.target).hasClass("sp-clear") && e.target.className.indexOf("sp-light") < 0 && "sp-container" !== e.target.className && e.target.className.indexOf("ui-dialog") < 0 && $(".dpattern-holder").has(e.target).length < 1 && $(".patternFillTab").has(e.target).length < 1 && $("#font-symbols").has(e.target).length < 1 && (canvas.discardActiveObject().renderAll(),
-        $(".tools-top").removeClass("toolbar-show"),
-        $(".patternFillTab").hide(),
-        $(".patternFillPreview").removeClass("open"),
-        $("#font-symbols").dialog("close"))
-    });
+            $(".sp-container.color-fill, .sp-container.dynamic-fill, .sp-container.color-stroke").addClass("sp-hidden");
+        });
+    }
+    
+    function handleCloseDialogs(activeObject, e) {
+        if (activeObject && activeObject.type === "image" && $(e.target).closest(".ui-dialog").length === 0) {
+            $("#object-properties").dialog("close");
+        }
+    
+        if (!activeObject || (!/text/.test(activeObject.type) && $(e.target).closest(".ui-dialog").length === 0)) {
+            $("#font-symbols").dialog("close");
+        }
+    }
+    
+    function handleCanvasClicks(e) {
+        if (e.target.nodeName !== "CANVAS" && e.target.nodeName === "DIV" && e.target.className !== "sp-preview" && !$(e.target).hasClass("sp-clear") && e.target.className.indexOf("sp-light") < 0 && e.target.className !== "sp-container" && e.target.className.indexOf("ui-dialog") < 0 && $(".dpattern-holder").has(e.target).length < 1 && $(".patternFillTab").has(e.target).length < 1 && $("#font-symbols").has(e.target).length < 1) {
+            canvas.discardActiveObject().renderAll();
+            $(".tools-top").removeClass("toolbar-show");
+            $(".patternFillTab").hide();
+            $(".patternFillPreview").removeClass("open");
+            $("#font-symbols").dialog("close");
+        }
+    }
+
 }
