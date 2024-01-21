@@ -5361,36 +5361,57 @@ zoomBy = function(x, y, z) {
     })
 }
 ,
-objManip = function(prop, value) {
-    var obj = canvas.getActiveObject()
-      , grpobjs = obj;
-    if (!obj)
-        return !0;
+objManip = function (prop, value) {
+    console.log("prop>> "+prop);
+    console.log("value>> "+value);
+
+    var obj = canvas.getActiveObject();
+    if (!obj) return true;
+
+    var applyZoom = function(newZoomLevel) {
+        setZoom(newZoomLevel);
+    };
+
+    var updateProperty = function() {
+        if (obj && obj.lockMovementX === false) {
+            obj.set(prop, obj.get(prop) + value);
+        }
+    };
+
+    var updateGroupObjects = function() {
+        if (obj._objects) {
+            obj.set(prop, obj.get(prop) + value);
+            obj.setCoords();
+        }
+    };
+
+    var shouldSetCoords = function() {
+        return prop === "left" || prop === "top";
+    };
+
     switch (prop) {
-    case "zoomBy-x":
-        obj.zoomBy(value, 0, 0, function() {
-            canvas.renderAll()
-        });
-        break;
-    case "zoomBy-y":
-        obj.zoomBy(0, value, 0, function() {
-            canvas.renderAll()
-        });
-        break;
-    case "zoomBy-z":
-        obj.zoomBy(0, 0, value, function() {
-            canvas.renderAll()
-        });
-        break;
-    default:
-        obj && 0 == obj.lockMovementX && obj.set(prop, obj.get(prop) + value),
-        grpobjs && grpobjs._objects && (grpobjs.set(prop, grpobjs.get(prop) + value),
-        grpobjs.setCoords())
+        case "zoomOut":
+            applyZoom(value);
+            break;
+        case "zoomIn":
+            applyZoom(value);
+            break;
+        // case "zoomBy-z":
+        //     applyZoom(value);
+        //     break;
+        default:
+            updateProperty();
+            updateGroupObjects();
     }
-    return !obj || "left" !== prop && "top" !== prop || obj.setCoords(),
-    canvas.renderAll(),
-    !1
+
+    if (shouldSetCoords()) {
+        obj.setCoords();
+    }
+
+    canvas.renderAll();
+    return false;
 }
+
 ,
 $(document).ready(function() {
     var imageDz = null;

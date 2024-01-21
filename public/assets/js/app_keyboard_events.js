@@ -19,7 +19,6 @@ function initKeyboardEvents() {
             return; // Skip further processing for certain active object conditions
         }
         processKeyStringUpdate(e, 'keydown');
-        handleKeyDownEvents(e);
         processKeyCodeActions(e);
     });
 }
@@ -63,98 +62,104 @@ function updateKeyString(remstring) {
     }
 }
 
-function handleKeyDownEvents() {
-    $("#canvaspages").keydown(function (e) {
-        if (DEBUG) {
-            console.log("MIGRATED:: keydown", "keystring: ", keystring);
-        }
+function processKeyCodeActions(e) {
+    if (DEBUG) {
+        console.log("MIGRATED:: keydown", "keystring: ", keystring);
+    }
 
-        if (isNonControlKeyCode(e.keyCode) && isTargetInput(e.target)) {
-            return false;
-        }
+    if (isNonControlKeyCode(e.keyCode) && isTargetInput(e.target)) {
+        return false;
+    }
 
-        const activeobject = canvas.getActiveObject();
-        if (isInvalidActiveObject(activeobject)) {
-            return;
-        }
+    var activeobject = canvas.getActiveObject();
+    if (isInvalidActiveObject(activeobject)) {
+        return;
+    }
 
-        switch (e.keyCode) {
-            case 8: // Backspace
-                e.preventDefault();
-                deleteItem();
-                break;
-            case 17: // Ctrl
-                e.preventDefault();
-                keystring = "ctrl";
-                break;
-            case 91: // Command
-                e.preventDefault();
-                keystring = "cmd";
-                break;
-            case 173: // Minus (Firefox)
-            case 109: // Numpad Substract
-                e.preventDefault();
-                if (e.ctrlKey || e.metaKey) {
-                    objManip("zoomBy-z", -10);
-                }
-                break;
-            case 61: // Equal (Firefox)
-            case 107: // Numpad Add
-                e.preventDefault();
-                if (e.ctrlKey || e.metaKey) {
-                    objManip("zoomBy-z", 10);
-                }
-                break;
-            case 37: // Left Arrow
-                e.preventDefault();
-                handleArrowKey(activeobject, e, "left");
-                break;
-            case 39: // Right Arrow
-                e.preventDefault();
-                handleArrowKey(activeobject, e, "right");
-                break;
-            case 38: // Up Arrow
-                e.preventDefault();
-                handleArrowKey(activeobject, e, "up");
-                break;
-            case 40: // Down Arrow
-                e.preventDefault();
-                handleArrowKey(activeobject, e, "down");
-                break;
-            case 67: // C key
-                e.preventDefault();
-                if (keystring === "ctrl c" || keystring === "cmd c") {
-                    copyobjs();
-                }
-                break;
-            case 88: // X key
-                e.preventDefault();
-                if (keystring === "ctrl x" || keystring === "cmd x") {
-                    cutobjs();
-                }
-                break;
-            case 86: // V key
-                e.preventDefault();
-                if (keystring === "ctrl v" || keystring === "cmd v") {
-                    pasteobjs();
-                }
-                break;
-            case 90: // Z key
-                e.preventDefault();
-                keystring += " z";
-                if (keystring === "ctrl z" || keystring === "cmd z") {
-                    history_undo();
-                }
-                break;
-            case 46: // Delete key
-                e.preventDefault();
-                deleteItem();
-                break;
-        }
+    switch (e.keyCode) {
+        case 8: // Backspace
+            e.preventDefault();
+            deleteItem();
+            break;
+        case 17: // Ctrl
+            e.preventDefault();
+            keystring = "ctrl";
+            break;
+        case 48: //CMD+0 // Command with "0" / reset zoom to default
+            e.preventDefault();
+            if (e.ctrlKey || e.metaKey) {
+                setZoom(1);
+            }
+            break;
+        case 91: // Command
+            e.preventDefault();
+            keystring = "cmd";
+            break;
+        case 173: // Minus (Firefox)
+        case 189: // Numpad Substract (-) on laptop
+        case 109: // Numpad Substract
+            e.preventDefault();
+            if (e.ctrlKey || e.metaKey) {
+                objManip("zoomOut", calculateZoomLevel()-0.1);
+            }
+            break;
+        case 61: // Equal (Firefox)
+        case 187: // Numpad Substract (+) on laptop
+        case 107: // Numpad Add
+            e.preventDefault();
+            if (e.ctrlKey || e.metaKey) {
+                objManip("zoomIn", calculateZoomLevel()+0.1);
+            }
+            break;
+        case 37: // Left Arrow
+            e.preventDefault();
+            handleArrowKey(activeobject, e, "left");
+            break;
+        case 39: // Right Arrow
+            e.preventDefault();
+            handleArrowKey(activeobject, e, "right");
+            break;
+        case 38: // Up Arrow
+            e.preventDefault();
+            handleArrowKey(activeobject, e, "up");
+            break;
+        case 40: // Down Arrow
+            e.preventDefault();
+            handleArrowKey(activeobject, e, "down");
+            break;
+        case 67: // C key
+            e.preventDefault();
+            if (e.ctrlKey || e.metaKey) {
+                copyobjs();
+            }
+            break;
+        case 88: // X key
+            e.preventDefault();
+            if (e.ctrlKey || e.metaKey) {
+                cutobjs();
+            }
+            break;
+        case 86: // V key
+            e.preventDefault();
+            if (e.ctrlKey || e.metaKey) {
+                pasteobjs();
+            }
+            break;
+        case 90: // Z key
+            e.preventDefault();
+            keystring += " z";
+            if (e.ctrlKey || e.metaKey) {
+                history_undo();
+            }
+            break;
+        case 46: // Delete key
+            e.preventDefault();
+            deleteItem();
+            break;
+    }
 
-        canvas.renderAll();
-        return true;
-    });
+    canvas.renderAll();
+    return true;
 }
 
 function isNonControlKeyCode(keyCode) {
@@ -246,58 +251,7 @@ function handleActiveObject(event) {
     return true;
 }
 
-function processKeyCodeActions(e) {
-    const activeObject = canvas.getActiveObject();
-
-    switch (e.keyCode) {
-        case 8: // Backspace
-            e.preventDefault();
-            deleteItem();
-            break;
-        case 17: // Ctrl
-            e.preventDefault();
-            keystring = "ctrl";
-            break;
-        case 91: // Command
-            e.preventDefault();
-            keystring = "cmd";
-            break;
-        case 173: // Minus (Firefox)
-        case 109: // Numpad Subtract
-            e.preventDefault();
-            if (!e.ctrlKey && !e.metaKey) {
-                objManip("zoomBy-z", -10);
-            }
-            break;
-        case 61: // Equal (Firefox)
-        case 107: // Numpad Add
-            e.preventDefault();
-            if (!e.ctrlKey && !e.metaKey) {
-                objManip("zoomBy-z", 10);
-            }
-            break;
-        case 37: // Left Arrow
-        case 39: // Right Arrow
-        case 38: // Up Arrow
-        case 40: // Down Arrow
-            handleArrowKey(e, activeObject);
-            break;
-        case 67: // C key
-        case 88: // X key
-        case 86: // V key
-            handleClipboardAction(e, activeObject);
-            break;
-        case 90: // Z key
-            handleUndoAction(e);
-            break;
-        case 46: // Delete key
-            e.preventDefault();
-            deleteItem();
-            break;
-    }
-}
-
-function handleArrowKey(e, activeObject) {
+function handleArrowKey(activeObject, e) {
     if ((e.keyCode === 37 || e.keyCode === 39) && activeObject.lockMovementX) {
         e.preventDefault();
         return;
@@ -307,53 +261,26 @@ function handleArrowKey(e, activeObject) {
         return;
     }
 
-    const direction = getArrowKeyDirection(e.keyCode);
-    const manipulationType = e.shiftKey ? 'zoomBy' : (e.ctrlKey || e.metaKey) ? 'angle' : 'move';
-    const manipulationValue = getArrowKeyValue(e.keyCode, e.shiftKey);
+    var direction = getArrowKeyDirection(e.keyCode);
+    // var manipulationType = e.shiftKey ? 'zoomBy' : (e.ctrlKey || e.metaKey) ? 'angle' : 'move';
+    var manipulationValue = getArrowKeyValue(e.keyCode, e.shiftKey);
+    
+    console.log("objManip(`${manipulationType}-${direction}`, manipulationValue)");
+    // console.log("manipulationType"+manipulationType);
+    console.log("direction"+direction);
+    console.log("manipulationValue"+manipulationValue);
 
-    objManip(`${manipulationType}-${direction}`, manipulationValue);
-    e.preventDefault();
-}
-
-function handleClipboardAction(e, activeObject) {
-    if (!activeObject) {
-        return;
-    }
-
-    switch (e.keyCode) {
-        case 67: // C key
-            if (keystring === "ctrl c" || keystring === "cmd c") {
-                copyobjs();
-            }
-            break;
-        case 88: // X key
-            if (keystring === "ctrl x" || keystring === "cmd x") {
-                cutobjs();
-            }
-            break;
-        case 86: // V key
-            if (keystring === "ctrl v" || keystring === "cmd v") {
-                pasteobjs();
-            }
-            break;
-    }
-    e.preventDefault();
-}
-
-function handleUndoAction(e) {
-    if (keystring === "ctrl z" || keystring === "cmd z") {
-        history_undo();
-    }
+    objManip(direction, manipulationValue);
     e.preventDefault();
 }
 
 // Helper functions for direction and value calculation
 function getArrowKeyDirection(keyCode) {
     switch (keyCode) {
-        case 37: return 'x';
-        case 39: return 'x';
-        case 38: return 'y';
-        case 40: return 'y';
+        case 37: return 'left';
+        case 39: return 'left';
+        case 38: return 'top';
+        case 40: return 'top';
     }
 }
 
