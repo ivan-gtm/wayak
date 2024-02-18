@@ -88,15 +88,17 @@ class AdminController extends Controller
 
         $ready_for_sale_products = DB::select( DB::raw(
             "SELECT 
-                thumbnails.template_id, thumbnails. filename 
-            FROM 
-                thumbnails,templates
-            WHERE
-                thumbnails.template_id = templates.template_id
-                AND thumbnails.language_code = 'en'
-                AND thumbnails.thumbnail_ready IS NULL
-                AND thumbnails.status = 1
-            LIMIT 2000") 
+            thumbnails.template_id, thumbnails. filename 
+        FROM 
+            thumbnails,templates
+        WHERE
+            thumbnails.template_id = templates.template_id
+            AND templates.source = 'templett'
+            AND LENGTH(templates.template_id) = 10
+            AND thumbnails.language_code = 'en'
+            AND thumbnails.thumbnail_ready IS NULL
+            AND thumbnails.status = 0
+        LIMIT 2000") 
         );
 
         return view('admin.thumbnail_generation', [
@@ -264,24 +266,26 @@ class AdminController extends Controller
                     // ->where('template_id','=', $template_key )
                     ->where('thumbnails.language_code','=', $language_code )
                     // ->where('thumbnails.dimentions','=', '5 x 7 in' )
-                    // ->where('templates.status','=', 5 )
                     // ->where('templates.format_ready','1')
                     // ->where('templates.translation_ready','1')
-                    // ->where('templates.thumbnail_ready','1')
+                    ->where('templates.status','=', 1 )
+                    ->where('templates.source','=', 'templett' )
+                    ->whereNull('thumbnails.thumbnail_ready')
                     ->count();
                     
         $total_pages = ceil( $total_templates/$per_page );
 
         $translation_ready_templates = DB::table('templates')
                     ->join('thumbnails', 'templates.template_id', '=', 'thumbnails.template_id')
-                    ->select('templates.template_id','thumbnails.format_ready','thumbnails.translation_ready','thumbnails.thumbnail_ready', 'filename','thumbnails.title', 'thumbnails.dimentions')
+                    ->select('templates.template_id','templates.format_ready','templates.translation_ready','templates.thumbnail_ready', 'filename','thumbnails.title', 'thumbnails.dimentions')
                     // ->where('template_id','=', $template_key )
                     ->where('thumbnails.language_code','=', $language_code )
                     // ->where('thumbnails.dimentions','=', '5 x 7 in' )
                     // ->where('templates.status','=', 5 )
-                    // ->where('thumbnails.format_ready','1')
-                    // ->where('thumbnails.translation_ready','1')
-                    // ->where('thumbnails.thumbnail_ready','1')
+                    // ->where('templates.format_ready','1')
+                    ->where('templates.status','=', 1 )
+                    ->where('templates.source','=', 'templett' )
+                    ->whereNull('thumbnails.thumbnail_ready')
                     ->offset($offset)
                     ->limit($per_page)
                     ->get();

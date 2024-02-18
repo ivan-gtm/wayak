@@ -280,7 +280,7 @@ Route::group(['middleware' => ['guest']], function() {
     });
 
 // Recommendator
-Route::get('/{country}/carousels', [RecommendationController::class, 'getUserCarousels'])->name('recommendator.carousels'); // beta
+// Route::get('/{country}/carousels', [RecommendationController::class, 'getUserCarousels'])->name('recommendator.carousels'); // beta
 
 Route::group(['middleware' => ['auth']], function() {
     // Logout Routes
@@ -332,7 +332,7 @@ Route::group(['middleware' => ['auth']], function() {
 // Store
     Route::get('/', [ContentController::class, 'showHome']);
     
-    Route::get('/{country}', [ContentController::class, 'showHomePerPage'])->name('user.homepage');
+    Route::get('/{country}', [ContentController::class, 'showHome'])->name('user.homepage');
     
     Route::get('/{country}/code', [CodeController::class, 'validateCode'])->name('code.validate.form');
     Route::post('/{country}/code', [CodeController::class,'redeemCode'])->name('code.validate');

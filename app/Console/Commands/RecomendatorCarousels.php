@@ -47,10 +47,15 @@ class RecomendatorCarousels extends Command
         $this->buildCarouselPopularCategories();
         $this->buildCarouselTrendingProducts();
         
-        $this->buildFavoritesCarousels($customerId);
-        $this->buildSearchBasedCarousels($customerId);
-        $this->buildRecentlyViewedProductsCarousel($customerId);
+        $favoritesCarousels = $this->buildFavoritesCarousels($customerId);
+        $searchBasedCarousels = $this->buildSearchBasedCarousels($customerId);
+        $productsCarousel = $this->buildRecentlyViewedProductsCarousel($customerId);
+        
         // popular categories
+        $recommendationsCarousels = array_merge($favoritesCarousels, $searchBasedCarousels, $productsCarousel);
+        
+        $redisRecommendationsCarouselKey = "wayak:user:{$customerId}:recommendations:carousels";
+        Redis::set($redisRecommendationsCarouselKey, json_encode($recommendationsCarousels));
     }
 
     // Global user preferences
@@ -86,9 +91,9 @@ class RecomendatorCarousels extends Command
             foreach ($products as $product) {
 
                 if (App::environment() == 'local') {
-                    $product->preview_image_url = asset('design/template/' . $product->_id . '/thumbnails/' . $language_code . '/' . $product->previewImageUrls['product_preview']);
+                    $product->preview_image_url = asset('design/template/' . $product->_id . '/thumbnails/' . $language_code . '/' . $product->previewImageUrls['carousel']);
                 } else {
-                    $product->preview_image_url = Storage::disk('s3')->url('design/template/' . $product->_id . '/thumbnails/' . $language_code . '/' . $product->previewImageUrls['product_preview']);
+                    $product->preview_image_url = Storage::disk('s3')->url('design/template/' . $product->_id . '/thumbnails/' . $language_code . '/' . $product->previewImageUrls['carousel']);
                 }
 
                 $carouselItems[] = [
@@ -166,7 +171,7 @@ class RecomendatorCarousels extends Command
             
             $carouselItems = [];
             foreach ($randomProducts as $product) {
-                $urlPath = 'design/template/' . $product->_id . '/thumbnails/' . $language_code . '/' . $product->previewImageUrls['product_preview'];
+                $urlPath = 'design/template/' . $product->_id . '/thumbnails/' . $language_code . '/' . $product->previewImageUrls['carousel'];
                 $product->preview_image_url = App::environment() == 'local' ? asset($urlPath) : Storage::disk('s3')->url($urlPath);
 
                 $carouselItems[] = [
@@ -219,9 +224,9 @@ class RecomendatorCarousels extends Command
         foreach ($products as $product) {
 
             if (App::environment() == 'local') {
-                $product->preview_image_url = asset('design/template/' . $product->_id . '/thumbnails/' . $language_code . '/' . $product->previewImageUrls['product_preview']);
+                $product->preview_image_url = asset('design/template/' . $product->_id . '/thumbnails/' . $language_code . '/' . $product->previewImageUrls['carousel']);
             } else {
-                $product->preview_image_url = Storage::disk('s3')->url('design/template/' . $product->_id . '/thumbnails/' . $language_code . '/' . $product->previewImageUrls['product_preview']);
+                $product->preview_image_url = Storage::disk('s3')->url('design/template/' . $product->_id . '/thumbnails/' . $language_code . '/' . $product->previewImageUrls['carousel']);
             }
 
             $carouselItems[] = [
@@ -240,6 +245,7 @@ class RecomendatorCarousels extends Command
         $carousel = [[
             'slider_id' => Str::random(5),
             'title' => 'Favorites',
+            'search_term' => 'Favorites',
             'link' => route('user.favorites',['customerId' => $customerId, 'country' => $country]),
             'items' => $carouselItems
         ]];
@@ -250,7 +256,7 @@ class RecomendatorCarousels extends Command
 
         $this->info('Carousel created successfully for customer: ' . $customerId);
 
-        return true;
+        return $carousel;
     }
 
     function getFavorites($customerId)
@@ -311,9 +317,9 @@ class RecomendatorCarousels extends Command
             foreach ($products['documents'] as $product) {
 
                 if (App::environment() == 'local') {
-                    $product->preview_image_url = asset('design/template/' . $product->_id . '/thumbnails/' . $language_code . '/' . $product->previewImageUrls['product_preview']);
+                    $product->preview_image_url = asset('design/template/' . $product->_id . '/thumbnails/' . $language_code . '/' . $product->previewImageUrls['carousel']);
                 } else {
-                    $product->preview_image_url = Storage::disk('s3')->url('design/template/' . $product->_id . '/thumbnails/' . $language_code . '/' . $product->previewImageUrls['product_preview']);
+                    $product->preview_image_url = Storage::disk('s3')->url('design/template/' . $product->_id . '/thumbnails/' . $language_code . '/' . $product->previewImageUrls['carousel']);
                 }
 
                 $carouselItems[] = [
@@ -342,7 +348,7 @@ class RecomendatorCarousels extends Command
         Redis::set($redisCarouselKey, json_encode($carousels));
         $this->info('Carousel created successfully for customer: ' . $customerId);
 
-        return 0;
+        return $carousels;
     }
 
     public function buildRecentlyViewedProductsCarousel($customerId)
@@ -365,7 +371,7 @@ class RecomendatorCarousels extends Command
 
         // Process products and generate URLs based on environment
         $carouselItems = $products->map(function ($product) use ($isLocal, $language_code) {
-            $urlPath = 'design/template/' . $product->_id . '/thumbnails/' . $language_code . '/' . $product->previewImageUrls['product_preview'];
+            $urlPath = 'design/template/' . $product->_id . '/thumbnails/' . $language_code . '/' . $product->previewImageUrls['carousel'];
 
             if ($isLocal) {
                 $product->preview_image_url = asset($urlPath);
@@ -385,16 +391,18 @@ class RecomendatorCarousels extends Command
             ];
         })->toArray();
 
-        // Construct and store carousel JSON
-        Redis::set("wayak:user:{$customerId}:carousels:product-history", json_encode([[
+        $carouselMetadata = [[
             'slider_id' => Str::random(5),
             'title' => 'Recently viewed products',
             'search_term' => 'recently viewed',
             'items' => $carouselItems
-        ]]));
+        ]];
+
+        // Construct and store carousel JSON
+        Redis::set("wayak:user:{$customerId}:carousels:product-history", json_encode($carouselMetadata));
 
         $this->info('Carousel created successfully for customer: ' . $customerId);
 
-        return 0;
+        return $carouselMetadata;
     }
 }

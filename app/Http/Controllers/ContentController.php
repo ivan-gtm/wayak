@@ -27,123 +27,47 @@ class ContentController extends Controller
         $this->userPurchaseService = $userPurchaseService;
     }
 
-    public function showHome()
+    public function showHome($country = 'us', Request $request)
     {
-
-        $country = 'us'; // default country
         $locale = $this->getLocaleByCountry($country);
 
-        App::setLocale($locale);
-
-        $prefix = 'wayak:' . $country;
-
-        // Batch Redis requests
-        $redisKeys = [
-            $prefix . ':home:carousels',
-            $prefix . ':menu'
-        ];
-
-        list($carousels, $menu) = array_map('json_decode', Redis::mget($redisKeys));
-
-        $sale = Redis::hgetall($prefix . ':config:sales');
-        
-        if( Auth::check() ) {
-            // User is logged in
-            // $logged_id = Auth::id();
-            $user = Auth::user();
-        }
-
-        return view('content.home', [
-            'search_term' => '',
-            'language_code' => $locale,
-            'country' => $country,
-            'menu' => $menu,
-            'sale' => $sale,
-            'search_query' => '',
-            'coupon' => '',
-            'customer_id' => isset($user->customer_id) ? $user->customer_id : null,
-            'carousels' => $carousels
-        ]);
-    }
-
-    public function showHomePerPage($country, Request $request)
-    {
-
-        $locale = $this->getLocaleByCountry($country);
-
+        // Early return if locale is not supported
         if (!in_array($locale, ['en', 'es'])) {
-            abort(400);
+            abort(400, 'Unsupported locale.');
         }
 
         App::setLocale($locale);
 
         $redisPrefix = 'wayak:' . $country;
-
-        $carouselKeys = [
-            $redisPrefix . ':home:carousels',
-            // $redisPrefix . ':home:carousels:trending-categories',
-            // $redisPrefix . ':home:carousels:trending'
-        ];
-
+        $customerId = $this->getCustomerId($request);
+        $carouselKeys = $this->getCarouselKeys($redisPrefix, $customerId);
         $redisResults = Redis::mget($carouselKeys);
 
-        if (!$redisResults[0]) {
-            abort(404);
+        // echo "<pre>";
+        // print_r( $redisResults );
+        // exit;
+
+        // Early return if there are no carousel results
+        if ($customerId > 0 && !$redisResults[0]) {
+            abort(404, 'Carousels not found.');
         }
 
-        $carousels = json_decode($redisResults[0]);
-        // $carousels = array_merge(json_decode($redisResults[1]), $carousels);
-        // array_unshift($carousels, json_decode($redisResults[2]));
+        $carousels = $this->mergeCarousels($redisResults);
+        $menu = json_decode(Redis::get("{$redisPrefix}:menu"));
+        $sale = $this->getSaleDetails($redisPrefix, $request);
 
-        // $customer_id = $this->getCustomerId($request);
-
-        // if ($customer_id) {
-        //     $userPrefix = 'wayak:user:' . $customer_id . ':carousels:';
-
-        //     $userCarouselKeys = [
-        //         $userPrefix . 'product-history',
-        //         $userPrefix . 'favorites',
-        //         $userPrefix . 'search'
-        //     ];
-
-        //     $userRedisResults = Redis::mget($userCarouselKeys);
-
-        //     $userCarousels = [
-        //         json_decode($userRedisResults[0]),
-        //         json_decode($userRedisResults[1])
-        //     ];
-
-        //     $userRedisResults = array_merge($userCarousels, json_decode($userRedisResults[2]));
-        //     $carousels = array_merge($userCarousels, $carousels);
-        // }
-
-        $menu = json_decode(Redis::get($redisPrefix . ':menu'));
-        $sale = Redis::hgetall($redisPrefix . ':config:sales');
-        
-        $couponCode = $request->input('coupon', null);
-        if(isset($couponCode)){
-            $couponDetails = Redis::hgetall('wayak:admin:template:code:' . $request->coupon);
-            $sale['status'] = 1;
-            $sale['sale_ends_at'] = $couponDetails['expires_at'];
-            $sale['site_banner_txt'] = 'Coupon applied !';
-            $sale['site_banner_btn'] = 'Jjaja';
-        }
-
-        if( Auth::check() ) {
-            // User is logged in
-            // $logged_id = Auth::id();
-            $user = Auth::user();
-        }
+        // Get user if logged in
+        $user = Auth::user();
 
         return view('content.home', [
             'language_code' => $locale,
             'country' => $country,
-            'coupon' => $couponCode,
+            'coupon' => $request->input('coupon', null),
             'menu' => $menu,
-            'customer_id' => isset($user->customer_id) ? $user->customer_id : null,
+            'customer_id' => $user ? $user->customer_id : null,
             'sale' => $sale,
             'search_query' => '',
-            'carousels' => $carousels
+            'carousels' => $carousels,
         ]);
     }
 
@@ -164,6 +88,38 @@ class ContentController extends Controller
         }
 
         return false;
+    }
+
+    private function getCarouselKeys($redisPrefix, $customerId)
+    {
+        return [
+            "wayak:user:{$customerId}:recommendations:carousels",
+            "{$redisPrefix}:home:carousels:trending-categories",
+            "{$redisPrefix}:home:carousels",
+        ];
+    }
+
+    private function mergeCarousels(array $redisResults)
+    {
+        return collect($redisResults)->map(fn($result) => json_decode($result))->collapse();
+    }
+
+    private function getSaleDetails($redisPrefix, Request $request)
+    {
+        $sale = Redis::hgetall("{$redisPrefix}:config:sales");
+        $couponCode = $request->input('coupon');
+
+        if ($couponCode) {
+            $couponDetails = Redis::hgetall("wayak:admin:template:code:{$couponCode}");
+            $sale = array_merge($sale, [
+                'status' => 1,
+                'sale_ends_at' => $couponDetails['expires_at'],
+                'site_banner_txt' => 'Coupon applied!',
+                'site_banner_btn' => 'Jjaja',
+            ]);
+        }
+
+        return $sale;
     }
     
     public function showCategoryPage($country, $catLevel1_slug = null, $catLevel2_slug = null, $catLevel3_slug = null, Request $request)
