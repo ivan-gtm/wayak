@@ -4953,6 +4953,7 @@
             var demo_as_id = {{ $demo_as_id }};
             var currentUserRole = '{{ $user_role }}'; 
             var language_code = '{{ $language_code }}'; 
+            var docUserId = 'docUserId{{ $demo_as_id }}'; 
             
             // FREE
             // var design_as_id = 0;

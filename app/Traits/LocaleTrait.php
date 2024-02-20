@@ -5,6 +5,11 @@ namespace App\Traits;
 trait LocaleTrait
 {
 
+    public function isValidCountry($country){
+        $validCountries = ['us','ca','es','mx','co','ar','bo','ch','cu','do','sv','hn','ni','pe','uy','ve','py','pa','gt','pr','gq','fr','be','ch','mc','lu','bj','bf','bi','cm','cf','td','km','cg','cd','dj','gq','ga','gn','ci','mg','ml','ne','rw','sn','sc','tg','vu','ht','pt','br','ao','mz','cv','gw','st','tl','gq','mo'];
+        return in_array($country, $validCountries);
+    }
+    
     public function getLocaleByCountry($country)
     {
         switch ($country) {

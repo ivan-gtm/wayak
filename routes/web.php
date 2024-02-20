@@ -314,7 +314,8 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('/editor/get-bg-images', [EditorController::class, 'getBackgroundImages']);
     Route::get('/editor/load-settings', [EditorController::class, 'loadSettings']);
 
-    Route::get('/editor/download-pdf', [EditorController::class, 'downloadPDF']);
+    // Route::get('/editor/download-pdf', [EditorController::class, 'downloadPDF']);
+    Route::post('/editor/download-pdf', [EditorController::class, 'createPdfWithBackgroundImage']);
     Route::post('/editor/register-template-download', [EditorController::class, 'registerTemplateDownload']);
     Route::get('/editor/get-remaining-downloads/{template_id}', [EditorController::class,'loadRemainingDownloads']);
     Route::get('/editor/get-uploaded-images/{limit_image}/{load_count}', [EditorController::class,'getUploadedImages']);

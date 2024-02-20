@@ -581,7 +581,7 @@
                     @foreach ($related_templates as $r_template)
                         <figure>
                             <a href="{{ route( 'template.productDetail', ['country' => $country,'slug' => $r_template->slug,'source'=>'related'] ) }}">
-                                <img alt="Diy Party Invitation Invites Kids Adult Halloween Haunted House Spooky Soir Bat Spooktacular" crossorigin="anonymous" loading="lazy" data-categ="invitations" data-value="PA4SzDDJNx" src="{{  $r_template->preview_image }}" class="itemImg">
+                                <img alt="{{ $r_template->title }}" crossorigin="anonymous" loading="lazy" data-categ="invitations" data-value="$r_template->_id" src="{{  $r_template->preview_image }}" class="itemImg">
                             </a>
                             <figcaption>
                                 <a href="{{ route( 'template.productDetail', ['country' => $country,'slug' => $r_template->slug,'source'=>'related'] ) }}">
@@ -598,31 +598,44 @@
                                                 By
                                             </a>
                                             <a rel="nofollow" data-test-selector="item-card-user-profile-link" href="/user/ashenterprise">
-                                                ashenterprise
+                                                {{ $r_template->studioName }}
                                             </a>
                                         </div>
                                         <div class="n-listing-card__price  wt-display-block wt-text-title-01 lc-price">
                                             <p class="wt-text-title-01 lc-price ">
                                                 <span class="wt-screen-reader-only">
-                                                    Sale Price MX$220.12
+                                                    Sale Price 
+                                                    @if(isset($sale) && $sale != null || isset($couponDetails) )
+                                                        US${{ $r_template->prices['price'] }}
+                                                    @else
+                                                        US${{ $r_template->prices['original_price'] }}
+                                                    @endif
                                                 </span>
                                                 <span aria-hidden="true">
-                                                    <span class="currency-symbol">MX$</span>
-                                                    <span class="currency-value">220.12</span>
+                                                    <span class="currency-symbol">US$</span>
+                                                    <span class="currency-value">
+                                                        @if(isset($sale) && $sale != null || isset($couponDetails) )
+                                                            {{ $r_template->prices['price'] }}
+                                                        @else
+                                                            {{ $r_template->prices['original_price'] }}
+                                                        @endif
+                                                    </span>
                                                 </span>
                                             </p>
-                                            <p class="wt-text-caption search-collage-promotion-price wt-text-slime wt-text-truncate wt-no-wrap">
-                                                <span class="wt-text-strikethrough " aria-hidden="true">
-                                                    <span class="currency-symbol">MX$</span>
-                                                    <span class="currency-value">576.10</span>
-                                                </span>
-                                                <span class="wt-screen-reader-only">
-                                                    Original Price MX$576.10
-                                                </span>
-                                                <span>
-                                                    (70% off)
-                                                </span>
-                                            </p>
+                                            @if(isset($sale) && $sale != null || isset($couponDetails) )
+                                                <p class="wt-text-caption search-collage-promotion-price wt-text-slime wt-text-truncate wt-no-wrap">
+                                                    <span class="wt-text-strikethrough " aria-hidden="true">
+                                                        <span class="currency-symbol">US$</span>
+                                                        <span class="currency-value">{{ $r_template->prices['original_price'] }}</span>
+                                                    </span>
+                                                    <span class="wt-screen-reader-only">
+                                                        Original Price MX${{ $r_template->prices['original_price'] }}
+                                                    </span>
+                                                    <span>
+                                                        ({{ $template->prices['discount_percent'] }}% Off)
+                                                    </span>
+                                                </p>
+                                            @endif
                                         </div>
                                     </div>
                                     <div class="EnawCRza wnbOpC0l">

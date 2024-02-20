@@ -29,8 +29,12 @@ class ContentController extends Controller
 
     public function showHome($country = 'us', Request $request)
     {
+        
+        if( $this->isValidCountry($country) == false){
+            abort(400, 'Unsupported country.');
+        }
+        
         $locale = $this->getLocaleByCountry($country);
-
         // Early return if locale is not supported
         if (!in_array($locale, ['en', 'es'])) {
             abort(400, 'Unsupported locale.');
@@ -407,6 +411,7 @@ class ContentController extends Controller
             'slug',
             'sales',
             'stars',
+            'prices',
             'format',
             'categories',
             'mainCategory',
