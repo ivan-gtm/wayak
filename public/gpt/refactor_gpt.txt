@@ -1,109 +1,15 @@
-
-Act as an expert in JavaScript development.
-Refactor this function to improve the readability and maintainability.I'm using "fabric.js" 2.7.0 and "jQuery" 1.12
-This function belongs to a bigger script and is called by another functions, keep original function name to avoid errors with the rest of the code.
-Be meticulous with scope variables, taking into consideration that global variables could be used by other functions.
 Take your time, write functions one by one, if answer is too big.
 To start, list only functions name and a number to identify it, DO NOT PROCEED with functions content until user specifies selects a function number.
 
-function addBackgroundLayer(canvas, tcanvas) {
-    if (DEBUG) {
-        console.log("addBackgroundLayer()");
-    }
-
-    return DEBUG && console.log("addBackgroundLayer()"),
-        new Promise(function (resolve, reject) {
-            var rows = parseInt($("#numOfcanvasrows").val())
-                , cols = parseInt($("#numOfcanvascols").val());
-            if (canvas.backgroundImage && "image" === canvas.backgroundImage.type)
-                fabric.Image.fromURL(canvas.backgroundImage.toDataURL({
-                    format: "jpeg",
-                    quality: .5,
-                    multiplier: 3.125,
-                    left: 0,
-                    top: 0,
-                    width: canvas.get("width"),
-                    height: canvas.get("height")
-                }), function (img) {
-                    if ($("input#savecrop").is(":checked") && rows + cols < 3)
-                        var width = img.get("width") + 75
-                            , height = img.get("height") + 75;
-                    else
-                        width = img.get("width"),
-                            height = img.get("height");
-                    img.set({
-                        top: 0,
-                        left: 0,
-                        width: width,
-                        height: height,
-                        id: "bgl"
-                    }),
-                        tcanvas.add(img),
-                        img.moveTo(0),
-                        resolve(tcanvas)
-                });
-            else if (canvas.backgroundColor && "string" == typeof canvas.backgroundColor) {
-                var rect = new fabric.Rect({
-                    top: -.5,
-                    left: -.5,
-                    width: canvas.get("width"),
-                    height: canvas.get("height"),
-                    id: "bgl",
-                    fill: canvas.backgroundColor
-                });
-                tcanvas.add(rect),
-                    rect.moveTo(0),
-                    resolve(tcanvas)
-            } else if (canvas.bgsrc)
-                getBg2(canvas, 1).then(function ($bg) {
-                    fabric.Image.fromURL($bg, function (img) {
-                        if ($("input#savecrop").is(":checked") && cols + rows < 3)
-                            var width = img.get("width") + 75
-                                , height = img.get("height") + 75;
-                        else
-                            width = img.get("width"),
-                                height = img.get("height");
-                        DEBUG && console.log("addBackgroundLayer() img width, img.height", width, height),
-                            tcanvas.add(img);
-                        img.set({
-                            scaleX: width / img.get("width") / 3.125,
-                            scaleY: height / img.get("height") / 3.125,
-                            top: 0,
-                            left: 0,
-                            originX: "left",
-                            originY: "top",
-                            id: "bgl",
-                            preserveAspectRatio: !0
-                        }),
-                            img.moveTo(0),
-                            DEBUG && console.log("img", img),
-                            DEBUG && console.log("addBackgroundLayer() tcanvas", tcanvas),
-                            resolve(tcanvas)
-                    })
-                }).catch(function ($res) {
-                    console.log($res)
-                });
-            else {
-                rect = new fabric.Rect({
-                    top: -.5,
-                    left: -.5,
-                    width: canvas.get("width") / canvas.getZoom(),
-                    height: canvas.get("height") / canvas.getZoom(),
-                    fill: "",
-                    id: "bgl"
-                });
-                tcanvas.add(rect),
-                    rect.moveTo(0),
-                    resolve(tcanvas)
-            }
-        }
-        )
-}
+Act as an expert in JavaScript development.
+Refactor this function to improve the readability and maintainability.I'm using "fabric.js" 2.7.0 and "jQuery" 1.12
 
 
 // improve the readability and maintainability of objectSelected function
 
 Act as an expert in JavaScript development.
 Improve readability and maintainability of this lines of JS code, I'm using "fabric.js" 2.7.0 and "jQuery" 1.12:
+Do not write new functions, only add comments if its neccessary
+This function belongs to a bigger script and is called by another functions, keep original function name to avoid errors with the rest of the code.
+Be meticulous with scope variables, taking into consideration that global variables could be used by other functions.
 
-......

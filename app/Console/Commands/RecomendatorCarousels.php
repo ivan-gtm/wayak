@@ -49,10 +49,10 @@ class RecomendatorCarousels extends Command
         
         $favoritesCarousels = $this->buildFavoritesCarousels($customerId);
         $searchBasedCarousels = $this->buildSearchBasedCarousels($customerId);
-        $productsCarousel = $this->buildRecentlyViewedProductsCarousel($customerId);
+        $recentlyViewedProductsCarousel = $this->buildRecentlyViewedProductsCarousel($customerId);
         
-        // popular categories
-        $recommendationsCarousels = array_merge($favoritesCarousels, $searchBasedCarousels, $productsCarousel);
+        // Popular categories
+        $recommendationsCarousels = array_merge($favoritesCarousels, $searchBasedCarousels, $recentlyViewedProductsCarousel);
         
         $redisRecommendationsCarouselKey = "wayak:user:{$customerId}:recommendations:carousels";
         Redis::set($redisRecommendationsCarouselKey, json_encode($recommendationsCarousels));
@@ -292,7 +292,7 @@ class RecomendatorCarousels extends Command
 
         // // Sort the product history based on view count in descending order
         // uasort($serachHistoryArray, function ($a, $b) {
-        //     return $b['count'] <=> $a['count'];
+        //     return $b['counter'] <=> $a['count'];
         // });
         
         // Sort the product history based on "lastSearched" date in descending order
@@ -306,11 +306,22 @@ class RecomendatorCarousels extends Command
         $carousels = [];
         foreach ($serachHistoryArray as $slug => $search_info) {
             $searchTerm = Redis::hget('wayak:us:analytics:search:terms', $slug);
+            
+            // print_r($slug);
+            // print_r($search_info);
+            // print_r($searchTerm);
+            // exit;
 
             $products = (new Template())->filterDocuments(strtolower($searchTerm), null, null, null, null, null, 0, $total_items_per_carousel);
-
+            
+            // print_r($slug);
+            // print_r("\n");
             // print_r(array_keys($products));
-            // exit;
+            // print_r($products['total']);
+            // // print_r($products);
+            // print_r("\n");
+            // print_r("\n");
+            // // exit;
 
             // Convert the products into a suitable format for the carousel
             $carouselItems = [];
@@ -334,13 +345,16 @@ class RecomendatorCarousels extends Command
                 ];
             }
 
-            // Construct the carousel JSON object
-            $carousels[] = [
-                'slider_id' => Str::random(5),
-                'title' => 'Beacuse you search "' . $searchTerm . '"',
-                'search_term' => $searchTerm,
-                'items' => $carouselItems
-            ];
+            // Avoid to add empty carousels
+            if(isset($products['total']) && is_int($products['total']) && $products['total'] > 0){
+                // Construct the carousel JSON object
+                $carousels[] = [
+                    'slider_id' => Str::random(5),
+                    'title' => 'Beacuse you search "' . $searchTerm . '"',
+                    'search_term' => $searchTerm,
+                    'items' => $carouselItems
+                ];
+            }
         }
 
         // Store the JSON object in Redis
@@ -365,8 +379,11 @@ class RecomendatorCarousels extends Command
         // Sort by lastVisited
         uasort($productHistoryArray, fn ($a, $b) => $b['lastVisited'] <=> $a['lastVisited']);
 
+        // print_r( array_slice(array_keys($productHistoryArray),0,30) );
+        // exit;
+
         // Fetch necessary fields from MongoDB
-        $products = Template::whereIn('_id', array_keys($productHistoryArray))
+        $products = Template::whereIn('_id', array_slice(array_keys($productHistoryArray),0,30) )
             ->get(['_id', 'title', 'slug', 'width', 'height', 'forSubscribers', 'previewImageUrls']);
 
         // Process products and generate URLs based on environment

@@ -2715,56 +2715,83 @@ var globalRow = 0
   , globalCol = 0
   , toastMsg = null
   , pdfRequestId = "";
+
+// Bind click event to the download PDF button
 $("#downloadAsPDF").click(function() {
+    // Abort any ongoing AJAX request to prevent conflicts
     if (ajaxRequestRef && ajaxRequestRef.abort(),
-    demo_as_id > 0)
+    demo_as_id > 0) {
+        // Show a toast message if the action is not allowed in demo mode
         $.toast({
             text: "Not allowed in demo mode",
             icon: "error",
-            loader: !1,
+            loader: false, // Use boolean for clarity
             position: "top-right"
         });
-    else {
-        downloadPdfTimer(120),
+    } else {
+        // Start the download PDF countdown timer
+        downloadPdfTimer(120);
+        // Deselect any selected objects on the canvas and re-render
         canvas.discardActiveObject().renderAll();
+
+        // Initialize variables for canvas dimensions and page settings
         var canvases = canvasarray;
         globalRow = parseInt($("#numOfcanvasrows").val()),
         globalCol = parseInt($("#numOfcanvascols").val());
-        var pages = $(".divcanvas:visible").length / document.getElementById("numOfcanvasrows").value / document.getElementById("numOfcanvascols").value
-          , canvasWidth = canvases[0].get("width") / canvases[0].getZoom()
-          , canvasHeight = canvases[0].get("height") / canvases[0].getZoom()
-          , bleed = $("#savebleedPdf").is(":checked")
-          , trimsMarks = $("#savecrop").is(":checked")
-          , savePaper = $("#savePaper").is(":checked")
-          , pageSize = "us-letter"
-          , metrics = $("input[name=metric_units1]:checked").val();
-        "a4" === $(".paper-size.active").find('input[name="paperSize"]').val() && (pageSize = "a4");
-        var templateJson = getTemplateJson()
-          , urlDocument = appUrl + "admin/Documents/download-pdf-file";
+
+        // Calculate the number of pages based on visible divs and input values
+        var pages = $(".divcanvas:visible").length / document.getElementById("numOfcanvasrows").value / document.getElementById("numOfcanvascols").value,
+            canvasWidth = canvases[0].get("width") / canvases[0].getZoom(),
+            canvasHeight = canvases[0].get("height") / canvases[0].getZoom(),
+            bleed = $("#savebleedPdf").is(":checked"),
+            trimsMarks = $("#savecrop").is(":checked"),
+            savePaper = $("#savePaper").is(":checked"),
+            pageSize = "us-letter", // Default page size
+            metrics = $("input[name=metric_units1]:checked").val();
+
+        // Update page size if A4 is selected
+        if ($(".paper-size.active").find('input[name="paperSize"]').val() === "a4") {
+            pageSize = "a4";
+        }
+
+        // Retrieve the template JSON for the document
+        // var templateJson = getTemplateJson()
+        
+        // Construct the URL for the document download endpoint
+        var urlDocument = appUrl + "editor/download-pdf";
+
+        // Show a toast message indicating the PDF creation is in progress
         $.toast({
             heading: "Creating PDF...",
             text: "Please wait",
             icon: "info",
-            loader: !1,
-            allowToastClose: !1,
+            loader: false,
+            allowToastClose: false,
             position: "top-right",
-            hideAfter: !1,
+            hideAfter: false,
             stack: 1,
             beforeShow: function() {
+                // Change the icon of the toast message to a loader
                 var tag = $(".jq-toast-single.jq-has-icon.jq-icon-info").first();
                 $(tag).removeClass("jq-icon-info"),
                 $(tag).addClass("toast-loader-icon")
             }
-        }),
+        });
+
+        // Perform the AJAX request to generate the PDF
         $.ajax({
             url: urlDocument,
             method: "POST",
+            headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+            },
             data: {
-                webSocketConn: webSocketConn,
+                // Removed commented out code for cleanliness
                 demoAsId: demo_as_id,
                 docUserId: docUserId,
                 templateId: loadedtemplateid,
-                templateJson: templateJson,
+                jpgImageData: getTemplateImage(canvasWidth),
+                // asdasd canvasWidth
                 pages: pages,
                 canvasWidth: canvasWidth,
                 canvasHeight: canvasHeight,
@@ -2779,13 +2806,94 @@ $("#downloadAsPDF").click(function() {
             },
             dataType: "json"
         }).done(function(data) {
-            pdfRequestId = data.requestId,
-            pullingType = "pdf",
-            webSocketConn || (clearTimeout(referenceUpdates),
-            checkDocsUpdates(pdfRequestId))
-        })
+            // Update global variables with the response for further processing
+            pdfRequestId = data.requestId;
+            pullingType = "pdf";
+            type = "pdf";
+            
+            // data.success = true;
+            // data.file = 'url to download';
+            // data.msg = "Please try again" / "Your PDF is Ready";
+            // data.requestId = 'sdasdasd';
+            
+            if(data.success) {
+                var msg = "Your PDF is Ready";
+                var linkText = '<a class="file-button-download" data-linktype="' + type + '" target="_blank" href="' + data.file + '">Download Now</a>';
+                $.toast({
+                    heading: msg,
+                    text: linkText,
+                    icon: "success",
+                    loader: !0,
+                    position: "top-right",
+                    hideAfter: !1,
+                    stack: 1
+                });
+            } else {
+                $.toast({
+                    heading: "Error",
+                    text: data.msg,
+                    icon: "error",
+                    loader: !1,
+                    position: "top-right",
+                    hideAfter: 4e3,
+                    stack: 1
+                });
+            }
+        });
     }
 });
+
+/**
+ * Generates a data URL for the current canvas image at a specified width.
+ * @param {number} desiredWidth - The desired width of the image.
+ * @returns {string} The data URL of the canvas image in JPEG format.
+ */
+function getTemplateImage(desiredWidth) {
+    // Retrieve the current canvas based on the global currentcanvasid
+    var firstCanvas = canvasarray[currentcanvasid],
+        // Store the initial zoom level of the canvas to restore it later
+        initialZoom = firstCanvas.getZoom(),
+        // Flag to track if the canvas background is initially empty
+        isEmptyBackground = false;
+
+    // Set the canvas zoom based on the desired width and the original canvas width
+    setZoom(desiredWidth / (96 * parseFloat(document.getElementById("loadCanvasWid").value)));
+
+    // Check and set the background color to white if it's not set
+    if (!firstCanvas.backgroundColor) {
+        isEmptyBackground = true;
+        firstCanvas.set({ backgroundColor: "#ffffff" });
+    }
+
+    // Specific action for a template type, remove geofilter overlay if applicable
+    if (template_type === "geofilter2") {
+        removeGeofilterOverlay();
+    }
+
+    // Generate the canvas data URL in JPEG format with high quality
+    var dataURL = firstCanvas.toDataURL({
+        format: "jpeg",
+        quality: 0.9
+    });
+
+    // Restore specific template modifications after generating the data URL
+    if (template_type === "geofilter2") {
+        setGeofilterOverlay();
+    }
+
+    // Restore the canvas background color if it was initially empty
+    if (isEmptyBackground) {
+        firstCanvas.set({ backgroundColor: "" });
+    }
+
+    // Reset the zoom level to its original value
+    setZoom(initialZoom);
+
+    // Return the generated data URL
+    return dataURL;
+}
+
+
 var processDownloadButton = function(data, type) {
     if (clearTimeout(timerPdfRef),
     data.requestId == pdfRequestId) {
@@ -2971,7 +3079,7 @@ function getTemplateThumbnail() {
     var firstcanvas = canvasarray[currentcanvasid]
       , initialZoom = firstcanvas.getZoom()
       , isEmptyBackground = !1;
-    setZoom(350 / (96 * document.getElementById("loadCanvasWid").value)),
+    setZoom(1200 / (96 * document.getElementById("loadCanvasWid").value)),
     firstcanvas.backgroundColor || (isEmptyBackground = !0,
     firstcanvas.set({
         backgroundColor: "#ffffff"
@@ -2979,7 +3087,7 @@ function getTemplateThumbnail() {
     "geofilter2" == template_type && removeGeofilterOverlay();
     var dataURL = firstcanvas.toDataURL({
         format: "jpeg",
-        quality: .7
+        quality: .9
     });
     return "geofilter2" == template_type && setGeofilterOverlay(),
     isEmptyBackground && firstcanvas.set({
