@@ -162,7 +162,8 @@ fabric.Dpattern.fromObject = function(object, callback) {
     new fabric.Dpattern(object,callback)
 }
 ;
-var canvasScale = 1, currentcanvasid = 0, canvasindex = 0, pageindex = 0, canvasarray = [], isdownloadpdf = !1, isupdatetemplate = !1, issaveastemplate = !1, totalsvgs = 0, convertedsvgs = 0, loadedtemplateid = 0, activeObjectCopy, keystring = "", remstring = "", savestatecount = 0, stopProcess = !1, templatesloading = !1, backgroundsLoading = !1, elementsLoading = !1, textsLoading = !1, rotationStep = 1, properties_to_save = Array("format", "patternSourceCanvas", "bgImg", "src", "svg_custom_paths", "hidden", "cwidth", "cheight", "locked", "selectable", "editable", "bg", "logoid", "evented", "id", "bgsrc", "bgScale", "lockMovementX", "lockMovementY"), isMac = navigator.platform.toUpperCase().indexOf("MAC") >= 0, isSafari = /Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor), isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor), s_history = !1, previewSvg, offsetTemplates = 0, offsetRelatedProducts = 0, offsetTexts = 0, offsetElements = 0, offsetBackgrounds = 0, template_type, geofilterBackground, instructionsId, svg_custom_data = [], localStorageKey = "wayak.design", templateOptions, backgroundPromise, duplicatedTemplateId, lastShadowBlur, lastShadowHorizontalOffset, lastShadowVerticalOffset, lastShadowColor, historyTable, $fontUTF8Symbols = {}, $useKeepSvgGroups = !1, dontLoadFonts = [], DEBUG = !1, $copyOnePageAcrossSheet = !1;
+var canvasScale = 1, currentcanvasid = 0, canvasindex = 0, pageindex = 0, canvasarray = [], isdownloadpdf = !1, isupdatetemplate = !1, issaveastemplate = !1, totalsvgs = 0, convertedsvgs = 0, loadedtemplateid = 0, activeObjectCopy, keystring = "", remstring = "", savestatecount = 0, stopProcess = !1, templatesloading = !1, backgroundsLoading = !1, elementsLoading = !1, textsLoading = !1, rotationStep = 1, properties_to_save = Array("format", "patternSourceCanvas", "bgImg", "src", "svg_custom_paths", "hidden", "cwidth", "cheight", "locked", "selectable", "editable", "bg", "logoid", "evented", "id", "bgsrc", "bgScale", "lockMovementX", "lockMovementY"), isMac = navigator.platform.toUpperCase().indexOf("MAC") >= 0, isSafari = /Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor), isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor), s_history = !1, previewSvg, offsetTemplates = 0, offsetRelatedProducts = 0, offsetTexts = 0, offsetElements = 0, offsetBackgrounds = 0, template_type, geofilterBackground, instructionsId, svg_custom_data = [], localStorageKey = "wayak.design", templateOptions, backgroundPromise, duplicatedTemplateId, lastShadowBlur, lastShadowHorizontalOffset, lastShadowVerticalOffset, lastShadowColor, historyTable, $fontUTF8Symbols = {}, $useKeepSvgGroups = !1, dontLoadFonts = [], $copyOnePageAcrossSheet = !1;
+// var DEBUG = !1;
 fabric.Object.NUM_FRACTION_DIGITS = 10,
 InfiniteScroll.prototype.loadNextPage = function() {
     if (!this.isLoading && this.canLoad) {
@@ -488,19 +489,6 @@ function autoSave($element) {
     $.getJSON(url, {
         key: $key,
         value: $val
-    })
-}
-
-function loadSettings() {
-    if (DEBUG) {
-        console.log("loadSettings()");
-    }
-
-    var url = appUrl + "editor/load-settings";
-    $.getJSON(url).done(function($answer) {
-        0 == $answer.err && $answer.data.forEach(function($setting, i) {
-            $("#" + $setting.set_key).length && $("#" + $setting.set_key).prop("checked", eval($setting.set_value))
-        })
     })
 }
 
@@ -979,24 +967,6 @@ function addUploadedSVGToCanvas(svgimg) {
     })
 }
 
-function setControlsVisibility(object) {
-    if (DEBUG) {
-        console.log("addUploadedSVGToCanvas()");
-    }
-
-    object.locked && !0 === object.locked || (object.setControlsVisibility({
-        tl: !0,
-        tr: !0,
-        bl: !0,
-        br: !0,
-        mt: !0,
-        mb: !0,
-        ml: !0,
-        mr: !0
-    }),
-    object.hasControls = !0)
-}
-
 function addFileToCanvas(imagefile) {
     if (DEBUG) {
         console.log("addFileToCanvas()");
@@ -1029,41 +999,6 @@ function deleteCanvasBg(lcanvas) {
     lcanvas.bgsrc = "",
     lcanvas.bgImg = "",
     lcanvas.renderAll(),
-    save_history()
-}
-
-function setStyle(object, styleName, value) {
-    if (DEBUG) {
-        console.log("setStyle()");
-    }
-
-    if (object && object.setSelectionStyles && object.isEditing) {
-        var style = {};
-        style[styleName] = value,
-        object.selectionStart === object.selectionEnd || 0 === object.selectionStart && object.selectionEnd === object.text.length ? (object.removeStyle(styleName),
-        object[styleName] = value,
-        "fontFamily" == styleName && $("#font-dropdown").on("shown.bs.dropdown", function() {
-            $("#fontSearch").focus(),
-            $("#fonts-dropdown").scrollTop($('#fonts-dropdown li a[data-ff="' + value + '"]').position().top - $("#fonts-dropdown li:first").position().top),
-            $("#fonts-dropdown li a").removeClass("font-selected"),
-            $('#fonts-dropdown li a[data-ff="' + value + '"]').addClass("font-selected")
-        })) : ($.isEmptyObject(object.getSelectionStyles()) ? ($.isEmptyObject(object.getStyleAtPosition()) || object.getStyleAtPosition()[styleName] !== value || "fill" === styleName || (style[styleName] = ""),
-        object.setSelectionStyles(style, object.selectionStart, object.selectionEnd)) : $.each(object.getSelectionStyles(), function($i, $s) {
-            void 0 !== $s[styleName] && $s[styleName] === value && "fill" !== styleName ? $s[styleName] = "" : $s[styleName] = value,
-            object.setSelectionStyles($s, object.selectionStart + $i, object.selectionStart + 1 + $i)
-        }),
-        "fontFamily" === styleName && object.setSelectionStyles(style, object.selectionStart, object.selectionEnd))
-    } else
-        object && (object.setSelectionStyles && object.removeStyle(styleName),
-        object[styleName] = value,
-        "fontFamily" == styleName && $("#font-dropdown").on("shown.bs.dropdown", function() {
-            $("#fontSearch").focus(),
-            $("#fonts-dropdown").scrollTop($('#fonts-dropdown li a[data-ff="' + value + '"]').position().top - $("#fonts-dropdown li:first").position().top),
-            $("#fonts-dropdown li a").removeClass("font-selected"),
-            $('#fonts-dropdown li a[data-ff="' + value + '"]').addClass("font-selected")
-        }));
-    object.dirty = !0,
-    canvas.renderAll(),
     save_history()
 }
 
@@ -1466,30 +1401,7 @@ $("#changecharspacing").slider().on("slide", function(e) {
     s_history = !0,
     save_history()
 });
-var deleteitembtn = document.getElementById("deleteitem");
-function deleteItem() {
-    if (DEBUG) {
-        console.log("deleteItem()");
-    }
 
-    var activeObject = canvas.getActiveObject();
-    if (activeObject) {
-        if ("activeSelection" === activeObject.type && activeObject._objects) {
-            var objectsInGroup = activeObject.getObjects();
-            canvas.discardActiveObject(),
-            objectsInGroup.forEach(function(object) {
-                !0 !== object.locked && canvas.remove(object)
-            })
-        } else
-            !0 !== activeObject.locked && canvas.remove(activeObject);
-        canvas.discardActiveObject().renderAll(),
-        save_history()
-    }
-}
-deleteitembtn && (deleteitembtn.onclick = function() {
-    deleteItem()
-}
-);
 var objectalignleftSwitch = document.getElementById("objectalignleft");
 objectalignleftSwitch && (objectalignleftSwitch.onclick = function() {
     var activeObject = canvas.getActiveObject();
@@ -2293,6 +2205,9 @@ var checkSavePaper = function(fn) {
   , toggleLoop = !1
   , timeOutRef = 0
   , previewLoopZoom = function previewLoopZoom(originalWidth, svgWidth) {
+    if (DEBUG) {
+        console.log("previewLoopZoom()");
+    }
     var scaleValue = 1;
     (toggleLoop = !toggleLoop) && (scaleValue = originalWidth / svgWidth * 2),
     timeOutRef = setTimeout(function() {
@@ -4644,26 +4559,6 @@ var checkUploadedBg = function checkUploadedBg(ids) {
     }, 3e3)
 };
 
-function sortUnorderedList(ul, sortDescending) {
-    if (DEBUG) {
-        console.log("sortUnorderedList()");
-    }
-
-    if ("string" == typeof ul && (ul = document.getElementById(ul)),
-    ul) {
-        for (var lis = ul.getElementsByTagName("LI"), vals = [], i = 0, l = lis.length; i < l; i++)
-            vals.push(lis[i].innerHTML);
-        vals.sort(function(a, b) {
-            return a.toLowerCase().localeCompare(b.toLowerCase())
-        }),
-        sortDescending && vals.reverse();
-        for (i = 0,
-        l = lis.length; i < l; i++)
-            lis[i].innerHTML = vals[i]
-    } else
-        alert("The UL object is null!")
-}
-
 $("#unsaved_changes_commit").click(function(e) {
     e.preventDefault();
     var $templateid = $("#unsavedChanges").data("templateid")
@@ -5602,26 +5497,6 @@ $("#colorSelector").spectrum($color_selector_options);
 var $color_selector2_options = $spectrum_options;
 function getCatimages2($offset, $tags) {}
 
-function getUploadedImages($offset) {
-    if (DEBUG) {
-        console.log("getUploadedImages()");
-    }
-
-    $(".uploaded_images_list");
-    var url = appUrl + "editor/get-additional-assets/?offset=" + $offset;
-    $.getJSON(url).done(function(data) {
-        data.success,
-        "administrator" != currentUserRole && "designer" != currentUserRole || ($("#tab-upload").hide(),
-        !isNaN(design_as_id) && design_as_id > 0 ? $("#tab-upload").show() : data.images.length > 0 && ($("#tab-upload").show(),
-        $("#tab-upload .dz-message").hide(),
-        $("#myAwesomeDropzone").css({
-            border: "none"
-        }),
-        $("#myAwesomeDropzone").removeClass("dz-clickable")))
-    })
-}
-
-function getBgimages2($offset, $tags) {}
 function getTemplates2($offset, $tags) {}
 $color_selector2_options.change = function(color) {
     DEBUG && console.log("color: ", color),
@@ -5822,9 +5697,9 @@ jQuery(function($) {
         loadTemplates_related())
     }),
     $("#f").on("scroll", function() {
-        flag_scroll_templates_image || 100 * ($(this).scrollTop() + $(this).innerHeight()) / $(this)[0].scrollHeight > 95 && ($(aContainer_image).next().find(".loader-ellips").show(),
-        $(aContainer_image).next().find(".iscroll-button").hide(),
-        flag_scroll_templates_image = !0,
+        isScrollEnabledForImages || 100 * ($(this).scrollTop() + $(this).innerHeight()) / $(this)[0].scrollHeight > 95 && ($(imagesContainerSelector).next().find(".loader-ellips").show(),
+        $(imagesContainerSelector).next().find(".iscroll-button").hide(),
+        isScrollEnabledForImages = !0,
         loadTemplates_image())
     })
 }),
@@ -5896,7 +5771,7 @@ $("#cancel_bg_search").click(function(e) {
 });
 var relatedProductPage = 0
   , relatedProductCount = 2;
-function getRelatedProducts(templateId, page) {}
+
 function getTexts2($offset, $tags) {}
 function handleFileSelect(evt) {
     if (DEBUG) {
@@ -6958,70 +6833,6 @@ function setDynamicPattern($o, $src) {
     canvas.renderAll()
 }
 
-function checkUTF8Symbols() {
-    if (DEBUG) {
-        console.log("checkUTF8Symbols()");
-    }
-    var $font = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : ""
-      , callback = arguments.length > 1 ? arguments[1] : void 0;
-    if (!$font)
-        return !1;
-    var url = appUrl + "editor/get-woff-font-url?font_id=" + $font;
-    $.ajax({
-        url: url,
-        method: "get",
-        dataType: "json"
-    }).done(function(data) {
-        data.success && opentype.load(data.url, function(err, font) {
-            if (err)
-                $.toast({
-                    text: "Could not load font.",
-                    icon: "error",
-                    loader: !1,
-                    position: "top-right"
-                });
-            else {
-                for (var keys = [], glyphs = font.glyphs.glyphs, glyphsKeys = Object.keys(glyphs), i = 0; i < glyphsKeys.length; i++)
-                    void 0 !== glyphs[glyphsKeys[i]].unicode && keys.push(glyphs[glyphsKeys[i]].unicode);
-                callback(keys)
-            }
-        })
-    }).fail(function() {
-        return $.toast({
-            text: "Glyph font request error",
-            icon: "error",
-            loader: !1,
-            position: "top-right"
-        }),
-        !1
-    })
-}
-function setupSymbolsPanel() {
-    if (DEBUG) {
-        console.log("setupSymbolsPanel()");
-    }
-    var $font = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : ""
-      , $text = canvas.getActiveObject();
-    if ($text)
-        if ($font || ($font = $text.fontFamily),
-        $fontUTF8Symbols[$font] && "object" === _typeof($fontUTF8Symbols[$font])) {
-            var $markup = "";
-            $.each($fontUTF8Symbols[$font], function($i, $s) {
-                $markup += '<span data-code="' + $s + '" class="utf8-symbol">&#' + $s + "</span>"
-            }),
-            $(".utf8-symbols").html($markup).css("font-family", $font)
-        } else
-            checkUTF8Symbols($font, function(keys) {
-                if ($fontUTF8Symbols[$font] = keys,
-                $fontUTF8Symbols[$font].length) {
-                    var $markup = "";
-                    $.each($fontUTF8Symbols[$font], function($i, $s) {
-                        $markup += '<span data-code="' + $s + '" class="utf8-symbol">&#' + $s + "</span>"
-                    }),
-                    $(".utf8-symbols").html($markup).css("font-family", $font)
-                }
-            })
-}
 $("body").on("pattern_image_loaded", function(e) {
     DEBUG && console.log("pattern_image_loaded"),
     $(".pattern_tile").removeClass("loading"),
@@ -7295,6 +7106,9 @@ var toastInstance = null
   , timerPdfValue = 120
   , timerPdfRef = 0
   , downloadPdfTimer = function downloadPdfTimer() {
+    if (DEBUG) {
+        console.log("downloadPdfTimer()");
+    }
     var initValue = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : void 0;
     initValue && (timerPdfValue = initValue),
     timerPdfRef = setTimeout(function() {
@@ -7570,79 +7384,7 @@ $(aContainer_text).on("load.infiniteScroll", function(event, response) {
     $(aContainer_text).next().find(".iscroll-button").hide(),
     $(aContainer_text).next().find(".iscroll-last").show())
 });
-var flag_scroll_templates_template = !1
-  , limit_template = 20
-  , aContainer_template = "#template_container"
-  , aSearch_template = "#templatesearch"
-  , aMethod_template = "get-thumbnails"
-  , type_template = "template";
-function initMasonry_template() {
-    if (DEBUG) {
-        console.log("initMasonry_template()");
-    }
-    null != $(aContainer_template).data("infiniteScroll") && ($(aContainer_template).html(""),
-    $(aContainer_template).infiniteScroll().infiniteScroll("destroy"),
-    $(aContainer_template).masonry().masonry("destroy")),
-    infinites[type_template] = $(aContainer_template).masonry({
-        itemSelector: ".thumb",
-        columnWidth: 1,
-        percentPosition: !0,
-        stagger: 30,
-        visibleStyle: {
-            transform: "translateY(0)",
-            opacity: 1
-        },
-        hiddenStyle: {
-            transform: "translateY(100px)",
-            opacity: 0
-        }
-    }),
-    masonrys[type_template] = infinites[type_template].data("masonry"),
-    infinites[type_template].infiniteScroll({
-        path: function() {
-            var tags = $(aSearch_template).val() ? $(aSearch_template).val().toString() : "";
-            return appUrl + "editor/" + aMethod_template + "/?load_count=" + this.loadCount + "&limit_template=" + limit_template + "&tags=" + tags + "&design_as_id=" + design_as_id + "&demo_as_id=" + demo_as_id + "&demo_templates=" + demo_templates + "&id=" + demo_templates + "&language_code=" + language_code
-        },
-        responseType: "text",
-        outlayer: masonrys[type_template],
-        history: !1,
-        scrollThreshold: !1
-    }),
-    loadReadMore(aContainer_template, "loadTemplates_template"),
-    $(aContainer_template).next().find(".iscroll-button").show(),
-    $('#template-status').val("Thumbs Loaded")
-}
-function getItemHTML_template($row) {
-    if (DEBUG) {
-        console.log("getItemHTML_template()");
-    }
-    return $templates = '<div class="col-xs-6 thumb" id="' + $row.template_id + '">',
-    $row.instructionsId && ($templates += '<a class="instructions-overlay" onclick="loadInstructions(' + $row.template_id + ')" data-toggle="modal" data-target="#sellerInstructions"><h3>Seller Instructions</h3></a>'),
-    $templates += '<a class="thumbnail" data-target="' + $row.template_id + '">',
-    $templates += '<span class="thumb-overlay"><h3>' + $row.template_name + "</h3></span>",
-    $templates += '<div class="expired-notice" style="display:none;">EXPIRED</div>',
-    $templates += '<img class="tempImage img-responsive" src="' + $row.temp_source + '" alt="" style="">',
-    $templates += "</a>",
-    $templates += '<div class="badge-container">',
-    $templates += '<span class="badge dims">' + $row.width + " x " + $row.height + " " + $row.metrics + "</span>",
-    $templates += '<span class="badge tempId">ID: ' + $row.template_id + "</span>",
-    "designer" != currentUserRole && ($templates += '<i class="fa fa-trash-o deleteTemp" id="' + $row.template_id + '"></i>'),
-    $templates += "</div>",
-    $templates += "</div>",
-    $templates
-}
-function loadTemplates_template() {
-    if (DEBUG) {
-        console.log("loadTemplates_template()");
-    }
-    infinites[type_template].infiniteScroll("loadNextPage"),
-    setTimeout(function() {
-        masonrys[type_template].layout()
-    }, 200),
-    setTimeout(function() {
-        $(aContainer_template).next().find(".loader-ellips").hide()
-    }, 1500)
-}
+
 $(aContainer_template).on("load.infiniteScroll", function(event, response) {
     var data = JSON.parse(response)
       , itemsHTML = (data = data.data).map(getItemHTML_template).join("")
@@ -7745,42 +7487,7 @@ $(aContainer_related).on("load.infiniteScroll", function(event, response) {
     } else
         $("#relatedProductsPane a:visible").addClass("invisible")
 });
-var flag_scroll_templates_image = !1, limit_image = 24, aContainer_image = ".uploaded_images_list", aSearch_image = "", aMethod_image = "get-uploaded-images", type_image = "image", templateId_image;
-function initMasonry_image(templateId) {
-    if (DEBUG) {
-        console.log("initMasonry_image()");
-    }
-    templateId_image = templateId,
-    null != $(aContainer_image).data("infiniteScroll") && ($(aContainer_image).html(""),
-    $(aContainer_image).infiniteScroll().infiniteScroll("destroy"),
-    $(aContainer_image).masonry().masonry("destroy")),
-    infinites[type_image] = $(aContainer_image).masonry({
-        itemSelector: ".thumb",
-        columnWidth: 1,
-        percentPosition: !0,
-        stagger: 30,
-        visibleStyle: {
-            transform: "translateY(0)",
-            opacity: 1
-        },
-        hiddenStyle: {
-            transform: "translateY(100px)",
-            opacity: 0
-        }
-    }),
-    masonrys[type_image] = infinites[type_image].data("masonry"),
-    infinites[type_image].infiniteScroll({
-        path: function() {
-            return appUrl + "editor/" + aMethod_image + "/" + limit_image + "/" + this.loadCount
-        },
-        responseType: "text",
-        outlayer: masonrys[type_image],
-        history: !1,
-        scrollThreshold: !1
-    }),
-    loadReadMore(aContainer_image, "loadTemplates_image"),
-    $(aContainer_image).next().find(".iscroll-button").show()
-}
+
 function getItemHTML_image(product) {
     if (DEBUG) {
         console.log("getItemHTML_image()");
@@ -7788,46 +7495,21 @@ function getItemHTML_image(product) {
     var deleteBtn = demo_as_id ? "" : '<i data-target="' + product.id + '" class="fa fa-trash-o deleteImage"></i>';
     return '<div data-id="' + product.id + '" class="dz-preview dz-processing dz-image-preview dz-success dz-complete thumb"><div class="dz-image"><img data-dz-thumbnail="" alt="' + product.filename + '" src="' + product.img + '"></div> \x3c!-- <div class="dz-details"> <div class="dz-filename"><span data-dz-name="">' + product.filename + "</span></div>  </div> --\x3e" + deleteBtn + "</div>"
 }
-function loadTemplates_image() {
-    if (DEBUG) {
-        console.log("loadTemplates_image()");
-    }
 
-    infinites[type_image].infiniteScroll("loadNextPage"),
-    setTimeout(function() {
-        masonrys[type_image] && (masonrys[type_image].layout(),
-        $(".infinite-scroll-request_image_products").show())
-    }, 500),
-    setTimeout(function() {
-        $(aContainer_image).next().find(".loader-ellips").hide()
-    }, 1500)
-}
-function loadReadMore(container, loadFunctionName) {
-    if (DEBUG) {
-        console.log("loadReadMore()");
-    }
-    "page-load" == $(container).next().attr("class") && $(container).next().remove();
-    var html_load = '<div class="page-load">';
-    html_load += '<div class="loader-ellips"><img class="loading-spin" src="' + appUrl + 'design/assets/img/loader.svg"></div>',
-    html_load += '<p class="iscroll-last">End of Results</p>',
-    html_load += "</div>",
-    $(container).after(html_load)
-}
-
-$(aContainer_image).on("load.infiniteScroll", function(event, response) {
+$(imagesContainerSelector).on("load.infiniteScroll", function(event, response) {
     var data = JSON.parse(response)
       , itemsHTML = (data = data.images).map(getItemHTML_image).join("")
       , $items = $(itemsHTML);
     $items.imagesLoaded(function() {
-        infinites[type_image].infiniteScroll("appendItems", $items).masonry("appended", $items)
+        infinites[typeForImages].infiniteScroll("appendItems", $items).masonry("appended", $items)
     }),
     0 != data.length && setTimeout(function() {
         flag_scroll_images_image = !1,
-        $(aContainer_image).next().find(".iscroll-last").hide()
+        $(imagesContainerSelector).next().find(".iscroll-last").hide()
     }, 500),
-    data.length < limit_image && ($(aContainer_image).next().find(".loader-ellips").hide(),
-    $(aContainer_image).next().find(".iscroll-button").hide(),
-    $(aContainer_image).next().find(".iscroll-last").show())
+    data.length < imagesLimit && ($(imagesContainerSelector).next().find(".loader-ellips").hide(),
+    $(imagesContainerSelector).next().find(".iscroll-button").hide(),
+    $(imagesContainerSelector).next().find(".iscroll-last").show())
 }),
 $(document).ready(function() {
     var columns = [{

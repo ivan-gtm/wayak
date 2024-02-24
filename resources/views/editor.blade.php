@@ -4936,6 +4936,7 @@
             var tempcanvas = new fabric.Canvas('tempcanvas');
             var selectedFont = 'font42';
             var fillColor = 'Black';
+            const DEBUG = true;
 
             // PAID
             var design_as_id = {{ $purchase_code }};
@@ -4965,11 +4966,13 @@
             }
         </script>
         <!-- build:app -->
+        <script src="{{ asset('assets/js/app_init_editor_refactor.js?rev='.time()) }}"></script>
         <script src="{{ asset('assets/js/app.js?rev='.time()) }}"></script>
         <script src="{{ asset('assets/js/app_init_refactor.js?rev='.time()) }}"></script>
         <script src="{{ asset('assets/js/app_keyboard_events.js?rev='.time()) }}"></script>
         <script src="{{ asset('assets/js/app_refactor.js?rev='.time()) }}"></script>
         <script src="{{ asset('assets/js/app_download.js?rev='.time()) }}"></script>
+        <script src="{{ asset('assets/js/toolbar.js?rev='.time()) }}"></script>
         <!-- endbuild -->
         <script type="text/javascript">
             // Wait for window load
