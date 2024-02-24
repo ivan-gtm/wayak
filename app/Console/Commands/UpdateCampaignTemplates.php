@@ -19,7 +19,10 @@ class UpdateCampaignTemplates extends Command {
         $this->info("Discount Percentage: $discountPercentage%");
 
         $newPriceCalculation = function ($originalPrice) use ($discountPercentage) {
-            return $originalPrice * (1 - $discountPercentage / 100);
+            // Calculate the new price
+            $newPrice = $originalPrice * (1 - $discountPercentage / 100);
+            // Format the new price to 2 decimal places
+            return number_format($newPrice, 2, '.', '');
         };
 
         Template::chunk(200, function ($templates) use ($newPriceCalculation, $discountPercentage) {

@@ -2657,7 +2657,8 @@ var registerDownload = function(type) {
                 "_token": $('meta[name="csrf-token"]').attr('content'),
             templateId: loadedtemplateid,
             fileType: type,
-                purchase_code: design_as_id,
+            purchase_code: design_as_id,
+            customerId: customerId,
             option: void 0 !== obj ? JSON.stringify(obj) : ""
         },
         dataType: "json"
@@ -6061,6 +6062,7 @@ function loadTemplate(templateid) {
         data: {
             language_code: language_code,
             id: templateid,
+            customerId: customerId,
             design_as_id: design_as_id,
             demo_as_id: demo_as_id,
             demo_templates: demo_templates
@@ -6132,7 +6134,7 @@ function loadTemplate(templateid) {
         }
     }),
     $("#downloads-remaining-text").hide();
-    var urlDownloadsRemaining = appUrl + "editor/get-remaining-downloads/" + templateid;
+    var urlDownloadsRemaining = appUrl + "editor/get-remaining-downloads/" + templateid+"?customerId="+customerId;
     $.ajax({
         url: urlDownloadsRemaining,
         type: "GET",
@@ -8855,7 +8857,7 @@ function initMasonry_template() {
     infinites[type_template].infiniteScroll({
         path: function() {
             var tags = $(aSearch_template).val() ? $(aSearch_template).val().toString() : "";
-            return appUrl + "editor/" + aMethod_template + "/?load_count=" + this.loadCount + "&limit_template=" + limit_template + "&tags=" + tags + "&design_as_id=" + design_as_id + "&demo_as_id=" + demo_as_id + "&demo_templates=" + demo_templates + "&id=" + demo_templates + "&language_code=" + language_code
+            return appUrl + "editor/" + aMethod_template + "/?load_count=" + this.loadCount + "&limit_template=" + limit_template + "&tags=" + tags + "&design_as_id=" + design_as_id + "&demo_as_id=" + demo_as_id + "&demo_templates=" + demo_templates + "&id=" + demo_templates + "&language_code=" + language_code + "&customerId=" + customerId
         },
         responseType: "text",
         outlayer: masonrys[type_template],

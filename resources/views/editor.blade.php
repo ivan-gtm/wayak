@@ -4890,6 +4890,7 @@
         <script src="{{ asset('assets/js/bootstrap/bootstrap.min.js') }}" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
         <script src="{{ asset('assets/js/toast/jquery.toast.min.js') }}" crossorigin="anonymous"></script>
         <script src="{{ asset('assets/js/webfontloader/webfontloader.js') }}" crossorigin="anonymous"></script>
+        <script src="{{ asset('assets/js/store/init-min.js') }}"></script>
 
         <script type="text/javascript">
             $(document).ready(function() {
@@ -4951,9 +4952,10 @@
             // PAID
             var design_as_id = {{ $purchase_code }};
             var demo_as_id = {{ $demo_as_id }};
-            var currentUserRole = '{{ $user_role }}'; 
-            var language_code = '{{ $language_code }}'; 
-            var docUserId = 'docUserId{{ $demo_as_id }}'; 
+            var currentUserRole = '{{ $user_role }}';
+            var language_code = '{{ $language_code }}';
+            var docUserId = 'docUserId{{ $demo_as_id }}';
+            let customerId = getCustomerId();
             
             // FREE
             // var design_as_id = 0;
