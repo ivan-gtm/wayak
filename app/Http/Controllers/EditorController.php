@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Template;
 use Dompdf\Dompdf;
+use Dompdf\Options as DomOptions;
 
 use SVG\SVG;
 // use Image;
@@ -26,7 +27,8 @@ use App\Services\UserPurchaseService;
 // use Illuminate\Support\Facades\Response;
 
 
-use Barryvdh\DomPDF\Facade as PDF;
+// use Barryvdh\DomPDF\Facade as PDF;
+// use Barryvdh\Options as \Facade as PDFDomOptions;
 // use Image;
 // use Intervention\Image;
 
@@ -38,10 +40,10 @@ class EditorController extends Controller
 {
 	protected $userPurchaseService;
 
-    public function __construct(UserPurchaseService $userPurchaseService)
-    {
-        $this->userPurchaseService = $userPurchaseService;
-    }
+	public function __construct(UserPurchaseService $userPurchaseService)
+	{
+		$this->userPurchaseService = $userPurchaseService;
+	}
 
 	function home()
 	{
@@ -280,19 +282,40 @@ class EditorController extends Controller
 		$template_id = $request->templateid;
 		$language_code = $request->language_code;
 
-		// echo "<pre>";
-		// print_r( $request->all() );
-		// exit;
-		
 		// Its temporal user template
-		if (strpos($template_id, 'temp') === false) { 
+		if (strpos($template_id, 'temp') === false) {
+
+			$templateDocument = Template::where('_id', '=', $template_id)->first();
+			// $templateDocument->previewImageUrls;
+			// $templateDocument->save();
 
 			// echo "<pre>";
-			// print_r( $template_id );
+			// print_r( $template->previewImageUrls );
 			// exit;
 
+			// Check if 'previewImageUrls' is set and is an array
+			if (isset($templateDocument->previewImageUrls) && is_array($templateDocument->previewImageUrls)) {
+				$existingFileNames = [
+					'carousel' => $templateDocument->previewImageUrls['carousel'],
+					'grid' => str_replace('carousel', 'grid', $templateDocument->previewImageUrls['carousel']),
+					'large' => $templateDocument->previewImageUrls['large'],
+					'product_preview' => $templateDocument->previewImageUrls['product_preview'],
+					'thumbnail' => $templateDocument->previewImageUrls['thumbnail']
+				];
+				$thumbStatus = 1;
+			} else {
+				$existingFileNames = [
+					'carousel' => null,
+					'grid' => null,
+					'large' => null,
+					'product_preview' => null,
+					'thumbnail' => null
+				];
+				$thumbStatus = 999;
+			}
+
 			$this->deleteCurrentThumbnails($template_id, $language_code);
-			$thumbnail_imgs = $this->createThumbnailFiles($request->pngimageData, $template_id, $language_code);
+			$thumbnail_imgs = $this->createThumbnailFiles($request->pngimageData, $template_id, $language_code, $existingFileNames);
 			// exit;
 
 			$thumbnail_info = [
@@ -303,7 +326,7 @@ class EditorController extends Controller
 				'status' => 1
 			];
 
-			// exit;
+
 			$this->updateThumbnailsOnDB($thumbnail_info);
 
 			// Redis::set('product:format_ready:'.$template_id, 1);
@@ -317,6 +340,7 @@ class EditorController extends Controller
 				->update([
 					// 'translation_ready' => true,
 					// 'format_ready' => true,
+					'status' => $thumbStatus,
 					'thumbnail_ready' => true
 				]);
 			// Redis::set('product:thumbnail_ready:'.$template_id, 1);
@@ -329,7 +353,7 @@ class EditorController extends Controller
 		// print_r( $thumbnail_info );
 		// exit;
 
-		$this->storeJSONTemplate($template_id, $language_code, json_encode($template_obj));
+		// $this->storeJSONTemplate($template_id, $language_code, json_encode($template_obj));
 
 		$response = [
 			'id' => $template_id,
@@ -409,7 +433,7 @@ class EditorController extends Controller
 		// $collection_id = $request->tmp_templates;
 
 		// Crreate thumbnail file, from base64 encoded data
-		$thumbnail_paths = $this->createThumbnailFiles($png_base64_thumb_data, $template_id);
+		$thumbnail_paths = $this->createThumbnailFiles($png_base64_thumb_data, $template_id, '', null);
 
 		$thumbnail_info = [
 			'title' => $request->filename,
@@ -720,74 +744,59 @@ class EditorController extends Controller
 		}
 	}
 
-	function createThumbnailFiles($image_data, $template_id, $language_code)
+	function createThumbnailFiles($image_data, $template_id, $language_code, $existingFileNames)
 	{
-		// $image_data = 'data:image/png;base64,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';
-		// $image_data = urldecode($image_data);
 		$croppie_code = $image_data;
-
-		// print_r( $language_code );
-		// exit;
 
 		if (preg_match('/^data:image\/(\w+);base64,/', $croppie_code, $type)) {
 
-			$rand_filename_id = $this->randomNumber(6) . '_' . $this->randomNumber(10);
 			$encoded_base64_image = substr($croppie_code, strpos($croppie_code, ',') + 1);
 			$decoded_image = base64_decode($encoded_base64_image);
-			// $type = strtolower($type[1]);
-			// echo $encoded_base64_image;
-
 			$img = \Image::make($decoded_image);
-			// exit;
 			$img_path = 'design/template/' . $template_id . '/thumbnails/' . $language_code . '/';
-			// echo $img_path;
-			// exit;
-
 			$path = public_path($img_path);
-
-			// print_r( $path );
-			// exit;
 
 			@mkdir($path, 0777, true);
 
-			// Store mid-size thumbnail
-			// $unique_id = Str::random(10);
-			$full_thumbnail_path = public_path($img_path . $rand_filename_id . '_large.jpg');
+			// Use the existing filenames from the MongoDB document
+			$full_thumbnail_path = public_path($img_path . $existingFileNames['large']);
 			$img->save($full_thumbnail_path);
 
-
+			// Product Preview Thumbnail
 			$img->resize(null, 600, function ($constraint) {
 				$constraint->aspectRatio();
 			});
-
-			$product_preview_thumbnail_path = public_path($img_path . $rand_filename_id . '_product_preview.jpg');
+			$product_preview_thumbnail_path = public_path($img_path . $existingFileNames['product_preview']);
 			$img->save($product_preview_thumbnail_path);
 
-			// Guardar en S3
-			// Storage::disk('s3')->put($img_path.$unique_id.'.jpg', $full_thumbnail_path);
+			// Create Carousel Thumbnail
+			$img->resize(null, 400, function ($constraint) {
+				$constraint->aspectRatio();
+			});
+			$carousel_thumbnail_path = public_path($img_path . $existingFileNames['carousel']);
+			$img->save($carousel_thumbnail_path);
+
+			// Create Grid Thumbnail
+			$img->resize(335, null, function ($constraint) {
+				$constraint->aspectRatio();
+			});
+			$carousel_thumbnail_path = public_path($img_path . $existingFileNames['grid']);
+			$img->save($carousel_thumbnail_path);
 
 			// Create mini thumbnail
 			$img->resize(278, 360, function ($constraint) {
 				$constraint->aspectRatio();
 			});
-
-			$full_minithumbnail_path = public_path($img_path . $rand_filename_id . '_thumbnail.jpg');
+			$full_minithumbnail_path = public_path($img_path . $existingFileNames['thumbnail']);
 			$img->save($full_minithumbnail_path);
 
-			$img->resize(null, 400, function ($constraint) {
-				$constraint->aspectRatio();
-			});
-
-			$carousel_thumbnail_path = public_path($img_path . $rand_filename_id . '_carousel.jpg');
-			$img->save($carousel_thumbnail_path);
-
 			return [
-				'thumbnail' => $rand_filename_id . '_thumbnail.jpg',
-				'preview' => $rand_filename_id . '_large.jpg'
+				'thumbnail' => $existingFileNames['thumbnail'],
+				'preview' => $existingFileNames['large']
 			];
 		}
-		// $image = str_replace('data:image/jpeg;base64,', '', $image);
 	}
+
 
 	function updateThumbnailsOnDB($template_info)
 	{
@@ -852,7 +861,6 @@ class EditorController extends Controller
 
 	function deleteCurrentThumbnails($template_id, $language_code)
 	{
-
 		$thumbnail = DB::table('thumbnails')
 			->select('filename')
 			->where('template_id', '=', $template_id)
@@ -863,8 +871,6 @@ class EditorController extends Controller
 
 			$img_folder = 'design/template/' . $template_id . '/thumbnails/' . $language_code . '/';
 			$img_path = $img_folder . $thumbnail->filename;
-			
-			$this->emptyFolder($img_folder);
 
 			$thumbnail_path = public_path($img_path);
 			$mini_thumbnail_path = str_replace('_thumbnail.jpg', '_large.jpg', $thumbnail_path);
@@ -877,17 +883,20 @@ class EditorController extends Controller
 				unlink($mini_thumbnail_path);
 			}
 		}
+
+		$this->emptyFolder($img_folder);
 	}
 
-	function emptyFolder($dir) {
+	function emptyFolder($dir)
+	{
 		if (is_dir($dir)) {
 			$objects = scandir($dir);
 			foreach ($objects as $object) {
 				if ($object != "." && $object != "..") {
-					if (filetype($dir."/".$object) == "dir") {
-						$this->emptyFolder($dir."/".$object); // Recurse into subdirectories
+					if (filetype($dir . "/" . $object) == "dir") {
+						$this->emptyFolder($dir . "/" . $object); // Recurse into subdirectories
 					} else {
-						unlink($dir."/".$object); // Delete files
+						unlink($dir . "/" . $object); // Delete files
 					}
 				}
 			}
@@ -897,27 +906,27 @@ class EditorController extends Controller
 
 	function getTemplateThumbnails(Request $request)
 	{
-		$demoTemplates = $request->demo_templates;
+		$templateKeys = str_replace('temp:','',$request->demo_templates);
+		$purchaseCode = str_replace('temp:','',$request->demo_templates);
 		$languageCode = $request->language_code;
+		$customerId = $request->customerId;
 
 		// Fetch template IDs
-		$templateIds = Redis::exists('temp:template:relation:' . $demoTemplates) ?
-			Redis::get('temp:template:relation:' . $demoTemplates) :
-			$demoTemplates;
+		$templateIds = Redis::hget('wayak:user:'.$customerId.':purchases:'.$purchaseCode,'template_key') ? Redis::hget('wayak:user:'.$customerId.':purchases:'.$purchaseCode,'template_key') : $templateKeys;
 
 		if (!$templateIds) {
-			return Response::json(['success' => false, 'message' => 'Template IDs not found.']);
+			return response()->json(['success' => false, 'message' => 'Template IDs not found.']);
 		}
 
 		// Fetch thumbnail
 		$thumbnail = DB::table('thumbnails')
-			->select(['template_id', 'filename', 'title', 'dimentions'])
-			->where('language_code', '=', $languageCode)
-			->whereIn('template_id', explode(',', $templateIds))
-			->first();
+						->select(['template_id', 'filename', 'title', 'dimentions'])
+						->where('language_code', '=', $languageCode)
+						->whereIn('template_id', explode(',', $templateIds))
+						->first();
 
 		if (!$thumbnail) {
-			return Response::json(['success' => false, 'message' => 'Thumbnail not found.']);
+			return response()->json(['success' => false, 'message' => 'Thumbnail not found.']);
 		}
 
 		// Determine image URL
@@ -930,7 +939,7 @@ class EditorController extends Controller
 			'success' => true,
 			'data' => [
 				[
-					'template_id' => $demoTemplates,
+					'template_id' => $templateKeys,
 					'order_id' => '0',
 					'uid' => mt_rand(100000, 999999),
 					'template_name' => $this->escapeForJson($thumbnail->title),
@@ -1010,34 +1019,49 @@ class EditorController extends Controller
 	function loadTemplate(Request $request)
 	{
 
-		$template_ids = isset($request['id']) ? $request['id'] : null;
-		$language_code = isset($request['language_code']) ? $request['language_code'] : 'en';
+		$purchaseCode = isset($request['id']) ? $request['id'] : null;
+		$customerId = $request->customerId;
+		$remainingDownloads = intval( Redis::hget('wayak:user:'.$customerId.':purchases:'.$purchaseCode,'remaining_downloads') );
 		
-		$array_final = $this->getJSONTemplate($template_ids, $language_code);
+		if($remainingDownloads > 0){
+			$templateIds = Redis::hget('wayak:user:'.$customerId.':purchases:'.$purchaseCode,'template_key') ? Redis::hget('wayak:user:'.$customerId.':purchases:'.$purchaseCode,'template_key') : $request['id'];
+			$language_code = isset($request['language_code']) ? $request['language_code'] : 'en';
+			$array_final = $this->getJSONTemplate($templateIds, $language_code);
+	
+			return response()->json(
+				array(
+					'err' => 0,
+					'data' => $array_final,
+					'metrics' => 'in',
+					'options' => "{\"width\":1728,\"height\":2304,\"metrics\":\"in\",\"type\":\"single\",\"instructionsId\":\"80\",\"scriptVersion\":4}",
+					'instructions' => ""
+				)
+			);
+		} else {
+			return response()->json(
+				array(
+					'err' => 1,
+					// 'data' => '',
+					'msg' => 'This item is no longer available',
+					// 'metrics' => '',
+					// 'options' => '',
+					// 'instructions' => ''
+				)
+			);
+		}
 
-		// echo "<pre>";
-		// print_r($array_final);
-		// exit;
-		
-		return response()->json(
-			array(
-				'err' => 0,
-				'data' => $array_final,
-				'metrics' => 'in',
-				'options' => "{\"width\":1728,\"height\":2304,\"metrics\":\"in\",\"type\":\"single\",\"instructionsId\":\"80\",\"scriptVersion\":4}",
-				'instructions' => ""
-			)
-		);
 	}
 
-	function loadRemainingDownloads($template_id)
+	function loadRemainingDownloads($purchaseCode, Request $request)
 	{
+		$customerId = $request->customerId;
+		$remainingDownloads = Redis::hget('wayak:user:'.$customerId.':purchases:'.$purchaseCode,'remaining_downloads') ? Redis::hget('wayak:user:'.$customerId.':purchases:'.$purchaseCode,'remaining_downloads') : $request['id'];
 
 		return response()->json([
 			'success' => true,
 			'msg' => 'No downloads remaining',
 			'limit' => 10,
-			'remaining' => 10
+			'remaining' => intval($remainingDownloads)
 		]);
 	}
 
@@ -1248,6 +1272,7 @@ class EditorController extends Controller
 
 	function registerTemplateDownload(Request $request)
 	{
+		$language_code = 'en';
 		// echo "<pre>";
 		// print_r($request->all());
 		// exit;
@@ -1258,43 +1283,60 @@ class EditorController extends Controller
 		// 	'purchase_code' => $request->purchase_code
 		// ]);
 
-		$template_key = Redis::get('temp:template:relation:' . $request->templateId);
+		// $template_key = Redis::get('temp:template:relation:' . $request->templateId);
 
-		if (Redis::hexists('analytics:btn:download', $template_key)) {
-			Redis::hincrby('analytics:btn:download', $template_key, 1);
+		$customerId = $request->customerId;
+		$purchaseCode = $request->templateId;
+		$templateKey = Redis::hget('wayak:user:'.$customerId.':purchases:' . $purchaseCode, 'template_key');
+		$expires_at = Redis::hget('wayak:user:'.$customerId.':purchases:' . $purchaseCode, 'expires_at');
+		$remaining_downloads = Redis::hget('wayak:user:'.$customerId.':purchases:' . $purchaseCode, 'remaining_downloads') - 1;
+
+		if (Redis::hexists('analytics:btn:download', $templateKey)) {
+			Redis::hincrby('analytics:btn:download', $templateKey, 1);
 		} else {
-			Redis::hset('analytics:btn:download', $template_key, 1);
+			Redis::hset('analytics:btn:download', $templateKey, 1);
 		}
 
-		Redis::del('code:' . $request->purchase_code);
-		Redis::del('temp:template:relation:temp:' . $request->purchase_code);
-		Redis::del('template:temp:' . $request->purchase_code . ':jsondata');
+		// Once user downloads template, code is removed to avoid multiple usages
+		
+		Redis::hincrby('wayak:user:'.$customerId.':purchases:' . $purchaseCode, 'remaining_downloads', -1);
+		$successResponse = true;
+		
+		if($remaining_downloads == 0){
+			// } else {
+			// $successResponse = false;
+			Redis::del('code:' . $purchaseCode);
+			Redis::del('template:' . $language_code . ':temp:' . $purchaseCode . ':jsondata');
+			Redis::srem('wayak:user:'.$customerId.':purchases', $templateKey);
+			
+		}
 
 		return response()->json([
-			'success' => true,
-			'limit' => 10,
-			'remaining' => 0
+			'success' => $successResponse,
+			'msg' => 'No downloads remaining',
+			'limit' => 3,
+			'remaining' => $remaining_downloads
 		]);
 	}
 
 	private function getCustomerId(Request $request)
-    {
-        // Cache authenticated user
-        $user = auth()->user();
+	{
+		// Cache authenticated user
+		$user = auth()->user();
 
-        if ($user) {
-            return $user->customer_id;
-        }
+		if ($user) {
+			return $user->customer_id;
+		}
 
-        // $customerId = $request->input('customer_id');
-        // print_r($request->all());
-        // exit;
-        if ($request->customerId) {
-            return $request->customerId;
-        }
+		// $customerId = $request->input('customer_id');
+		// print_r($request->all());
+		// exit;
+		if ($request->customerId) {
+			return $request->customerId;
+		}
 
-        return false;
-    }
+		return false;
+	}
 
 	function openTemplate($country, Request $request, $template_key)
 	{
@@ -1310,9 +1352,9 @@ class EditorController extends Controller
 
 		// http://localhost:8001/us/template/open/sjilZYwA1V?customerId=gq9mm31pti
 		$customerId = $this->getCustomerId($request);
-		if($this->userPurchaseService->isTemplateIdInPurchases($customerId, $template_key) == false) {
-            abort(404);
-        }
+		if ($this->userPurchaseService->isTemplateIdInPurchases($customerId, $template_key) == false) {
+			abort(404);
+		}
 
 		$temporal_customer_key = 'temp:' . $purchase_code;
 
@@ -1323,12 +1365,19 @@ class EditorController extends Controller
 			Redis::hset('analytics:btn:edit', $template_key, 1);
 		}
 
+		$expiresAt = 60 * 60 * 24 * 1; // Codigo valido por 30 dias - 60*60*24*30 = 2592000
 
-		Redis::set('temp:template:relation:temp:' . $purchase_code, $original_template_key);
-		Redis::expire('temp:template:relation:temp:' . $purchase_code, 60 * 60 * 24 * 1); // Codigo valido por 30 dias - 60*60*24*30 = 2592000
+		// // Redis::set('temp:template:relation:temp:' . $purchase_code, $original_template_key);
+		// // Redis::expire('temp:template:relation:temp:' . $purchase_code, $expiresAt ); 
 
+		// Clone original template into a temporal key for user usage.
 		Redis::set('template:' . $language_code . ':' . $temporal_customer_key . ':jsondata', Redis::get('template:' . $language_code . ':' . $original_template_key . ':jsondata'));
-		Redis::expire('template:' . $temporal_customer_key . ':jsondata', 60 * 60 * 24 * 1); // Codigo valido por 30 dias - 60*60*24*30 = 2592000
+		Redis::expire('template:' . $temporal_customer_key . ':jsondata', $expiresAt); // Codigo valido por 30 dias - 60*60*24*30 = 2592000
+
+		// Stores purchase info
+		Redis::hset('wayak:user:' . $customerId . ':purchases:' . $purchase_code, 'template_key', $original_template_key);
+		Redis::hset('wayak:user:' . $customerId . ':purchases:' . $purchase_code, 'expires_at', $expiresAt);
+		Redis::hset('wayak:user:' . $customerId . ':purchases:' . $purchase_code, 'remaining_downloads', 3);
 
 		// Redis::get('template:'.$language_code.':'.$original_template_key.':jsondata')
 
@@ -1356,11 +1405,15 @@ class EditorController extends Controller
 			$language_code = 'en';
 		}
 
+		// echo 'template:' . $language_code . ':' . $template_key . ':jsondata';
+		// exit;
+		
 		if (Redis::exists('template:' . $language_code . ':' . $template_key . ':jsondata') == false) {
-			return response()->json([
-				'success' => false,
-				'msg' => 'Template does not exists'
-			]);
+			abort(404);
+			// return response()->json([
+			// 	'success' => false,
+			// 	'msg' => 'Template does not exists'
+			// ]);
 		}
 
 		$templates = $template_key;
@@ -1374,6 +1427,147 @@ class EditorController extends Controller
 			'demo_as_id' => $demo_as_id,
 			'user_role' => $user_role,
 			'language_code' => $language_code
+		]);
+	}
+
+	function createPdfWithBackgroundImage(Request $request)
+	{
+		// Retrieve the data from the request
+		$base64Image = $request->input('jpgImageData');
+		$widthInPixels = $request->input('canvasWidth');
+		$heightInPixels = $request->input('canvasHeight');
+		$requestId = $request->input('requestId');
+		$trimsMarks = $request->input('trimsMarks', false); // Default to false if not provided
+		$savePaper = filter_var($request->input('savePaper', false), FILTER_VALIDATE_BOOLEAN);
+		$pageSize = $request->input('pageSize', 'us-letter');
+
+		// Paper dimensions in points (width x height)
+		$paperDimensions = [
+			'us-letter' => [612, 792],
+			'a4' => [595, 842]
+		];
+
+		// Get the dimensions for the selected paper size
+		list($paperWidth, $paperHeight) = $paperDimensions[$pageSize] ?? $paperDimensions['us-letter'];
+
+		if ($savePaper) {
+			$widthInPoints = $paperWidth;
+			$heightInPoints = $paperHeight;
+
+			$imageWidthInPoints = ($widthInPixels / 96) * 72;
+			$imageHeightInPoints = ($heightInPixels / 96) * 72;
+			// Calculate how many images fit on one page horizontally and vertically
+			$imagesPerRow = floor($widthInPoints / $imageWidthInPoints);
+			$imagesPerColumn = floor($heightInPoints / $imageHeightInPoints);
+		} else {
+			// Convert pixels to inches assuming 96 DPI, then convert inches to points for DOMPDF
+			$widthInPoints = ($widthInPixels / 96) * 72;
+			$heightInPoints = ($heightInPixels / 96) * 72;
+		}
+
+
+		// echo $imagesPerRow;
+		// echo '--';
+		// echo $imagesPerColumn;
+		// exit;
+
+		// Check if trim marks are requested
+		$trimMarksHtml = '';
+		if (filter_var($trimsMarks, FILTER_VALIDATE_BOOLEAN)) {
+			// Add HTML/CSS for trim marks. Adjust the styling as needed.
+			$trimMarksHtml = <<<HTML
+			<div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; box-sizing: border-box;">
+				<div style="position: absolute; top: -10px; left: 0; right: 0; height: 20px; background-color: transparent; border-top: 1px solid black; border-bottom: 1px solid black;"></div>
+				<div style="position: absolute; top: 0; left: -10px; bottom: 0; width: 20px; background-color: transparent; border-left: 1px solid black; border-right: 1px solid black;"></div>
+				<div style="position: absolute; bottom: -10px; left: 0; right: 0; height: 20px; background-color: transparent; border-top: 1px solid black; border-bottom: 1px solid black;"></div>
+				<div style="position: absolute; top: 0; right: -10px; bottom: 0; width: 20px; background-color: transparent; border-left: 1px solid black; border-right: 1px solid black;"></div>
+			</div>
+			HTML;
+		}
+
+		// If savePaper is true and more than one image can fit on a page, adjust calculations
+		if ($savePaper && ($imagesPerRow > 1 || $imagesPerColumn > 1)) {
+			// HTML content for multiple images
+			$htmlContent = '<!DOCTYPE html><html><head><style>';
+			$htmlContent .= 'body, html { margin: 0; padding: 0; width: ' . $widthInPoints . 'px; height: ' . $heightInPoints . 'px; }';
+			$htmlContent .= '.image { width: ' . $widthInPixels . 'px; height: ' . $heightInPixels . 'px; background-size: contain; background-repeat: no-repeat; background-position: center; }';
+			$htmlContent .= '</style></head><body>';
+
+			for ($row = 0; $row < $imagesPerColumn; $row++) {
+				for ($col = 0; $col < $imagesPerRow; $col++) {
+					$leftPosition = $col * $widthInPoints;
+					$topPosition = $row * $heightInPixels;
+					$htmlContent .= "<div class='image' style='position: absolute; left: ${leftPosition}px; top: ${topPosition}px; background-image: url(\"{$base64Image}\");'></div>";
+				}
+			}
+
+			$htmlContent .= '</body></html>';
+		} else {
+			// Generate the HTML content
+			$htmlContent = <<<HTML
+							<!DOCTYPE html>
+							<html>
+							<head>
+							<style>
+								body, html {
+									margin: 0;
+									padding: 0;
+									background-image: url('{$base64Image}');
+									background-size: cover;
+									background-repeat: no-repeat;
+									position: relative;
+									height: 100%;
+								}
+							</style>
+							</head>
+							<body>
+								$trimMarksHtml
+							</body>
+							</html>
+							HTML;
+		}
+
+		// Initialize dompdf
+		$options = new \Dompdf\Options();
+		$options->setDpi(96);
+		$dompdf = new \Dompdf\Dompdf($options);
+		$dompdf->loadHtml($htmlContent);
+
+		// Set paper size in points for a 5x7 inch document
+		$dompdf->setPaper(array(0, 0, $widthInPoints, $heightInPoints));
+
+		// Render the HTML as PDF
+		$dompdf->render();
+
+		// Define the PDF file path within the "temp" folder in the public directory
+		$pdfFileName = 'doc_' . uniqid() . '.pdf';
+		$pdfFilePath = public_path('temp/' . $pdfFileName);
+
+		// Ensure the "temp" directory exists
+		if (!file_exists(public_path('temp'))) {
+			mkdir(public_path('temp'), 0777, true);
+		}
+
+		// Save the PDF to a file
+		file_put_contents($pdfFilePath, $dompdf->output());
+
+		// Check if file was saved successfully
+		if (file_exists($pdfFilePath)) {
+			$success = true;
+			$fileUrl = url('temp/' . $pdfFileName);
+			$message = "Your PDF is Ready";
+		} else {
+			$success = false;
+			$fileUrl = null;
+			$message = "Please try again";
+		}
+
+		// Return JSON response
+		return response()->json([
+			'success' => $success,
+			'file' => $fileUrl,
+			'msg' => $message,
+			'requestId' => $requestId,
 		]);
 	}
 }
