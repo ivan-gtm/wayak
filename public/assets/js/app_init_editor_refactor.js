@@ -345,3 +345,343 @@ function getItemHTML_template(row) {
     `;
 }
 
+function getItemHTML_text(item) {
+    return `
+        <div class="col-xs-6 thumb ${item.isownitem}" id="${item.text_id}">
+            <a class="thumbnail" title="${item.text_name}" href="#" data-target="${item.text_id}">
+                <img class="textImage img-responsive" src="${item.text_thumbnail}" alt="">
+            </a>
+            <i class="fa fa-trash-o deleteText" id="${item.text_id}"></i>
+        </div>
+    `;
+}
+
+var infinites = [], masonrys = [], flag_scroll_templates_element = !1
+, limit_element = 24
+, aContainer_element = "#catimage_container"
+, aSearch_element = "#elementssearch"
+, aMethod_element = "get-elements"
+, type_element = "element";
+
+var flag_scroll_templates_bg = !1
+  , limit_bg = 24
+  , aContainer_bg = "#background_container"
+  , aSearch_bg = "#bgsearch"
+  , aMethod_bg = "get-backgrounds"
+  , type_bg = "bg";
+  var flag_scroll_templates_text = !1
+  , limit_text = 24
+  , aContainer_text = "#text_container"
+  , aSearch_text = "#textsearch"
+  , aMethod_text = "get-texts"
+  , type_text = "text";
+
+  var flag_scroll_templates_related = !1, limit_related = 24, aContainer_related = "#related_products_container", aSearch_related = "", aMethod_related = "get-related-products", type_related = "related", templateId_related;
+
+Dropzone.autoDiscover = false;
+
+InfiniteScroll.prototype.loadNextPage = function() {
+    if (!this.isLoading && this.canLoad) {
+        const path = this.getAbsolutePath();
+        this.isLoading = true;
+
+        const handleLoad = (response) => this.onPageLoad(response, path);
+        const handleError = (error) => this.onPageError(error, path);
+        const handleLast = (response) => this.lastPageReached(response, path);
+
+        request(path, this.options.responseType, handleLoad, handleError, handleLast);
+        this.dispatchEvent("request", null, [path]);
+    }
+};
+
+const request = (url, responseType = '', onLoad, onError, onLast) => {
+    const req = new XMLHttpRequest();
+    req.open("GET", url, true);
+    req.responseType = responseType;
+    req.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+
+    if (demo_as_id && demoJwt !== "") {
+        req.setRequestHeader("x-demo-wayak-jwt", demoJwt);
+    }
+
+    req.onload = () => {
+        if (req.status === 200) onLoad(req.response);
+        else if (req.status === 204) onLast(req.response);
+        else onError(new Error(req.statusText));
+    };
+
+    req.onerror = () => onError(new Error(`Network error requesting ${url}`));
+
+    req.send();
+};
+
+$(document).ready(function() {
+    setupDropzone();
+    initializeSelect2();
+    setupInitialUIState();
+    initializeMasonryAndTemplates();
+    getUploadedImages(0);
+
+    sortUnorderedList("fonts-dropdown");
+    initializeFontDropdown();
+    
+    setupInfiniteScroll(aContainer_template, type_template, getItemHTML_template, limit_template, 'flag_scroll_templates_template');
+    // Not necessary for startup
+    setupInfiniteScroll(aContainer_bg, type_bg, getItemHTML_bg, limit_bg, 'flag_scroll_templates_bg');
+    setupInfiniteScroll(aContainer_text, type_text, getItemHTML_text, limit_text, 'flag_scroll_templates_text');
+    setupInfiniteScroll(aContainer_related, type_related, getItemHTML_related, limit_related, 'flag_scroll_relateds_related');
+    setupInfiniteScroll(imagesContainerSelector, typeForImages, getItemHTML_image, imagesLimit, 'flag_scroll_images_image');    
+});
+
+function setupDropzone() {
+    if ($("#myAwesomeDropzone").data('dropzone')) return; // Prevent initializing Dropzone multiple times
+
+    $("#myAwesomeDropzone").dropzone({
+        url: `${appUrl}editor/template/upload-image`,
+        paramName: "file[]",
+        maxFilesize: 20,
+        thumbnailWidth: 140,
+        previewsContainer: ".uploaded_images",
+        acceptedFiles: ".png,.jpg,.jpeg,.svg",
+        headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+        },
+        init: function() {
+            this.on("success", function(file, response) {
+                handleDropzoneSuccess(file, response);
+            });
+        }
+    });
+}
+
+function getItemHTML_bg(item) {
+    if (DEBUG) {
+        console.log("getItemHTML_bg()");
+    }
+    
+    // Template for the common part of the item HTML
+    const commonHTML = `
+        <div class="col-xs-4 thumb ${item.is_own_item}" id="${item.id}">
+            <a class="thumbnail bgImage" href="#" data-imgsrc="${item.url}">
+                <img class="img-responsive" src="${item.thumb}" alt="">
+                <span class="thumb-overlay"><h3>${item.name}</h3></span>
+            </a>
+    `;
+
+    // Conditionally add the delete button for certain roles
+    const deleteButtonHTML = ["superadmin", "administrator"].includes(currentUserRole) ? 
+        `<i class="fa fa-trash-o deleteBg" id="${item.id}"></i>` : 
+        "";
+
+    // Combine the common HTML with the conditional part and close the div
+    return `${commonHTML} ${deleteButtonHTML}</div>`;
+}
+
+
+function handleDropzoneSuccess(file, response) {
+    const data = JSON.parse(response);
+    if (!data.success) {
+        $.toast({
+            text: data.msg,
+            icon: "error",
+            loader: false,
+            position: "top-right",
+            hideAfter: 3000
+        });
+        return;
+    }
+
+    $(file.previewElement).data("id", data.id);
+    if (!demo_as_id) {
+        const deleteBtnHtml = `<i class="fa fa-trash-o deleteImage" data-target="${data.id}"></i>`;
+        appendImageToMasonry(data, deleteBtnHtml);
+    }
+}
+
+function appendImageToMasonry(data, deleteBtnHtml) {
+    $(".uploaded_images .dz-preview").each(function() {
+        const imgSrc = $(this).find(".dz-image img").attr("src");
+        const name = $(this).find(".dz-filename span").html();
+        const newItemHtml = `
+            <div data-id="${data.id}" class="dz-preview dz-processing dz-image-preview dz-success dz-complete thumb">
+                <div class="dz-image">
+                    <img data-dz-thumbnail="" alt="${name}" src="${imgSrc}">
+                </div>
+                ${deleteBtnHtml}
+            </div>
+        `;
+        const newItem = $(newItemHtml);
+        infinites.image.infiniteScroll("appendItems", newItem).masonry("appended", newItem);
+    });
+    $(".uploaded_images").empty(); // Clear the previews container
+}
+
+function initializeSelect2() {
+    $("#template_tags, #element_tags, #bg_tags, #new_element_tags").select2({
+        tags: true,
+        width: "100%",
+        tokenSeparators: [","]
+    });
+
+    $("input[name=metric_units1], input[name=metric_units]").val(["in"]);
+}
+
+function setupInitialUIState() {
+    $("#undo, #productImageDownload, #addnewpagebutton, #saveimage, #saveastemplate, .download-menu, .zoom-control, #options, #savetemplate").hide();
+}
+
+function initializeMasonryAndTemplates() {
+    initMasonry_template();
+    loadTemplates_template();
+    initMasonry_image();
+    loadTemplates_image();
+}
+
+function initializeFontDropdown() {
+    $("#fonts-dropdown li a").click(function(e) {
+        e.preventDefault();
+        const selectedFontFamily = $(this).data("ff");
+        const fontDisplayName = $(this).parent().find("span").html();
+        const activeObject = canvas.getActiveObject();
+
+        updateDropdownDisplay($(this), selectedFontFamily, fontDisplayName);
+        if (activeObject) {
+            loadAndApplyFont(activeObject, selectedFontFamily);
+        }
+
+        if (activeObject && activeObject._objects && isTextsGroup()) {
+            loadFontsForGroup(activeObject, selectedFontFamily);
+        }
+
+        save_history();
+    });
+}
+
+function updateDropdownDisplay($element, fontFamily, displayName) {
+    $element.parents(".btn-group").find(".dropdown-toggle").html(
+        `<span style="overflow:hidden"><a style="font-family: ${fontFamily}" href="#" data-ff="${fontFamily}" size="3">${displayName}</a>&nbsp;&nbsp;<span class="caret"></span></span>`
+    );
+}
+
+function loadAndApplyFont(object, fontFamily) {
+    getFonts2(object, fontFamily).then(result => {
+        console.log("getFonts2() success", result); // Consider removing DEBUG flag for simplicity
+        applyFontToObject(result.object, result.font);
+    }).catch(result => {
+        console.error(`font ${result.font} failed to load`);
+    });
+}
+
+function loadFontsForGroup(group, fontFamily) {
+    group.forEachObject(object => {
+        getFonts2(object, fontFamily).then(result => {
+            applyFontToObject(result.object, result.font);
+            result.object.initDimensions();
+        }).then(() => {
+            updateGroupAfterFontLoad(group);
+        }).catch(result => {
+            console.error(`font ${result.font} failed to load for object`);
+        });
+    });
+}
+
+function applyFontToObject(object, fontFamily) {
+    fabric.charWidthsCache[fontFamily] = {};
+    object.__lineWidths = [];
+    object._charWidthsCache = {};
+    setStyle(object, "fontFamily", fontFamily);
+    object.charSpacing = 0;
+    object.setCoords();
+}
+
+function updateGroupAfterFontLoad(group) {
+    group._restoreObjectsState();
+    fabric.util.resetObjectTransform(group);
+    group._calcBounds();
+    group._updateObjectsCoords();
+    group.setCoords();
+    canvas.renderAll();
+}
+
+function setupInfiniteScroll(containerSelector, itemType, itemHTMLFunction, limit, flagVarName) {
+    $(containerSelector).on("load.infiniteScroll", function(event, response) {
+        const data = JSON.parse(response);
+        const itemsData = data.data || data.products || data.images; // Adapt based on the expected data structure
+        const itemsHTML = itemsData.map(itemHTMLFunction).join("");
+        const $items = $(itemsHTML);
+
+        $items.imagesLoaded(function() {
+            infinites[itemType].infiniteScroll("appendItems", $items).masonry("appended", $items);
+        });
+
+        if (itemsData.length) {
+            setTimeout(function() {
+                window[flagVarName] = false;
+                $(containerSelector).next().find(".iscroll-last").hide();
+            }, 500);
+        }
+
+        if (itemsData.length < limit) {
+            $(containerSelector).next().find(".loader-ellips, .iscroll-button").hide();
+            $(containerSelector).next().find(".iscroll-last").show();
+        }
+    });
+}
+
+function getItemHTML_related(product) {
+    if (DEBUG) {
+        console.log("getItemHTML_related()");
+    }
+
+    // Create and configure the new element with chaining
+    var newElement = $("<div/>")
+        .addClass("grid-item")
+        .css({
+            "width": "140px",
+            "float": "left",
+            "margin": "0 0 10px 10px"
+        });
+
+    // Create the product link and configure attributes
+    var productLink = $("<a/>")
+        .attr({
+            "href": product.url,
+            "target": "_blank"
+        });
+
+    // Create the product image, set its source and width, and append it to the link
+    $("<img/>")
+        .attr("src", product.image)
+        .css("width", "100%")
+        .appendTo(productLink);
+
+    // Append the link to the new element and return the outer HTML
+    return newElement.append(productLink).prop('outerHTML');
+}
+
+function getItemHTML_image(product) {
+    if (DEBUG) {
+        console.log("getItemHTML_image()");
+    }
+    
+    // Conditionally render the delete button based on `demo_as_id`
+    const deleteBtn = demo_as_id 
+        ? "" 
+        : `<i data-target="${product.id}" class="fa fa-trash-o deleteImage"></i>`;
+
+    // Use template literals to construct the HTML string
+    return `
+        <div data-id="${product.id}" class="dz-preview dz-processing dz-image-preview dz-success dz-complete thumb">
+            <div class="dz-image">
+                <img data-dz-thumbnail="" alt="${product.filename}" src="${product.img}">
+            </div>
+            <!-- The details div is commented out, if needed in the future, it can be uncommented and used
+            <div class="dz-details">
+                <div class="dz-filename"><span data-dz-name="">${product.filename}</span></div>
+            </div>
+            -->
+            ${deleteBtn}
+        </div>
+    `;
+}
+

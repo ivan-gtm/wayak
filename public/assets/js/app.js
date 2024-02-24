@@ -165,51 +165,6 @@ fabric.Dpattern.fromObject = function(object, callback) {
 var canvasScale = 1, currentcanvasid = 0, canvasindex = 0, pageindex = 0, canvasarray = [], isdownloadpdf = !1, isupdatetemplate = !1, issaveastemplate = !1, totalsvgs = 0, convertedsvgs = 0, loadedtemplateid = 0, activeObjectCopy, keystring = "", remstring = "", savestatecount = 0, stopProcess = !1, templatesloading = !1, backgroundsLoading = !1, elementsLoading = !1, textsLoading = !1, rotationStep = 1, properties_to_save = Array("format", "patternSourceCanvas", "bgImg", "src", "svg_custom_paths", "hidden", "cwidth", "cheight", "locked", "selectable", "editable", "bg", "logoid", "evented", "id", "bgsrc", "bgScale", "lockMovementX", "lockMovementY"), isMac = navigator.platform.toUpperCase().indexOf("MAC") >= 0, isSafari = /Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor), isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor), s_history = !1, previewSvg, offsetTemplates = 0, offsetRelatedProducts = 0, offsetTexts = 0, offsetElements = 0, offsetBackgrounds = 0, template_type, geofilterBackground, instructionsId, svg_custom_data = [], localStorageKey = "wayak.design", templateOptions, backgroundPromise, duplicatedTemplateId, lastShadowBlur, lastShadowHorizontalOffset, lastShadowVerticalOffset, lastShadowColor, historyTable, $fontUTF8Symbols = {}, $useKeepSvgGroups = !1, dontLoadFonts = [], $copyOnePageAcrossSheet = !1;
 // var DEBUG = !1;
 fabric.Object.NUM_FRACTION_DIGITS = 10,
-InfiniteScroll.prototype.loadNextPage = function() {
-    if (!this.isLoading && this.canLoad) {
-        var path = this.getAbsolutePath();
-        this.isLoading = !0;
-        var onLoad = function(response) {
-            this.onPageLoad(response, path)
-        }
-        .bind(this)
-          , onError = function(error) {
-            this.onPageError(error, path)
-        }
-        .bind(this)
-          , onLast = function(response) {
-            this.lastPageReached(response, path)
-        }
-        .bind(this);
-        request(path, this.options.responseType, onLoad, onError, onLast),
-        this.dispatchEvent("request", null, [path])
-    }
-}
-;
-var request = function(url, responseType, onLoad, onError, onLast) {
-    var req = new XMLHttpRequest;
-    req.open("GET", url, !0),
-    req.responseType = responseType || "",
-    req.setRequestHeader("X-Requested-With", "XMLHttpRequest"),
-    demo_as_id && "" != demoJwt && req.setRequestHeader("x-demo-templett-jwt", demoJwt),
-    req.onload = function() {
-        if (200 == req.status)
-            onLoad(req.response);
-        else if (204 == req.status)
-            onLast(req.response);
-        else {
-            var error = new Error(req.statusText);
-            onError(error)
-        }
-    }
-    ,
-    req.onerror = function() {
-        var error = new Error("Network error requesting " + url);
-        onError(error)
-    }
-    ,
-    req.send()
-};
 fabric.textureSize = 4096,
 fabric.util.object.extend(fabric.Group.prototype, {
     clone: function(callback, properties) {
@@ -3644,8 +3599,7 @@ $("#redirect-admin-design-as").on("click", function(e) {
     }).done(function(data) {
         data.success && (window.location.href = redirectUrl)
     })
-}),
-Dropzone.autoDiscover = !1;
+});
 var wrapperDz = null, files, bgfiles;
 
 function deleteTemplate(id) {
@@ -4391,48 +4345,6 @@ $("#font-size-dropdown").on("click", "li a", function() {
         canvas.renderAll(),
         $(this).parents(".input-group").find(".fontinput").val(selectedFontSize)
     }
-}),
-$(document).ready(function() {
-    sortUnorderedList("fonts-dropdown"),
-    $("#fonts-dropdown li a").click(function(e) {
-        e.preventDefault();
-        var selText = $(this).data("ff")
-          , fDisplayName = $(this).parent().find("span").html()
-          , activeObject = canvas.getActiveObject();
-        $(this).parents(".btn-group").find(".dropdown-toggle").html('<span style="overflow:hidden"><a  style="font-family: ' + selText + '" href="#" data-ff="' + selText + '" size="3">' + fDisplayName + '</a>&nbsp;&nbsp;<span class="caret"></span></span>'),
-        activeObject && getFonts2(activeObject, selText).then(function($result) {
-            DEBUG && console.log("getFonts2() success", $result),
-            fabric.charWidthsCache[$result.font] = {},
-            $result.object.__lineWidths = [],
-            $result.object._charWidthsCache = {},
-            setStyle($result.object, "fontFamily", $result.font),
-            activeObject.charSpacing = 0,
-            $result.object.setCoords()
-        }).catch(function($result) {
-            console.log("font " + $result.font + " failed to load")
-        }),
-        activeObject && activeObject._objects && isTextsGroup() && activeObject.forEachObject(function($o, $i) {
-            getFonts2($o, selText).then(function($result) {
-                fabric.charWidthsCache[$result.font] = {},
-                $result.object.__lineWidths = [],
-                $result.object._charWidthsCache = {},
-                $result.object.set("fontFamily", $result.font),
-                $result.object.initDimensions(),
-                $result.object.charSpacing = 0,
-                $result.object.setCoords()
-            }).then(function() {
-                activeObject._restoreObjectsState(),
-                fabric.util.resetObjectTransform(activeObject),
-                activeObject._calcBounds(),
-                activeObject._updateObjectsCoords(),
-                activeObject.setCoords(),
-                canvas.renderAll()
-            }).catch(function($result) {
-                console.log("font " + $result.font + " failed to load for object")
-            })
-        }),
-        save_history()
-    })
 });
 var newBgTagsEdit = $("#newBgTags").tagsField({
     label: "Tags",
@@ -5306,69 +5218,7 @@ objManip = function (prop, value) {
     canvas.renderAll();
     return false;
 }
-
 ,
-$(document).ready(function() {
-    var imageDz = null;
-    null === imageDz && $("#myAwesomeDropzone").dropzone({
-        url: appUrl + "editor/template/upload-image",
-        paramName: "file[]",
-        maxFilesize: 20,
-        thumbnailWidth: 140,
-        previewsContainer: ".uploaded_images",
-        acceptedFiles: ".png,.jpg,.jpeg,.svg",
-        headers: {
-            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
-        },
-        init: function() {
-            imageDz = this,
-            this.on("success", function(file, $answer) {
-                var data = JSON.parse($answer);
-                if (data.success) {
-                    $(file.previewElement).data("id", data.id);
-                    var deleteBtn = "";
-                    demo_as_id || (deleteBtn = '<i class="fa fa-trash-o deleteImage" data-target="' + data.id + '"></i>'),
-                    $(".uploaded_images .dz-preview").each(function(index, element) {
-                        var img = $(element).find(".dz-image img").attr("src")
-                          , name = $(element).find(".dz-filename span").html()
-                          , items = '<div data-id="' + data.id + '" class="dz-preview dz-processing dz-image-preview dz-success dz-complete thumb"><div class="dz-image"><img data-dz-thumbnail="" alt="' + name + '" src="' + img + '"></div> \x3c!-- <div class="dz-details"> <div class="dz-filename"><span data-dz-name="">' + name + "</span></div>  </div> --\x3e" + deleteBtn + "</div>";
-                        items = $(items),
-                        infinites.image.infiniteScroll("appendItems", items).masonry("appended", items)
-                    }),
-                    $(".uploaded_images").html("")
-                } else
-                    $.toast({
-                        text: data.msg,
-                        icon: "error",
-                        loader: !1,
-                        position: "top-right",
-                        hideAfter: 3e3
-                    })
-            })
-        }
-    }),
-    $("#template_tags,#element_tags, #bg_tags,#new_element_tags").select2({
-        tags: !0,
-        width: "100%",
-        tokenSeparators: [","]
-    }),
-    $("input[name=metric_units1]").val(["in"]),
-    $("input[name=metric_units]").val(["in"]),
-    $("#undo").hide(),
-    $("#productImageDownload").hide(),
-    $(".page *").length || ($("#addnewpagebutton").hide(),
-    $("#saveimage").hide(),
-    $("#saveastemplate").hide(),
-    $(".download-menu").hide(),
-    $(".zoom-control").hide(),
-    $("#options").hide()),
-    $("#savetemplate").hide(),
-    initMasonry_template(),
-    loadTemplates_template(),
-    initMasonry_image(),
-    loadTemplates_image(),
-    getUploadedImages(0)
-}),
 $(window).load(function() {
     if ("administrator" == currentUserRole && !hideVideoModal) {
         $("#modal-video").modal(),
@@ -7139,15 +6989,7 @@ var toastInstance = null
         errorMsg = "Error creating PNG"
     }
     return errorMsg
-}
-  , infinites = []
-  , masonrys = []
-  , flag_scroll_templates_element = !1
-  , limit_element = 24
-  , aContainer_element = "#catimage_container"
-  , aSearch_element = "#elementssearch"
-  , aMethod_element = "get-elements"
-  , type_element = "element";
+};
 function initMasonry_element() {
     if (DEBUG) {
         console.log("initMasonry_element()");
@@ -7235,12 +7077,6 @@ function loadTemplates_element() {
 //     }
 // }());
 
-var flag_scroll_templates_bg = !1
-  , limit_bg = 24
-  , aContainer_bg = "#background_container"
-  , aSearch_bg = "#bgsearch"
-  , aMethod_bg = "get-backgrounds"
-  , type_bg = "bg";
 function initMasonry_bg() {
     if (DEBUG) {
         console.log("initMasonry_bg()");
@@ -7276,13 +7112,7 @@ function initMasonry_bg() {
     loadReadMore(aContainer_bg, "loadTemplates_bg"),
     $(aContainer_bg).next().find(".iscroll-button").show()
 }
-function getItemHTML_bg(item) {
-    if (DEBUG) {
-        console.log("getItemHTML_bg()");
-    }
-    demo_as_id;
-    return "superadmin" == currentUserRole || "administrator" == currentUserRole ? '<div class="col-xs-4 thumb ' + item.is_own_item + '" id="' + item.id + '"><a class="thumbnail bgImage" href="#" data-imgsrc="' + item.url + '"><img class="img-responsive" src="' + item.thumb + '" alt=""><span class="thumb-overlay"><h3>' + item.name + '</h3></span></a> <i class="fa fa-trash-o deleteBg" id="' + item.id + '"></i></div>' : '<div class="col-xs-4 thumb ' + item.is_own_item + '" id="' + item.id + '"><a class="thumbnail bgImage" href="#" data-imgsrc="' + item.url + '"><img class="img-responsive" src="' + item.thumb + '" alt=""><span class="thumb-overlay"><h3>' + item.name + "</h3></span></a></div>"
-}
+
 function loadTemplates_bg() {
     if (DEBUG) {
         console.log("loadTemplates_bg()");
@@ -7297,27 +7127,8 @@ function loadTemplates_bg() {
         $(aContainer_bg).next().find(".loader-ellips").hide()
     }, 1500)
 }
-$(aContainer_bg).on("load.infiniteScroll", function(event, response) {
-    var data = JSON.parse(response)
-      , itemsHTML = (data = data.data).map(getItemHTML_bg).join("")
-      , $items = $(itemsHTML);
-    $items.imagesLoaded(function() {
-        infinites[type_bg].infiniteScroll("appendItems", $items).masonry("appended", $items)
-    }),
-    0 != data.length && setTimeout(function() {
-        flag_scroll_templates_bg = !1,
-        $(aContainer_bg).next().find(".iscroll-last").hide()
-    }, 500),
-    data.length < limit_bg && ($(aContainer_bg).next().find(".loader-ellips").hide(),
-    $(aContainer_bg).next().find(".iscroll-button").hide(),
-    $(aContainer_bg).next().find(".iscroll-last").show());
-});
-var flag_scroll_templates_text = !1
-  , limit_text = 24
-  , aContainer_text = "#text_container"
-  , aSearch_text = "#textsearch"
-  , aMethod_text = "get-texts"
-  , type_text = "text";
+
+
 function initMasonry_text() {
     if (DEBUG) {
         console.log("initMasonry_text()");
@@ -7353,9 +7164,7 @@ function initMasonry_text() {
     loadReadMore(aContainer_text, "loadTemplates_text"),
     $(aContainer_text).next().find(".iscroll-button").show()
 }
-function getItemHTML_text(item) {
-    return '<div class="col-xs-6 thumb ' + item.isownitem + '" id="' + item.text_id + '"><a class="thumbnail" title="' + item.text_name + '" href="#" data-target="' + item.text_id + '"><img class="textImage img-responsive" src="' + item.text_thumbnail + '" alt=""></a><i class="fa fa-trash-o deleteText" id="' + item.text_id + '"></i></div>'
-}
+
 function loadTemplates_text() {
     if (DEBUG) {
         console.log("loadTemplates_text()");
@@ -7369,38 +7178,8 @@ function loadTemplates_text() {
         $(aContainer_text).next().find(".loader-ellips").hide()
     }, 1500)
 }
-$(aContainer_text).on("load.infiniteScroll", function(event, response) {
-    var data = JSON.parse(response)
-      , itemsHTML = (data = data.data).map(getItemHTML_text).join("")
-      , $items = $(itemsHTML);
-    $items.imagesLoaded(function() {
-        infinites[type_text].infiniteScroll("appendItems", $items).masonry("appended", $items)
-    }),
-    0 != data.length && setTimeout(function() {
-        flag_scroll_templates_text = !1,
-        $(aContainer_text).next().find(".iscroll-last").hide()
-    }, 500),
-    data.length < limit_text && ($(aContainer_text).next().find(".loader-ellips").hide(),
-    $(aContainer_text).next().find(".iscroll-button").hide(),
-    $(aContainer_text).next().find(".iscroll-last").show())
-});
 
-$(aContainer_template).on("load.infiniteScroll", function(event, response) {
-    var data = JSON.parse(response)
-      , itemsHTML = (data = data.data).map(getItemHTML_template).join("")
-      , $items = $(itemsHTML);
-    $items.imagesLoaded(function() {
-        infinites[type_template].infiniteScroll("appendItems", $items).masonry("appended", $items)
-    }),
-    0 != data.length && setTimeout(function() {
-        flag_scroll_templates_template = !1,
-        $(aContainer_template).next().find(".iscroll-last").hide()
-    }, 500),
-    data.length < limit_template && ($(aContainer_template).next().find(".loader-ellips").hide(),
-    $(aContainer_template).next().find(".iscroll-button").hide(),
-    $(aContainer_template).next().find(".iscroll-last").show())
-});
-var flag_scroll_templates_related = !1, limit_related = 24, aContainer_related = "#related_products_container", aSearch_related = "", aMethod_related = "get-related-products", type_related = "related", templateId_related;
+
 function initMasonry_related(templateId) {
     if (DEBUG) {
         console.log("initMasonry_related()");
@@ -7436,25 +7215,7 @@ function initMasonry_related(templateId) {
     loadReadMore(aContainer_related, "loadTemplates_related"),
     $(aContainer_related).next().find(".iscroll-button").show()
 }
-function getItemHTML_related(product) {
-    if (DEBUG) {
-        console.log("getItemHTML_related()");
-    }
-    var newElement = $("<div/>");
-    $(newElement).addClass("grid-item"),
-    $(newElement).css("width", 140),
-    $(newElement).css("float", "left"),
-    $(newElement).css("margin", "0 0 10px 10px");
-    var productLink = $("<a/>");
-    $(productLink).attr("href", product.url),
-    $(productLink).attr("target", "_blank");
-    var productImage = $("<img/>");
-    return $(productImage).attr("src", product.image),
-    $(productImage).css("width", "100%"),
-    $(productLink).append(productImage),
-    $(newElement).append(productLink),
-    $("<div/>").append(newElement).html()
-}
+
 function loadTemplates_related() {
     if (DEBUG) {
         console.log("loadTemplates_related()");
@@ -7468,49 +7229,7 @@ function loadTemplates_related() {
         $(aContainer_related).next().find(".loader-ellips").hide()
     }, 1500)
 }
-$(aContainer_related).on("load.infiniteScroll", function(event, response) {
-    var data = JSON.parse(response);
-    if (data.total > 0) {
-        $("#relatedProductsPane a:hidden").removeClass("invisible");
-        var itemsHTML = (data = data.products).map(getItemHTML_related).join("")
-          , $items = $(itemsHTML);
-        $items.imagesLoaded(function() {
-            infinites[type_related].infiniteScroll("appendItems", $items).masonry("appended", $items)
-        }),
-        0 != data.length && setTimeout(function() {
-            flag_scroll_relateds_related = !1,
-            $(aContainer_related).next().find(".iscroll-last").hide()
-        }, 500),
-        data.length < limit_related && ($(aContainer_related).next().find(".loader-ellips").hide(),
-        $(aContainer_related).next().find(".iscroll-button").hide(),
-        $(aContainer_related).next().find(".iscroll-last").show())
-    } else
-        $("#relatedProductsPane a:visible").addClass("invisible")
-});
 
-function getItemHTML_image(product) {
-    if (DEBUG) {
-        console.log("getItemHTML_image()");
-    }
-    var deleteBtn = demo_as_id ? "" : '<i data-target="' + product.id + '" class="fa fa-trash-o deleteImage"></i>';
-    return '<div data-id="' + product.id + '" class="dz-preview dz-processing dz-image-preview dz-success dz-complete thumb"><div class="dz-image"><img data-dz-thumbnail="" alt="' + product.filename + '" src="' + product.img + '"></div> \x3c!-- <div class="dz-details"> <div class="dz-filename"><span data-dz-name="">' + product.filename + "</span></div>  </div> --\x3e" + deleteBtn + "</div>"
-}
-
-$(imagesContainerSelector).on("load.infiniteScroll", function(event, response) {
-    var data = JSON.parse(response)
-      , itemsHTML = (data = data.images).map(getItemHTML_image).join("")
-      , $items = $(itemsHTML);
-    $items.imagesLoaded(function() {
-        infinites[typeForImages].infiniteScroll("appendItems", $items).masonry("appended", $items)
-    }),
-    0 != data.length && setTimeout(function() {
-        flag_scroll_images_image = !1,
-        $(imagesContainerSelector).next().find(".iscroll-last").hide()
-    }, 500),
-    data.length < imagesLimit && ($(imagesContainerSelector).next().find(".loader-ellips").hide(),
-    $(imagesContainerSelector).next().find(".iscroll-button").hide(),
-    $(imagesContainerSelector).next().find(".iscroll-last").show())
-}),
 $(document).ready(function() {
     var columns = [{
         data: "date",

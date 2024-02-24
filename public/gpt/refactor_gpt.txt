@@ -3,20 +3,27 @@ Refactor this function to improve the readability and maintainability.I'm using 
 This function belongs to a bigger script and is called by another functions, keep original function name to avoid errors with the rest of the code.
 Be meticulous with scope variables, taking into consideration that global variables could be used by other functions.
 
-function loadTemplates_image() {
-    if (DEBUG) {
-        console.log("loadTemplates_image()");
+InfiniteScroll.prototype.loadNextPage = function() {
+    if (!this.isLoading && this.canLoad) {
+        var path = this.getAbsolutePath();
+        this.isLoading = !0;
+        var onLoad = function(response) {
+            this.onPageLoad(response, path)
+        }
+        .bind(this)
+          , onError = function(error) {
+            this.onPageError(error, path)
+        }
+        .bind(this)
+          , onLast = function(response) {
+            this.lastPageReached(response, path)
+        }
+        .bind(this);
+        request(path, this.options.responseType, onLoad, onError, onLast),
+        this.dispatchEvent("request", null, [path])
     }
-
-    infinites[typeForImages].infiniteScroll("loadNextPage"),
-    setTimeout(function() {
-        masonrys[typeForImages] && (masonrys[typeForImages].layout(),
-        $(".infinite-scroll-request_image_products").show())
-    }, 500),
-    setTimeout(function() {
-        $(imagesContainerSelector).next().find(".loader-ellips").hide()
-    }, 1500)
 }
+;
 
 // improve the readability and maintainability of objectSelected function
 
