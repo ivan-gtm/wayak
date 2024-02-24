@@ -10,7 +10,7 @@ class UserPurchaseService
     public function getPurchases($customerId)
     {
         // Construct the Redis key for the user's purchases
-        $redisKey = 'wayak:user:' . $customerId . ':purchases';
+        $redisKey = 'wayak:user:'.$customerId.':purchases';
 
         // Use Redis to retrieve the list of template IDs purchased by the user
         $purchaseTemplateIds = Redis::smembers($redisKey);
