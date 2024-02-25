@@ -1,373 +1,433 @@
-/**
- * Logs debug messages to the console if DEBUG mode is enabled.
- * @param {string} message - The message to log.
- * @param {any} [data] - Optional data to log alongside the message.
- */
-function logDebug(message, data) {
-    if (window.DEBUG) { // Assuming DEBUG is a global variable.
-        if (data !== undefined) {
-            console.log(message, data);
-        } else {
-            console.log(message);
-        }
+function logDebugInfo(message, data = '') {
+    if (DEBUG) {
+        console.log(message, data);
     }
-  }
-  
-  /**
-   * Sets the background of the canvas.
-   * @param {fabric.Canvas} canvas - The Fabric.js canvas instance.
-   * @param {string} imageUrl - The URL of the background image. Empty string if setting a color.
-   * @param {string} color - The background color. Used if imageUrl is empty.
-   * @param {number} scale - The scale at which to apply the background image.
-   * @param {number} index - The z-index at which the background should be placed.
-   * @param {boolean} shouldRender - Whether the canvas should be re-rendered after setting the background.
-   */
-  function setBackground(canvas, imageUrl, color, scale = 1, index, shouldRender = true) {
-    if (imageUrl) {
-        // If an image URL is provided, set the canvas background to that image
-        fabric.Image.fromURL(imageUrl, function(img) {
-            img.scale(scale).set({
-                originX: 'left',
-                originY: 'top'
-            });
-            canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas), {
-                // Optional: Set additional image properties here, if needed
-            });
-            if (shouldRender) {
-                canvas.renderAll();
-            }
-        });
-    } else if (color && typeof color === 'string') {
-        // If a color string is provided, set the canvas background to that color
-        canvas.setBackgroundColor(color, function() {
-            if (shouldRender) {
-                canvas.renderAll();
-            }
-        });
+}
+
+function setCanvasBackground(lcanvas, bgImageSrc, bgColor, bgScale, index, forceImageBackground = false) {
+    if (bgImageSrc) {
+        // Sets the canvas background image
+        setCanvasBg(lcanvas, bgImageSrc, "", bgScale, index, forceImageBackground);
+    } else if (bgColor && typeof bgColor === 'string' && !bgImageSrc) {
+        // Sets the canvas background color if no image source is provided
+        setCanvasBg(lcanvas, "", bgColor, 1, index);
     }
-  }
-  
-  /**
-   * Loads an SVG from a given URL and applies custom properties before adding it to the canvas.
-   * @param {fabric.Canvas} canvas - The Fabric.js canvas instance.
-   * @param {string} svgUrl - The URL of the SVG to load.
-   * @param {Object} svgProperties - Object containing properties to be applied to the loaded SVG.
-   * @param {number} index - The index at which the SVG should be added in the canvas' object stack.
-   */
-  function loadSVG(canvas, svgUrl, svgProperties, index) {
-    fabric.loadSVGFromURL(svgUrl, function(objects, options) {
-        var svgGroup = fabric.util.groupSVGElements(objects, options);
-        applyObjectProperties(svgGroup, svgProperties);
-  
-        // Add the SVG group to the canvas
-        canvas.add(svgGroup);
-        svgGroup.moveTo(index);
-  
-        // Optional: Perform additional canvas adjustments here if necessary
-        canvas.renderAll();
+}
+
+function loadSVGData(lcanvas, svgData, svgIndex) {
+    if (!svgData || typeof svgData.src === 'undefined') return;
+
+    fabric.loadSVGFromURL(svgData.src, function(objects, options, svgElements, allSvgElements) {
+        var loadedObject = keepSvgGroups(objects, svgElements, allSvgElements, options);
+        
+        logDebugInfo("loadedObject", loadedObject);
+        
+        lcanvas.discardActiveObject().renderAll();
+        
+        applyObjectProperties(loadedObject, svgData, svgIndex);
+
+        // After all properties have been applied, add the object to the canvas
+        lcanvas.add(loadedObject);
+        loadedObject.setCoords();
+        
+        // Finalize the object's setup
+        finalizeObject(loadedObject, svgData, svgIndex, lcanvas);
     });
-  }
-  
-  /**
-  * Applies given properties to a Fabric object.
-  * @param {fabric.Object} fabricObject - The Fabric object to modify.
-  * @param {Object} properties - Object containing properties to be applied.
-  */
-  function applyObjectProperties(fabricObject, properties) {
-    for (let prop in properties) {
-        if (properties.hasOwnProperty(prop)) {
-            fabricObject.set(prop, properties[prop]);
-        }
-    }
-  
-    // Special handling for properties that require additional processing
-    if (properties.fill && typeof properties.fill === 'object' && properties.fill.type) {
-        // Handle special fill types (e.g., patterns, gradients) here
-        // This is just a placeholder; specifics depend on the fill type
-    }
-  
-    fabricObject.setCoords();
-  }
-  
-  /**
-   * Applies given properties to a Fabric object. This function is versatile and can handle
-   * setting a wide range of properties including position, appearance, and custom attributes.
-   * @param {fabric.Object} fabricObject - The Fabric object to which properties will be applied.
-   * @param {Object} properties - An object containing key-value pairs of properties to apply.
-   */
-  function applyObjectProperties(fabricObject, properties) {
-    // Apply standard properties directly
-    fabricObject.set(properties);
-  
-    // Check and apply any special properties that need additional handling
-    // Example: Applying a shadow property
-    if (properties.shadow) {
-        // Assuming properties.shadow is in a format Fabric.js can accept directly
-        fabricObject.setShadow(properties.shadow);
-    }
-  
-    // Example: Applying a fill pattern
-    if (properties.fill && typeof properties.fill === 'object' && properties.fill.type === 'pattern') {
-        fabric.Pattern.fromObject(properties.fill, (pattern) => {
-            fabricObject.set('fill', pattern);
-        });
-    }
-  
-    // Example: Applying gradients (linear or radial)
-    if (properties.fill && typeof properties.fill === 'object' && (properties.fill.type === 'linear' || properties.fill.type === 'radial')) {
-        fabric.Gradient.fromObject(properties.fill, (gradient) => {
-            fabricObject.set('fill', gradient);
-        });
-    }
-  
-    // Additional special properties can be handled here
-  
-    // Ensure the object's position and scaling are updated
-    fabricObject.setCoords();
-  }
-  
-  /**
-   * Processes and applies custom SVG data to objects on the canvas.
-   * @param {fabric.Canvas} canvas - The Fabric.js canvas instance.
-   * @param {Array} svgCustomData - An array of objects containing custom SVG data.
-   * @param {function} callback - A callback function to execute after all custom data has been applied.
-   */
-  function handleSvgCustomData(canvas, svgCustomData, callback) {
-    if (!svgCustomData || svgCustomData.length === 0) {
-        if (typeof callback === "function") {
-            callback();
-        }
-        return;
-    }
-  
-    svgCustomData.forEach((data, index) => {
-        if (!data || !data.src) return; // Skip if data is not valid or missing essential properties
-  
-        fabric.loadSVGFromURL(data.src, (objects, options) => {
-            const svgObject = fabric.util.groupSVGElements(objects, options);
-            applyObjectProperties(svgObject, {
-                left: data.left,
-                top: data.top,
-                scaleX: data.scaleX,
-                scaleY: data.scaleY,
-                angle: data.angle,
-                originX: data.originX || 'center',
-                originY: data.originY || 'center',
-                stroke: data.stroke,
-                strokeWidth: data.strokeWidth,
-                fill: data.fill // This could be a color, pattern, or gradient
-            });
-  
-            // Custom processing for svg_custom_paths or any other custom data
-            if (data.svg_custom_paths) {
-                // Example: Apply custom paths modifications here
-            }
-  
-            canvas.add(svgObject);
-            svgObject.moveTo(index);
-  
-            if (index === svgCustomData.length - 1 && typeof callback === "function") {
-                callback(); // Execute callback when the last SVG is processed
-            }
-        });
+}
+
+function applyObjectProperties(loadedObject, svgData, svgIndex) {
+    // Basic properties
+    loadedObject.set({
+        top: svgData.top,
+        left: svgData.left,
+        shadow: svgData.shadow,
+        stroke: svgData.stroke,
+        strokeWidth: svgData.strokeWidth,
+        opacity: svgData.opacity,
+        index: svgIndex,
+        locked: svgData.locked,
+        src: svgData.src,
+        svg_custom_paths: svgData.svg_custom_paths,
+        originX: svgData.originX || "center",
+        originY: svgData.originY || "center",
+        width: svgData.width,
+        height: svgData.height
     });
-  }
-  
-  /**
-   * Applies fill properties to a fabric object or each object within a group.
-   * @param {fabric.Object|fabric.Group} object - The fabric object or group to which the fill will be applied.
-   * @param {Object|string} fill - The fill properties to apply. This can be a string for solid colors or an object for gradients or patterns.
-   */
-  function applyFillToObjects(object, fill) {
-    // Function to apply fill to a single object
-    const applyFillToObject = (obj, fillData) => {
-        if (typeof fillData === 'string') {
-            // Solid color fill
-            obj.set('fill', fillData);
-        } else if (fillData.type && fillData.type === 'pattern') {
-            // Pattern fill
-            fabric.Pattern.fromObject(fillData, pattern => {
-                obj.set('fill', pattern);
+
+    // Conditional properties
+    if (svgData.fill) {
+        if (typeof svgData.fill === 'string') {
+            loadedObject.fill = svgData.fill;
+        } else if (typeof svgData.fill === 'object' && (svgData.fill.type === 'Dpattern' || svgData.fill.type === 'pattern')) {
+            try {
+                fabric.Dpattern.fromObject(svgData.fill, function(fillPattern) {
+                    loadedObject.set({ fill: fillPattern, dirty: true });
+                });
+            } catch (e) {
+                console.log("Error setting fill pattern:", e, svgData.fill);
+                // Fallback to directly setting the fill property in case of error
+                loadedObject.fill = svgData.fill;
+            }
+        }
+    }
+
+    // Apply gradient if applicable
+    var gradientType = getGradientTypeofObject(svgData);
+    if (gradientType !== false) {
+        applyGradient(svgData.fill.colorStops[0].color, svgData.fill.colorStops[1].color, gradientType, loadedObject);
+    } else {
+        // This seems like a fallback or alternate gradient application method
+        // The implementation will depend on the specifics of applyGradient2
+        applyGradient2(svgData, loadedObject);
+    }
+
+    // Set transformation properties
+    updateObjectPosition(loadedObject, svgData);
+
+    // Here we assume that applyGradient, applyGradient2, and updateObjectPosition are implemented elsewhere.
+    // These functions handle specific property applications based on SVG data.
+}
+
+function finalizeObject(loadedObject, svgData, svgIndex, lcanvas) {
+    // Set additional properties like scaleX, scaleY, flipX, flipY, angle
+    loadedObject.set({
+        scaleX: svgData.scaleX || 1,
+        scaleY: svgData.scaleY || 1,
+        flipX: svgData.flipX || false,
+        flipY: svgData.flipY || false,
+        angle: svgData.angle || 0
+    });
+
+    // Adjust position if origin is not centered
+    if (loadedObject.originX !== 'center' || loadedObject.originY !== 'center') {
+        const centerPoint = loadedObject.getCenterPoint();
+        loadedObject.set({
+            left: centerPoint.x,
+            top: centerPoint.y,
+            originX: 'center',
+            originY: 'center'
+        });
+    }
+
+    // Ensure the object's coordinates are updated
+    loadedObject.setCoords();
+
+    // Optionally, handle custom path operations or additional customizations
+    processSVGCustomPaths(loadedObject, svgData, svgIndex);
+
+    // Ensure the object has a rotating point if needed
+    if (svgData.hasRotatingPoint) {
+        loadedObject.hasRotatingPoint = true;
+    }
+
+    // If there's any additional behavior or adjustments needed for the object, apply them here
+
+    // Finally, ensure the canvas is updated with the new object
+    lcanvas.renderAll();
+}
+
+function applyFillPattern(loadedObject, svgData) {
+    if (typeof svgData.fill === 'object' && (svgData.fill.type === 'Dpattern' || svgData.fill.type === 'pattern')) {
+        try {
+            fabric.Dpattern.fromObject(svgData.fill, function(pattern) {
+                loadedObject.set({ fill: pattern });
+                loadedObject.dirty = true; // Mark the object as needing a re-render
             });
-        } else if (fillData.type && (fillData.type === 'linear' || fillData.type === 'radial')) {
-            // Gradient fill
-            fabric.Gradient.fromObject(fillData, gradient => {
-                obj.set('fill', gradient);
+        } catch (error) {
+            console.error("Error applying fill pattern:", error, svgData.fill);
+            // Fallback to a default fill if the pattern application fails
+            loadedObject.fill = 'gray'; // Example fallback color
+            loadedObject.dirty = true;
+        }
+    }
+}
+
+function applyGradientFill(loadedObject, svgData) {
+    // Check if gradient fill data is available
+    if (svgData.fill && typeof svgData.fill === 'object' && svgData.fill.type === 'gradient') {
+        var gradientOptions = {};
+
+        if (svgData.fill.gradientType === 'linear') {
+            gradientOptions = {
+                type: 'linear',
+                coords: {
+                    x1: svgData.fill.coords.x1,
+                    y1: svgData.fill.coords.y1,
+                    x2: svgData.fill.coords.x2,
+                    y2: svgData.fill.coords.y2
+                },
+                colorStops: svgData.fill.colorStops
+            };
+        } else if (svgData.fill.gradientType === 'radial') {
+            gradientOptions = {
+                type: 'radial',
+                coords: {
+                    r1: svgData.fill.coords.r1,
+                    r2: svgData.fill.coords.r2,
+                    cx: svgData.fill.coords.cx,
+                    cy: svgData.fill.coords.cy,
+                    fx: svgData.fill.coords.fx,
+                    fy: svgData.fill.coords.fy
+                },
+                colorStops: svgData.fill.colorStops
+            };
+        }
+
+        // Create the gradient fill
+        var gradient = new fabric.Gradient(gradientOptions);
+
+        // Apply the gradient fill to the loaded object
+        loadedObject.set({ fill: gradient });
+    }
+}
+
+function processSVGCustomPaths(loadedObject, svgData, svgIndex) {
+    if (typeof svgData.svg_custom_paths !== 'object' || !svgData.svg_custom_paths.length) {
+        return; // No custom paths to process
+    }
+
+    svgData.svg_custom_paths.forEach((pathData, pathIndex) => {
+        if (!pathData || typeof pathData.action === 'undefined') return;
+
+        // Assuming loadedObject could be a group of objects (e.g., when loading complex SVGs)
+        var targetObject = loadedObject._objects ? loadedObject._objects[pathIndex] : loadedObject;
+
+        switch (pathData.action) {
+            case 'fill':
+                // Apply fill color or gradient
+                if (typeof pathData.color_value === 'string') {
+                    targetObject.set('fill', pathData.color_value);
+                } else if (typeof pathData.color_value === 'object' && pathData.color_value.type === 'gradient') {
+                    // Here, you would call a function similar to applyGradientFill but tailored for individual paths
+                    applyPathGradientFill(targetObject, pathData.color_value);
+                }
+                break;
+            case 'stroke':
+                // Apply stroke color
+                targetObject.set('stroke', pathData.color_value);
+                if (pathData.strokeWidth !== undefined) {
+                    targetObject.set('strokeWidth', pathData.strokeWidth);
+                }
+                break;
+            default:
+                console.warn('Unknown action for custom path:', pathData.action);
+        }
+    });
+
+    // Ensure the object is updated on the canvas
+    if (loadedObject._updateObjectsCoords) {
+        loadedObject._updateObjectsCoords(); // For groups, update coordinates of all objects
+    }
+    loadedObject.setCoords(); // Update the coordinates of the parent object or individual path
+}
+
+function updateObjectPosition(loadedObject, svgData) {
+    // Apply scale, flip, and rotation properties
+    loadedObject.set({
+        scaleX: svgData.scaleX || 1,
+        scaleY: svgData.scaleY || 1,
+        flipX: !!svgData.flipX,
+        flipY: !!svgData.flipY,
+        angle: svgData.angle || 0
+    });
+
+    // Update position if specified, considering the object's current origin point
+    if (svgData.top !== undefined && svgData.left !== undefined) {
+        loadedObject.setPositionByOrigin(new fabric.Point(svgData.left, svgData.top), 'center', 'center');
+    }
+
+    // Adjust origin to center for rotation and scaling, if not already set
+    if (loadedObject.originX !== 'center' || loadedObject.originY !== 'center') {
+        const center = loadedObject.getCenterPoint();
+        loadedObject.set({
+            originX: 'center',
+            originY: 'center',
+            left: center.x,
+            top: center.y
+        });
+    }
+
+    loadedObject.setCoords(); // Update the object's coordinates for interaction and rendering
+}
+
+function finalizeObjectExpanded(loadedObject, lcanvas) {
+    // Ensure the object is fully integrated into the canvas environment
+    lcanvas.add(loadedObject);
+    loadedObject.setCoords();
+
+    // Apply any final transformations or adjustments that may be needed
+    // This could include alignment checks, ensuring the object is within canvas bounds, etc.
+
+    // Trigger a canvas re-render to display the newly added object
+    lcanvas.renderAll();
+
+    // Additional checks or operations after the object has been added and rendered
+    // Example: Checking the object's visibility within the current viewport
+    checkObjectVisibility(loadedObject, lcanvas);
+
+    // Any additional logging or operations to signify completion of the object's integration
+    console.log('Object finalized and added to canvas:', loadedObject);
+}
+
+function checkObjectVisibility(object, canvas) {
+    // Placeholder for visibility checks or adjustments
+    // This could involve scrolling the canvas to the object's location or adjusting zoom
+}
+
+function processSVGCustomeData(lcanvas, svgCustomeData, svgIndex) {
+    if (!svgCustomeData || svgCustomeData.length === 0) return;
+
+    svgCustomeData.forEach((customeDataItem, index) => {
+        if (customeDataItem && customeDataItem.src) {
+            // Assuming customeDataItem contains SVG data similar to the primary SVG
+            fabric.loadSVGFromURL(customeDataItem.src, function(objects, options) {
+                var customeObject = fabric.util.groupSVGElements(objects, options);
+
+                // Apply basic properties from the customeDataItem, similar to how primary SVG data was handled
+                customeObject.set({
+                    left: customeDataItem.left || 0,
+                    top: customeDataItem.top || 0,
+                    scaleX: customeDataItem.scaleX || 1,
+                    scaleY: customeDataItem.scaleY || 1,
+                    angle: customeDataItem.angle || 0,
+                    opacity: customeDataItem.opacity || 1
+                });
+
+                // Apply any special handling or properties specific to custome data
+                // For example, handling custom interactions, bindings, or visibility conditions
+
+                // Finalize the custom object's setup and add it to the canvas
+                lcanvas.add(customeObject);
+                customeObject.setCoords();
+
+                // Optionally, log the addition or perform additional operations specific to custom SVG data
+                console.log(`Custom SVG data processed and added at index: ${svgIndex}, custom index: ${index}`);
             });
         }
-    };
-  
-    if (object.type === 'group') {
-        // If the object is a group, apply the fill to each object in the group
-        object.getObjects().forEach(obj => applyFillToObject(obj, fill));
-    } else {
-        // If the object is not a group, apply the fill directly to the object
-        applyFillToObject(object, fill);
-    }
-  
-    object.setCoords(); // Update object coordinates after applying fill
-  }
-  
-  /**
-   * Applies stroke properties to a fabric object or each object within a group.
-   * @param {fabric.Object|fabric.Group} object - The fabric object or group to which the stroke will be applied.
-   * @param {string} strokeColor - The color of the stroke.
-   * @param {number} strokeWidth - The width of the stroke.
-   */
-  function applyStrokeToObjects(object, strokeColor, strokeWidth) {
-    // Helper function to apply stroke properties to a single object
-    const applyStroke = (obj, color, width) => {
-        obj.set({
-            stroke: color,
-            strokeWidth: width
-        });
-    };
-  
-    if (object.type === 'group') {
-        // If the object is a group, apply the stroke to each object in the group
-        object.getObjects().forEach(childObject => applyStroke(childObject, strokeColor, strokeWidth));
-    } else {
-        // If the object is not a group, apply the stroke directly to the object
-        applyStroke(object, strokeColor, strokeWidth);
-    }
-  
-    // Ensure the object's coordinates and visual state are updated
-    object.setCoords();
-    if (object.canvas) {
-        object.canvas.renderAll();
-    }
-  }
-  
-  /**
-   * Applies a gradient fill to a fabric object.
-   * @param {fabric.Object} object - The fabric object to which the gradient will be applied.
-   * @param {Object} gradientProps - The properties of the gradient to apply.
-   */
-  function applyGradientFill(object, gradientProps) {
-    let gradient;
-  
-    // Determine the type of gradient and construct it accordingly
-    if (gradientProps.type === 'linear') {
-        gradient = new fabric.Gradient({
-            type: 'linear',
-            coords: {
-                x1: gradientProps.coords.x1,
-                y1: gradientProps.coords.y1,
-                x2: gradientProps.coords.x2,
-                y2: gradientProps.coords.y2
-            },
-            colorStops: gradientProps.colorStops
-        });
-    } else if (gradientProps.type === 'radial') {
-        gradient = new fabric.Gradient({
-            type: 'radial',
-            coords: {
-                r1: gradientProps.coords.r1,
-                r2: gradientProps.coords.r2,
-                x1: gradientProps.coords.x1,
-                y1: gradientProps.coords.y1,
-                x2: gradientProps.coords.x2,
-                y2: gradientProps.coords.y2
-            },
-            colorStops: gradientProps.colorStops
-        });
-    }
-  
-    // Apply the constructed gradient to the object's fill
-    if (gradient) {
-        object.set('fill', gradient);
-        object.setCoords(); // Update object's coordinates to reflect changes
-  
-        // If the object is part of a canvas, request a render to display changes
-        if (object.canvas) {
-            object.canvas.renderAll();
+    });
+
+    // After processing all custom SVG data, optionally re-render the canvas or perform additional checks
+    lcanvas.renderAll();
+}
+
+function checkAndLoadGroupsSVGLoading(lcanvas, svgIndex) {
+    // Assuming there's a way to identify groups within the canvas that may have associated SVG data to load
+    lcanvas.getObjects().forEach((obj, index) => {
+        if (obj.type === 'group' && obj.needsSVGLoading) {
+            // Placeholder for the logic to load SVG content for the group
+            // This could involve checking a property on the group for an SVG URL or data to load
+            let svgDataForGroup = obj.svgData; // Assuming each group has an 'svgData' property with the SVG data or URL
+            
+            if (svgDataForGroup) {
+                // Load the SVG data for the group. This could be a URL or direct SVG content.
+                // The specific loading function would depend on how your application handles SVG loading,
+                // similar to the initial SVG loading process for the canvas.
+                loadSVGDataForGroup(lcanvas, obj, svgDataForGroup, index);
+            }
         }
-    } else {
-        console.error('Unsupported gradient type or missing properties.');
+    });
+
+    // After checking and potentially loading SVGs for all groups, you might want to update the canvas
+    lcanvas.renderAll();
+}
+
+function loadSVGDataForGroup(lcanvas, group, svgData, groupIndex) {
+    // This function is a placeholder for the actual SVG loading logic for a group.
+    // It would involve loading the SVG (possibly using fabric.loadSVGFromURL or similar),
+    // then processing the loaded SVG to create fabric objects,
+    // and finally adding these objects to the group.
+    
+    console.log(`Loading SVG data for group at index ${groupIndex}.`);
+    // Example: Load SVG, then add to group
+    // fabric.loadSVGFromURL(svgData.url, function(objects, options) {
+    //     var svgGroup = fabric.util.groupSVGElements(objects, options);
+    //     group.addWithUpdate(svgGroup);
+    //     lcanvas.renderAll();
+    // });
+}
+
+function setDemoOverlayIfNeeded(lcanvas) {
+    // Check if the demo mode is active; this might depend on a global variable or a property of the canvas
+    if (demo_as_id) { // Assuming `demo_as_id` is a flag indicating demo mode is active
+        // Define the overlay properties
+        const overlayText = 'DEMO MODE ACTIVE';
+        const overlayOptions = {
+            left: lcanvas.width / 2,
+            top: lcanvas.height / 2,
+            fontSize: 20,
+            fontStyle: 'italic',
+            fill: '#FF0000',
+            stroke: '#FFFFFF',
+            strokeWidth: 2,
+            selectable: false,
+            evented: false,
+            opacity: 0.5
+        };
+
+        // Create a text object for the overlay
+        const overlay = new fabric.Text(overlayText, overlayOptions);
+
+        // Adjust the text object's position to be centered
+        overlay.set({
+            originX: 'center',
+            originY: 'center'
+        });
+
+        // Add the overlay to the canvas
+        lcanvas.add(overlay);
+
+        // Optionally, bring the overlay to the front
+        lcanvas.bringToFront(overlay);
+
+        // Render the canvas to display the overlay
+        lcanvas.renderAll();
     }
-  }
-  
-  /**
-   * Inserts an SVG object into a Fabric.js canvas at a specified index.
-   * @param {fabric.Canvas} canvas - The Fabric.js canvas instance.
-   * @param {fabric.Object} svgObject - The SVG object to be inserted.
-   * @param {number} index - The index at which to insert the SVG object.
-   */
-  function insertSvgIntoCanvas(canvas, svgObject, index) {
-    // Add the SVG object to the canvas without rendering
-    canvas.add(svgObject);
-  
-    // Move the SVG object to the specified index
-    canvas.moveTo(svgObject, index);
-  
-    // Optional: Adjust the SVG object's position or other properties before rendering
-    // svgObject.set({ top: 100, left: 100, scaleX: 0.5, scaleY: 0.5 });
-  
-    // Render the canvas to display changes
-    canvas.renderAll();
-  }
-  
-  /**
-   * Performs final adjustments on the Fabric.js canvas. This function can be used to re-enable
-   * rendering optimizations, apply global transformations, or execute callbacks after objects
-   * have been loaded and modified.
-   * @param {fabric.Canvas} canvas - The Fabric.js canvas instance to finalize.
-   * @param {Function} [callback] - An optional callback function to execute after finalization.
-   */
-  function finalizeCanvas(canvas, callback) {
-    // Re-enable rendering optimizations if they were disabled
-    canvas.renderOnAddRemove = true;
-  
-    // Perform any necessary global transformations or adjustments
-    // Example: canvas.setViewportTransform([scaleX, skewX, skewY, scaleY, translateX, translateY]);
-  
-    // Ensure the canvas is fully up to date
-    canvas.renderAll();
-  
-    // Execute the callback function if provided
-    if (typeof callback === 'function') {
-        callback();
-    }
-  }
-  
-  /**
-   * Loads objects onto a Fabric.js canvas from JSON data, sets the canvas background,
-   * handles SVG custom data, and applies various properties using a series of modular functions.
-   * @param {fabric.Canvas} canvas - The Fabric.js canvas instance.
-   * @param {string} json - JSON string representing the objects to load onto the canvas.
-   * @param {Array} svgCustomData - Array of objects containing custom SVG data.
-   * @param {number} i - An index or identifier that might be used for layering or other logic.
-   */
-  function loadObjectOnCanvasFromJSON(canvas, json, svgCustomData, i) {
-    // Load the canvas from JSON data
-    canvas.loadFromJSON(json, function() {
-        logDebug("Canvas loaded from JSON");
-  
-        // Assuming background settings are part of the JSON or separately defined
-        // You might need to adjust this part to fit how your background settings are structured
-        if (canvas.bgsrc) {
-            setBackground(canvas, canvas.bgsrc, "", canvas.bgScale, i, true);
-        }
-        if (canvas.bgColor && typeof canvas.bgColor === 'string' && !canvas.bgsrc) {
-            setBackground(canvas, "", canvas.bgColor, 1, i, true);
-        }
-  
-        // Handle SVG custom data if provided
-        if (svgCustomData && svgCustomData.length > 0) {
-            handleSvgCustomData(canvas, svgCustomData, () => {
-                logDebug("SVG custom data processed.");
-                // Finalize canvas after SVG data has been handled
-                finalizeCanvas(canvas, () => {
-                    logDebug("Canvas finalized after handling SVG custom data.");
+}
+
+// Assuming all helper functions (1-12) are defined elsewhere in the script
+function loadObjectOnCanvasFromJSON(lcanvas, json, svg_custom_data12, i) {
+    logDebugInfo("loadObjectOnCanvasFromJSON() Start", json);
+
+    lcanvas.renderOnAddRemove = false;
+
+    lcanvas.loadFromJSON(json, function() {
+        setCanvasBackground(lcanvas, lcanvas.bgsrc, lcanvas.bgColor, lcanvas.bgScale, i);
+
+        if (svg_custom_data12 && svg_custom_data12.length > 0) {
+            $.each(svg_custom_data12, function(svg_i, svg_data) {
+                loadSVGData(lcanvas, svg_data, svg_i, function() {
+                    // Check and load groups if needed after loading SVG data
+                    if (svg_custom_data12.length == svg_i + 1) { // Last iteration
+                        checkIfGroupsNeedsSVGLoading(lcanvas, i);
+                    }
                 });
             });
         } else {
-            // Directly finalize the canvas if no SVG custom data to process
-            finalizeCanvas(canvas, () => {
-                logDebug("Canvas finalized without SVG custom data.");
-            });
+            // If there's no custom SVG data, directly check if groups need SVG loading
+            checkIfGroupsNeedsSVGLoading(lcanvas, i);
+        }
+
+        // Set the demo overlay if needed
+        setDemoOverlayIfNeeded(lcanvas);
+        setDemoOverlay();
+    });
+
+    // Additional or alternative global settings or overlays could be managed here
+}
+
+// Adjust the loadSVGData function to include a callback for when SVG data loading and processing are complete
+function loadSVGData(lcanvas, svgData, svgIndex, callback) {
+    if (!svgData || typeof svgData.src === 'undefined') return;
+
+    fabric.loadSVGFromURL(svgData.src, function(objects, options) {
+        var loadedObject = fabric.util.groupSVGElements(objects, options);
+        applyObjectProperties(loadedObject, svgData, svgIndex);
+        finalizeObject(loadedObject, lcanvas);
+        processSVGCustomeData(lcanvas, svgData.svg_custom_data, svgIndex);
+
+        // Call the callback function if provided, to allow for sequential operations
+        if (typeof callback === 'function') {
+            callback();
         }
     });
-  }
-  
-  
+}
