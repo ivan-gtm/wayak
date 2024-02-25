@@ -1,3 +1,26 @@
+class AppSpinner {
+    constructor() {
+        if (DEBUG) {
+            console.log("AppSpinner()");
+        }
+    }
+
+    show() {
+        if (!$("#appSpinner").is(":visible")) {
+            $("#appSpinner").show();
+        }
+    }
+
+    hide() {
+        if ($("#appSpinner").is(":visible")) {
+            $("#appSpinner").hide();
+        }
+    }
+}
+
+const appSpinner = new AppSpinner();
+
+
 /**
  * Loads settings from a specified endpoint and applies them to the corresponding elements on the page.
  */
@@ -380,6 +403,8 @@ var flag_scroll_templates_bg = !1
 
 Dropzone.autoDiscover = false;
 
+var canvasScale = 1, currentcanvasid = 0, canvasindex = 0, pageindex = 0, canvasarray = [], isdownloadpdf = !1, isupdatetemplate = !1, issaveastemplate = !1, totalsvgs = 0, convertedsvgs = 0, loadedtemplateid = 0, activeObjectCopy, keystring = "", remstring = "", savestatecount = 0, stopProcess = !1, templatesloading = !1, backgroundsLoading = !1, elementsLoading = !1, textsLoading = !1, rotationStep = 1, properties_to_save = Array("format", "patternSourceCanvas", "bgImg", "src", "svg_custom_paths", "hidden", "cwidth", "cheight", "locked", "selectable", "editable", "bg", "logoid", "evented", "id", "bgsrc", "bgScale", "lockMovementX", "lockMovementY"), isMac = navigator.platform.toUpperCase().indexOf("MAC") >= 0, isSafari = /Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor), isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor), s_history = !1, previewSvg, offsetTemplates = 0, offsetRelatedProducts = 0, offsetTexts = 0, offsetElements = 0, offsetBackgrounds = 0, template_type, geofilterBackground, instructionsId, svg_custom_data = [], localStorageKey = "wayak.design", templateOptions, backgroundPromise, duplicatedTemplateId, lastShadowBlur, lastShadowHorizontalOffset, lastShadowVerticalOffset, lastShadowColor, historyTable, $fontUTF8Symbols = {}, $useKeepSvgGroups = !1, dontLoadFonts = [], $copyOnePageAcrossSheet = !1;
+
 InfiniteScroll.prototype.loadNextPage = function() {
     if (!this.isLoading && this.canLoad) {
         const path = this.getAbsolutePath();
@@ -431,6 +456,10 @@ $(document).ready(function() {
     setupInfiniteScroll(aContainer_text, type_text, getItemHTML_text, limit_text, 'flag_scroll_templates_text');
     setupInfiniteScroll(aContainer_related, type_related, getItemHTML_related, limit_related, 'flag_scroll_relateds_related');
     setupInfiniteScroll(imagesContainerSelector, typeForImages, getItemHTML_image, imagesLimit, 'flag_scroll_images_image');    
+});
+
+$("#template_container").on("click", ".thumbnail", function() {
+    jQuery(this).data("target") && loadTemplate(jQuery(this).data("target"))
 });
 
 function setupDropzone() {
