@@ -381,6 +381,8 @@ function setDemoOverlayIfNeeded(lcanvas) {
 
         // Render the canvas to display the overlay
         lcanvas.renderAll();
+
+        setDemoOverlay();
     }
 }
 
@@ -409,7 +411,6 @@ function loadObjectOnCanvasFromJSON(lcanvas, json, svg_custom_data12, i) {
 
         // Set the demo overlay if needed
         setDemoOverlayIfNeeded(lcanvas);
-        setDemoOverlay();
     });
 
     // Additional or alternative global settings or overlays could be managed here
