@@ -5,9 +5,9 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Redis;
-use App\Models\Template;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use App\Models\Template;
 
 class RecomendatorCarousels extends Command
 {
@@ -243,7 +243,7 @@ class RecomendatorCarousels extends Command
 
         // Construct the carousel JSON object
         $carousel = [[
-            'slider_id' => Str::random(5),
+            'slider_id' => 'favorites',
             'title' => 'Favorites',
             'search_term' => 'Favorites',
             'link' => route('user.favorites',['customerId' => $customerId, 'country' => $country]),
@@ -409,7 +409,7 @@ class RecomendatorCarousels extends Command
         })->toArray();
 
         $carouselMetadata = [[
-            'slider_id' => Str::random(5),
+            'slider_id' => 'recently-viewed',
             'title' => 'Recently viewed products',
             'search_term' => 'recently viewed',
             'items' => $carouselItems

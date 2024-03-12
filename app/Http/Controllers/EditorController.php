@@ -1021,9 +1021,10 @@ class EditorController extends Controller
 
 		$purchaseCode = isset($request['id']) ? $request['id'] : null;
 		$customerId = $request->customerId;
+		$demoAsId = $request->demo_as_id;
 		$remainingDownloads = intval( Redis::hget('wayak:user:'.$customerId.':purchases:'.$purchaseCode,'remaining_downloads') );
 		
-		if($remainingDownloads > 0){
+		if($remainingDownloads > 0 || (intval($demoAsId) > 0)){
 			$templateIds = Redis::hget('wayak:user:'.$customerId.':purchases:'.$purchaseCode,'template_key') ? Redis::hget('wayak:user:'.$customerId.':purchases:'.$purchaseCode,'template_key') : $request['id'];
 			$language_code = isset($request['language_code']) ? $request['language_code'] : 'en';
 			$array_final = $this->getJSONTemplate($templateIds, $language_code);

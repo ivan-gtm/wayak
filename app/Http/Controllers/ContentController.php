@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Auth;
 use App\Services\UserPurchaseService;
+use App\Services\HomeCarouselsService;
 
 use App\Models\Template;
 use Storage;
@@ -20,16 +21,16 @@ use Storage;
 class ContentController extends Controller
 {
     use LocaleTrait;
-    protected $userPurchaseService;
+    protected $userPurchaseService, $homeCarouselsService;
 
-    public function __construct(UserPurchaseService $userPurchaseService)
+    public function __construct(UserPurchaseService $userPurchaseService, HomeCarouselsService $homeCarouselsService)
     {
         $this->userPurchaseService = $userPurchaseService;
+        $this->homeCarouselsService = $homeCarouselsService;
     }
 
     public function showHome($country = 'us', Request $request)
     {
-        
         if( $this->isValidCountry($country) == false){
             abort(400, 'Unsupported country.');
         }
@@ -243,6 +244,8 @@ class ContentController extends Controller
     {
 
         // $language_code = 'en';
+        $customerId = $this->getCustomerId($request);
+        $templateId = substr($slug, strrpos($slug, '-') + 1, strlen($slug));
         $locale = $this->getLocaleByCountry($country);
 
         if (!in_array($locale, ['en', 'es','fr','pt'])) {
@@ -251,14 +254,13 @@ class ContentController extends Controller
 
         App::setLocale($locale);
 
-        $template_id = substr($slug, strrpos($slug, '-') + 1, strlen($slug));
         $search_query = '';
 
         if (isset($request->searchQuery)) {
             $search_query = $request->searchQuery;
         }
 
-        $template = self::getTemplateMetadata($template_id);
+        $template = self::getTemplateMetadata($templateId);
 
         // Template not found
         if (isset($template->_id) == false) {
@@ -269,7 +271,9 @@ class ContentController extends Controller
         // $related_templates = [];
 
         $analyticsController = new AnalyticsController();
-        $analyticsController->registerProductView($template_id);
+        $analyticsController->registerProductView($templateId);
+        $this->homeCarouselsService->buildFavoritesCarousels($customerId, $templateId);
+        // exit;
         
         $language_code = 'en'; // Temporal
         if (App::environment() == 'local') {
@@ -314,7 +318,7 @@ class ContentController extends Controller
         }
 
         $customerId = $this->getCustomerId($request);
-        $isPurchased = $this->userPurchaseService->isTemplateIdInPurchases($customerId, $template_id);
+        $isPurchased = $this->userPurchaseService->isTemplateIdInPurchases($customerId, $templateId);
         
         $couponDetails = null;
         if( isset($request->coupon) ) {
