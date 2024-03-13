@@ -1,7 +1,7 @@
 class AppSpinner {
     constructor() {
         if (DEBUG) {
-            console.log("AppSpinner()");
+            console.log("MIGRATED:: AppSpinner()");
         }
     }
 
@@ -567,6 +567,10 @@ function initializeMasonryAndTemplates() {
 }
 
 function initializeFontDropdown() {
+    if (DEBUG) {
+        console.log("initializeFontDropdown()");
+    }
+
     $("#fonts-dropdown li a").click(function(e) {
         e.preventDefault();
         const selectedFontFamily = $(this).data("ff");
@@ -587,6 +591,10 @@ function initializeFontDropdown() {
 }
 
 function updateDropdownDisplay($element, fontFamily, displayName) {
+    if (DEBUG) {
+        console.log("updateDropdownDisplay()");
+    }
+
     $element.parents(".btn-group").find(".dropdown-toggle").html(
         `<span style="overflow:hidden"><a style="font-family: ${fontFamily}" href="#" data-ff="${fontFamily}" size="3">${displayName}</a>&nbsp;&nbsp;<span class="caret"></span></span>`
     );

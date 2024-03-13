@@ -1,6 +1,6 @@
 function initCanvasEvents(lcanvas) {
     if (DEBUG) {
-        console.log(`initCanvasEvents(): Canvas ID - ${lcanvas ? lcanvas.id : 'undefined'}`);
+        console.log(`MIGRATED:: initCanvasEvents(): Canvas ID - ${lcanvas ? lcanvas.id : 'undefined'}`);
     }
 
     let selectedObject;

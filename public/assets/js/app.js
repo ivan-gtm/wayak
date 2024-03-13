@@ -65,137 +65,7 @@ function _typeof(obj) {
     }
     )(obj)
 }
-fabric.Dpattern = fabric.util.createClass(fabric.Pattern, {
-    padding: 0,
-    scale: 1,
-    patternImage: null,
-    patternSourceCanvas: null,
-    type: "Dpattern",
-    src: null,
-    width: 0,
-    height: 0,
-    crossOrigin: "anonymous",
-    initialize: function(options, cb) {
-        var _this = this;
-        this.setOptions(options),
-        this.source && "object" === _typeof(this.source) && "string" == typeof this.source.src && !this.src && (this.src = this.source.src),
-        this.src || (this.src = "//d1p42ymg3s8emo.cloudfront.net/thumbs/1_1510855424.png"),
-        fabric.Image.fromURL(this.src, function($img) {
-            return _this.id = fabric.Object.__uid++,
-            $("body").trigger("pattern_image_loaded"),
-            canvas && canvas.fire("custom:pattern_image_loaded", {
-                target: _this
-            }),
-            _this.patternImage = $img,
-            _this.width = _this.width || _this.patternImage.width,
-            _this.height = _this.height || _this.patternImage.height,
-            _this.scale || (_this.scale = 1),
-            _this.padding || (_this.padding = 0),
-            _this.patternImage.scaleToWidth(_this.width * _this.scale),
-            _this.patternSourceCanvas = new fabric.StaticCanvas,
-            _this.patternSourceCanvas.add(_this.patternImage),
-            _this.patternSourceCanvas.renderAll(),
-            _this.source = function() {
-                return this.patternSourceCanvas.setDimensions({
-                    width: this.patternImage.getScaledWidth() + this.padding,
-                    height: this.patternImage.getScaledHeight() + this.padding
-                }),
-                this.patternSourceCanvas.renderAll(),
-                this.patternSourceCanvas.getElement()
-            }
-            ,
-            cb && cb(_this),
-            _this
-        }, {
-            crossOrigin: this.crossOrigin
-        })
-    },
-    toDataURL: function($params) {
-        return this.src && this.patternSourceCanvas && void 0 !== this.patternSourceCanvas.toDataURL ? this.patternSourceCanvas.toDataURL($params) : this.src
-    },
-    update: function($params) {
-        this.setOptions($params),
-        this.patternImage.scale(this.scale),
-        this.patternSourceCanvas.setDimensions({
-            width: this.patternImage.getScaledWidth() + this.padding,
-            height: this.patternImage.getScaledHeight() + this.padding
-        })
-    },
-    toObject: function() {
-        DEBUG && console.log("Dpattern toObject", this);
-        var object, NUM_FRACTION_DIGITS = fabric.Object.NUM_FRACTION_DIGITS, source = this.patternSourceCanvas;
-        this.patternSourceCanvas && this.patternSourceCanvas.toDataURL && (source = this.patternSourceCanvas.toDataURL({
-            multiplier: fabric.devicePixelRatio
-        })),
-        object = {
-            type: "Dpattern",
-            repeat: this.repeat,
-            crossOrigin: this.crossOrigin,
-            offsetX: fabric.util.toFixed(this.offsetX, NUM_FRACTION_DIGITS),
-            offsetY: fabric.util.toFixed(this.offsetY, NUM_FRACTION_DIGITS),
-            patternTransform: this.patternTransform ? this.patternTransform.concat() : null,
-            padding: this.padding,
-            scale: this.scale,
-            src: this.src,
-            source: source
-        };
-        for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++)
-            args[_key] = arguments[_key];
-        return fabric.util.populateWithProperties(this, object, args),
-        object
-    },
-    toDatalessJSON: function() {
-        DEBUG && console.log("toDatalessJSON", this);
-        for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++)
-            args[_key2] = arguments[_key2];
-        var object = this.toObject(args);
-        return delete object.patternImage,
-        delete object.patternSourceCanvas,
-        delete object.source,
-        fabric.util.populateWithProperties(this, object, args),
-        object
-    }
-}),
-fabric.Dpattern.async = !0,
-fabric.Dpattern.fromObject = function(object, callback) {
-    return DEBUG && console.log("Dpattern fromObject", object),
-    new fabric.Dpattern(object,callback)
-}
-;
 
-// var DEBUG = !1;
-fabric.Object.NUM_FRACTION_DIGITS = 10,
-fabric.textureSize = 4096,
-fabric.util.object.extend(fabric.Group.prototype, {
-    clone: function(callback, properties) {
-        var _this2 = this;
-        this.callSuper("clone", function(cloned) {
-            normalizeSvgScale(_this2, cloned),
-            callback && callback(cloned)
-        }, properties)
-    }
-}),
-fabric.PathGroup = {},
-fabric.PathGroup.fromObject = function(object, callback) {
-    var originalPaths = object.paths;
-    delete object.paths,
-    "string" == typeof originalPaths ? fabric.loadSVGFromURL(originalPaths, function(elements) {
-        var pathUrl = originalPaths
-          , group = fabric.util.groupSVGElements(elements, object, pathUrl);
-        group.type = "group",
-        object.paths = originalPaths,
-        void 0 !== callback && callback(group)
-    }) : fabric.util.enlivenObjects(originalPaths, function(enlivenedObjects) {
-        enlivenedObjects.forEach(function(obj) {
-            obj._removeTransformMatrix()
-        });
-        var group = new fabric.Group(enlivenedObjects,object);
-        group.type = "group",
-        object.paths = originalPaths,
-        void 0 !== callback && callback(group)
-    })
-}
-;
 var $spectrum_options = {
     containerClassName: "color-fill",
     togglePaletteOnly: !0,
@@ -365,24 +235,6 @@ function getOffsetKey(index, length) {
     return 0 == index ? 0 : index == length - 1 ? 1 : 1 / (length - 1) * index
 }
 
-function isImagesGroup($object) {
-    if (DEBUG) {
-        console.log("isImagesGroup()");
-    }
-
-    if ($object || ($object = canvas.getActiveObject()),
-    !$object)
-        return !1;
-    var $return = !0;
-    return $object._objects || ($return = !1),
-    $object._objects && $.each($object._objects, function($i, $o) {
-        /image/.test($o.type) || ("group" === $o.type ? $.each($o._objects, function($i, $c) {
-            /image/.test($c.type) || ($return = !1)
-        }) : $return = !1)
-    }),
-    $return
-}
-
 function history_redo() {
     if (DEBUG) {
         console.log("history_redo()");
@@ -399,26 +251,6 @@ function history_redo() {
     DEBUG && console.log("redo. history length: " + canvas.$history.length + " history position: " + canvas.$h_pos),
     s_history = !0,
     $("#undo").show()) : $("#redo").hide()
-}
-
-function history_undo() {
-    if (DEBUG) {
-        console.log("history_undo()");
-    }
-
-    canvas.$history[canvas.$h_pos - 1] && (s_history = !1,
-    canvas.loadFromJSON(canvas.$history[--canvas.$h_pos], function() {
-        setCanvasWidthHeight(canvas.cwidth * canvas.getZoom(), canvas.cheight * canvas.getZoom()),
-        $("#loadCanvasWid").val(canvas.cwidth / 96),
-        $("#loadCanvasHei").val(canvas.cheight / 96),
-        canvas.bgsrc && setCanvasBg(canvas, canvas.bgsrc, "", canvas.bgScale),
-        canvas.renderAll.bind(canvas),
-        s_history = !0
-    }),
-    DEBUG && console.log("undo. history length: " + canvas.$history.length + " history position: " + canvas.$h_pos),
-    $("#redo").show()),
-    canvas.$h_pos < 1 && ($("#undo").hide(),
-    $("#autosave").data("saved", "yes"))
 }
 
 function dataURItoBlob(dataURI) {
@@ -995,65 +827,6 @@ $("body").on("click", ".fill-type", function(e) {
         canvas.renderAll()
     }
 }),
-fabric.Object.prototype.rotatingPointOffset = 20,
-fabric.Group.prototype.toSVG = function(t) {
-    for (var transform, cwidth = canvasarray[0].get("width") / canvasarray[0].getZoom(), cheight = canvasarray[0].get("height") / canvasarray[0].getZoom(), e = [], i = 0, len = this._objects.length; i < len; i++)
-        if ("group" == this._objects[i].type) {
-            var opacityValue = this._objects[i].opacity
-              , groupSvg = this._objects[i].toSVG(t)
-              , groupElement = $(groupSvg);
-            $(groupElement).css("opacity", opacityValue),
-            groupSvg = groupSvg.replace('style="', 'style="opacity: ' + opacityValue + ";"),
-            e.push("\t", groupSvg)
-        } else
-            e.push("\t", this._objects[i].toSVG(t));
-    var center, options = {
-        translateX: 0,
-        translateY: 0,
-        scaleX: 1,
-        scaleY: 1
-    };
-    this.getObjects().forEach(function(o) {
-        "bgl" === o.id && (transform = o.calcOwnMatrix(),
-        options = fabric.util.qrDecompose(transform),
-        center = new fabric.Point(options.translateX,options.translateY),
-        cwidth = o.get("width"),
-        cheight = o.get("height"))
-    });
-    var x = -cwidth / 2 - .1
-      , y = -cheight / 2 - .1;
-    if (transform) {
-        var $clipPath = new fabric.Rect({
-            left: x,
-            top: y,
-            width: cwidth,
-            height: cheight,
-            scaleX: options.scaleX,
-            scaleY: options.scaleY
-        });
-        this.clipPath = $clipPath,
-        $clipPath.setPositionByOrigin(center, "center", "center")
-    }
-    return this._createBaseSVGMarkup(e, {
-        reviver: t,
-        noStyle: !0,
-        withShadow: !0
-    })
-}
-,
-fabric.Image.prototype.getSrc = function(filtered) {
-    var element = filtered ? this._element : this._originalElement;
-    if (element) {
-        if (element.toDataURL) {
-            var format = /jp?g/.test(this.src) ? "jpeg" : "png";
-            return element.toDataURL("image/" + format, .8)
-        }
-        return element.src
-    }
-    return this.src || ""
-}
-,
-fabric.Image.prototype.getSvgSrc = fabric.Image.prototype.getSrc,
 $("#deleterow,#deletecolumn").click(function(e) {
     e.preventDefault();
     var jsonCanvasArray = []
@@ -1304,33 +1077,7 @@ $("#fontunderline").click(function(e) {
     }
     canvas.renderAll()
 });
-var fontSizeSwitch = document.getElementById("fontsize");
-fontSizeSwitch && (fontSizeSwitch.onchange = function() {
-    this.value > 500 && (this.value = 500),
-    this.value < 6 && (this.value = 6);
-    var fontsize = Math.round(1.3 * this.value.toLowerCase())
-      , activeObject = canvas.getActiveObject();
-    activeObject && ("text" != activeObject.type && "i-text" != activeObject.type || (activeObject.set("fontSize", fontsize),
-    activeObject.scaleX = 1,
-    activeObject.scaleY = 1,
-    activeObject.setCoords()),
-    "textbox" == activeObject.type && (activeObject.set("fontSize", fontsize / activeObject.scaleX),
-    activeObject.setCoords()),
-    activeObject.setSelectionStyles && activeObject.removeStyle("fontSize"),
-    isTextsGroup() && activeObject._objects && (activeObject.forEachObject(function(ch) {
-        ch.setSelectionStyles && ch.removeStyle("fontSize"),
-        ch.set("fontSize", fontsize),
-        ch.scaleX = 1,
-        ch.scaleY = 1
-    }),
-    activeObject._restoreObjectsState(),
-    fabric.util.resetObjectTransform(activeObject),
-    activeObject._calcBounds(),
-    activeObject._updateObjectsCoords(),
-    activeObject.setCoords()),
-    canvas.renderAll())
-}
-);
+
 var ChangeLineHeight = function() {
     s_history = !1,
     setStyle(canvas.getActiveObject(), "lineHeight", clh.getValue()),
@@ -4127,34 +3874,8 @@ $(".duplicatecanvas").click(function() {
         addNewCanvasPage(!0, id),
         setWorkspace()
     }
-}),
-$("#font-size-dropdown").on("click", "li a", function() {
-    var selSize = $(this).text()
-      , activeObject = canvas.getActiveObject();
-    if (activeObject) {
-        var selectedFontSize = selSize;
-        activeObject.fontSize;
-        "text" != activeObject.type && "i-text" != activeObject.type || (activeObject.set("fontSize", 1.3 * selectedFontSize),
-        activeObject.scaleX = 1,
-        activeObject.scaleY = 1,
-        activeObject.setCoords()),
-        "textbox" == activeObject.type && activeObject.set("fontSize", 1.3 * selectedFontSize / activeObject.scaleX),
-        activeObject.setSelectionStyles && activeObject.removeStyle("fontSize"),
-        isTextsGroup() && activeObject._objects && (activeObject.forEachObject(function(ch) {
-            ch.setSelectionStyles && ch.removeStyle("fontSize"),
-            ch.set("fontSize", 1.3 * selectedFontSize),
-            ch.scaleX = 1,
-            ch.scaleY = 1
-        }),
-        activeObject._restoreObjectsState(),
-        fabric.util.resetObjectTransform(activeObject),
-        activeObject._calcBounds(),
-        activeObject._updateObjectsCoords(),
-        activeObject.setCoords()),
-        canvas.renderAll(),
-        $(this).parents(".input-group").find(".fontinput").val(selectedFontSize)
-    }
 });
+
 var newBgTagsEdit = $("#newBgTags").tagsField({
     label: "Tags",
     id: "new-bg-tags-id",
@@ -4892,84 +4613,6 @@ bringLayerToFrontSwitch && (bringLayerToFrontSwitch.onclick = function() {
     canvas.renderAll())
 }
 ),
-fabric.Cropzoomimage = fabric.util.createClass(fabric.Image, {
-    type: "cropzoomimage",
-    zoomedXY: !1,
-    initialize: function(element, options) {
-        options || (options = {}),
-        this.callSuper("initialize", element, options),
-        this.set({
-            orgSrc: element.src,
-            cx: 0,
-            cy: 0,
-            cw: element.width,
-            ch: element.height
-        })
-    },
-    zoomBy: function(x, y, z, callback) {
-        (x || y) && (this.zoomedXY = !0),
-        this.cx += x,
-        this.cy += y,
-        z && (this.cw -= z,
-        this.ch -= z / (this.width / this.height)),
-        z && !this.zoomedXY && (this.cx = this.width / 2 - this.cw / 2,
-        this.cy = this.height / 2 - this.ch / 2),
-        this.cw > this.width && (this.cw = this.width),
-        this.ch > this.height && (this.ch = this.height),
-        this.cw < 1 && (this.cw = 1),
-        this.ch < 1 && (this.ch = 1),
-        this.cx < 0 && (this.cx = 0),
-        this.cy < 0 && (this.cy = 0),
-        this.cx > this.width - this.cw && (this.cx = this.width - this.cw),
-        this.cy > this.height - this.ch && (this.cy = this.height - this.ch),
-        this.rerender(callback)
-    },
-    rerender: function(callback) {
-        var img = new Image
-          , obj = this;
-        img.onload = function() {
-            var canvas = fabric.util.createCanvasElement();
-            canvas.width = obj.width,
-            canvas.height = obj.height,
-            canvas.getContext("2d").drawImage(this, obj.cx, obj.cy, obj.cw, obj.ch, 0, 0, obj.width, obj.height),
-            img.onload = function() {
-                obj.setElement(this),
-                obj.applyFilters(canvas.renderAll),
-                obj.set({
-                    left: obj.left,
-                    top: obj.top,
-                    angle: obj.angle
-                }),
-                obj.setCoords(),
-                callback && callback(obj)
-            }
-            ,
-            img.src = canvas.toDataURL("image/png")
-        }
-        ,
-        img.src = this.orgSrc
-    },
-    toObject: function() {
-        return fabric.util.object.extend(this.callSuper("toObject"), {
-            orgSrc: this.orgSrc,
-            cx: this.cx,
-            cy: this.cy,
-            cw: this.cw,
-            ch: this.ch
-        })
-    }
-}),
-fabric.Cropzoomimage.async = !0,
-fabric.Cropzoomimage.fromObject = function(object, callback) {
-    fabric.util.loadImage(object.src, function(img) {
-        fabric.Image.prototype._initFilters.call(object, object, function(filters) {
-            object.filters = filters || [];
-            var instance = new fabric.Cropzoomimage(img,object);
-            callback && callback(instance)
-        })
-    }, null, object.crossOrigin)
-}
-,
 zoomBy = function(x, y, z) {
     var activeObject = canvas.getActiveObject();
     activeObject && activeObject.zoomBy(x, y, z, function() {
@@ -6087,31 +5730,6 @@ function duplicateTemplate(el) {
         img.src = url
     }
 }(console),
-$("#object-properties").dialog({
-    resizable: !1,
-    height: "auto",
-    width: "auto",
-    modal: !1,
-    autoOpen: !1,
-    dialogClass: "no-close",
-    position: {
-        my: "left center",
-        at: "left+20px center",
-        of: ".main-content"
-    },
-    open: function() {
-        $("#object-properties").dialog("option", "position", {
-            my: "left center",
-            at: "left+20px center",
-            of: ".main-content"
-        }),
-        getPropertiesOfObject()
-    },
-    close: function() {
-        s_history = !0,
-        save_history()
-    }
-}),
 $("#object-grayscale").checkboxradio({
     icon: !1,
     classes: {
@@ -6527,47 +6145,6 @@ $(document).ready(function() {
     //     element.scrollTop > element.scrollHeight - element.offsetHeight - 10 && (patternsLoading || getPatterns(offsetPatterns))
     // })
 }),
-$("#font-symbols").dialog({
-    resizable: !1,
-    height: "auto",
-    width: "auto",
-    modal: !1,
-    autoOpen: !1,
-    dialogClass: "no-close",
-    position: {
-        my: "left center",
-        at: "left+20px center",
-        of: ".main-content"
-    },
-    open: function() {
-        $("#font-symbols").dialog("option", "position", {
-            my: "left center",
-            at: "left+20px center",
-            of: ".main-content"
-        }),
-        setupSymbolsPanel()
-    },
-    close: function() {}
-}),
-$("body").on("click", ".utf8-symbol", function(e) {
-    e.preventDefault();
-    var $textObject = canvas.getActiveObject();
-    if ($textObject && /text/.test($textObject.type)) {
-        var $symbol = $(this).text()
-          , $selectionStart = $textObject.text.length
-          , $selectionEnd = $textObject.text.length;
-        $textObject.isEditing && ($selectionStart = $textObject.selectionStart,
-        $selectionEnd = $textObject.selectionEnd),
-        $textObject.insertChars($symbol, "", $selectionStart, $selectionEnd),
-        $selectionEnd === $selectionStart && ($textObject.selectionStart = $textObject.selectionEnd = ++$selectionEnd),
-        $textObject.isEditing && ($textObject.hiddenTextarea.value = $textObject.text),
-        $textObject.dirty = !0,
-        canvas.renderAll()
-    }
-}),
-$("#showObSymbolsPanel").click(function() {
-    return $("#font-symbols").dialog("open")
-}),
 $("#fontSearch").on("keyup", function() {
     var value = $(this).val().toLowerCase();
     $(".dropdown-menu li").filter(function() {
@@ -6876,42 +6453,6 @@ function loadTemplates_element() {
 //     }
 // }());
 
-function initMasonry_bg() {
-    if (DEBUG) {
-        console.log("initMasonry_bg()");
-    }
-    null != $(aContainer_bg).data("infiniteScroll") && ($(aContainer_bg).html(""),
-    $(aContainer_bg).infiniteScroll().infiniteScroll("destroy"),
-    $(aContainer_bg).masonry().masonry("destroy")),
-    infinites[type_bg] = $(aContainer_bg).masonry({
-        itemSelector: ".thumb",
-        columnWidth: 1,
-        percentPosition: !0,
-        stagger: 30,
-        visibleStyle: {
-            transform: "translateY(0)",
-            opacity: 1
-        },
-        hiddenStyle: {
-            transform: "translateY(100px)",
-            opacity: 0
-        }
-    }),
-    masonrys[type_bg] = infinites[type_bg].data("masonry"),
-    infinites[type_bg].infiniteScroll({
-        path: function() {
-            var tags = $(aSearch_bg).val() ? $(aSearch_bg).val().toString() : "";
-            return appUrl + "editor/" + aMethod_bg + "?loadCount=" + this.loadCount + "&limit_bg=" + limit_bg + "&tags=" + tags + "&design_as_id=" + design_as_id + "&demo_as_id=" + demo_as_id + "&loadedtemplateid=" + loadedtemplateid
-        },
-        responseType: "text",
-        outlayer: masonrys[type_bg],
-        history: !1,
-        scrollThreshold: !1
-    }),
-    loadReadMore(aContainer_bg, "loadTemplates_bg"),
-    $(aContainer_bg).next().find(".iscroll-button").show()
-}
-
 function loadTemplates_bg() {
     if (DEBUG) {
         console.log("loadTemplates_bg()");
@@ -6978,43 +6519,6 @@ function loadTemplates_text() {
     }, 1500)
 }
 
-
-function initMasonry_related(templateId) {
-    if (DEBUG) {
-        console.log("initMasonry_related()");
-    }
-    templateId_related = templateId,
-    null != $(aContainer_related).data("infiniteScroll") && ($(aContainer_related).html(""),
-    $(aContainer_related).infiniteScroll().infiniteScroll("destroy"),
-    $(aContainer_related).masonry().masonry("destroy")),
-    infinites[type_related] = $(aContainer_related).masonry({
-        itemSelector: ".thumb",
-        columnWidth: 1,
-        percentPosition: !0,
-        stagger: 30,
-        visibleStyle: {
-            transform: "translateY(0)",
-            opacity: 1
-        },
-        hiddenStyle: {
-            transform: "translateY(100px)",
-            opacity: 0
-        }
-    }),
-    masonrys[type_related] = infinites[type_related].data("masonry"),
-    infinites[type_related].infiniteScroll({
-        path: function() {
-            return appUrl + "editor/" + aMethod_related + "/" + templateId_related + "?demo_as_id=" + demo_as_id + "&loadCount=" + this.loadCount + "&limit_related=" + limit_related
-        },
-        responseType: "text",
-        outlayer: masonrys[type_related],
-        history: !1,
-        scrollThreshold: !1
-    }),
-    loadReadMore(aContainer_related, "loadTemplates_related"),
-    $(aContainer_related).next().find(".iscroll-button").show()
-}
-
 function loadTemplates_related() {
     if (DEBUG) {
         console.log("loadTemplates_related()");
@@ -7056,3 +6560,4 @@ $(document).ready(function() {
     //     aaSorting: [[0, "desc"]]
     // })
 });
+
