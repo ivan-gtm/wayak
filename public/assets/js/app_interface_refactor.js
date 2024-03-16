@@ -11,6 +11,12 @@ $(document).ready(function() {
         // Update the font size display in the input field
         $(this).closest(".input-group").find(".fontinput").val(selectedFontSize);
     });
+    
+    $("#bgscale").slider({
+        formatter: function(value) {
+            return value + "%"
+        }
+    });
 });
 
 function updateFontSizeForActiveObject(object, fontSize) {
@@ -142,7 +148,7 @@ function destroyExistingInfiniteScrollAndMasonry(container) {
     }
 }
 
-function initializeMasonry(container) {
+function initializeMasonrySidebar(container) {
     return $(container).masonry({
         itemSelector: ".thumb",
         columnWidth: 1,
@@ -159,7 +165,7 @@ function initializeMasonry(container) {
     });
 }
 
-function initializeInfiniteScroll(container, masonryInstance, templateId) {
+function initializeInfiniteScrollSidebar(container, masonryInstance, templateId) {
     $(container).infiniteScroll({
         path: () => `${appUrl}editor/${aMethod_related}/${templateId}?demo_as_id=${demo_as_id}&loadCount=${this.loadCount}&limit_related=${limit_related}`,
         responseType: "text",
@@ -176,11 +182,11 @@ function initMasonry_related(templateId) {
     destroyExistingInfiniteScrollAndMasonry(aContainer_related);
 
     // Initialize Masonry and store the instance
-    infinites[type_related] = initializeMasonry(aContainer_related);
+    infinites[type_related] = initializeMasonrySidebar(aContainer_related);
     masonrys[type_related] = infinites[type_related].data("masonry");
 
     // Initialize Infinite Scroll with the newly created Masonry instance
-    initializeInfiniteScroll(aContainer_related, masonrys[type_related], templateId_related);
+    initializeInfiniteScrollSidebar(aContainer_related, masonrys[type_related], templateId_related);
 
     // Assuming loadReadMore is a function defined elsewhere
     loadReadMore(aContainer_related, "loadTemplates_related");
@@ -392,6 +398,83 @@ $("#font-symbols").dialog({
     close: function() {}
 });
 
+$("#btnZoomIn").click(function() {
+    var $scale_value = parseFloat(jQuery("#zoomperc").data("scaleValue")) || 1;
+    setZoom($scale_value += .1)
+});
+$("#btnZoomOut").click(function() {
+    var $scale_value = parseFloat(jQuery("#zoomperc").data("scaleValue")) || 1;
+    setZoom($scale_value -= .1)
+});
+$("#zoomperc").click(function() {
+    setZoom(1)
+});
+$("#btnFitToScreen").click(function() {
+    setZoom(1),
+    autoZoom()
+});
+
+
+function toggleTextStyle(styleType, activeClassId, defaultValue, alternateValue) {
+    var activeObject = canvas.getActiveObject();
+    if (!activeObject) return;
+
+    var isGroup = activeObject._objects;
+    var objectsToStyle = isGroup ? activeObject._objects : [activeObject];
+
+    objectsToStyle.forEach(function(obj) {
+        if (/text/.test(obj.type)) {
+            var currentValue = obj[styleType];
+            var newValue = currentValue === defaultValue ? alternateValue : defaultValue;
+            setStyle(obj, styleType, newValue);
+        }
+    });
+
+    // Toggle the button's active state if applicable
+    $("#" + activeClassId).toggleClass("active", objectsToStyle.some(obj => obj[styleType] === alternateValue));
+
+    canvas.renderAll();
+}
+
+$(document).ready(function() {
+    $("#fontbold").click(function(e) {
+        e.preventDefault();
+        toggleTextStyle("fontWeight", "fontbold", "normal", "bold");
+    });
+
+    $("#fontitalic").click(function(e) {
+        e.preventDefault();
+        toggleTextStyle("fontStyle", "fontitalic", "", "italic");
+    });
+
+    $("#fontunderline").click(function(e) {
+        e.preventDefault();
+        // For 'underline', assuming it's a boolean since Fabric.js usually uses boolean for such styles.
+        // You might need to adjust the implementation if it's handled differently in your project.
+        toggleTextDecoration("underline", "fontunderline");
+    });
+});
+
+function toggleTextDecoration(decorationType, activeClassId) {
+    var activeObject = canvas.getActiveObject();
+    if (!activeObject) return;
+
+    var isGroup = activeObject._objects;
+    var objectsToStyle = isGroup ? activeObject._objects : [activeObject];
+
+    objectsToStyle.forEach(function(obj) {
+        if (/text/.test(obj.type)) {
+            var newValue = !obj[decorationType];
+            setStyle(obj, decorationType, newValue);
+        }
+    });
+
+    $("#" + activeClassId).toggleClass("active", objectsToStyle.some(obj => obj[decorationType]));
+
+    canvas.renderAll();
+}
+
+
 
 $(document).ready(function() {
     $("body").on("click", ".utf8-symbol", function(event) {
@@ -430,6 +513,398 @@ $(document).ready(function() {
     }
 });
 
+
+$(document).ready(function() {
+    $("#clone").on("click", function() {
+        cloneActiveObject();
+    });
+});
+
+function cloneActiveObject() {
+    var activeObject = canvas.getActiveObject();
+    if (!activeObject) return;
+
+    activeObject.clone(function(clone) {
+        processClone(clone, activeObject);
+        adjustCloneProperties(clone, activeObject);
+        finalizeClone(clone, activeObject);
+    }, properties_to_save); // Assuming properties_to_save is defined elsewhere
+}
+
+function adjustCloneProperties(clone, original) {
+    // Adjust the clone's properties based on the original object or active selection
+    if (original.type === 'activeSelection') {
+        // If cloning an active selection, individually adjust properties of each object within
+        clone.forEachObject(function(obj, index) {
+            const originalObj = original._objects[index];
+            adjustObjectProperties(obj, originalObj);
+        });
+    } else {
+        // If cloning a single object, directly adjust the clone's properties
+        adjustObjectProperties(clone, original);
+    }
+
+    // Set additional properties and position the clone relative to the original
+    clone.set({
+        left: original.get('left') + 10,
+        top: original.get('top') + 10,
+        angle: original.angle,
+        scaleX: original.scaleX,
+        scaleY: original.scaleY,
+        skewX: original.skewX,
+        skewY: original.skewY,
+        flipX: original.flipX,
+        flipY: original.flipY
+    }).setCoords();
+}
+
+function adjustObjectProperties(obj, originalObj) {
+    // Apply patterns if the original object has a pattern fill
+    if (typeof originalObj.fill === 'object' && (originalObj.fill.type === 'Dpattern' || originalObj.fill.type === 'pattern')) {
+        const patternProps = originalObj.fill.toObject();
+        fabric.Dpattern.fromObject(patternProps, function(fill) {
+            obj.set({ fill: fill, dirty: true });
+        });
+    }
+
+    // Adjust borderColor for the cloned object if necessary
+    if (originalObj.borderColor === '#ff0000') {
+        obj.set({
+            borderColor: '#4dd7fa',
+            lockMovementY: false,
+            lockMovementX: false,
+            hasControls: true
+        });
+    }
+
+    obj.setCoords();
+}
+
+
+function processClone(clone, activeObject) {
+    if (clone.type === "activeSelection") {
+        clone.canvas = canvas;
+        clone.forEachObject(function(obj, i) {
+            obj.scale(1);
+            canvas.add(obj);
+            copyPropertiesFromActiveObject(obj, activeObject._objects[i]);
+        });
+    } else {
+        clone.scale(1);
+        canvas.add(clone);
+        copyPropertiesFromActiveObject(clone, activeObject);
+    }
+}
+
+function copyPropertiesFromActiveObject(clone, original) {
+    setCloneScaleAndPosition(clone, original);
+    applyPatternFillIfNeeded(clone, original);
+    adjustBorderColor(clone, original);
+    clone.setCoords();
+}
+
+function setCloneScaleAndPosition(clone, original) {
+    clone.set({
+        scaleX: original.get("scaleX"),
+        scaleY: original.get("scaleY"),
+        left: original.get("left") + 50,
+        top: original.get("top") + 50
+    });
+}
+
+function applyPatternFillIfNeeded(clone, original) {
+    if (typeof original.fill === "object" && (original.fill.type === "Dpattern" || original.fill.type === "pattern")) {
+        var pattern = original.fill.toObject();
+        fabric.Dpattern.fromObject(pattern, function(fill) {
+            clone.set({ fill: fill, dirty: true });
+        });
+    }
+}
+
+function adjustBorderColor(clone, original) {
+    if (original.borderColor === "#ff0000") {
+        clone.set({
+            borderColor: "#4dd7fa",
+            lockMovementY: false,
+            lockMovementX: false,
+            hasControls: true
+        });
+    }
+}
+
+function finalizeClone(clone, activeObject) {
+    canvas.renderAll();
+    canvas.discardActiveObject();
+    canvas.setActiveObject(clone);
+}
+
+function onlyUnique(value, index, self) {
+    if (DEBUG) {
+        console.log("onlyUnique()");
+    }
+    return self.indexOf(value) === index
+}
+
+// Function to log messages when debug mode is enabled.
+function logDebugInfo(message) {
+    if (DEBUG) { // Checks if debug mode is globally enabled
+        console.log(message);
+    }
+}
+
+// Function to check if source and destination objects are valid for normalization.
+function isValidObjectPair(src, dest) {
+    // Returns true only if both src and dest objects and their _objects property exist.
+    return src && dest && src._objects && dest._objects;
+}
+
+// Function to apply transformations from a source object to a destination object.
+function applyObjectTransformations(srcObject, destObject) {
+    // Decompose the matrix of the source object to get its properties.
+    const matrix = srcObject.calcOwnMatrix();
+    const options = fabric.util.qrDecompose(matrix);
+    // Create a center point based on the decomposed options.
+    const center = new fabric.Point(options.translateX, options.translateY);
+
+    // Set transformation properties on the destination object and position it by the calculated center.
+    destObject.set({
+        flipX: false,
+        flipY: false,
+        scaleX: options.scaleX,
+        scaleY: options.scaleY,
+        skewX: options.skewX,
+        skewY: options.skewY,
+        angle: options.angle
+    }).setPositionByOrigin(center, "center", "center");
+}
+
+// Main function to normalize the scale of SVG objects.
+function normalizeSvgScale(src, dest) {
+    logDebugInfo("normalizeSvgScale()"); // Log the function call for debugging.
+
+    // Early return if src or dest objects do not meet validity criteria.
+    if (!isValidObjectPair(src, dest)) return false;
+
+    // Decompose the matrix of the source object to use its properties for the destination.
+    const srcOptions = fabric.util.qrDecompose(src.calcOwnMatrix());
+
+    // Iterate over each object in the source, applying transformations to corresponding objects in the destination.
+    src.forEachObject(function(obj, index) {
+        if (dest._objects[index]) {
+            applyObjectTransformations(obj, dest._objects[index]);
+        }
+    });
+
+    // Recalculate bounds and set coordinates for the destination object.
+    dest._calcBounds();
+    dest.setCoords();
+
+    // Create a center point based on the source object's options and set the destination object's properties accordingly.
+    const center = new fabric.Point(srcOptions.translateX, srcOptions.translateY);
+    dest.set({
+        angle: src.angle,
+        scaleX: srcOptions.scaleX,
+        scaleY: srcOptions.scaleY,
+        skewX: srcOptions.skewX,
+        skewY: srcOptions.skewY,
+        flipX: src.flipX,
+        flipY: src.flipY
+    }).setPositionByOrigin(center, "center", "center");
+
+    dest.setCoords(); // Ensure the destination object's coordinates are updated.
+    return true; // Return true to indicate successful normalization.
+}
+
+// var activeObjectCopy = null; // Ensure activeObjectCopy is declared at a broader scope
+
+function copyobjs() {
+    logDebug("copyobjs()");
+    var activeObject = canvas.getActiveObject();
+
+    if (activeObject) {
+        activeObject.clone(function(cloned) {
+            if (cloned.type === "activeSelection") {
+                cloned._objects = cloned._objects.filter(o => !o.locked);
+            }
+            activeObjectCopy = cloned;
+        }, properties_to_save); // Assuming properties_to_save is defined and relevant
+    }
+}
+
+function pasteobjs(inPlace = false) {
+    logDebug("pasteobjs()");
+    if (!activeObjectCopy) return;
+
+    activeObjectCopy.clone(function(clonedObj) {
+        canvas.discardActiveObject();
+        clonedObj.set({ evented: true });
+
+        if (!inPlace) {
+            // Position the cloned object at the center of the viewport if not pasting in place
+            canvas.viewportCenterObject(clonedObj);
+        }
+
+        if (clonedObj.type === "activeSelection") {
+            pasteActiveSelection(clonedObj);
+        } else {
+            pasteSingleObject(clonedObj);
+        }
+
+        canvas.setActiveObject(clonedObj);
+        canvas.requestRenderAll();
+    }, properties_to_save); // Assuming properties_to_save is defined and relevant
+}
+
+function pasteActiveSelection(clonedSelection) {
+    clonedSelection.canvas = canvas;
+    clonedSelection.forEachObject((obj, i) => {
+        applyObjectProperties(obj, activeObjectCopy._objects[i]);
+        canvas.add(obj);
+    });
+}
+
+function pasteSingleObject(clonedObj) {
+    applyObjectProperties(clonedObj, activeObjectCopy);
+    canvas.add(clonedObj);
+}
+
+function applyObjectProperties(object, referenceObject) {
+    object.set({
+        scaleX: referenceObject.get("scaleX"),
+        scaleY: referenceObject.get("scaleY"),
+        left: referenceObject.get("left") + 10, // Offset to visualize the paste action
+        top: referenceObject.get("top") + 10,
+    }).setCoords();
+}
+
+// Ensures the script runs after the DOM is fully loaded.
+document.addEventListener("DOMContentLoaded", function() {
+    setupSendLayerBackward();
+    setupBringLayerForward();
+    setupSendLayerToBack();
+    setupBringLayerToFront();
+    setupShadowSwitch();
+});
+
+function setupShadowSwitch() {
+    $("input#shadowSwitch").on("click", toggleShadow);
+}
+
+function toggleShadow() {
+    var activeObject = canvas.getActiveObject();
+    if (!activeObject) return;
+
+    if ($("input#shadowSwitch").is(":checked")) {
+        applyShadowToActiveObject(activeObject);
+        enableShadowControls();
+    } else {
+        removeShadowFromActiveObject(activeObject);
+        disableShadowControls();
+    }
+
+    canvas.renderAll();
+}
+
+function applyShadowToActiveObject(object) {
+    if (object.shadow) {
+        object.shadow.color = "rgba(0, 0, 0, 1)";
+    } else {
+        var shadow = {
+            color: lastShadowColor || "rgba(0, 0, 0, 1)",
+            blur: lastShadowBlur || 5,
+            offsetX: lastShadowHorizontalOffset || 5,
+            offsetY: lastShadowVerticalOffset || 5
+        };
+        object.setShadow(shadow);
+    }
+}
+
+function enableShadowControls() {
+    $("#shadowGroup .tab-content").removeClass("editor-disabled");
+    $("#shadowColor").spectrum("enable");
+}
+
+function removeShadowFromActiveObject(object) {
+    object.shadow = null;
+}
+
+function disableShadowControls() {
+    $("#shadowGroup .tab-content").addClass("editor-disabled");
+    $("#shadowColor").spectrum("disable");
+}
+
+
+// Function to set up the "bring to front" action for the active object on the canvas.
+function setupBringLayerToFront() {
+    var bringLayerToFrontSwitch = document.getElementById("bringtofront");
+    if (bringLayerToFrontSwitch) {
+        bringLayerToFrontSwitch.addEventListener("click", bringActiveObjectToFront);
+    }
+}
+
+// Function to bring the active object to the front of the canvas, if it exists.
+function bringActiveObjectToFront() {
+    var activeObject = canvas.getActiveObject();
+    if (activeObject) {
+        canvas.bringToFront(activeObject);
+        canvas.renderAll();
+    }
+}
+
+
+// Function to set up the "send to back" action for the active object.
+function setupSendLayerToBack() {
+    var sendLayerToBackSwitch = document.getElementById("sendtoback");
+    if (sendLayerToBackSwitch) {
+        sendLayerToBackSwitch.addEventListener("click", sendActiveObjectToBack);
+    }
+}
+
+// Function to send the active object to the back on the canvas, if it exists.
+function sendActiveObjectToBack() {
+    var activeObject = canvas.getActiveObject();
+    if (activeObject) {
+        canvas.sendToBack(activeObject);
+        canvas.renderAll();
+    }
+}
+
+// Function to set up the "bring forward" action for the active object.
+function setupBringLayerForward() {
+    var bringLayerFrontSwitch = document.getElementById("bringforward");
+    if (bringLayerFrontSwitch) {
+        bringLayerFrontSwitch.addEventListener("click", sendActiveObjectForward);
+    }
+}
+
+// Function to bring the active object forward on the canvas, if it exists.
+function sendActiveObjectForward() {
+    var activeObject = canvas.getActiveObject();
+    if (activeObject) {
+        canvas.bringForward(activeObject, true); // true to move it one layer forward only if it's not already at the front
+        canvas.renderAll();
+    }
+}
+
+
+// Function to set up the "send backward" action for the active object.
+function setupSendLayerBackward() {
+    var sendLayerBackSwitch = document.getElementById("sendbackward");
+    if (sendLayerBackSwitch) {
+        sendLayerBackSwitch.addEventListener("click", function() {
+            sendActiveObjectBackward();
+        });
+    }
+}
+
+// Function to send the active object backward on the canvas, if it exists.
+function sendActiveObjectBackward() {
+    var activeObject = canvas.getActiveObject();
+    if (activeObject) {
+        canvas.sendBackwards(activeObject, true); // true to send it one layer back only if it's not already at the bottom
+        canvas.renderAll();
+    }
+}
 
 fabric.Cropzoomimage = fabric.util.createClass(fabric.Image, {
     type: "cropzoomimage",

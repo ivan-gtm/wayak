@@ -1025,58 +1025,8 @@ $("#bgscale").on("slide", function(slideEvt) {
 }),
 $("#bgscale").on("slideStop", function(slideEvt) {
     canvas.bgScale = slideEvt.value / 100
-}),
-$("#fontbold").click(function(e) {
-    e.preventDefault();
-    var activeObject = canvas.getActiveObject()
-      , fontBoldValue = "";
-    if (activeObject)
-        fontBoldValue = "normal" === activeObject.fontWeight ? "bold" : "normal",
-        activeObject && /text/.test(activeObject.type) && (setStyle(activeObject, "fontWeight", fontBoldValue),
-        $("#fontbold").toggleClass("active"));
-    else {
-        var groupObjects = canvas.getActiveObject()._objects;
-        fontBoldValue = "normal" === groupObjects[0].fontWeight ? "bold" : "normal",
-        $.each(groupObjects, function(object_i, object) {
-            object && /text/.test(object.type) && setStyle(object, "fontWeight", fontBoldValue)
-        })
-    }
-    canvas.renderAll()
-}),
-$("#fontitalic").click(function(e) {
-    e.preventDefault();
-    var activeObject = canvas.getActiveObject()
-      , fontItalicValue = "";
-    if (activeObject)
-        fontItalicValue = "italic" === activeObject.fontStyle ? "" : "italic",
-        activeObject && /text/.test(activeObject.type) && (setStyle(activeObject, "fontStyle", fontItalicValue),
-        $("#fontitalic").toggleClass("active"));
-    else {
-        var groupObjects = canvas.getActiveObject()._objects;
-        fontItalicValue = "italic" === groupObjects[0].fontStyle ? "" : "italic",
-        $.each(groupObjects, function(object_i, object) {
-            object && /text/.test(object.type) && setStyle(object, "fontStyle", fontItalicValue)
-        })
-    }
-    canvas.renderAll()
-}),
-$("#fontunderline").click(function(e) {
-    e.preventDefault();
-    var activeObject = canvas.getActiveObject()
-      , fontUnderlineValue = "";
-    if (activeObject)
-        fontUnderlineValue = "underline" === activeObject.underline ? "" : "underline",
-        activeObject && /text/.test(activeObject.type) && (setStyle(activeObject, "underline", fontUnderlineValue),
-        $("#fontunderline").toggleClass("active"));
-    else {
-        var groupObjects = canvas.getActiveObject()._objects;
-        fontUnderlineValue = "underline" === groupObjects[0].underline ? "" : "underline",
-        $.each(groupObjects, function(object_i, object) {
-            object && /text/.test(object.type) && setStyle(object, "underline", fontUnderlineValue)
-        })
-    }
-    canvas.renderAll()
 });
+
 
 var ChangeLineHeight = function() {
     s_history = !1,
@@ -1366,22 +1316,8 @@ $("#addremovestroke").click(function(e) {
         canvas.renderAll(),
         save_history()
     }
-}),
-$("#btnZoomIn").click(function() {
-    var $scale_value = parseFloat(jQuery("#zoomperc").data("scaleValue")) || 1;
-    setZoom($scale_value += .1)
-}),
-$("#btnZoomOut").click(function() {
-    var $scale_value = parseFloat(jQuery("#zoomperc").data("scaleValue")) || 1;
-    setZoom($scale_value -= .1)
-}),
-$("#zoomperc").click(function() {
-    setZoom(1)
-}),
-$("#btnFitToScreen").click(function() {
-    setZoom(1),
-    autoZoom()
 });
+
 var newTemplateTagsEdit = $("#newTemplateTags").tagsField({
     label: "Tags",
     id: "template_tags",
@@ -1977,46 +1913,7 @@ function saveAsTemplateFile() {
     })
 }
 
-function normalizeSvgScale($src, $dest) {
-    if (DEBUG) {
-        console.log("normalizeSvgScale()");
-    }
 
-    if (!$src || !$dest)
-        return !1;
-    if (!$src._objects || !$dest._objects)
-        return !1;
-    var $src_options = fabric.util.qrDecompose($src.calcOwnMatrix());
-    $src.forEachObject(function($o, $i) {
-        var matrix = $o.calcOwnMatrix()
-          , options = fabric.util.qrDecompose(matrix)
-          , center = new fabric.Point(options.translateX,options.translateY)
-          , object = $dest._objects[$i];
-        object.flipX = !1,
-        object.flipY = !1,
-        object.set("scaleX", options.scaleX),
-        object.set("scaleY", options.scaleY),
-        object.skewX = options.skewX,
-        object.skewY = options.skewY,
-        object.angle = options.angle,
-        object.setPositionByOrigin(center, "center", "center")
-    }),
-    $dest._calcBounds(),
-    $dest.setCoords();
-    var $center = new fabric.Point($src_options.translateX,$src_options.translateY);
-    return $dest.set({
-        angle: $src.angle,
-        scaleX: $src_options.scaleX,
-        scaleY: $src_options.scaleY,
-        skewX: $src_options.skewX,
-        skewY: $src_options.skewY,
-        flipX: $src.flipX,
-        flipY: $src.flipY
-    }),
-    $dest.setPositionByOrigin($center, "center", "center"),
-    $dest.setCoords(),
-    !0
-}
 
 $("#progressModal").on("shown.bs.modal", function(e) {
     $("#savePaper").is(":checked") ? $("input#savecrop").is(":checked") && 1 === globalCol && 1 === globalRow ? createBleedForPDF({
@@ -4345,31 +4242,6 @@ $("#changeborderwh").slider().on("slideStop", function(e) {
     s_history = !0,
     save_history()
 }),
-$("input#shadowSwitch").click(function() {
-    var activeObject = canvas.getActiveObject();
-    if ($("input#shadowSwitch").is(":checked")) {
-        if (activeObject.shadow)
-            activeObject.shadow.color = "rgba(0, 0, 0, 1)";
-        else {
-            var shadowColor = lastShadowColor || "rgba(0, 0, 0, 1)"
-              , shadowBlur = lastShadowBlur || 5
-              , shadowOffsetX = lastShadowHorizontalOffset || 5
-              , shadowOffsetY = lastShadowVerticalOffset || 5;
-            activeObject.setShadow({
-                blur: shadowBlur,
-                offsetX: shadowOffsetX,
-                offsetY: shadowOffsetY,
-                color: shadowColor
-            })
-        }
-        $("#shadowGroup .tab-content").removeClass("editor-disabled"),
-        $("#shadowColor").spectrum("enable")
-    } else
-        activeObject.shadow = null,
-        $("#shadowGroup .tab-content").addClass("editor-disabled"),
-        $("#shadowColor").spectrum("disable");
-    canvas.renderAll()
-}),
 $("#changeBlur").slider();
 var ChangeShadowBlur = function() {
     canvas.getActiveObject().shadow.blur = csb.getValue(),
@@ -4389,91 +4261,7 @@ var ChangeShadowBlur = function() {
     canvas.renderAll()
 }
   , csvo = $("#changeVOffset").slider().on("slide", ChangeShadowVOffset).data("slider");
-$("#clone").on("click", function() {
-    var activeObject = canvas.getActiveObject();
-    activeObject && (activeObject.clone(function(clone) {
-        if ("activeSelection" === clone.type)
-            clone.canvas = canvas,
-            clone.forEachObject(function(obj, i) {
-                if (obj.scale(1),
-                canvas.add(obj),
-                obj.set({
-                    scaleX: activeObject._objects[i].get("scaleX"),
-                    scaleY: activeObject._objects[i].get("scaleY"),
-                    left: activeObject._objects[i].get("left"),
-                    top: activeObject._objects[i].get("top")
-                }),
-                "object" === _typeof(activeObject._objects[i].fill) && ("Dpattern" === activeObject._objects[i].fill.type || "pattern" === activeObject._objects[i].fill.type)) {
-                    var $p = activeObject._objects[i].fill.toObject();
-                    fabric.Dpattern.fromObject($p, function(fill) {
-                        return obj.set({
-                            fill: fill,
-                            dirty: !0
-                        })
-                    })
-                }
-                "#ff0000" == activeObject._objects[i].borderColor && (obj.lockMovementY = obj.lockMovementX = !1,
-                obj.hasControls = !0,
-                obj.set({
-                    borderColor: "#4dd7fa"
-                })),
-                obj.setCoords()
-            });
-        else {
-            if (clone.scale(1),
-            canvas.add(clone),
-            clone.set({
-                scaleX: activeObject.get("scaleX"),
-                scaleY: activeObject.get("scaleY")
-            }),
-            "object" === _typeof(activeObject.fill) && ("Dpattern" === activeObject.fill.type || "pattern" === activeObject.fill.type)) {
-                var $p = activeObject.fill.toObject();
-                fabric.Dpattern.fromObject($p, function(fill) {
-                    return clone.set({
-                        fill: fill,
-                        dirty: !0
-                    })
-                })
-            }
-            "#ff0000" == activeObject.borderColor && (clone.lockMovementY = clone.lockMovementX = !1,
-            clone.hasControls = !0,
-            clone.set({
-                borderColor: "#4dd7fa"
-            }))
-        }
-        clone.set({
-            left: activeObject.get("left") + 50,
-            top: activeObject.get("top") + 50
-        }),
-        clone.setCoords(),
-        canvas.renderAll(),
-        canvas.discardActiveObject(),
-        canvas.setActiveObject(clone)
-    }, properties_to_save),
-    canvas.renderAll())
-});
-var sendLayerBackSwitch = document.getElementById("sendbackward");
-sendLayerBackSwitch && (sendLayerBackSwitch.onclick = function() {
-    var activeObject = canvas.getActiveObject();
-    activeObject && (canvas.sendBackwards(activeObject),
-    canvas.renderAll())
-}
-);
-var bringLayerFrontSwitch = document.getElementById("bringforward");
-bringLayerFrontSwitch && (bringLayerFrontSwitch.onclick = function() {
-    var activeObject = canvas.getActiveObject();
-    activeObject && (canvas.bringForward(activeObject),
-    canvas.renderAll())
-}
-);
-var sendLayerToBackSwitch = document.getElementById("sendtoback");
-sendLayerToBackSwitch && (sendLayerToBackSwitch.onclick = function() {
-    var activeObject = canvas.getActiveObject();
-    activeObject && (canvas.sendToBack(activeObject),
-    canvas.renderAll())
-}
-);
-var bringLayerToFrontSwitch = document.getElementById("bringtofront");
+
 
 function rgbToHex(r, g, b) {
     if (DEBUG) {
@@ -4482,12 +4270,7 @@ function rgbToHex(r, g, b) {
     return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)
 }
 
-function onlyUnique(value, index, self) {
-    if (DEBUG) {
-        console.log("onlyUnique()");
-    }
-    return self.indexOf(value) === index
-}
+
 
 function selectallobjs() {
     if (DEBUG) {
@@ -4527,55 +4310,7 @@ function cutobjs() {
     }, properties_to_save)
 }
 
-function copyobjs() {
-    if (DEBUG) {
-        console.log("copyobjs()");
-    }
 
-    var $activeObject = canvas.getActiveObject();
-    $activeObject && $activeObject.clone(function(cloned) {
-        activeObjectCopy = cloned,
-        "activeSelection" === cloned.type && (cloned.canvas = canvas,
-        cloned._objects = cloned._objects.filter(function(o) {
-            return !o.locked
-        }))
-    }, properties_to_save)
-}
-
-function pasteobjs($inPlace) {
-    if (DEBUG) {
-        console.log("pasteobjs()");
-    }
-
-    activeObjectCopy && activeObjectCopy.clone(function(clonedObj) {
-        canvas.discardActiveObject(),
-        clonedObj.set({
-            evented: !0
-        }),
-        $inPlace || canvas.viewportCenterObject(clonedObj),
-        clonedObj.setCoords(),
-        "activeSelection" === clonedObj.type ? (clonedObj.canvas = canvas,
-        clonedObj.forEachObject(function(obj, i) {
-            obj.scale(1),
-            canvas.add(obj),
-            obj.set({
-                scaleX: activeObjectCopy._objects[i].get("scaleX"),
-                scaleY: activeObjectCopy._objects[i].get("scaleY"),
-                left: activeObjectCopy._objects[i].get("left"),
-                top: activeObjectCopy._objects[i].get("top")
-            }),
-            obj.setCoords()
-        })) : (clonedObj.scale(1),
-        canvas.add(clonedObj),
-        clonedObj.set({
-            scaleX: activeObjectCopy.get("scaleX"),
-            scaleY: activeObjectCopy.get("scaleY")
-        })),
-        clonedObj.setCoords(),
-        canvas.setActiveObject(clonedObj),
-        canvas.requestRenderAll()
-    }, properties_to_save)
-}
 
 function toSVG() {
     if (DEBUG) {
@@ -4607,12 +4342,7 @@ function hasCanvas() {
     }),
     !1)
 }
-bringLayerToFrontSwitch && (bringLayerToFrontSwitch.onclick = function() {
-    var activeObject = canvas.getActiveObject();
-    activeObject && (canvas.bringToFront(activeObject),
-    canvas.renderAll())
-}
-),
+
 zoomBy = function(x, y, z) {
     var activeObject = canvas.getActiveObject();
     activeObject && activeObject.zoomBy(x, y, z, function() {
@@ -5290,11 +5020,6 @@ $("#changeopacity").slider({
         return 100 * value + "%"
     }
 }),
-$("#bgscale").slider({
-    formatter: function(value) {
-        return value + "%"
-    }
-}),
 $("#canvasbox-tab").bind("contextmenu", function(e) {
     return handleContextmenu(e),
     !1
@@ -5767,10 +5492,7 @@ function getPropertiesOfObject(event, ui) {
     }
     $(".slider").blur()
 }
-$("#showObjectProperties").click(function(e) {
-    e.preventDefault(),
-    $("#object-properties").dialog("open")
-}),
+
 $("#object-scale").slider().on("slide", function(e) {
     var $obj = canvas.getActiveObject();
     if ($obj) {
