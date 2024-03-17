@@ -176,12 +176,12 @@ function initCanvasEvents(lcanvas) {
                 $("#dynamiccolorpickers").html("");
 
                 // Get the gradient type of the selected object
-                var gradientType = getGradientTypeofObject(selectedObject);
+                var gradientType = getGradientTypeOfObject(selectedObject);
 
                 // Check if the selected object has a gradient fill
                 if (gradientType !== false) {
                     if (DEBUG) {
-                        console.log("getGradientTypeofObject: ", gradientType);
+                        console.log("getGradientTypeOfObject: ", gradientType);
                     }
                     var color1 = selectedObject.fill.colorStops[0].color;
                     var color2 = selectedObject.fill.colorStops[1].color;
@@ -312,6 +312,11 @@ function initCanvasEvents(lcanvas) {
 
                     function isTextType(type) {
                         return type === "textbox" || type === "text" || type === "i-text" || isTextsGroup();
+                    }
+
+                    function onlyUnique(value, index, self) {
+                        logDebug("onlyUnique()");
+                        return self.indexOf(value) === index
                     }
 
                     // Remove duplicate colors from colorarray
@@ -549,7 +554,7 @@ function initCanvasEvents(lcanvas) {
                         if ($filltype === "color-fill") {
                             updateColorFill(obj, newColorVal, $oldColorVal, $color2, index);
                         } else {
-                            updateGradientFill(obj, newColorVal, $oldColorVal, $color2, index);
+                            updateGradientColorFill(obj, newColorVal, $oldColorVal, $color2, index);
                         }
                     }
                     
@@ -569,7 +574,7 @@ function initCanvasEvents(lcanvas) {
                         }
                     }
                     
-                    function updateGradientFill(obj, newColorVal, oldColorVal, color2, index) {
+                    function updateGradientColorFill(obj, newColorVal, oldColorVal, color2, index) {
                         if (obj.fill && typeof obj.fill === "object" && (obj.fill.type === "linear" || obj.fill.type === "radial")) {
                             var isFirstColorStopMatch = obj.fill.colorStops[0].color === oldColorVal;
                             var isSecondColorStopMatch = obj.fill.colorStops[1].color === color2;
@@ -632,14 +637,14 @@ function initCanvasEvents(lcanvas) {
                     
                         var $colorPicker2 = $(colorBox).find(".dynamiccolorpicker2");
                         if ($colorPicker2.hasClass("showElement")) {
-                            initializeColorPicker($colorPicker2, $(colorBox));
+                            initializeColorPicker2($colorPicker2, $(colorBox));
                         } else {
                             $(colorBox).find(".fill-type").removeClass("active");
                             $(colorBox).find("#color-fill").addClass("active");
                         }
                     });
                     
-                    function initializeColorPicker($colorPicker, $colorBox) {
+                    function initializeColorPicker2($colorPicker, $colorBox) {
                         $colorPicker.spectrum({
                             // Spectrum settings
                             containerClassName: "dynamic-fill",
@@ -909,14 +914,14 @@ function initCanvasEvents(lcanvas) {
     });
 
     function handleObjectScaling(event) {
-        if (isTextObject(event.target)) {
+        if (isTextObjectScaling(event.target)) {
             updateTextObjectFontSize(event.target);
         }
         setObjectCoordinates(event.target);
         updateCanvasHeightInput();
     }
 
-    function isTextObject(target) {
+    function isTextObjectScaling(target) {
         return target && /text/.test(target.type) && target.scaleX === target.scaleY;
     }
 
@@ -1231,12 +1236,6 @@ function initCanvasEvents(lcanvas) {
         removeEmptyText(event.target);
 
         showTextEditingOptions();
-    }
-
-    function logDebugInfo(message) {
-        if (DEBUG) {
-            console.log(message);
-        }
     }
 
     function removeEmptyText(target) {

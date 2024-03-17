@@ -55,7 +55,7 @@ function loadObjectOnCanvasFromJSON(lcanvas, json, svg_custom_data12, i) {
                                 console.log("Error", e, svg_data.fill),
                                 loadedObject.fill = svg_data.fill
                             }
-                        var $gradientType = getGradientTypeofObject(svg_data);
+                        var $gradientType = getGradientTypeOfObject(svg_data);
                         if (!1 !== $gradientType ? applyGradient(svg_data.fill.colorStops[0].color, svg_data.fill.colorStops[1].color, $gradientType, loadedObject) : applyGradient2(svg_data, loadedObject),
                         lcanvas.add(loadedObject),
                         loadedObject.setCoords(),
@@ -135,7 +135,7 @@ function loadObjectOnCanvasFromJSON(lcanvas, json, svg_custom_data12, i) {
                             height: $svg_data.height
                         }),
                         $svg_data.fill && ($object.fill = $svg_data.fill);
-                        var $gradientType = getGradientTypeofObject($svg_data);
+                        var $gradientType = getGradientTypeOfObject($svg_data);
                         !1 !== $gradientType && applyGradient($svg_data.fill.colorStops[0].color, $svg_data.fill.colorStops[1].color, $gradientType, $object),
                         $object.set({
                             scaleX: $svg_data.scaleX,

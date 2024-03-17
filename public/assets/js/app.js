@@ -66,29 +66,6 @@ function _typeof(obj) {
     )(obj)
 }
 
-var $spectrum_options = {
-    containerClassName: "color-fill",
-    togglePaletteOnly: !0,
-    showPalette: !0,
-    preferredFormat: "hex",
-    hideAfterPaletteSelect: !0,
-    showSelectionPalette: !0,
-    localStorageKey: localStorageKey,
-    showInput: !0,
-    showInitial: !0,
-    allowEmpty: !0,
-    showButtons: !1,
-    maxSelectionSize: 24,
-    togglePaletteMoreText: "Show advanced",
-    togglePaletteLessText: "Hide advanced",
-    beforeShow: function(color) {
-        $(this).spectrum("set", $(this).css("backgroundColor"))
-    },
-    show: function(color) {
-        $(this).data("previous-color", color.toRgbString().replace(/\s/g, ""))
-    }
-};
-
 function keepSvgGroups(objects, svgElements, allSvgElements, options) {
     if (DEBUG) {
         console.log("keepSvgGroups()");
@@ -1025,30 +1002,6 @@ $("#bgscale").on("slide", function(slideEvt) {
 }),
 $("#bgscale").on("slideStop", function(slideEvt) {
     canvas.bgScale = slideEvt.value / 100
-});
-
-
-var ChangeLineHeight = function() {
-    s_history = !1,
-    setStyle(canvas.getActiveObject(), "lineHeight", clh.getValue()),
-    canvas.renderAll()
-}
-  , clh = $("#changelineheight").slider().on("slide", ChangeLineHeight).data("slider");
-$("#changelineheight").slider().on("slideStop", function(e) {
-    s_history = !0,
-    save_history()
-});
-var ChangeCharSpacing = function() {
-    s_history = !1;
-    var activeObject = canvas.getActiveObject();
-    setStyle(activeObject, "charSpacing", 100 * ccs.getValue()),
-    activeObject.setCoords(),
-    canvas.renderAll()
-}
-  , ccs = $("#changecharspacing").slider().on("slide", ChangeCharSpacing).data("slider");
-$("#changecharspacing").slider().on("slide", function(e) {
-    s_history = !0,
-    save_history()
 });
 
 var objectalignleftSwitch = document.getElementById("objectalignleft");
@@ -4087,48 +4040,6 @@ function loadElement(elementid) {
     })
 }
 
-var objectFlipHorizontalSwitch = document.getElementById("objectfliphorizontal");
-objectFlipHorizontalSwitch && (objectFlipHorizontalSwitch.onclick = function() {
-    var activeObject = canvas.getActiveObject();
-    activeObject && (activeObject.flipX ? activeObject.flipX = !1 : activeObject.flipX = !0,
-    canvas.renderAll(),
-    save_history())
-}
-);
-var objectFlipVerticalSwitch = document.getElementById("objectflipvertical");
-objectFlipVerticalSwitch && (objectFlipVerticalSwitch.onclick = function() {
-    var activeObject = canvas.getActiveObject();
-    activeObject && (activeObject.flipY ? activeObject.flipY = !1 : activeObject.flipY = !0,
-    canvas.renderAll(),
-    save_history())
-}
-);
-var objectLock = document.getElementById("objectlock");
-objectLock && (objectLock.onclick = function() {
-    var activeObject = canvas.getActiveObject();
-    activeObject._objects && "activeSelection" === activeObject.type ? activeObject.forEachObject(function($c) {
-        $c.lockMovementY ? ($c.lockMovementY = $c.lockMovementX = !1,
-        $c.hasControls = !0,
-        $c.set({
-            borderColor: "#4dd7fa"
-        })) : ($c.lockMovementY = $c.lockMovementX = !0,
-        $c.hasControls = !1,
-        $c.set({
-            borderColor: "#ff0000"
-        }))
-    }) : activeObject.lockMovementY ? (activeObject.lockMovementY = activeObject.lockMovementX = !1,
-    activeObject.hasControls = !0,
-    activeObject.set({
-        borderColor: "#4dd7fa"
-    })) : (activeObject.lockMovementY = activeObject.lockMovementX = !0,
-    activeObject.hasControls = !1,
-    activeObject.set({
-        borderColor: "#ff0000"
-    })),
-    canvas.renderAll(),
-    save_history()
-}
-),
 $("#group").on("click", function() {
     var activeSelection = canvas.getActiveObject();
     activeSelection && "activeSelection" === activeSelection.type && activeSelection._objects && (activeSelection.toGroup().svg_custom_paths = [],
@@ -4212,22 +4123,7 @@ $("#changestrokewidth").slider().on("slideStop", function(e) {
     s_history = !0,
     save_history()
 });
-var ChangeBorderWH = function() {
-    s_history = !1;
-    var activeObject = canvas.getActiveObject();
-    activeObject.set({
-        width: canvas.get("width") / canvas.getZoom() - 96 * cbwh.getValue() * 2,
-        height: canvas.get("height") / canvas.getZoom() - 96 * cbwh.getValue() * 2
-    }),
-    "rect" == activeObject.type && (activeObject.viewportCenter(),
-    activeObject.set({
-        left: (canvas.get("width") / canvas.getZoom() - activeObject.get("width")) / 2,
-        top: (canvas.get("height") / canvas.getZoom() - activeObject.get("height")) / 2
-    })),
-    activeObject.setCoords(),
-    canvas.renderAll()
-}
-  , cbwh = $("#changeborderwh").slider().on("slide", ChangeBorderWH).data("slider");
+
 function ChangeShadowColor(color) {
     if (DEBUG) {
         console.log("ChangeShadowColor()");
@@ -4238,30 +4134,6 @@ function ChangeShadowColor(color) {
     lastShadowColor = color.toString(),
     canvas.renderAll()
 }
-$("#changeborderwh").slider().on("slideStop", function(e) {
-    s_history = !0,
-    save_history()
-}),
-$("#changeBlur").slider();
-var ChangeShadowBlur = function() {
-    canvas.getActiveObject().shadow.blur = csb.getValue(),
-    lastShadowBlur = csb.getValue(),
-    canvas.renderAll()
-}
-  , csb = $("#changeBlur").slider().on("slide", ChangeShadowBlur).data("slider")
-  , ChangeShadowHOffset = function() {
-    canvas.getActiveObject().shadow.offsetX = csho.getValue(),
-    lastShadowHorizontalOffset = csho.getValue(),
-    canvas.renderAll()
-}
-  , csho = $("#changeHOffset").slider().on("slide", ChangeShadowHOffset).data("slider")
-  , ChangeShadowVOffset = function() {
-    canvas.getActiveObject().shadow.offsetY = csvo.getValue(),
-    lastShadowVerticalOffset = csvo.getValue(),
-    canvas.renderAll()
-}
-  , csvo = $("#changeVOffset").slider().on("slide", ChangeShadowVOffset).data("slider");
-
 
 function rgbToHex(r, g, b) {
     if (DEBUG) {
@@ -4486,85 +4358,11 @@ $("#changeCanvasSize").click(function(e) {
     scale_canvas_to($new_canvas_width, $new_canvas_height)),
     setWorkspace()
 });
-var $color_selector_options = $spectrum_options;
-$color_selector_options.change = function(color) {
-    DEBUG && console.log("color: ", color),
-    null == window.localStorage[localStorageKey] && (window.localStorage[localStorageKey] = ";");
-    var local_store = window.localStorage[localStorageKey];
-    if (-1 == local_store.search(color) && (window.localStorage[localStorageKey] = local_store + ";" + color),
-    color)
-        colorVal = color.toHexString();
-    else
-        var colorVal = "";
-    var $activeObject = canvas.getActiveObject()
-      , $gradientType = getGradientTypeofObject($activeObject);
-    if ($activeObject && !1 !== $gradientType) {
-        var $color2 = $("#colorSelector2").spectrum("get");
-        $color2 = $color2 ? $color2.toHexString() : "#" + ("000000" + ("0xffffff" ^ colorVal.replace("#", "0x")).toString(16)).slice(-6),
-        DEBUG && console.log("#colorSelector: ", $gradientType, colorVal, $color2),
-        switchFillType($gradientType, colorVal, $color2),
-        applyGradient(colorVal, $color2, $gradientType)
-    } else
-        changeObjectColor(colorVal),
-        $("#colorSelector").css("background", colorVal)
-}
-,
-$color_selector_options.move = function(color) {
-    var colorVal = "";
-    color && (colorVal = color.toHexString());
-    var $activeObject = canvas.getActiveObject()
-      , $gradientType = getGradientTypeofObject($activeObject);
-    if ($activeObject && !1 !== $gradientType) {
-        var $color2 = $("#colorSelector2").spectrum("get");
-        $color2 = $color2 ? $color2.toHexString() : "#" + ("000000" + ("0xffffff" ^ colorVal.replace("#", "0x")).toString(16)).slice(-6),
-        DEBUG && console.log("#colorSelector: ", $gradientType, colorVal, $color2),
-        switchFillType($gradientType, colorVal, $color2),
-        applyGradient(colorVal, $color2, $gradientType)
-    } else
-        changeObjectColor(colorVal),
-        $("#colorSelector").css("background", colorVal)
-}
-,
-$("#colorSelector").spectrum($color_selector_options);
-var $color_selector2_options = $spectrum_options;
+
 function getCatimages2($offset, $tags) {}
 
 function getTemplates2($offset, $tags) {}
-$color_selector2_options.change = function(color) {
-    DEBUG && console.log("color: ", color),
-    null == window.localStorage[localStorageKey] && (window.localStorage[localStorageKey] = ";");
-    var local_store = window.localStorage[localStorageKey];
-    if (-1 == local_store.search(color) && (window.localStorage[localStorageKey] = local_store + ";" + color),
-    color)
-        colorVal = color.toHexString();
-    else
-        var colorVal = "#000000";
-    var $activeObject = canvas.getActiveObject()
-      , $color1 = $("#colorSelector").spectrum("get")
-      , $gradientType = getGradientTypeofObject($activeObject);
-    $activeObject && !1 !== $gradientType && ($color1 = $color1 ? $color1.toHexString() : $activeObject.fill.colorStops[0].color,
-    DEBUG && console.log("#colorSelector2: ", $gradientType, $color1, colorVal),
-    switchFillType($gradientType, $color1, colorVal),
-    applyGradient($color1, colorVal, $gradientType))
-}
-,
-$color_selector2_options.move = function(color) {
-    var colorVal = "";
-    color && (colorVal = color.toHexString());
-    var $activeObject = canvas.getActiveObject()
-      , $gradientType = getGradientTypeofObject($activeObject);
-    if ($activeObject && !1 !== $gradientType) {
-        var $color1 = $("#colorSelector").spectrum("get");
-        $color1 = $color1 ? $color1.toHexString() : "#" + ("000000" + ("0xffffff" ^ colorVal.replace("#", "0x")).toString(16)).slice(-6),
-        DEBUG && console.log("#colorSelector: ", $gradientType, $color1, colorVal),
-        switchFillType($gradientType, $color1, colorVal),
-        applyGradient($color1, colorVal, $gradientType)
-    } else
-        changeObjectColor(colorVal),
-        $("#colorSelector2").css("background", colorVal)
-}
-,
-$("#colorSelector2").spectrum($color_selector2_options),
+
 $("#bgcolorselect").spectrum({
     flat: !0,
     showPalette: !0,
@@ -4921,57 +4719,6 @@ $("#opentemplate").click(function(e) {
 $("#opentemplate_input").change(function(evt) {
     handleFileSelect(evt)
 }),
-$("#showmoreoptions").click(function() {
-    $("#showmoreoptions ul li").find("a.temphide").removeClass("temphide").css("display", "block"),
-    $("#opacitySlider").hide(),
-    $("#lineheightSlider").hide(),
-    $("#charspacingSlider").hide(),
-    $("#borderwhSlider").hide(),
-    $("#textuppercase").hide(),
-    $("#textlowercase").hide(),
-    $("#textcapitalize").hide();
-    var activeObject = canvas.getActiveObject();
-    if (activeObject) {
-        activeObject._objects && "activeSelection" === activeObject.type ? $("#objectlock").html("<i class='fa fa-lock'></i>&nbsp;&nbsp; Toggle Lock") : 1 == activeObject.lockMovementY ? $("#objectlock").html("<i class='fa fa-unlock'></i>&nbsp;&nbsp; Unlock Object") : $("#objectlock").html("<i class='fa fa-lock' style='font-size:16px;'></i>&nbsp;&nbsp; Lock Position"),
-        activeObject.get("stroke") ? $("#addremovestroke").html("<i class='fa' style='font-size: 18px;'>▣</i>&nbsp; Remove Stroke") : ($("#strokegroup").hide(),
-        $("#addremovestroke").html("<i class='fa' style='font-size: 18px;'>▣</i>&nbsp; Add Stroke"));
-        var objectopacity = activeObject.get("opacity");
-        $("#changeopacity").slider("setValue", objectopacity);
-        var objectborderwh = (canvas.get("width") - activeObject.get("width")) / 96 / 2;
-        if ($("#changeborderwh").slider("setValue", objectborderwh),
-        "textbox" == activeObject.type || "text" == activeObject.type || "i-text" == activeObject.type) {
-            var textlineheight = activeObject.get("lineHeight");
-            $("#changelineheight").slider("setValue", textlineheight);
-            var textcharspacing = activeObject.charSpacing / 100;
-            $("#changecharspacing").slider("setValue", textcharspacing)
-        }
-    }
-}),
-$("#shadowGroup").click(function() {
-    $("#shadowColor").spectrum("set", "rgba(0, 0, 0, 1)");
-    var activeObject = canvas.getActiveObject();
-    if (activeObject && activeObject.get("shadow")) {
-        var objectShadow = activeObject.get("shadow");
-        objectShadow.color && ($("#shadowSwitch").prop("checked", !0),
-        $("#shadowColor").spectrum("enable"),
-        $("#shadowColor").spectrum("set", objectShadow.color)),
-        $("#changeBlur").slider("setValue", objectShadow.blur),
-        $("#changeHOffset").slider("setValue", objectShadow.offsetX),
-        $("#changeVOffset").slider("setValue", objectShadow.offsetY)
-    } else
-        $("#shadowSwitch").prop("checked", !1),
-        $("#shadowGroup .tab-content").addClass("editor-disabled"),
-        $("#shadowColor").spectrum("disable")
-}),
-$("#shadowGroup a.dropdown-toggle").on("click", function(event) {
-    $(this).parent().toggleClass("open")
-}),
-$("body").on("click", function(e) {
-    $("#shadowGroup").is(e.target) || 0 !== $("#shadowGroup").has(e.target).length || 0 !== $(".open").has(e.target).length || ($("#shadowGroup").removeClass("open"),
-    $("#shadowTabs .nav-tabs li").first().tab("show"),
-    $("#color").removeClass("active"),
-    $("#appearance").addClass("active"))
-}),
 $("#strokedropdown").click(function() {
     var activeObject = canvas.getActiveObject();
     if (activeObject) {
@@ -4983,12 +4730,6 @@ $("#objectopacity").click(function() {
     $("#opacitySlider").toggle(),
     $("#showmoreoptions ul li a").each(function() {
         "block" == $(this).css("display") && $(this).not("#objectopacity").addClass("temphide")
-    })
-}),
-$("#lineheight").click(function() {
-    $("#lineheightSlider").toggle(),
-    $("#showmoreoptions ul li a").each(function() {
-        "block" == $(this).css("display") && $(this).not("#lineheight").addClass("temphide")
     })
 }),
 $("#charspacing").click(function() {
@@ -5003,22 +4744,11 @@ $("#objectborderwh").click(function() {
         "block" == $(this).css("display") && $(this).not("#objectborderwh").addClass("temphide")
     })
 }),
-$("#textcase").click(function() {
-    $("#textuppercase, #textlowercase, #textcapitalize").toggle(),
-    $("#showmoreoptions ul li a").each(function() {
-        "block" == $(this).css("display") && $(this).not("#textuppercase, #textlowercase, #textcapitalize").addClass("temphide")
-    })
-}),
 $("#hideobject").click(function() {
     var activeObject = canvas.getActiveObject();
     activeObject && (activeObject.hidden ? (activeObject.hidden = !1,
     $("#hideobject").html("<i class='fa fa-eye'></i>&nbsp; Hide object in pdf/png")) : (activeObject.hidden = !0,
     $("#hideobject").html("<i class='fa fa-eye'></i>&nbsp; Unhide object in pdf/png")))
-}),
-$("#changeopacity").slider({
-    formatter: function(value) {
-        return 100 * value + "%"
-    }
 }),
 $("#canvasbox-tab").bind("contextmenu", function(e) {
     return handleContextmenu(e),
@@ -5075,36 +4805,7 @@ $(document).unbind("keydown").bind("keydown", function(event) {
     }
     doPrevent && event.preventDefault()
 });
-var textuppercaseSwitch = document.getElementById("textuppercase");
-textuppercaseSwitch && (textuppercaseSwitch.onclick = function() {
-    var activeObject = canvas.getActiveObject();
-    activeObject && (activeObject._objects && "activeSelection" === activeObject.type ? activeObject.forEachObject(function(e) {
-        /text/.test(e.type) && (e.text = e.text.toUpperCase())
-    }) : /text/.test(activeObject.type) && (activeObject.text = activeObject.text.toUpperCase()),
-    canvas.renderAll())
-}
-);
-var textlowercaseSwitch = document.getElementById("textlowercase");
-textlowercaseSwitch && (textlowercaseSwitch.onclick = function() {
-    var activeObject = canvas.getActiveObject();
-    activeObject && (activeObject._objects && "activeSelection" === activeObject.type ? activeObject.forEachObject(function(e) {
-        /text/.test(e.type) && (e.text = e.text.toLowerCase())
-    }) : /text/.test(activeObject.type) && (activeObject.text = activeObject.text.toLowerCase()),
-    canvas.renderAll())
-}
-);
-var textcapitalizeSwitch = document.getElementById("textcapitalize");
-function capitalizeFirstAllWords(str) {
-    if (DEBUG) {
-        console.log("capitalizeFirstAllWords()");
-    }
 
-    for (var pieces = str.split(" "), i = 0; i < pieces.length; i++) {
-        var j = pieces[i].charAt(0).toUpperCase();
-        pieces[i] = j + pieces[i].substr(1)
-    }
-    return pieces.join(" ")
-}
 
 function setGeofilterBackground(index) {
     if (DEBUG) {
@@ -5216,16 +4917,16 @@ function trackRelatedProducts(listing_id) {
     })
 }
 
-textcapitalizeSwitch && (textcapitalizeSwitch.onclick = function() {
-    var activeObject = canvas.getActiveObject();
-    activeObject && (activeObject._objects && "activeSelection" === activeObject.type ? activeObject.forEachObject(function(e) {
-        /text/.test(e.type) && (e.text = e.text.toLowerCase(),
-        e.text = capitalizeFirstAllWords(e.text))
-    }) : /text/.test(activeObject.type) && (activeObject.text = activeObject.text.toLowerCase(),
-    activeObject.text = capitalizeFirstAllWords(activeObject.text)),
-    canvas.renderAll())
-}
-),
+// textcapitalizeSwitch && (textcapitalizeSwitch.onclick = function() {
+//     var activeObject = canvas.getActiveObject();
+//     activeObject && (activeObject._objects && "activeSelection" === activeObject.type ? activeObject.forEachObject(function(e) {
+//         /text/.test(e.type) && (e.text = e.text.toLowerCase(),
+//         e.text = capitalizeFirstAllWords(e.text))
+//     }) : /text/.test(activeObject.type) && (activeObject.text = activeObject.text.toLowerCase(),
+//     activeObject.text = capitalizeFirstAllWords(activeObject.text)),
+//     canvas.renderAll())
+// }
+// ),
 $("body").tooltip({
     selector: "[data-toggle=tooltip]"
 }),
@@ -6241,20 +5942,6 @@ function loadTemplates_text() {
     }, 1500)
 }
 
-function loadTemplates_related() {
-    if (DEBUG) {
-        console.log("loadTemplates_related()");
-    }
-    infinites[type_related].infiniteScroll("loadNextPage"),
-    setTimeout(function() {
-        masonrys[type_related] && (masonrys[type_related].layout(),
-        $(".infinite-scroll-request_related_products").show())
-    }, 500),
-    setTimeout(function() {
-        $(aContainer_related).next().find(".loader-ellips").hide()
-    }, 1500)
-}
-
 $(document).ready(function() {
     var columns = [{
         data: "date",
@@ -6282,4 +5969,3 @@ $(document).ready(function() {
     //     aaSorting: [[0, "desc"]]
     // })
 });
-

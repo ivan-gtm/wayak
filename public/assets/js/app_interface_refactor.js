@@ -17,51 +17,647 @@ $(document).ready(function() {
             return value + "%"
         }
     });
+    
+    setupShowMoreOptions();
+    setupTextCaseToggle();
+    initializeLineHeightToggle();
+    initializeLineHeightSlider();
+    initializeCharSpacingSlider();
+    setupTextTransformationSwitches();
+    setupFlipHorizontalSwitch();
+    setupFlipVerticalSwitch();
+    setupObjectLockToggle();
+    initializeShadowGroupClick();
+    initializeShadowDropdownToggle();
+    initializeBodyClick();
+    initializeShadowBlurSlider();
+    initializeShadowOffsetSliders();
 });
 
+
+// Define a more readable and maintainable configuration object
+const spectrumOptions = {
+    containerClassName: "color-fill",
+    togglePaletteOnly: true,
+    showPalette: true,
+    preferredFormat: "hex",
+    hideAfterPaletteSelect: true,
+    showSelectionPalette: true,
+    localStorageKey: localStorageKey, // Assuming localStorageKey is defined elsewhere
+    showInput: true,
+    showInitial: true,
+    allowEmpty: true,
+    showButtons: false,
+    maxSelectionSize: 24,
+    togglePaletteMoreText: "Show advanced",
+    togglePaletteLessText: "Hide advanced",
+    beforeShow: function() {
+        $(this).spectrum("set", $(this).css("backgroundColor"));
+    },
+    show: function(color) {
+        $(this).data("previous-color", color.toRgbString().replace(/\s/g, ""));
+    }
+};
+
+// Utility function to handle repetitive tasks
+function updateLocalStorage(color) {
+    if (DEBUG) console.log("color: ", color);
+    const keyExists = window.localStorage[localStorageKey] !== undefined;
+    if (!keyExists) window.localStorage[localStorageKey] = ";";
+
+    let storedColors = window.localStorage[localStorageKey];
+    if (!storedColors.includes(color)) {
+        window.localStorage[localStorageKey] = `${storedColors};${color}`;
+    }
+}
+
+function setColorAndGradient(selector, color, isSecondSelector = false) {
+    const colorVal = color ? color.toHexString() : (isSecondSelector ? "#000000" : "");
+    const activeObject = canvas.getActiveObject();
+    const gradientType = getGradientTypeOfObject(activeObject);
+
+    if (activeObject && gradientType !== false) {
+        let otherSelector = isSecondSelector ? "#colorSelector" : "#colorSelector2";
+        let otherColor = $(otherSelector).spectrum("get");
+        otherColor = otherColor ? otherColor.toHexString() : getContrastingColor(colorVal);
+
+        if (DEBUG) console.log(selector, gradientType, colorVal, otherColor);
+        switchFillType(gradientType, colorVal, otherColor);
+        applyGradient(colorVal, otherColor, gradientType);
+    } else {
+        changeObjectColor(colorVal);
+        $(selector).css("background", colorVal);
+    }
+}
+
+function getContrastingColor(colorVal) {
+    return "#" + ("000000" + ("0xffffff" ^ colorVal.replace("#", "0x")).toString(16)).slice(-6);
+}
+
+// Configure spectrumOptions for specific selectors
+const colorSelectorOptions = {
+    ...spectrumOptions,
+    change: function(color) {
+        updateLocalStorage(color);
+        setColorAndGradient("#colorSelector", color);
+    },
+    move: function(color) {
+        setColorAndGradient("#colorSelector", color);
+    }
+};
+
+const colorSelector2Options = {
+    ...spectrumOptions,
+    change: function(color) {
+        updateLocalStorage(color);
+        setColorAndGradient("#colorSelector2", color, true);
+    },
+    move: function(color) {
+        setColorAndGradient("#colorSelector2", color, true);
+    }
+};
+
+// Initialize spectrum with the configured options
+$("#colorSelector").spectrum(colorSelectorOptions);
+$("#colorSelector2").spectrum(colorSelector2Options);
+
+
+
+function initializeShadowOffsetSliders() {
+    logDebug("initializeShadowOffsetSliders()");
+    // Initialize horizontal offset slider and attach slide event handler
+    var shadowHOffsetSlider = $("#changeHOffset").slider({
+        slide: function(event, ui) {
+            updateShadowOffset('horizontal', ui.value);
+        }
+    }).data("slider");
+
+    // Initialize vertical offset slider and attach slide event handler
+    var shadowVOffsetSlider = $("#changeVOffset").slider({
+        slide: function(event, ui) {
+            updateShadowOffset('vertical', ui.value);
+        }
+    }).data("slider");
+}
+
+function updateShadowOffset(direction, offsetValue) {
+    logDebug("updateShadowOffset(d");
+    var activeObject = canvas.getActiveObject();
+    if (activeObject && activeObject.shadow) {
+        // Update the appropriate shadow offset based on direction
+        if (direction === 'horizontal') {
+            activeObject.shadow.offsetX = offsetValue;
+            lastShadowHorizontalOffset = offsetValue; // Remember the last horizontal offset value
+        } else if (direction === 'vertical') {
+            activeObject.shadow.offsetY = offsetValue;
+            lastShadowVerticalOffset = offsetValue; // Remember the last vertical offset value
+        }
+
+        // Re-render the canvas to apply the offset change
+        canvas.renderAll();
+    }
+}
+
+function initializeShadowBlurSlider() {
+    logDebug("initializeShadowBlurSlider()");
+    // Initialize the slider and store a reference for later use
+    var shadowBlurSlider = $("#changeBlur").slider({
+        slide: function(event, ui) {
+            updateShadowBlur(ui.value);
+        }
+    }).data("slider");
+
+    function updateShadowBlur(blurValue) {
+        var activeObject = canvas.getActiveObject();
+        if (activeObject && activeObject.shadow) {
+            // Update the shadow blur value of the active object
+            activeObject.shadow.blur = blurValue;
+            // Remember the last shadow blur value for potential future use
+            lastShadowBlur = blurValue;
+            // Re-render the canvas to apply the blur change
+            canvas.renderAll();
+        }
+    }
+}
+
+
+function initializeShadowGroupClick() {
+    logDebug("initializeShadowGroupClick()");
+    $("#shadowGroup").click(function() {
+        setDefaultShadowColor();
+        updateShadowControlsBasedOnActiveObject();
+    });
+}
+
+function setDefaultShadowColor() {
+    logDebug("setDefaultShadowColor()");
+    $("#shadowColor").spectrum("set", "rgba(0, 0, 0, 1)");
+}
+
+function updateShadowControlsBasedOnActiveObject() {
+    logDebug("updateShadowControlsBasedOnActiveObject()");
+    var activeObject = canvas.getActiveObject();
+    if (activeObject && activeObject.get("shadow")) {
+        const objectShadow = activeObject.get("shadow");
+        updateShadowControls(objectShadow);
+    } else {
+        disableShadowControls();
+    }
+}
+
+function updateShadowControls(objectShadow) {
+    logDebug("updateShadowControls(o");
+    if (objectShadow.color) {
+        $("#shadowSwitch").prop("checked", true);
+        $("#shadowColor").spectrum("enable").spectrum("set", objectShadow.color);
+    }
+    $("#changeBlur").slider("setValue", objectShadow.blur);
+    $("#changeHOffset").slider("setValue", objectShadow.offsetX);
+    $("#changeVOffset").slider("setValue", objectShadow.offsetY);
+}
+
+function disableShadowControls() {
+    logDebug("disableShadowControls()");
+    $("#shadowSwitch").prop("checked", false);
+    $("#shadowGroup .tab-content").addClass("editor-disabled");
+    $("#shadowColor").spectrum("disable");
+}
+
+function initializeShadowDropdownToggle() {
+    logDebug("initializeShadowDropdownToggle()");
+    $("#shadowGroup a.dropdown-toggle").on("click", function() {
+        $(this).parent().toggleClass("open");
+    });
+}
+
+function initializeBodyClick() {
+    logDebug("initializeBodyClick()");
+    $("body").on("click", function(e) {
+        if (!$("#shadowGroup").is(e.target) && $("#shadowGroup").has(e.target).length === 0 && $(".open").has(e.target).length === 0) {
+            closeShadowGroup();
+        }
+    });
+}
+
+function closeShadowGroup() {
+    logDebug("closeShadowGroup()");
+    $("#shadowGroup").removeClass("open");
+    $("#shadowTabs .nav-tabs li").first().tab("show");
+    $("#color").removeClass("active");
+    $("#appearance").addClass("active");
+}
+
+
+function setupObjectLockToggle() {
+    logDebug("setupObjectLockToggle()");
+    var objectLock = document.getElementById("objectlock");
+    if (objectLock) {
+        objectLock.addEventListener("click", toggleObjectLock);
+    }
+}
+
+function toggleObjectLock() {
+    logDebug("toggleObjectLock()");
+    var activeObject = canvas.getActiveObject();
+    if (!activeObject) return;
+
+    if (activeObject.type === "activeSelection") {
+        // Toggle lock state for each object in the active selection
+        activeObject.forEachObject(toggleLockState);
+    } else {
+        // Toggle lock state for a single active object
+        toggleLockState(activeObject);
+    }
+
+    canvas.renderAll();
+    save_history();
+}
+
+function toggleLockState(object) {
+    logDebug("toggleLockState(o");
+    const isLocked = object.lockMovementY && object.lockMovementX;
+    object.set({
+        lockMovementY: !isLocked,
+        lockMovementX: !isLocked,
+        hasControls: !isLocked,
+        borderColor: isLocked ? "#4dd7fa" : "#ff0000"
+    });
+}
+
+
+function setupFlipVerticalSwitch() {
+    logDebug("setupFlipVerticalSwitch()");
+    var flipVerticalSwitch = document.getElementById("objectflipvertical");
+    if (flipVerticalSwitch) {
+        flipVerticalSwitch.addEventListener("click", toggleFlipVertical);
+    }
+}
+
+function toggleFlipVertical() {
+    logDebug("toggleFlipVertical()");
+    var activeObject = canvas.getActiveObject();
+    if (activeObject) {
+        // Simplify the toggle by using a direct assignment
+        activeObject.flipY = !activeObject.flipY;
+        
+        // Render the canvas to reflect changes and save the current state
+        canvas.renderAll();
+        save_history();
+    }
+}
+
+
+function setupFlipHorizontalSwitch() {
+    logDebug("setupFlipHorizontalSwitch()");
+    var flipHorizontalSwitch = document.getElementById("objectfliphorizontal");
+    if (flipHorizontalSwitch) {
+        flipHorizontalSwitch.addEventListener("click", toggleFlipHorizontal);
+    }
+}
+
+function toggleFlipHorizontal() {
+    logDebug("toggleFlipHorizontal()");
+    var activeObject = canvas.getActiveObject();
+    if (activeObject) {
+        // Directly toggle the flipX property
+        activeObject.flipX = !activeObject.flipX;
+        
+        // Render the canvas to reflect changes and save the state
+        canvas.renderAll();
+        save_history();
+    }
+}
+
+
+function setupTextTransformationSwitches() {
+    logDebug("setupTextTransformationSwitches()");
+    setupSwitch("textuppercase", transformTextToUpper);
+    setupSwitch("textlowercase", transformTextToLower);
+    setupSwitch("textcapitalize", transformTextToCapital);
+}
+
+function setupSwitch(switchId, transformFunction) {
+    logDebug("setupSwitch(s");
+    var switchElement = document.getElementById(switchId);
+    if (switchElement) {
+        switchElement.onclick = function() {
+            applyTextTransformation(transformFunction);
+        };
+    }
+}
+
+function applyTextTransformation(transformFunction) {
+    logDebug("applyTextTransformation(t");
+    var activeObject = canvas.getActiveObject();
+    if (!activeObject) return;
+
+    if (activeObject.type === "activeSelection") {
+        activeObject.forEachObject(function(obj) {
+            if (/text/.test(obj.type)) {
+                obj.text = transformFunction(obj.text);
+                obj.setCoords(); // Ensure the object's coordinates are updated
+            }
+        });
+    } else if (/text/.test(activeObject.type)) {
+        activeObject.text = transformFunction(activeObject.text);
+        activeObject.setCoords();
+    }
+    canvas.renderAll();
+}
+
+// Transformation functions
+function transformTextToUpper(text) {
+    logDebug("transformTextToUpper(t");
+    return text.toUpperCase();
+}
+
+function transformTextToLower(text) {
+    logDebug("transformTextToLower(t");
+    return text.toLowerCase();
+}
+
+function transformTextToCapital(text) {
+    logDebug("transformTextToCapital(t");
+    return text.split(" ").map(function(word) {
+        return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    }).join(" ");
+}
+
+
+function initializeCharSpacingSlider() {
+    logDebug("initializeCharSpacingSlider()");
+    // Set up the slider and its event handlers in a structured manner
+    var charSpacingSlider = $("#changecharspacing").slider({
+        onSlide: adjustCharSpacing,
+        onSlideStop: finalizeCharSpacingAdjustment
+    }).data("slider");
+}
+
+function adjustCharSpacing() {
+    logDebug("adjustCharSpacing()");
+    // Temporarily disable history tracking
+    s_history = false;
+    
+    var activeObject = canvas.getActiveObject();
+    if (activeObject) {
+        var charSpacingValue = 100 * charSpacingSlider.getValue(); // Assuming charSpacingSlider is accessible
+        setStyle(activeObject, "charSpacing", charSpacingValue);
+        activeObject.setCoords();
+        canvas.renderAll();
+    }
+}
+
+function finalizeCharSpacingAdjustment() {
+    logDebug("finalizeCharSpacingAdjustment()");
+    // Re-enable history tracking and save the state
+    s_history = true;
+    save_history();
+}
+
+
+function initializeLineHeightSlider() {
+    logDebug("initializeLineHeightSlider()");
+    var lineHeightSlider = $("#changelineheight").slider({
+        onSlide: adjustActiveObjectLineHeight,
+        onSlideStop: finalizeLineHeightAdjustment
+    }).data("slider");
+}
+
+function adjustActiveObjectLineHeight() {
+    logDebug("adjustActiveObjectLineHeight()");
+    // Temporarily disable history tracking to avoid intermediate states
+    s_history = false;
+    var activeObject = canvas.getActiveObject();
+    if (activeObject) {
+        setStyle(activeObject, "lineHeight", lineHeightSlider.getValue());
+        canvas.renderAll();
+    }
+}
+
+function finalizeLineHeightAdjustment() {
+    logDebug("finalizeLineHeightAdjustment()");
+    // Re-enable history tracking and save the state
+    s_history = true;
+    save_history();
+}
+
+function setupShowMoreOptions() {
+    logDebug("setupShowMoreOptions()");
+    $("#showmoreoptions").click(function() {
+        resetUIElements();
+        updateLockButton();
+        updateStrokeButton();
+        updateSlidersBasedOnActiveObject();
+    });
+}
+
+function resetUIElements() {
+    logDebug("resetUIElements()");
+    // Hide sliders and reset buttons
+    $("#showmoreoptions ul li a.temphide").removeClass("temphide").css("display", "block");
+    $("#opacitySlider, #lineheightSlider, #charspacingSlider, #borderwhSlider, #textuppercase, #textlowercase, #textcapitalize").hide();
+}
+
+function updateLockButton() {
+    logDebug("updateLockButton()");
+    var activeObject = canvas.getActiveObject();
+    if (activeObject) {
+        var lockHtml = activeObject._objects && activeObject.type === "activeSelection" ?
+            "<i class='fa fa-lock'></i>&nbsp;&nbsp; Toggle Lock" :
+            activeObject.lockMovementY ?
+            "<i class='fa fa-unlock'></i>&nbsp;&nbsp; Unlock Object" :
+            "<i class='fa fa-lock' style='font-size:16px;'></i>&nbsp;&nbsp; Lock Position";
+        $("#objectlock").html(lockHtml);
+    }
+}
+
+function updateStrokeButton() {
+    logDebug("updateStrokeButton()");
+    var activeObject = canvas.getActiveObject();
+    if (activeObject) {
+        var strokeHtml = activeObject.get("stroke") ?
+            "<i class='fa' style='font-size: 18px;'>▣</i>&nbsp; Remove Stroke" :
+            "<i class='fa' style='font-size: 18px;'>▣</i>&nbsp; Add Stroke";
+        $("#addremovestroke").html(strokeHtml);
+        if (!activeObject.get("stroke")) {
+            $("#strokegroup").hide();
+        }
+    }
+}
+
+function updateSlidersBasedOnActiveObject() {
+    logDebug("updateSlidersBasedOnActiveObject()");
+    var activeObject = canvas.getActiveObject();
+    if (activeObject) {
+        $("#changeopacity").slider("setValue", activeObject.get("opacity"));
+        var objectborderwh = (canvas.get("width") - activeObject.get("width")) / 96 / 2;
+        $("#changeborderwh").slider("setValue", objectborderwh);
+
+        if (["textbox", "text", "i-text"].includes(activeObject.type)) {
+            $("#changelineheight").slider("setValue", activeObject.get("lineHeight"));
+            $("#changecharspacing").slider("setValue", activeObject.charSpacing / 100);
+        }
+    }
+}
+
+// Initialize the border width and height slider and set up event handlers
+$("#changeborderwh").slider({
+    onSlide: function(e) {
+        adjustActiveObjectBorder(e.value);
+    },
+    onSlideStop: function() {
+        s_history = true;
+        save_history();
+    }
+}).data("slider");
+
+function adjustActiveObjectBorder(borderValue) {
+    logDebug("adjustActiveObjectBorder(b");
+    var activeObject = canvas.getActiveObject();
+    if (!activeObject) return;
+
+    // Disable history tracking for this change
+    s_history = false;
+
+    // Calculate new width and height based on border value
+    var newWidth = canvas.get("width") / canvas.getZoom() - 96 * borderValue * 2;
+    var newHeight = canvas.get("height") / canvas.getZoom() - 96 * borderValue * 2;
+    
+    // Apply new width and height to the active object
+    activeObject.set({ width: newWidth, height: newHeight }).setCoords();
+
+    // If the object is a rectangle, center it on the viewport and adjust its position
+    if (activeObject.type === "rect") {
+        centerRectangleObject(activeObject);
+    }
+
+    canvas.renderAll();
+}
+
+function centerRectangleObject(rectObject) {
+    logDebug("centerRectangleObject(r");
+    rectObject.viewportCenter();
+    var newLeft = (canvas.get("width") / canvas.getZoom() - rectObject.get("width")) / 2;
+    var newTop = (canvas.get("height") / canvas.getZoom() - rectObject.get("height")) / 2;
+    rectObject.set({ left: newLeft, top: newTop }).setCoords();
+}
+
+function loadTemplates_related() {
+    logDebug("loadTemplates_related()");
+    logDebug("loadTemplates_related()");
+
+    // Trigger loading the next page of templates.
+    infinites[type_related].infiniteScroll("loadNextPage");
+
+    // Schedule layout refresh and display of related products request indicator after a short delay.
+    scheduleLayoutRefreshAndShowRequestIndicator();
+
+    // Hide the loader animation after a longer delay, indicating completion.
+    hideLoaderAnimationAfterDelay();
+}
+
+function scheduleLayoutRefreshAndShowRequestIndicator() {
+    logDebug("scheduleLayoutRefreshAndShowRequestIndicator()");
+    setTimeout(function() {
+        if (masonrys[type_related]) {
+            masonrys[type_related].layout();
+            $(".infinite-scroll-request_related_products").show();
+        }
+    }, 500); // Wait 500ms to refresh the layout and show the request indicator.
+}
+
+function hideLoaderAnimationAfterDelay() {
+    logDebug("hideLoaderAnimationAfterDelay()");
+    setTimeout(function() {
+        $(aContainer_related).next().find(".loader-ellips").hide();
+    }, 1500); // Wait 1500ms before hiding the loader animation.
+}
+
+
+function initializeLineHeightToggle() {
+    logDebug("initializeLineHeightToggle()");
+    $("#lineheight").on("click", function() {
+        toggleLineHeightSlider();
+        hideVisibleOptionsExceptLineHeight();
+    });
+}
+
+function toggleLineHeightSlider() {
+    logDebug("toggleLineHeightSlider()");
+    // Toggles visibility of the line height slider.
+    $("#lineheightSlider").toggle();
+}
+
+function hideVisibleOptionsExceptLineHeight() {
+    logDebug("hideVisibleOptionsExceptLineHeight()");
+    // Hides options that are currently visible, except for the line height option.
+    $("#showmoreoptions ul li a").each(function() {
+        if ($(this).css("display") === "block" && !$(this).is("#lineheight")) {
+            $(this).addClass("temphide");
+        }
+    });
+}
+
+
+function setupTextCaseToggle() {
+    logDebug("setupTextCaseToggle()");
+    $("#textcase").on("click", function() {
+        console.log("#textcase");
+        toggleTextCaseOptions();
+        hideNonVisibleOptions();
+    });
+}
+
+function toggleTextCaseOptions() {
+    logDebug("toggleTextCaseOptions()");
+    // Toggles visibility of the text case options.
+    $("#textuppercase, #textlowercase, #textcapitalize").toggle();
+}
+
+function hideNonVisibleOptions() {
+    logDebug("hideNonVisibleOptions()");
+    // Adds 'temphide' class to non-visible options, excluding specific text case options.
+    $("#showmoreoptions ul li a").each(function() {
+        if ($(this).css("display") === "block" && !$(this).is("#textuppercase, #textlowercase, #textcapitalize")) {
+            $(this).addClass("temphide");
+        }
+    });
+}
+
 function updateFontSizeForActiveObject(object, fontSize) {
+    logDebug("updateFontSizeForActiveObject(o");
     if (isObjectTextType(object)) {
         setFontSizeAndResetScale(object, fontSize);
     } else if (object.type === "textbox") {
         adjustFontSizeForTextbox(object, fontSize);
-    } else if (isTextsGroup(object)) {
+    } else if (isTextsGroup2(object)) {
         adjustFontSizeForTextsGroup(object, fontSize);
     }
 }
 
 function isObjectTextType(object) {
+    logDebug("isObjectTextType(o");
     return object.type === "text" || object.type === "i-text";
 }
 
 function setFontSizeAndResetScale(object, fontSize) {
+    logDebug("setFontSizeAndResetScale(o");
     object.set("fontSize", fontSize);
     object.scaleX = object.scaleY = 1;
     object.setCoords();
 }
 
 function adjustFontSizeForTextbox(textbox, fontSize) {
+    logDebug("adjustFontSizeForTextbox(t");
     textbox.set("fontSize", fontSize / textbox.scaleX);
     textbox.setCoords();
 }
 
-function isTextsGroup(object) {
+function isTextsGroup2(object) {
+    logDebug("isTextsGroup2(o");
     // Assuming isTextsGroup checks if the object is a group of text objects
     return object.type === "group" && object._objects && object._objects.every(obj => isObjectTextType(obj));
 }
-
-function adjustFontSizeForTextsGroup(group, fontSize) {
-    group.forEachObject(child => {
-        if (child.setSelectionStyles) child.removeStyle("fontSize");
-        setFontSizeAndResetScale(child, fontSize);
-    });
-
-    group._restoreObjectsState();
-    fabric.util.resetObjectTransform(group);
-    group._calcBounds();
-    group._updateObjectsCoords();
-    group.setCoords();
-}
-
 
 // Ensure the fontSizeSwitch element exists before attaching the event listener
 var fontSizeSwitch = document.getElementById("fontsize");
@@ -75,48 +671,43 @@ if (fontSizeSwitch) {
         var activeObject = canvas.getActiveObject();
 
         if (activeObject) {
-            updateFontSizeForActiveObject(activeObject, fontSize);
+            updateFontSizeForActiveObjectAlt(activeObject, fontSize);
             canvas.renderAll(); // Update the canvas only once after font size changes
         }
     };
 }
 
-function updateFontSizeForActiveObject(object, fontSize) {
+function updateFontSizeForActiveObjectAlt(object, fontSize) {
+    logDebug("updateFontSizeForActiveObjectAlt(o");
     if (isTextTypeObject(object)) {
         adjustFontSizeForTextObject(object, fontSize);
     } else if (object.type === "textbox") {
         adjustFontSizeForTextbox(object, fontSize);
-    } else if (isTextsGroup()) {
+    } else if (isTextsGroup2(object)) {
         adjustFontSizeForTextsGroup(object, fontSize);
     }
 }
 
 function isTextTypeObject(object) {
+    logDebug("isTextTypeObject(o");
     return object.type === "text" || object.type === "i-text";
 }
 
 function adjustFontSizeForTextObject(object, fontSize) {
+    logDebug("adjustFontSizeForTextObject(o");
     object.set("fontSize", fontSize);
     resetObjectScale(object);
 }
 
-function adjustFontSizeForTextbox(object, fontSize) {
-    object.set("fontSize", fontSize / object.scaleX); // Adjust for the object's scale
-    object.setCoords();
-}
-
 function resetObjectScale(object) {
+    logDebug("resetObjectScale(o");
     object.scaleX = 1;
     object.scaleY = 1;
     object.setCoords();
 }
 
-function isTextsGroup() {
-    // Placeholder for the actual implementation of isTextsGroup
-    // Assuming it checks if the active object is a group of text objects
-}
-
 function adjustFontSizeForTextsGroup(group, fontSize) {
+    logDebug("adjustFontSizeForTextsGroup(g");
     group.forEachObject(function(child) {
         if (child.setSelectionStyles) {
             child.removeStyle("fontSize");
@@ -133,7 +724,6 @@ function adjustFontSizeForTextsGroup(group, fontSize) {
     group.setCoords();
 }
 
-
 function logDebug(message) {
     if (DEBUG) { // Assumes DEBUG is a global flag
         console.log(message);
@@ -141,6 +731,7 @@ function logDebug(message) {
 }
 
 function destroyExistingInfiniteScrollAndMasonry(container) {
+    logDebug("destroyExistingInfiniteScrollAndMasonry(c");
     if ($(container).data("infiniteScroll")) {
         $(container).empty(); // Clear the container's HTML
         $(container).infiniteScroll('destroy');
@@ -149,6 +740,7 @@ function destroyExistingInfiniteScrollAndMasonry(container) {
 }
 
 function initializeMasonrySidebar(container) {
+    logDebug("initializeMasonrySidebar(c");
     return $(container).masonry({
         itemSelector: ".thumb",
         columnWidth: 1,
@@ -166,6 +758,7 @@ function initializeMasonrySidebar(container) {
 }
 
 function initializeInfiniteScrollSidebar(container, masonryInstance, templateId) {
+    logDebug("initializeInfiniteScrollSidebar(c");
     $(container).infiniteScroll({
         path: () => `${appUrl}editor/${aMethod_related}/${templateId}?demo_as_id=${demo_as_id}&loadCount=${this.loadCount}&limit_related=${limit_related}`,
         responseType: "text",
@@ -176,6 +769,7 @@ function initializeInfiniteScrollSidebar(container, masonryInstance, templateId)
 }
 
 function initMasonry_related(templateId) {
+    logDebug("initMasonry_related(t");
     logDebug("initMasonry_related()");
     templateId_related = templateId; // Assuming templateId_related is globally accessible
 
@@ -195,26 +789,22 @@ function initMasonry_related(templateId) {
     $(aContainer_related).next().find(".iscroll-button").show();
 }
 
-
-function logDebug(message) {
-    if (DEBUG) { // Assuming DEBUG is a global flag
-        console.log(message);
-    }
-}
-
 function updateCanvasSize(canvas) {
+    logDebug("updateCanvasSize(c");
     setCanvasWidthHeight(canvas.cwidth * canvas.getZoom(), canvas.cheight * canvas.getZoom());
     $("#loadCanvasWid").val(canvas.cwidth / 96);
     $("#loadCanvasHei").val(canvas.cheight / 96);
 }
 
 function applyCanvasBackgroundIfNeeded(canvas) {
+    logDebug("applyCanvasBackgroundIfNeeded(c");
     if (canvas.bgsrc) {
         setCanvasBg(canvas, canvas.bgsrc, "", canvas.bgScale);
     }
 }
 
 function updateHistoryControls(canvas) {
+    logDebug("updateHistoryControls(c");
     if (canvas.$h_pos < 1) {
         $("#undo").hide();
         $("#autosave").data("saved", "yes");
@@ -224,6 +814,7 @@ function updateHistoryControls(canvas) {
 }
 
 function history_undo() {
+    logDebug("history_undo()");
     logDebug("history_undo()");
 
     if (!canvas.$history[canvas.$h_pos - 1]) {
@@ -248,7 +839,7 @@ function history_undo() {
 
 
 function isImagesGroup($object) {
-    logDebugInfo("isImagesGroup()"); // Assuming logDebugInfo is a globally defined function for logging
+    logDebug("isImagesGroup()"); // Assuming logDebugInfo is a globally defined function for logging
 
     // Retrieve the active object if $object is not provided
     $object = $object || canvas.getActiveObject();
@@ -275,19 +866,8 @@ function isImagesGroup($object) {
     return areAllImages($object._objects);
 }
 
-function logDebugInfo(message) {
-    if (DEBUG) { // Assuming DEBUG is a globally defined flag
-        console.log(message);
-    }
-}
-
-function logDebug(message) {
-    if (DEBUG) {
-        console.log(message);
-    }
-}
-
 function destroyExistingMasonryAndInfiniteScroll(container) {
+    logDebug("destroyExistingMasonryAndInfiniteScroll(c");
     if ($(container).data("infiniteScroll")) {
         $(container).html("");
         $(container).infiniteScroll('destroy');
@@ -296,6 +876,7 @@ function destroyExistingMasonryAndInfiniteScroll(container) {
 }
 
 function initializeMasonry(container) {
+    logDebug("initializeMasonry(c");
     return $(container).masonry({
         itemSelector: ".thumb",
         columnWidth: 1,
@@ -313,11 +894,13 @@ function initializeMasonry(container) {
 }
 
 function generateInfiniteScrollPath() {
+    logDebug("generateInfiniteScrollPath()");
     var tags = $(aSearch_bg).val() ? $(aSearch_bg).val().toString() : "";
     return `${appUrl}editor/${aMethod_bg}?loadCount=${this.loadCount}&limit_bg=${limit_bg}&tags=${tags}&design_as_id=${design_as_id}&demo_as_id=${demo_as_id}&loadedtemplateid=${loadedtemplateid}`;
 }
 
 function initializeInfiniteScroll(masonryInstance) {
+    logDebug("initializeInfiniteScroll(m");
     masonryInstance.infiniteScroll({
         path: generateInfiniteScrollPath,
         responseType: "text",
@@ -328,10 +911,12 @@ function initializeInfiniteScroll(masonryInstance) {
 }
 
 function showScrollButton(container) {
+    logDebug("showScrollButton(c");
     $(container).next().find(".iscroll-button").show();
 }
 
 function initMasonry_bg() {
+    logDebug("initMasonry_bg()");
     logDebug("MIGRATED:: initMasonry_bg()");
 
     destroyExistingMasonryAndInfiniteScroll(aContainer_bg);
@@ -345,77 +930,105 @@ function initMasonry_bg() {
     showScrollButton(aContainer_bg);
 }
 
-$("#object-properties").dialog({
-    resizable: !1,
-    height: "auto",
-    width: "auto",
-    modal: !1,
-    autoOpen: !1,
-    dialogClass: "no-close",
-    position: {
-        my: "left center",
-        at: "left+20px center",
-        of: ".main-content"
-    },
-    open: function() {
-        $("#object-properties").dialog("option", "position", {
+$(document).ready(function() {
+
+    $("#object-properties").dialog({
+        resizable: !1,
+        height: "auto",
+        width: "auto",
+        modal: !1,
+        autoOpen: !1,
+        dialogClass: "no-close",
+        position: {
             my: "left center",
             at: "left+20px center",
             of: ".main-content"
-        }),
-        getPropertiesOfObject()
-    },
-    close: function() {
-        s_history = !0,
-        save_history()
-    }
-});
-
-$("#showObSymbolsPanel").click(function() {
-    return $("#font-symbols").dialog("open")
-});
-
-$("#font-symbols").dialog({
-    resizable: !1,
-    height: "auto",
-    width: "auto",
-    modal: !1,
-    autoOpen: !1,
-    dialogClass: "no-close",
-    position: {
-        my: "left center",
-        at: "left+20px center",
-        of: ".main-content"
-    },
-    open: function() {
-        $("#font-symbols").dialog("option", "position", {
+        },
+        open: function() {
+            $("#object-properties").dialog("option", "position", {
+                my: "left center",
+                at: "left+20px center",
+                of: ".main-content"
+            }),
+            getPropertiesOfObject()
+        },
+        close: function() {
+            s_history = !0,
+            save_history()
+        }
+    });
+    
+    $("#showObSymbolsPanel").click(function() {
+        return $("#font-symbols").dialog("open")
+    });
+    
+    $("#font-symbols").dialog({
+        resizable: !1,
+        height: "auto",
+        width: "auto",
+        modal: !1,
+        autoOpen: !1,
+        dialogClass: "no-close",
+        position: {
             my: "left center",
             at: "left+20px center",
             of: ".main-content"
-        }),
-        setupSymbolsPanel()
-    },
-    close: function() {}
-});
+        },
+        open: function() {
+            $("#font-symbols").dialog("option", "position", {
+                my: "left center",
+                at: "left+20px center",
+                of: ".main-content"
+            }),
+            setupSymbolsPanel()
+        },
+        close: function() {}
+    });
+    
+    $("#btnZoomIn").click(function() {
+        var $scale_value = parseFloat(jQuery("#zoomperc").data("scaleValue")) || 1;
+        setZoom($scale_value += .1)
+    });
+    $("#btnZoomOut").click(function() {
+        var $scale_value = parseFloat(jQuery("#zoomperc").data("scaleValue")) || 1;
+        setZoom($scale_value -= .1)
+    });
+    $("#zoomperc").click(function() {
+        setZoom(1)
+    });
 
-$("#btnZoomIn").click(function() {
-    var $scale_value = parseFloat(jQuery("#zoomperc").data("scaleValue")) || 1;
-    setZoom($scale_value += .1)
-});
-$("#btnZoomOut").click(function() {
-    var $scale_value = parseFloat(jQuery("#zoomperc").data("scaleValue")) || 1;
-    setZoom($scale_value -= .1)
-});
-$("#zoomperc").click(function() {
-    setZoom(1)
-});
-$("#btnFitToScreen").click(function() {
-    setZoom(1),
-    autoZoom()
+    $("#btnFitToScreen").click(function() {
+        setZoom(1),
+        autoZoom()
+    });
+    
+    $("#fontbold").click(function(e) {
+        e.preventDefault();
+        toggleTextStyle("fontWeight", "fontbold", "normal", "bold");
+    });
+
+    $("#fontitalic").click(function(e) {
+        e.preventDefault();
+        toggleTextStyle("fontStyle", "fontitalic", "", "italic");
+    });
+
+    $("#fontunderline").click(function(e) {
+        e.preventDefault();
+        // For 'underline', assuming it's a boolean since Fabric.js usually uses boolean for such styles.
+        // You might need to adjust the implementation if it's handled differently in your project.
+        toggleTextDecoration("underline", "fontunderline");
+    });
+
+    $("#changeopacity").slider({
+        formatter: function(value) {
+            return 100 * value + "%"
+        }
+    });
 });
 
 
 function toggleTextStyle(styleType, activeClassId, defaultValue, alternateValue) {
+    logDebug("toggleTextStyle(s");
     var activeObject = canvas.getActiveObject();
     if (!activeObject) return;
 
@@ -436,26 +1049,8 @@ function toggleTextStyle(styleType, activeClassId, defaultValue, alternateValue)
     canvas.renderAll();
 }
 
-$(document).ready(function() {
-    $("#fontbold").click(function(e) {
-        e.preventDefault();
-        toggleTextStyle("fontWeight", "fontbold", "normal", "bold");
-    });
-
-    $("#fontitalic").click(function(e) {
-        e.preventDefault();
-        toggleTextStyle("fontStyle", "fontitalic", "", "italic");
-    });
-
-    $("#fontunderline").click(function(e) {
-        e.preventDefault();
-        // For 'underline', assuming it's a boolean since Fabric.js usually uses boolean for such styles.
-        // You might need to adjust the implementation if it's handled differently in your project.
-        toggleTextDecoration("underline", "fontunderline");
-    });
-});
-
 function toggleTextDecoration(decorationType, activeClassId) {
+    logDebug("toggleTextDecoration(d");
     var activeObject = canvas.getActiveObject();
     if (!activeObject) return;
 
@@ -521,6 +1116,7 @@ $(document).ready(function() {
 });
 
 function cloneActiveObject() {
+    logDebug("cloneActiveObject()");
     var activeObject = canvas.getActiveObject();
     if (!activeObject) return;
 
@@ -532,6 +1128,7 @@ function cloneActiveObject() {
 }
 
 function adjustCloneProperties(clone, original) {
+    logDebug("adjustCloneProperties(c");
     // Adjust the clone's properties based on the original object or active selection
     if (original.type === 'activeSelection') {
         // If cloning an active selection, individually adjust properties of each object within
@@ -559,6 +1156,7 @@ function adjustCloneProperties(clone, original) {
 }
 
 function adjustObjectProperties(obj, originalObj) {
+    logDebug("adjustObjectProperties(o");
     // Apply patterns if the original object has a pattern fill
     if (typeof originalObj.fill === 'object' && (originalObj.fill.type === 'Dpattern' || originalObj.fill.type === 'pattern')) {
         const patternProps = originalObj.fill.toObject();
@@ -582,6 +1180,7 @@ function adjustObjectProperties(obj, originalObj) {
 
 
 function processClone(clone, activeObject) {
+    logDebug("processClone(c");
     if (clone.type === "activeSelection") {
         clone.canvas = canvas;
         clone.forEachObject(function(obj, i) {
@@ -597,6 +1196,7 @@ function processClone(clone, activeObject) {
 }
 
 function copyPropertiesFromActiveObject(clone, original) {
+    logDebug("copyPropertiesFromActiveObject(c");
     setCloneScaleAndPosition(clone, original);
     applyPatternFillIfNeeded(clone, original);
     adjustBorderColor(clone, original);
@@ -604,6 +1204,7 @@ function copyPropertiesFromActiveObject(clone, original) {
 }
 
 function setCloneScaleAndPosition(clone, original) {
+    logDebug("setCloneScaleAndPosition(c");
     clone.set({
         scaleX: original.get("scaleX"),
         scaleY: original.get("scaleY"),
@@ -613,6 +1214,7 @@ function setCloneScaleAndPosition(clone, original) {
 }
 
 function applyPatternFillIfNeeded(clone, original) {
+    logDebug("applyPatternFillIfNeeded(c");
     if (typeof original.fill === "object" && (original.fill.type === "Dpattern" || original.fill.type === "pattern")) {
         var pattern = original.fill.toObject();
         fabric.Dpattern.fromObject(pattern, function(fill) {
@@ -622,6 +1224,7 @@ function applyPatternFillIfNeeded(clone, original) {
 }
 
 function adjustBorderColor(clone, original) {
+    logDebug("adjustBorderColor(c");
     if (original.borderColor === "#ff0000") {
         clone.set({
             borderColor: "#4dd7fa",
@@ -633,33 +1236,22 @@ function adjustBorderColor(clone, original) {
 }
 
 function finalizeClone(clone, activeObject) {
+    logDebug("finalizeClone(c");
     canvas.renderAll();
     canvas.discardActiveObject();
     canvas.setActiveObject(clone);
 }
 
-function onlyUnique(value, index, self) {
-    if (DEBUG) {
-        console.log("onlyUnique()");
-    }
-    return self.indexOf(value) === index
-}
-
-// Function to log messages when debug mode is enabled.
-function logDebugInfo(message) {
-    if (DEBUG) { // Checks if debug mode is globally enabled
-        console.log(message);
-    }
-}
-
 // Function to check if source and destination objects are valid for normalization.
 function isValidObjectPair(src, dest) {
+    logDebug("isValidObjectPair(s");
     // Returns true only if both src and dest objects and their _objects property exist.
     return src && dest && src._objects && dest._objects;
 }
 
 // Function to apply transformations from a source object to a destination object.
 function applyObjectTransformations(srcObject, destObject) {
+    logDebug("applyObjectTransformations(s");
     // Decompose the matrix of the source object to get its properties.
     const matrix = srcObject.calcOwnMatrix();
     const options = fabric.util.qrDecompose(matrix);
@@ -680,7 +1272,8 @@ function applyObjectTransformations(srcObject, destObject) {
 
 // Main function to normalize the scale of SVG objects.
 function normalizeSvgScale(src, dest) {
-    logDebugInfo("normalizeSvgScale()"); // Log the function call for debugging.
+    logDebug("normalizeSvgScale(s");
+    logDebug("normalizeSvgScale()"); // Log the function call for debugging.
 
     // Early return if src or dest objects do not meet validity criteria.
     if (!isValidObjectPair(src, dest)) return false;
@@ -719,6 +1312,7 @@ function normalizeSvgScale(src, dest) {
 
 function copyobjs() {
     logDebug("copyobjs()");
+    logDebug("copyobjs()");
     var activeObject = canvas.getActiveObject();
 
     if (activeObject) {
@@ -732,6 +1326,7 @@ function copyobjs() {
 }
 
 function pasteobjs(inPlace = false) {
+    logDebug("pasteobjs(i");
     logDebug("pasteobjs()");
     if (!activeObjectCopy) return;
 
@@ -756,6 +1351,7 @@ function pasteobjs(inPlace = false) {
 }
 
 function pasteActiveSelection(clonedSelection) {
+    logDebug("pasteActiveSelection(c");
     clonedSelection.canvas = canvas;
     clonedSelection.forEachObject((obj, i) => {
         applyObjectProperties(obj, activeObjectCopy._objects[i]);
@@ -764,11 +1360,13 @@ function pasteActiveSelection(clonedSelection) {
 }
 
 function pasteSingleObject(clonedObj) {
+    logDebug("pasteSingleObject(c");
     applyObjectProperties(clonedObj, activeObjectCopy);
     canvas.add(clonedObj);
 }
 
 function applyObjectProperties(object, referenceObject) {
+    logDebug("applyObjectProperties(o");
     object.set({
         scaleX: referenceObject.get("scaleX"),
         scaleY: referenceObject.get("scaleY"),
@@ -787,10 +1385,12 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 function setupShadowSwitch() {
+    logDebug("setupShadowSwitch()");
     $("input#shadowSwitch").on("click", toggleShadow);
 }
 
 function toggleShadow() {
+    logDebug("toggleShadow()");
     var activeObject = canvas.getActiveObject();
     if (!activeObject) return;
 
@@ -806,6 +1406,7 @@ function toggleShadow() {
 }
 
 function applyShadowToActiveObject(object) {
+    logDebug("applyShadowToActiveObject(o");
     if (object.shadow) {
         object.shadow.color = "rgba(0, 0, 0, 1)";
     } else {
@@ -820,22 +1421,19 @@ function applyShadowToActiveObject(object) {
 }
 
 function enableShadowControls() {
+    logDebug("enableShadowControls()");
     $("#shadowGroup .tab-content").removeClass("editor-disabled");
     $("#shadowColor").spectrum("enable");
 }
 
 function removeShadowFromActiveObject(object) {
+    logDebug("removeShadowFromActiveObject(o");
     object.shadow = null;
 }
 
-function disableShadowControls() {
-    $("#shadowGroup .tab-content").addClass("editor-disabled");
-    $("#shadowColor").spectrum("disable");
-}
-
-
 // Function to set up the "bring to front" action for the active object on the canvas.
 function setupBringLayerToFront() {
+    logDebug("setupBringLayerToFront()");
     var bringLayerToFrontSwitch = document.getElementById("bringtofront");
     if (bringLayerToFrontSwitch) {
         bringLayerToFrontSwitch.addEventListener("click", bringActiveObjectToFront);
@@ -844,6 +1442,7 @@ function setupBringLayerToFront() {
 
 // Function to bring the active object to the front of the canvas, if it exists.
 function bringActiveObjectToFront() {
+    logDebug("bringActiveObjectToFront()");
     var activeObject = canvas.getActiveObject();
     if (activeObject) {
         canvas.bringToFront(activeObject);
@@ -854,6 +1453,7 @@ function bringActiveObjectToFront() {
 
 // Function to set up the "send to back" action for the active object.
 function setupSendLayerToBack() {
+    logDebug("setupSendLayerToBack()");
     var sendLayerToBackSwitch = document.getElementById("sendtoback");
     if (sendLayerToBackSwitch) {
         sendLayerToBackSwitch.addEventListener("click", sendActiveObjectToBack);
@@ -862,6 +1462,7 @@ function setupSendLayerToBack() {
 
 // Function to send the active object to the back on the canvas, if it exists.
 function sendActiveObjectToBack() {
+    logDebug("sendActiveObjectToBack()");
     var activeObject = canvas.getActiveObject();
     if (activeObject) {
         canvas.sendToBack(activeObject);
@@ -871,6 +1472,7 @@ function sendActiveObjectToBack() {
 
 // Function to set up the "bring forward" action for the active object.
 function setupBringLayerForward() {
+    logDebug("setupBringLayerForward()");
     var bringLayerFrontSwitch = document.getElementById("bringforward");
     if (bringLayerFrontSwitch) {
         bringLayerFrontSwitch.addEventListener("click", sendActiveObjectForward);
@@ -879,6 +1481,7 @@ function setupBringLayerForward() {
 
 // Function to bring the active object forward on the canvas, if it exists.
 function sendActiveObjectForward() {
+    logDebug("sendActiveObjectForward()");
     var activeObject = canvas.getActiveObject();
     if (activeObject) {
         canvas.bringForward(activeObject, true); // true to move it one layer forward only if it's not already at the front
@@ -889,6 +1492,7 @@ function sendActiveObjectForward() {
 
 // Function to set up the "send backward" action for the active object.
 function setupSendLayerBackward() {
+    logDebug("setupSendLayerBackward()");
     var sendLayerBackSwitch = document.getElementById("sendbackward");
     if (sendLayerBackSwitch) {
         sendLayerBackSwitch.addEventListener("click", function() {
@@ -899,6 +1503,7 @@ function setupSendLayerBackward() {
 
 // Function to send the active object backward on the canvas, if it exists.
 function sendActiveObjectBackward() {
+    logDebug("sendActiveObjectBackward()");
     var activeObject = canvas.getActiveObject();
     if (activeObject) {
         canvas.sendBackwards(activeObject, true); // true to send it one layer back only if it's not already at the bottom

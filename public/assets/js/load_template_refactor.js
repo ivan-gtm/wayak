@@ -72,7 +72,7 @@ function applyObjectProperties(loadedObject, svgData, svgIndex) {
     }
 
     // Apply gradient if applicable
-    var gradientType = getGradientTypeofObject(svgData);
+    var gradientType = getGradientTypeOfObject(svgData);
     if (gradientType !== false) {
         applyGradient(svgData.fill.colorStops[0].color, svgData.fill.colorStops[1].color, gradientType, loadedObject);
     } else {

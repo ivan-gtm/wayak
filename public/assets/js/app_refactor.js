@@ -1276,9 +1276,9 @@ function toggleUIElements() {
     canvasindex > 10 ? $(".download-jpeg-menu-item").hide() : $(".download-jpeg-menu-item").show();
 }
 
-function getGradientTypeofObject(object) {
+function getGradientTypeOfObject(object) {
     if (DEBUG) {
-        console.log("MIGRATED:: getGradientTypeofObject()");
+        console.log("MIGRATED:: getGradientTypeOfObject()");
     }
 
     if (!object || !isObjectGradient(object.fill)) {

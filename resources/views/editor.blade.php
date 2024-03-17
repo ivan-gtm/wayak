@@ -4973,8 +4973,8 @@
         <script src="{{ asset('assets/js/app_refactor.js?rev='.time()) }}"></script>
         <script src="{{ asset('assets/js/app_download.js?rev='.time()) }}"></script>
         <script src="{{ asset('assets/js/toolbar.js?rev='.time()) }}"></script>
+        <!-- <script src="{{ asset('assets/js/app.js?rev='.time()) }}"></script> -->
         <script src="{{ asset('assets/js/app_interface_refactor.js?rev='.time()) }}"></script>
-        <script src="{{ asset('assets/js/app.js?rev='.time()) }}"></script>
         <!-- endbuild -->
         <script type="text/javascript">
             // Wait for window load
