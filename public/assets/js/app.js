@@ -767,6 +767,7 @@ function deleteCanvasBg(lcanvas) {
 }
 
 $("body").on("click", ".fill-type", function(e) {
+    if (DEBUG) console.log('$("body").on("click", ".fill-type", function(e) {');
     e.preventDefault();
     var $color1, $color2, $activeObject = canvas.getActiveObject(), $colorSelectorBox = $(this).parents(".colorSelectorBox"), $filltype = $(this).attr("id"), $cpicker = $colorSelectorBox.find(".dynamiccolorpicker"), $cpicker2 = $colorSelectorBox.find(".dynamiccolorpicker2.showElement"), $oldFilltype = $colorSelectorBox.data("gradient-type");
     if ($color1 = $cpicker.length ? $cpicker.spectrum("get").toRgbString().replace(/\s/g, "") : "#000000",
@@ -860,6 +861,7 @@ $("#addrow,#addcolumn").click(function(e) {
     openTemplate(JSON.stringify(jsonCanvasArray))
 }),
 $("#templatesearch").on("keypress", function(e) {
+    if (DEBUG) console.log('$("#templatesearch").on("keypress", function(e) {');
     if (13 === e.which) {
         $(this).val().match(/\w+/g).toString();
         $("#a").scrollTop(0),
@@ -868,6 +870,7 @@ $("#templatesearch").on("keypress", function(e) {
     }
 }),
 $("#textsearch").on("keypress", function(e) {
+    if (DEBUG) console.log('$("#textsearch").on("keypress", function(e) {');
     if (13 === e.which) {
         $(this).val().match(/\w+/g).toString();
         $("#b").scrollTop(0),
@@ -876,6 +879,7 @@ $("#textsearch").on("keypress", function(e) {
     }
 }),
 $("#elementssearch").on("keypress", function(e) {
+    if (DEBUG) console.log('$("#elementssearch").on("keypress", function(e) {');
     if (13 === e.which) {
         $(this).val().match(/\w+/g).toString();
         initMasonry_element(),
@@ -883,6 +887,7 @@ $("#elementssearch").on("keypress", function(e) {
     }
 }),
 $("#bgsearch").on("keypress", function(e) {
+    if (DEBUG) console.log('$("#bgsearch").on("keypress", function(e) {');
     if (13 === e.which) {
         $(this).val().match(/\w+/g).toString();
         initMasonry_bg(),
@@ -890,9 +895,11 @@ $("#bgsearch").on("keypress", function(e) {
     }
 }),
 $("#catimage_container").on("click", ".thumbnail", function() {
+    if (DEBUG) console.log('$("#catimage_container").on("click", ".thumbnail", function() {');
     jQuery(this).data("target") && loadElement(jQuery(this).data("target"))
 }),
 $("#text_container").on("click", ".thumbnail", function() {
+    if (DEBUG) console.log('$("#text_container").on("click", ".thumbnail", function() {');
     jQuery(this).data("target") && loadText(jQuery(this).data("target"))
 }),
 $(window).bind("beforeunload", function() {
@@ -990,9 +997,11 @@ $(".bgPane").click(function(e) {
     loadTemplates_bg()
 }),
 $("#gridbtn").on("click", function() {
+    if (DEBUG) console.log('$("#gridbtn").on("click", function() {');
     addGrid()
 }),
 $("#bgscale").on("slide", function(slideEvt) {
+    if (DEBUG) console.log('$("#bgscale").on("slide", function(slideEvt) {');
     var $csv = $("#bgscale").data("cachedVal")
       , $zoom = canvas.getZoom() || 1
       , $sv = slideEvt.value / 100 / 3.125 / fabric.devicePixelRatio * $zoom;
@@ -1001,6 +1010,7 @@ $("#bgscale").on("slide", function(slideEvt) {
     canvas.renderAll())
 }),
 $("#bgscale").on("slideStop", function(slideEvt) {
+    if (DEBUG) console.log('$("#bgscale").on("slideStop", function(slideEvt) {');
     canvas.bgScale = slideEvt.value / 100
 });
 
@@ -1303,7 +1313,9 @@ $("#savetemplate").click(function() {
     isupdatetemplate = !0,
     proceed_savetemplate())
 }),
-$("#savetemplate_modal").on("hidden.bs.modal", function(e) {}),
+$("#savetemplate_modal").on("hidden.bs.modal", function(e) {
+    if (DEBUG) console.log('$("#savetemplate_modal").on("hidden.bs.modal", function(e) {}),');
+}),
 $("#newtemplate").click(function(e) {
     if (e.preventDefault(),
     "yes" !== $("#autosave").data("saved"))
@@ -1654,6 +1666,7 @@ var processDownloadButton = function(data, type) {
     }
 };
 $(document).on("click", ".file-button-download", function() {
+    if (DEBUG) console.log('$(document).on("click", ".file-button-download", function() {');
     setTimeout(function() {
         toastMsg && toastMsg.reset()
     }, 3e3);
@@ -1707,6 +1720,7 @@ var pageSizes = [{
     id: "#btn_type_a2"
 }];
 $("#savecrop, #savebleedPdf, #savePaper").on("change", function() {
+    if (DEBUG) console.log('$("#savecrop, #savebleedPdf, #savePaper").on("change", function() {');
     checkSavePaper().length > 0 ? $(".savePaperRow").show() : ($("#selectSize").attr("aria-expanded", !1),
     $("#selectSize").removeClass("in"),
     $("#savePaper").prop("checked", !1),
@@ -1714,6 +1728,7 @@ $("#savecrop, #savebleedPdf, #savePaper").on("change", function() {
     getPreview()
 }),
 $("#btn_type_a4, #btn_type_us").on("click", function() {
+    if (DEBUG) console.log('$("#btn_type_a4, #btn_type_us").on("click", function() {');
     checkSavePaper(),
     getPreview()
 });
@@ -1869,6 +1884,7 @@ function saveAsTemplateFile() {
 
 
 $("#progressModal").on("shown.bs.modal", function(e) {
+    if (DEBUG) console.log('$("#progressModal").on("shown.bs.modal", function(e) {');
     $("#savePaper").is(":checked") ? $("input#savecrop").is(":checked") && 1 === globalCol && 1 === globalRow ? createBleedForPDF({
         callback: removeDeletedCanvasesProxy
     }) : removeDeletedCanvasesProxy() : $("input#savecrop").is(":checked") && 1 === globalCol && 1 === globalRow ? createBleedForPDF({
@@ -3172,6 +3188,7 @@ $("#saveElement").click(function() {
     }) : $("#saveelement_modal").modal("show")
 }),
 $("#cancel-design-as").on("click", function() {
+    if (DEBUG) console.log('$("#cancel-design-as").on("click", function() {');
     var url = appUrl + "admin/Users/close-design-as-user-scope";
     $.ajax({
         method: "post",
@@ -3182,6 +3199,7 @@ $("#cancel-design-as").on("click", function() {
     })
 }),
 $("#redirect-admin-design-as").on("click", function(e) {
+    if (DEBUG) console.log('$("#redirect-admin-design-as").on("click", function(e) {');
     e.preventDefault(),
     e.stopPropagation();
     var redirectUrl = $(this).prop("href")
@@ -3514,6 +3532,7 @@ $(function() {
         divColumnClass: ""
     });
     $("#AddelementModal").on("shown.bs.modal", function(e) {
+        if (DEBUG) console.log('$("#AddelementModal").on("shown.bs.modal", function(e) {');
         var parent = $("#addElement").parent()[0];
         if ($(parent).removeClass("active"),
         null !== wrapperDz)
@@ -3551,6 +3570,7 @@ $(function() {
         })
     }),
     $(document).on("click", "#uploadButton", function() {
+        if (DEBUG) console.log('$(document).on("click", "#uploadButton", function() {');
         if (newElementTagsEdit.validate()) {
             var tags = JSON.parse(newElementTagsEdit.getTags()).join(",")
               , formData = new FormData;
@@ -3733,6 +3753,7 @@ var newBgTagsEdit = $("#newBgTags").tagsField({
     divColumnClass: "form-group col-sm-12"
 });
 // $("#add-background-form").parsley().on("form:submit", function(event) {
+    if (DEBUG) console.log('// $("#add-background-form").parsley().on("form:submit", function(event) {');
 //     if (!newBgTagsEdit.validate())
 //         return !1;
 //     $("#uploadBgButton").html("Uploading..."),
@@ -4041,6 +4062,7 @@ function loadElement(elementid) {
 }
 
 $("#group").on("click", function() {
+    if (DEBUG) console.log('$("#group").on("click", function() {');
     var activeSelection = canvas.getActiveObject();
     activeSelection && "activeSelection" === activeSelection.type && activeSelection._objects && (activeSelection.toGroup().svg_custom_paths = [],
     $("#group").hide(),
@@ -4093,6 +4115,7 @@ var ChangeOpacity = function() {
     }
 }
   , co = $("#changeopacity").slider().on("change", ChangeOpacity).data("slider");
+  if (DEBUG) console.log(', co = $("#changeopacity").slider().on("change", ChangeOpacity).data("slider");');
 
 function ChangeStrokeWidth(e) {
     if (DEBUG) {
@@ -4120,6 +4143,7 @@ function ChangeStrokeWidth(e) {
 
 $("#changestrokewidth").slider().on("slide", ChangeStrokeWidth).data("slider"),
 $("#changestrokewidth").slider().on("slideStop", function(e) {
+    if (DEBUG) console.log('$("#changestrokewidth").slider().on("slideStop", function(e) {');
     s_history = !0,
     save_history()
 });
@@ -4277,21 +4301,25 @@ $(window).load(function() {
     if ("administrator" == currentUserRole && !hideVideoModal) {
         $("#modal-video").modal(),
         $(document).on("click", "#hide-video", function() {
+            if (DEBUG) console.log('$(document).on("click", "#hide-video", function() {');
             var url = appUrl + "design/actions/hideVideo.php";
             $.get(url)
         });
         var youtubeFunc = ""
           , youtubeIframe = document.getElementById("modal-video").getElementsByTagName("iframe")[0].contentWindow;
         $("#modal-video").on("hidden.bs.modal", function(e) {
+            if (DEBUG) console.log('$("#modal-video").on("hidden.bs.modal", function(e) {');
             youtubeFunc = "pauseVideo",
             youtubeIframe.postMessage('{"event":"command","func":"' + youtubeFunc + '","args":""}', "*")
         })
     }
 }),
 $(".noclose").on("click", function(e) {
+    if (DEBUG) console.log('$(".noclose").on("click", function(e) {');
     e.stopPropagation()
 }),
 $(document).on("click", ".catImage", function() {
+    if (DEBUG) console.log('$(document).on("click", ".catImage", function() {');
     if (hasCanvas()) {
         appSpinner.show();
         var imagepath = $(this).data("imgsrc")
@@ -4306,6 +4334,7 @@ $(document).on("click", ".catImage", function() {
     return !1
 }),
 $(document).on("click", ".bgImage", function() {
+    if (DEBUG) console.log('$(document).on("click", ".bgImage", function() {');
     if (hasCanvas()) {
         var bgimagepath = $(this).data("imgsrc");
         $("#bgscale").slider("setValue", 100),
@@ -4314,24 +4343,30 @@ $(document).on("click", ".bgImage", function() {
     return !1
 }),
 $(document).on("click", "#bgImageRemove", function() {
+    if (DEBUG) console.log('$(document).on("click", "#bgImageRemove", function() {');
     return deleteCanvasBg(canvas),
     $("#bgcolorselect").spectrum("set", ""),
     !1
 });
 var tempIdToDel = "";
 $(document).on("click", ".deleteTemp", function() {
+    if (DEBUG) console.log('$(document).on("click", ".deleteTemp", function() {');
     showDeleteModal("Delete Template", "Are you sure you want to delete this template?", "Be sure this template id is not associated with any listings!", "deleteTemplate", $(this).attr("id"))
 }),
 $(document).on("click", ".deleteText", function() {
+    if (DEBUG) console.log('$(document).on("click", ".deleteText", function() {');
     deleteText($(this).attr("id"))
 }),
 $(document).on("click", ".deleteElement", function() {
+    if (DEBUG) console.log('$(document).on("click", ".deleteElement", function() {');
     showDeleteModal("Delete Element", "Are you sure you want to delete this element?", "Be sure this element id is not associated with any templates!", "deleteElement", $(this).attr("id"))
 }),
 $(document).on("click", ".deleteBg", function() {
+    if (DEBUG) console.log('$(document).on("click", ".deleteBg", function() {');
     showDeleteModal("Delete Background", "Are you sure you want to delete this background?", "Be sure this background id is not associated with any templates!", "deleteBg", $(this).attr("id"))
 }),
 $(document).on("click", ".deleteImage", function() {
+    if (DEBUG) console.log('$(document).on("click", ".deleteImage", function() {');
     deleteImage($(this).data("target"))
 }),
 $("#publishTemplate").click(function() {
@@ -4389,6 +4424,7 @@ $("#bgcolorselect").spectrum({
     }
 }),
 $("#bgcolorselect").on("dragstop.spectrum", function(e, color) {
+    if (DEBUG) console.log('$("#bgcolorselect").on("dragstop.spectrum", function(e, color) {');
     setTimeout(function() {
         null == window.localStorage[localStorageKey] && (window.localStorage[localStorageKey] = ";");
         var local_store = window.localStorage[localStorageKey];
@@ -4475,6 +4511,7 @@ $("#shadowColor").spectrum({
     }
 }),
 $("#shadowColor").on("dragstop.spectrum", function(e, color) {
+    if (DEBUG) console.log('$("#shadowColor").on("dragstop.spectrum", function(e, color) {');
     setTimeout(function() {
         null == window.localStorage[localStorageKey] && (window.localStorage[localStorageKey] = ";");
         var local_store = window.localStorage[localStorageKey];
@@ -4497,36 +4534,42 @@ $("#bgcolorcontainer .sp-palette-toggle").addClass("btn btn-alt4"),
 $("#bgcolorcontainer input").attr("placeholder", "Type a # hex color code and hit enter"),
 jQuery(function($) {
     $("#a").on("scroll", function() {
+        if (DEBUG) console.log('$("#a").on("scroll", function() {');
         flag_scroll_templates_template || 100 * ($(this).scrollTop() + $(this).innerHeight()) / $(this)[0].scrollHeight > 95 && ($(aContainer_template).next().find(".loader-ellips").show(),
         $(aContainer_template).next().find(".iscroll-button").hide(),
         flag_scroll_templates_template = !0,
         loadTemplates_template())
     }),
     $("#b").on("scroll", function() {
+        if (DEBUG) console.log('$("#b").on("scroll", function() {');
         flag_scroll_templates_text || 100 * ($(this).scrollTop() + $(this).innerHeight()) / $(this)[0].scrollHeight > 95 && ($(aContainer_text).next().find(".loader-ellips").show(),
         $(aContainer_text).next().find(".iscroll-button").hide(),
         flag_scroll_templates_text = !0,
         loadTemplates_text())
     }),
     $("#c").on("scroll", function() {
+        if (DEBUG) console.log('$("#c").on("scroll", function() {');
         flag_scroll_templates_element || 100 * ($(this).scrollTop() + $(this).innerHeight()) / $(this)[0].scrollHeight > 95 && ($(aContainer_element).next().find(".loader-ellips").show(),
         $(aContainer_element).next().find(".iscroll-button").hide(),
         flag_scroll_templates_element = !0,
         loadTemplates_element())
     }),
     $("#d").on("scroll", function() {
+        if (DEBUG) console.log('$("#d").on("scroll", function() {');
         flag_scroll_templates_bg || 100 * ($(this).scrollTop() + $(this).innerHeight()) / $(this)[0].scrollHeight > 95 && ($(aContainer_bg).next().find(".loader-ellips").show(),
         $(aContainer_bg).next().find(".iscroll-button").hide(),
         flag_scroll_templates_bg = !0,
         loadTemplates_bg())
     }),
     $("#e").on("scroll", function() {
+        if (DEBUG) console.log('$("#e").on("scroll", function() {');
         flag_scroll_templates_related || 100 * ($(this).scrollTop() + $(this).innerHeight()) / $(this)[0].scrollHeight > 95 && ($(aContainer_related).next().find(".loader-ellips").show(),
         $(aContainer_related).next().find(".iscroll-button").hide(),
         flag_scroll_templates_related = !0,
         loadTemplates_related())
     }),
     $("#f").on("scroll", function() {
+        if (DEBUG) console.log('$("#f").on("scroll", function() {');
         isScrollEnabledForImages || 100 * ($(this).scrollTop() + $(this).innerHeight()) / $(this)[0].scrollHeight > 95 && ($(imagesContainerSelector).next().find(".loader-ellips").show(),
         $(imagesContainerSelector).next().find(".iscroll-button").hide(),
         isScrollEnabledForImages = !0,
@@ -4534,6 +4577,7 @@ jQuery(function($) {
     })
 }),
 $(".uploaded_images_list").on("click", ".dz-preview:not(.dz-error)", function(e) {
+    if (DEBUG) console.log('$(".uploaded_images_list").on("click", ".dz-preview:not(.dz-error)", function(e) {');
     if (!$(e.target).hasClass("deleteImage")) {
         var id = $(this).data("id");
         if (id && hasCanvas()) {
@@ -4662,6 +4706,7 @@ function unflatten() {
     })
 }
 $("#relatedProductsPane .col-lg-12.scroll-container").on("click", function() {
+    if (DEBUG) console.log('$("#relatedProductsPane .col-lg-12.scroll-container").on("click", function() {');
     getRelatedProducts(loadedtemplateid)
 }),
 $(document).ready(function() {
@@ -4944,9 +4989,6 @@ $(".sidebar-elements li a").not(".sidebar-elements.zoom-control li a").click(fun
     $(".sidebar-elements .sub-menu").parent().removeClass("active"),
     $(this).parent().addClass("active")
 }),
-$("body").on("click", function(e) {
-    $(".submenu.visible").is(e.target) || 0 !== $(".submenu.visible").has(e.target).length || 0 !== $(".parent").parent().has(e.target).length || $(".sidebar-elements .sub-menu").parent().removeClass("active")
-}),
 $(document).ajaxError(function(event, jqxhr, settings, thrownError) {
     "Unauthorized" != thrownError && 401 != jqxhr.status || 0 !== demo_as_id || ($("#loginModal").modal("show"),
     appSpinner.hide()),
@@ -5195,6 +5237,7 @@ function getPropertiesOfObject(event, ui) {
 }
 
 $("#object-scale").slider().on("slide", function(e) {
+    if (DEBUG) console.log('$("#object-scale").slider().on("slide", function(e) {');
     var $obj = canvas.getActiveObject();
     if ($obj) {
         var $sc = this.value / 3.125 / 100;
@@ -5206,26 +5249,32 @@ $("#object-scale").slider().on("slide", function(e) {
     }
 }),
 $("#object-hue").slider().on("slide", function(e) {
+    if (DEBUG) console.log('$("#object-hue").slider().on("slide", function(e) {');
     var $f = new fabric.Image.filters.HueRotation;
     applyFilter($f, $f.mainParameter, parseFloat(this.value) / $filter_multiplier_hue)
 }),
 $("#object-brightness").slider().on("slide", function(e) {
+    if (DEBUG) console.log('$("#object-brightness").slider().on("slide", function(e) {');
     var $f = new fabric.Image.filters.Brightness;
     applyFilter($f, $f.mainParameter, parseFloat(this.value) / $filter_multiplier)
 }),
 $("#object-contrast").slider().on("slide", function(e) {
+    if (DEBUG) console.log('$("#object-contrast").slider().on("slide", function(e) {');
     var $f = new fabric.Image.filters.Contrast;
     applyFilter($f, $f.mainParameter, parseFloat(this.value) / $filter_multiplier)
 }),
 $("#object-saturation").slider().on("slide", function(e) {
+    if (DEBUG) console.log('$("#object-saturation").slider().on("slide", function(e) {');
     var $f = new fabric.Image.filters.Saturation;
     applyFilter($f, $f.mainParameter, parseFloat(this.value) / $filter_multiplier)
 }),
 $("#object-blur").slider().on("slide", function(e) {
+    if (DEBUG) console.log('$("#object-blur").slider().on("slide", function(e) {');
     var $f = new fabric.Image.filters.Blur;
     applyFilter($f, $f.mainParameter, parseFloat(this.value) / $filter_multiplier)
 }),
 $("#object-grayscale").on("change", function(e) {
+    if (DEBUG) console.log('$("#object-grayscale").on("change", function(e) {');
     var $f = new fabric.Image.filters.Grayscale
       , $parameter = $f.mainParameter;
     this.checked ? applyFilter($f, $parameter, "average") : resetFilter("Grayscale")
@@ -5396,6 +5445,7 @@ function saveFontDetails() {
 }
 
 $("body").on("click", ".filter-reset-all", function(e) {
+    if (DEBUG) console.log('$("body").on("click", ".filter-reset-all", function(e) {');
     e.preventDefault();
     var $obj = canvas.getActiveObject();
     $(".filter-wrapper").map(function() {
@@ -5524,6 +5574,7 @@ function setDynamicPattern($o, $src) {
 }
 
 $("body").on("pattern_image_loaded", function(e) {
+    if (DEBUG) console.log('$("body").on("pattern_image_loaded", function(e) {');
     DEBUG && console.log("pattern_image_loaded"),
     $(".pattern_tile").removeClass("loading"),
     setTimeout(function() {
@@ -5535,12 +5586,15 @@ $("body").on("pattern_image_loaded", function(e) {
 }),
 $(".patternScale").slider().on("slide", updatePatternFill).data("slider"),
 $(".patternScale").slider().on("slideStart", function(e) {
+    if (DEBUG) console.log('$(".patternScale").slider().on("slideStart", function(e) {');
     $(".patternFillTab").addClass("fade")
 }),
 $(".patternScale").slider().on("slideStop", function(e) {
+    if (DEBUG) console.log('$(".patternScale").slider().on("slideStop", function(e) {');
     $(".patternFillTab").removeClass("fade")
 }),
 $("body").on("click", ".patternFillLabel", function(e) {
+    if (DEBUG) console.log('$("body").on("click", ".patternFillLabel", function(e) {');
     e.preventDefault();
     var $btn = $(e.target);
     $(".patternFillPreview").removeClass("open"),
@@ -5555,6 +5609,7 @@ $("body").on("click", ".patternFillLabel", function(e) {
     $ao && $ao.fill instanceof fabric.Dpattern && $(".patternScale").slider("setValue", 100 * $ao.fill.scale * 3.125 * fabric.devicePixelRatio)
 }),
 $(".patternFillTab").on("click", ".pattern_tile", function(e) {
+    if (DEBUG) console.log('$(".patternFillTab").on("click", ".pattern_tile", function(e) {');
     var $ao = canvas.getActiveObject()
       , $pattern_tile = $(e.target).parent(".pattern_tile");
     $pattern_tile.addClass("loading"),
@@ -5564,17 +5619,20 @@ $(document).ready(function() {
     // Get background patterns
     // getPatterns(0),
     // $("#patternsList").on("scroll", function(e) {
+        if (DEBUG) console.log('// $("#patternsList").on("scroll", function(e) {');
     //     var element = $(e.target).get(0);
     //     element.scrollTop > element.scrollHeight - element.offsetHeight - 10 && (patternsLoading || getPatterns(offsetPatterns))
     // })
 }),
 $("#fontSearch").on("keyup", function() {
+    if (DEBUG) console.log('$("#fontSearch").on("keyup", function() {');
     var value = $(this).val().toLowerCase();
     $(".dropdown-menu li").filter(function() {
         $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
     })
 }),
 $("#font-dropdown").on("hide.bs.dropdown", function(e) {
+    if (DEBUG) console.log('$("#font-dropdown").on("hide.bs.dropdown", function(e) {');
     $("#fontSearch").val(""),
     $(".dropdown-menu li").filter(function() {
         $(this).toggle($(this).text().toLowerCase().indexOf("") > -1)
@@ -5582,6 +5640,7 @@ $("#font-dropdown").on("hide.bs.dropdown", function(e) {
     $("#fontSearch").blur()
 }),
 $(".left-sidebar-dropdown-menu").on("hide.bs.dropdown", function(e) {
+    if (DEBUG) console.log('$(".left-sidebar-dropdown-menu").on("hide.bs.dropdown", function(e) {');
     $(".left-sidebar-dropdown-menu .dropdown-menu li").removeClass("active")
 });
 var webSocketConn = !1
@@ -5847,6 +5906,7 @@ function loadTemplates_element() {
 }
 
 // $(aContainer_element).on("load.infiniteScroll", function() {
+    if (DEBUG) console.log('// $(aContainer_element).on("load.infiniteScroll", function() {');
 //     var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee(event, response) {
 //         var data, itemsHTML, items;
 //         return regeneratorRuntime.wrap(function(_context) {

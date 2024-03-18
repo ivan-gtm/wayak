@@ -34,6 +34,10 @@ $(document).ready(function() {
     initializeShadowOffsetSliders();
 });
 
+$("body").on("click", function(e) {
+    if (DEBUG) console.log('$("body").on("click", function(e) {');
+    $(".submenu.visible").is(e.target) || 0 !== $(".submenu.visible").has(e.target).length || 0 !== $(".parent").parent().has(e.target).length || $(".sidebar-elements .sub-menu").parent().removeClass("active")
+});
 
 // Define a more readable and maintainable configuration object
 const spectrumOptions = {
@@ -417,10 +421,10 @@ function finalizeCharSpacingAdjustment() {
 
 function initializeLineHeightSlider() {
     logDebug("initializeLineHeightSlider()");
-    var lineHeightSlider = $("#changelineheight").slider({
+    $("#changelineheight").slider({
         onSlide: adjustActiveObjectLineHeight,
         onSlideStop: finalizeLineHeightAdjustment
-    }).data("slider");
+    });
 }
 
 function adjustActiveObjectLineHeight() {
