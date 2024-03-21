@@ -3423,17 +3423,6 @@ function uploadBgimage() {
     })
 }
 
-function addNewCanvasPage(dupflag, pageid) {
-    if (DEBUG) {
-        console.log("addNewCanvasPage()");
-    }
-
-    pageindex++,
-    $("#canvaspages").append("<div class='page' id='page" + pageindex + "'></div>"),
-    addCanvasToPage(dupflag, pageid),
-    setWorkspace()
-}
-
 function loadSVGForGroupMembers($options) {
     if (DEBUG) {
         console.log("loadSVGForGroupMembers()");
@@ -3679,28 +3668,7 @@ $("#deleteText").click(function() {
         $("#responceMessage").html("Please select the Text(s), you wish to delete.")
 }),
 $("#element_img").on("change", prepareUpload),
-$("#bg_img").on("change", prepareBGUpload),
-$(".deletecanvas").click(function() {
-    var id = this.id.replace("deletecanvas", "");
-    $("#page" + id).hide();
-    var pages = $(".page:visible");
-    $.each(pages, function(key, page) {
-        adjustIconPos($(page).prop("id").replace("page", ""))
-    }),
-    1 == $(".page:visible").length && $(".deletecanvas").css("display", "none"),
-    $(".page:visible").find(".canvascontent").length > 10 ? $(".download-jpeg-menu-item").hide() : $(".download-jpeg-menu-item").show(),
-    setWorkspace(),
-    updatePageNumbers()
-}),
-$(".duplicatecanvas").click(function() {
-    if (!$(this).hasClass("disabled")) {
-        var id = this.id;
-        id = id.replace("duplicatecanvas", ""),
-        canvas.discardActiveObject(),
-        addNewCanvasPage(!0, id),
-        setWorkspace()
-    }
-});
+$("#bg_img").on("change", prepareBGUpload);
 
 var newBgTagsEdit = $("#newBgTags").tagsField({
     label: "Tags",

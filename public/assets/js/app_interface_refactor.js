@@ -36,7 +36,89 @@ $(document).ready(function() {
     attachNoCloseClickHandler();
     attachCharSpacingClickHandler();
     attachObjectOpacityClickHandler();
+    setupDuplicateCanvasClickHandler();
+    attachDeleteCanvasHandler();
 });
+
+function attachDeleteCanvasHandler() {
+    $(".deletecanvas").on("click", function() {
+        var id = extractIdFromElementId($(this).attr("id"), "deletecanvas");
+        hidePageById(id);
+        adjustVisiblePageIcons();
+        toggleDeleteButtonBasedOnVisiblePages();
+        toggleDownloadJpegMenuItemBasedOnCanvasCount();
+        setWorkspace();
+        updatePageNumbers();
+    });
+}
+
+function extractIdFromElementId(elementId, prefix) {
+    return elementId.replace(prefix, "");
+}
+
+function hidePageById(pageId) {
+    $("#page" + pageId).hide();
+}
+
+function adjustVisiblePageIcons() {
+    $(".page:visible").each(function() {
+        adjustIconPos(extractIdFromElementId($(this).attr("id"), "page"));
+    });
+}
+
+function toggleDeleteButtonBasedOnVisiblePages() {
+    if ($(".page:visible").length === 1) {
+        $(".deletecanvas").hide();
+    } else {
+        $(".deletecanvas").show();
+    }
+}
+
+function toggleDownloadJpegMenuItemBasedOnCanvasCount() {
+    if ($(".page:visible").find(".canvascontent").length > 10) {
+        $(".download-jpeg-menu-item").hide();
+    } else {
+        $(".download-jpeg-menu-item").show();
+    }
+}
+
+
+function setupDuplicateCanvasClickHandler() {
+    $(".duplicatecanvas").on("click", function() {
+        if (!$(this).hasClass("disabled")) {
+            var canvasId = extractCanvasIdFromDuplicateButtonId(this.id);
+            canvas.discardActiveObject();
+            addNewCanvasPage(true, canvasId);
+            setWorkspace();
+        }
+    });
+}
+
+function extractCanvasIdFromDuplicateButtonId(buttonId) {
+    // Replace "duplicatecanvas" with an empty string to extract the numeric ID
+    return buttonId.replace("duplicatecanvas", "");
+}
+
+function addNewCanvasPage(duplicateFlag, pageId) {
+    logDebug("addNewCanvasPage");
+
+    // Increment the page index and add a new page div to the canvas pages container
+    pageindex++;
+    var newPageId = 'page' + pageindex;
+    $("#canvaspages").append(`<div class='page' id='${newPageId}'></div>`);
+
+    // Add a canvas to the newly created page
+    addCanvasToPage(duplicateFlag, pageId);
+
+    // Adjust the workspace layout or settings
+    setWorkspace();
+}
+
+function logDebug(message) {
+    if (DEBUG) { // Ensure DEBUG is a global boolean flag
+        console.log(message);
+    }
+}
 
 function attachObjectOpacityClickHandler() {
     $("#objectopacity").on("click", function() {
@@ -1985,7 +2067,7 @@ fabric.Dpattern = fabric.util.createClass(fabric.Pattern, {
         })
     },
     toObject: function() {
-        DEBUG && console.log("Dpattern toObject", this);
+        // DEBUG && console.log("Dpattern toObject", this);
         var object, NUM_FRACTION_DIGITS = fabric.Object.NUM_FRACTION_DIGITS, source = this.patternSourceCanvas;
         this.patternSourceCanvas && this.patternSourceCanvas.toDataURL && (source = this.patternSourceCanvas.toDataURL({
             multiplier: fabric.devicePixelRatio
@@ -2008,7 +2090,7 @@ fabric.Dpattern = fabric.util.createClass(fabric.Pattern, {
         object
     },
     toDatalessJSON: function() {
-        DEBUG && console.log("toDatalessJSON", this);
+        // DEBUG && console.log("toDatalessJSON", this);
         for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++)
             args[_key2] = arguments[_key2];
         var object = this.toObject(args);
@@ -2021,10 +2103,9 @@ fabric.Dpattern = fabric.util.createClass(fabric.Pattern, {
 }),
 fabric.Dpattern.async = !0,
 fabric.Dpattern.fromObject = function(object, callback) {
-    return DEBUG && console.log("Dpattern fromObject", object),
-    new fabric.Dpattern(object,callback)
-}
-;
+    // DEBUG && console.log("Dpattern fromObject", object),
+    return new fabric.Dpattern(object,callback);
+};
 
 // var DEBUG = !1;
 fabric.Object.NUM_FRACTION_DIGITS = 10,
