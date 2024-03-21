@@ -32,7 +32,7 @@
         <link href="{{ asset('assets/js/font-awesome/css/all.min.css') }}" rel="stylesheet"/>
         <link href="{{ asset('assets/css/spectrum.css') }}" rel="stylesheet" type="text/css"/>
         <link href="{{ asset('assets/css/jquery-ui.min.css') }}" rel="stylesheet" type="text/css"/>
-        <!-- <link href="{{ asset('assets/css/bootstrap-slider.css') }}" rel="stylesheet" type="text/css"/> -->
+        <link href="{{ asset('assets/css/bootstrap-slider.css') }}" rel="stylesheet" type="text/css"/>
         <!-- <link href="{{ asset('assets/lib/dropzone/dist/dropzone.css') }}" rel="stylesheet" type="text/css"/> -->
         <link href="{{ asset('assets/css/style.css?v=0301201901') }}" rel="stylesheet" type="text/css"/>
         <link href="{{ asset('assets/js/select2/select2.min.css') }}" rel="stylesheet"/>

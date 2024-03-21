@@ -1243,42 +1243,6 @@ $("#undo").click(function(e) {
 $("#redo").click(function(e) {
     e.preventDefault(),
     history_redo()
-}),
-$("#addremovestroke").click(function(e) {
-    DEBUG && console.log(addremovestroke),
-    e.preventDefault(),
-    e.stopPropagation();
-    var activeObject = canvas.getActiveObject();
-    if (activeObject) {
-        if (activeObject.get("stroke")) {
-            if (activeObject.paths)
-                for (var i = 0; i < activeObject.paths.length; i++)
-                    activeObject.paths[i].set("stroke", ""),
-                    activeObject.paths[i].set("strokeWidth", 1);
-            if (activeObject._objects)
-                for (i = 0; i < activeObject._objects.length; i++)
-                    activeObject._objects[i].set("stroke", ""),
-                    activeObject._objects[i].set("strokeWidth", 1);
-            activeObject.set("stroke", ""),
-            activeObject.set("strokeWidth", 1),
-            $("#strokegroup").hide()
-        } else {
-            if (activeObject.paths)
-                for (i = 0; i < activeObject.paths.length; i++)
-                    activeObject.paths[i].set("stroke", "#000000");
-            if (activeObject._objects)
-                for (i = 0; i < activeObject._objects.length; i++)
-                    activeObject._objects[i].set("stroke", "#000000");
-            activeObject.set("paintFirst", "stroke"),
-            activeObject.set("strokeLineJoin", "round"),
-            activeObject.set("stroke", "#000000"),
-            activeObject.set("strokeWidth", 1),
-            $("#strokegroup").show(),
-            $("#colorStrokeSelector").css("background-color", "#000000")
-        }
-        canvas.renderAll(),
-        save_history()
-    }
 });
 
 var newTemplateTagsEdit = $("#newTemplateTags").tagsField({
@@ -3753,7 +3717,7 @@ var newBgTagsEdit = $("#newBgTags").tagsField({
     divColumnClass: "form-group col-sm-12"
 });
 // $("#add-background-form").parsley().on("form:submit", function(event) {
-    if (DEBUG) console.log('// $("#add-background-form").parsley().on("form:submit", function(event) {');
+    // if (DEBUG) console.log('// $("#add-background-form").parsley().on("form:submit", function(event) {');
 //     if (!newBgTagsEdit.validate())
 //         return !1;
 //     $("#uploadBgButton").html("Uploading..."),
@@ -4100,64 +4064,23 @@ $("#ungroup").click(function() {
     }
 });
 
-var ChangeOpacity = function() {
-    if (DEBUG) {
-        console.log("ChangeOpacity()");
-    }
+// var ChangeOpacity = function() {
+//     if (DEBUG) {
+//         console.log("ChangeOpacity()");
+//     }
 
-    var activeObject = canvas.getActiveObject();
-    if (activeObject) {
-        var $opacity = co.getValue();
-        activeObject._objects && "activeSelection" === activeObject.type ? activeObject.forEachObject(function($c) {
-            $c.set("opacity", $opacity)
-        }) : activeObject.set("opacity", $opacity),
-        canvas.renderAll()
-    }
-}
-  , co = $("#changeopacity").slider().on("change", ChangeOpacity).data("slider");
-  if (DEBUG) console.log(', co = $("#changeopacity").slider().on("change", ChangeOpacity).data("slider");');
-
-function ChangeStrokeWidth(e) {
-    if (DEBUG) {
-        console.log("ChangeStrokeWidth()");
-    }
-    
-    DEBUG && console.log("ChangeStrokeWidth"),
-    s_history = !1;
-    var activeObject = canvas.getActiveObject();
-    if ("path-group" === activeObject.type)
-        for (var i = 0; i < activeObject.paths.length; i++)
-            activeObject.paths[i].set("strokeWidth", e.value);
-    if ("group" === activeObject.type && activeObject._objects)
-        for (i = 0; i < activeObject._objects.length; i++)
-            activeObject._objects[i].set("strokeWidth", e.value);
-    "rect" === activeObject.type && (activeObject.viewportCenter(),
-    activeObject.set({
-        left: (canvas.get("width") / canvas.getZoom() - activeObject.get("width")) / 2,
-        top: (canvas.get("height") / canvas.getZoom() - activeObject.get("height")) / 2
-    })),
-    activeObject.set("strokeWidth", e.value),
-    activeObject.setCoords(),
-    canvas.renderAll()
-}
-
-$("#changestrokewidth").slider().on("slide", ChangeStrokeWidth).data("slider"),
-$("#changestrokewidth").slider().on("slideStop", function(e) {
-    if (DEBUG) console.log('$("#changestrokewidth").slider().on("slideStop", function(e) {');
-    s_history = !0,
-    save_history()
-});
-
-function ChangeShadowColor(color) {
-    if (DEBUG) {
-        console.log("ChangeShadowColor()");
-    }
-
-    var activeObject = canvas.getActiveObject();
-    activeObject && activeObject.shadow && (activeObject.shadow.color = color.toString()),
-    lastShadowColor = color.toString(),
-    canvas.renderAll()
-}
+//     var activeObject = canvas.getActiveObject();
+//     if (activeObject) {
+//         var $opacity = co.getValue();
+//         activeObject._objects && "activeSelection" === activeObject.type ? activeObject.forEachObject(function($c) {
+//             $c.set("opacity", $opacity)
+//         }) : activeObject.set("opacity", $opacity),
+//         canvas.renderAll()
+//     }
+// }
+//   , co = $("#changeopacity").slider().on("change", ChangeOpacity).data("slider");
+//   if (DEBUG) console.log(', co = $("#changeopacity").slider().on("change", ChangeOpacity).data("slider");');
+  
 
 function rgbToHex(r, g, b) {
     if (DEBUG) {
@@ -4314,10 +4237,10 @@ $(window).load(function() {
         })
     }
 }),
-$(".noclose").on("click", function(e) {
-    if (DEBUG) console.log('$(".noclose").on("click", function(e) {');
-    e.stopPropagation()
-}),
+// $(".noclose").on("click", function(e) {
+//     if (DEBUG) console.log('$(".noclose").on("click", function(e) {');
+//     e.stopPropagation()
+// }),
 $(document).on("click", ".catImage", function() {
     if (DEBUG) console.log('$(document).on("click", ".catImage", function() {');
     if (hasCanvas()) {
@@ -4441,92 +4364,6 @@ $("#bgcolorcontainer input").keypress(function(e) {
         $("#bgcolorselect").spectrum("set", color),
         0 != canvasindex && (deleteCanvasBg(canvas),
         setCanvasBg(canvas, !1, color))
-    }
-}),
-$("#colorStrokeSelector").spectrum({
-    containerClassName: "color-stroke",
-    showPaletteOnly: !0,
-    togglePaletteOnly: !0,
-    showPalette: !0,
-    preferredFormat: "hex",
-    hideAfterPaletteSelect: !0,
-    showSelectionPalette: !0,
-    localStorageKey: localStorageKey,
-    showInput: !0,
-    showInitial: !0,
-    allowEmpty: !0,
-    showButtons: !1,
-    maxSelectionSize: 24,
-    togglePaletteMoreText: "Show advanced",
-    togglePaletteLessText: "Hide advanced",
-    change: function(color) {
-        DEBUG && console.log("color: ", color),
-        null == window.localStorage[localStorageKey] && (window.localStorage[localStorageKey] = ";");
-        var local_store = window.localStorage[localStorageKey];
-        if (-1 == local_store.search(color) && (window.localStorage[localStorageKey] = local_store + ";" + color),
-        color)
-            colorVal = color.toHexString();
-        else
-            var colorVal = "";
-        changeStrokeColor(colorVal),
-        $("#colorStrokeSelector").css("backgroundColor", colorVal)
-    },
-    beforeShow: function(color) {
-        $(this).spectrum("set", canvas.getActiveObject().stroke)
-    },
-    move: function(color) {
-        if (DEBUG && console.log("colorStrokeSelector"),
-        color)
-            colorVal = color.toHexString();
-        else
-            var colorVal = "";
-        changeStrokeColor(colorVal),
-        $("#colorStrokeSelector").css("backgroundColor", colorVal)
-    }
-}),
-$("#shadowColor").spectrum({
-    containerClassName: "color-shadow",
-    showPaletteOnly: !0,
-    togglePaletteOnly: !0,
-    showPalette: !0,
-    hideAfterPaletteSelect: !1,
-    showSelectionPalette: !0,
-    localStorageKey: localStorageKey,
-    showInput: !0,
-    showInitial: !0,
-    preferredFormat: "hex",
-    flat: !0,
-    showButtons: !1,
-    maxSelectionSize: 24,
-    togglePaletteMoreText: "Show advanced",
-    togglePaletteLessText: "Hide advanced",
-    showAlpha: !0,
-    move: function(color) {
-        if (DEBUG && console.log("color: ", color),
-        color)
-            colorVal = color;
-        else
-            var colorVal = "";
-        ChangeShadowColor(colorVal)
-    }
-}),
-$("#shadowColor").on("dragstop.spectrum", function(e, color) {
-    if (DEBUG) console.log('$("#shadowColor").on("dragstop.spectrum", function(e, color) {');
-    setTimeout(function() {
-        null == window.localStorage[localStorageKey] && (window.localStorage[localStorageKey] = ";");
-        var local_store = window.localStorage[localStorageKey];
-        -1 == local_store.search(color) && (window.localStorage[localStorageKey] = local_store + ";" + color),
-        $("#shadowColor").spectrum("set", color)
-    }, 0)
-}),
-$("#shadowTabs .sp-input").keypress(function(e) {
-    if (13 == e.which) {
-        var color = $(this).val();
-        null == window.localStorage[localStorageKey] && (window.localStorage[localStorageKey] = ";");
-        var local_store = window.localStorage[localStorageKey];
-        -1 == local_store.search(color) && (window.localStorage[localStorageKey] = local_store + ";" + color),
-        $("#shadowColor").spectrum("set", color),
-        ChangeShadowColor(color)
     }
 }),
 $(".toolbar-top .sp-palette-toggle, .color-fill .sp-palette-toggle, .color-stroke .sp-palette-toggle").addClass("btn btn-default"),
@@ -4763,13 +4600,6 @@ $("#opentemplate").click(function(e) {
 }),
 $("#opentemplate_input").change(function(evt) {
     handleFileSelect(evt)
-}),
-$("#strokedropdown").click(function() {
-    var activeObject = canvas.getActiveObject();
-    if (activeObject) {
-        var objectstrokewidth = activeObject.get("strokeWidth");
-        $("#changestrokewidth").slider("setValue", objectstrokewidth)
-    }
 }),
 $("#objectopacity").click(function() {
     $("#opacitySlider").toggle(),
@@ -5619,7 +5449,7 @@ $(document).ready(function() {
     // Get background patterns
     // getPatterns(0),
     // $("#patternsList").on("scroll", function(e) {
-        if (DEBUG) console.log('// $("#patternsList").on("scroll", function(e) {');
+        // if (DEBUG) console.log('// $("#patternsList").on("scroll", function(e) {');
     //     var element = $(e.target).get(0);
     //     element.scrollTop > element.scrollHeight - element.offsetHeight - 10 && (patternsLoading || getPatterns(offsetPatterns))
     // })
@@ -5906,7 +5736,7 @@ function loadTemplates_element() {
 }
 
 // $(aContainer_element).on("load.infiniteScroll", function() {
-    if (DEBUG) console.log('// $(aContainer_element).on("load.infiniteScroll", function() {');
+    // if (DEBUG) console.log('// $(aContainer_element).on("load.infiniteScroll", function() {');
 //     var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee(event, response) {
 //         var data, itemsHTML, items;
 //         return regeneratorRuntime.wrap(function(_context) {

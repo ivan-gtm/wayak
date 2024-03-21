@@ -32,7 +32,325 @@ $(document).ready(function() {
     initializeBodyClick();
     initializeShadowBlurSlider();
     initializeShadowOffsetSliders();
+    initializeShadowColorPicker();
+    setupShadowColorChangeEvents();
+    $("#addremovestroke").click(handleStrokeToggle);
+    initializeColorStrokeSelector();
+    setupStrokeWidthDropdown();
+    initializeStrokeWidthSlider();
+    // initializeOpacitySlider();
+    attachNoCloseClickHandler();
 });
+
+function attachNoCloseClickHandler() {
+    $(".noclose").on("click", preventEventPropagation);
+}
+
+function preventEventPropagation(e) {
+    if (DEBUG) {
+        console.log('Click event on ".noclose" prevented from propagating.');
+    }
+    e.stopPropagation();
+}
+
+var co = $("#changeopacity").slider().on("change", changeOpacity).data("slider");
+
+function changeOpacity() {
+    logDebug("ChangeOpacity");
+    var activeObject = canvas.getActiveObject();
+    if (!activeObject) return;
+    
+    var opacityValue = co.getValue();
+    applyOpacityToActiveObject(activeObject, opacityValue);
+    canvas.renderAll();
+}
+
+function applyOpacityToActiveObject(object, opacityValue) {
+    if (object.type === "activeSelection" && object._objects) {
+        object.forEachObject(function(obj) {
+            obj.set("opacity", opacityValue);
+        });
+    } else {
+        object.set("opacity", opacityValue);
+    }
+}
+
+function initializeStrokeWidthSlider() {
+    logDebug("initializeStrokeWidthSlider");
+    $("#changestrokewidth").slider({
+        slide: changeStrokeWidth,
+        stop: finalizeStrokeWidthChange
+    });
+}
+
+function changeStrokeWidth(event, ui) {
+    logDebug("ChangeStrokeWidth");
+
+    s_history = false; // Temporarily disable history tracking
+    var activeObject = canvas.getActiveObject();
+    if (!activeObject) return;
+
+    updateStrokeWidthForActiveObject(activeObject, ui.value);
+    activeObject.setCoords();
+    canvas.renderAll();
+}
+
+function updateStrokeWidthForActiveObject(object, strokeWidth) {
+    if (["path-group", "group"].includes(object.type) && object._objects) {
+        object._objects.forEach(function(child) {
+            child.set("strokeWidth", strokeWidth);
+        });
+    } else {
+        object.set("strokeWidth", strokeWidth);
+    }
+
+    // Center the rectangle if it's the active object type being modified
+    if (object.type === "rect") {
+        centerRectangle(object);
+    }
+}
+
+function centerRectangle(rectangle) {
+    rectangle.viewportCenter();
+    rectangle.set({
+        left: (canvas.get("width") / canvas.getZoom() - rectangle.get("width")) / 2,
+        top: (canvas.get("height") / canvas.getZoom() - rectangle.get("height")) / 2
+    });
+}
+
+function finalizeStrokeWidthChange() {
+    logDebug('Stroke width adjustment finalized');
+    s_history = true; // Re-enable history tracking and save the state
+    save_history();
+}
+
+function logDebug(message) {
+    if (DEBUG) { // Check if debug mode is enabled and log the message
+        console.log(message);
+    }
+}
+
+
+function setupStrokeWidthDropdown() {
+    $("#strokedropdown").on("click", updateStrokeWidthSlider);
+}
+
+function updateStrokeWidthSlider() {
+    var activeObject = canvas.getActiveObject();
+    if (!activeObject) return;
+
+    var objectStrokeWidth = activeObject.get("strokeWidth") || 0; // Default to 0 if undefined
+    $("#changestrokewidth").slider("setValue", objectStrokeWidth);
+}
+
+
+function initializeColorStrokeSelector() {
+    $("#colorStrokeSelector").spectrum({
+        containerClassName: "color-stroke",
+        showPaletteOnly: true,
+        togglePaletteOnly: true,
+        showPalette: true,
+        preferredFormat: "hex",
+        hideAfterPaletteSelect: true,
+        showSelectionPalette: true,
+        localStorageKey: localStorageKey, // Assuming this is defined elsewhere
+        showInput: true,
+        showInitial: true,
+        allowEmpty: true,
+        showButtons: false,
+        maxSelectionSize: 24,
+        togglePaletteMoreText: "Show advanced",
+        togglePaletteLessText: "Hide advanced",
+        change: handleColorChange,
+        beforeShow: function() {
+            var strokeColor = canvas.getActiveObject() ? canvas.getActiveObject().stroke : "#000";
+            $(this).spectrum("set", strokeColor);
+        },
+        move: updateStrokeColor
+    });
+}
+
+function handleColorChange(color) {
+    logDebug("Stroke color changed: ", color);
+
+    var colorVal = color ? color.toHexString() : "";
+    updateLocalStorageForColor(color, colorVal);
+    changeStrokeColor(colorVal);
+    $("#colorStrokeSelector").css("backgroundColor", colorVal);
+}
+
+function updateStrokeColor(color) {
+    logDebug("Moving stroke color selector");
+
+    var colorVal = color ? color.toHexString() : "";
+    changeStrokeColor(colorVal);
+    $("#colorStrokeSelector").css("backgroundColor", colorVal);
+}
+
+function updateLocalStorageForColor(color, colorVal) {
+    if (!window.localStorage[localStorageKey]) {
+        window.localStorage[localStorageKey] = ";";
+    }
+
+    var localStore = window.localStorage[localStorageKey];
+    if (localStore.indexOf(color) === -1) {
+        window.localStorage[localStorageKey] += ";" + colorVal;
+    }
+}
+
+function logDebug(message, color = '') {
+    if (DEBUG) { // Assuming DEBUG is a global flag
+        console.log(message, color);
+    }
+}
+
+function changeStrokeColor(colorVal) {
+    // Assuming there's a function to update the stroke color of the active object
+    // If it doesn't exist, it should be implemented according to your application's logic
+    var activeObject = canvas.getActiveObject();
+    if (activeObject && colorVal) {
+        activeObject.set({ stroke: colorVal });
+        canvas.renderAll();
+    }
+}
+
+function handleStrokeToggle(e) {
+    if (DEBUG) console.log("Toggle Stroke");
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    var activeObject = canvas.getActiveObject();
+    if (!activeObject) return;
+
+    if (activeObject.get("stroke")) {
+        removeStroke(activeObject);
+        $("#strokegroup").hide();
+    } else {
+        addStroke(activeObject);
+        $("#strokegroup").show();
+        $("#colorStrokeSelector").css("background-color", "#000000");
+    }
+
+    canvas.renderAll();
+    save_history();
+}
+
+function removeStroke(object) {
+    setStrokeProperties(object, "", 1);
+}
+
+function addStroke(object) {
+    setStrokeProperties(object, "#000000", 1, {
+        paintFirst: "stroke",
+        strokeLineJoin: "round"
+    });
+}
+
+function setStrokeProperties(object, color, width, additionalProps = {}) {
+    const applyProps = (obj) => {
+        obj.set("stroke", color);
+        obj.set("strokeWidth", width);
+        for (let prop in additionalProps) {
+            obj.set(prop, additionalProps[prop]);
+        }
+    };
+
+    if (object.paths) {
+        object.paths.forEach(applyProps);
+    }
+
+    if (object._objects) {
+        object._objects.forEach(applyProps);
+    }
+
+    applyProps(object);
+}
+
+function ChangeShadowColor(color) {
+    if (DEBUG) {
+        console.log("ChangeShadowColor()");
+    }
+
+    var activeObject = canvas.getActiveObject();
+    if (!activeObject || !activeObject.shadow) return;
+
+    // Convert color to string only once and reuse
+    var colorStr = color.toString();
+    activeObject.shadow.color = colorStr;
+    lastShadowColor = colorStr; // Assuming lastShadowColor is used elsewhere to track state
+
+    canvas.renderAll();
+}
+
+
+function initializeShadowColorPicker() {
+    $("#shadowColor").spectrum({
+        containerClassName: "color-shadow",
+        showPaletteOnly: true,
+        togglePaletteOnly: true,
+        showPalette: true,
+        hideAfterPaletteSelect: false,
+        showSelectionPalette: true,
+        localStorageKey: localStorageKey, // Assuming localStorageKey is defined elsewhere
+        showInput: true,
+        showInitial: true,
+        preferredFormat: "hex",
+        flat: true,
+        showButtons: false,
+        maxSelectionSize: 24,
+        togglePaletteMoreText: "Show advanced",
+        togglePaletteLessText: "Hide advanced",
+        showAlpha: true,
+        move: handleColorMove
+    });
+}
+
+function handleColorMove(color) {
+    logDebugColor(color);
+    var colorVal = color ? color : "";
+    ChangeShadowColor(colorVal); // Assuming ChangeShadowColor is defined elsewhere
+}
+
+function logDebugColor(color) {
+    if (DEBUG) {
+        console.log("color: ", color);
+    }
+}
+
+function setupShadowColorChangeEvents() {
+    $("#shadowColor").on("dragstop.spectrum", handleDragStop);
+
+    $("#shadowTabs .sp-input").keypress(function(e) {
+        if (e.which == 13) { // Enter key pressed
+            handleEnterKeyPress($(this).val());
+        }
+    });
+}
+
+function handleDragStop(e, color) {
+    if (DEBUG) console.log('Color drag stop event');
+    setTimeout(function() {
+        updateLocalStorageColor(color);
+        $("#shadowColor").spectrum("set", color);
+    }, 0);
+}
+
+function handleEnterKeyPress(color) {
+    updateLocalStorageColor(color);
+    $("#shadowColor").spectrum("set", color);
+    ChangeShadowColor(color);
+}
+
+function updateLocalStorageColor(color) {
+    if (!window.localStorage[localStorageKey]) {
+        window.localStorage[localStorageKey] = ";";
+    }
+    var localStore = window.localStorage[localStorageKey];
+    if (localStore.search(color) == -1) {
+        window.localStorage[localStorageKey] = localStore + ";" + color;
+    }
+}
 
 $("body").on("click", function(e) {
     if (DEBUG) console.log('$("body").on("click", function(e) {');
