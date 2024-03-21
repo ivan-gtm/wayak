@@ -451,6 +451,7 @@ $(document).ready(function() {
     initializeFontDropdown();
     
     setupInfiniteScroll(aContainer_template, type_template, getItemHTML_template, limit_template, 'flag_scroll_templates_template');
+    
     // Not necessary for startup
     setupInfiniteScroll(aContainer_bg, type_bg, getItemHTML_bg, limit_bg, 'flag_scroll_templates_bg');
     setupInfiniteScroll(aContainer_text, type_text, getItemHTML_text, limit_text, 'flag_scroll_templates_text');

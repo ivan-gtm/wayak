@@ -886,14 +886,6 @@ $("#elementssearch").on("keypress", function(e) {
         loadTemplates_element()
     }
 }),
-$("#bgsearch").on("keypress", function(e) {
-    if (DEBUG) console.log('$("#bgsearch").on("keypress", function(e) {');
-    if (13 === e.which) {
-        $(this).val().match(/\w+/g).toString();
-        initMasonry_bg(),
-        loadTemplates_bg()
-    }
-}),
 $("#catimage_container").on("click", ".thumbnail", function() {
     if (DEBUG) console.log('$("#catimage_container").on("click", ".thumbnail", function() {');
     jQuery(this).data("target") && loadElement(jQuery(this).data("target"))
@@ -4600,18 +4592,6 @@ $("#opentemplate").click(function(e) {
 }),
 $("#opentemplate_input").change(function(evt) {
     handleFileSelect(evt)
-}),
-$("#objectopacity").click(function() {
-    $("#opacitySlider").toggle(),
-    $("#showmoreoptions ul li a").each(function() {
-        "block" == $(this).css("display") && $(this).not("#objectopacity").addClass("temphide")
-    })
-}),
-$("#charspacing").click(function() {
-    $("#charspacingSlider").toggle(),
-    $("#showmoreoptions ul li a").each(function() {
-        "block" == $(this).css("display") && $(this).not("#charspacing").addClass("temphide")
-    })
 }),
 $("#objectborderwh").click(function() {
     $("#borderwhSlider").toggle(),

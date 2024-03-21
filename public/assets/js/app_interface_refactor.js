@@ -12,12 +12,6 @@ $(document).ready(function() {
         $(this).closest(".input-group").find(".fontinput").val(selectedFontSize);
     });
     
-    $("#bgscale").slider({
-        formatter: function(value) {
-            return value + "%"
-        }
-    });
-    
     setupShowMoreOptions();
     setupTextCaseToggle();
     initializeLineHeightToggle();
@@ -40,7 +34,42 @@ $(document).ready(function() {
     initializeStrokeWidthSlider();
     // initializeOpacitySlider();
     attachNoCloseClickHandler();
+    attachCharSpacingClickHandler();
+    attachObjectOpacityClickHandler();
 });
+
+function attachObjectOpacityClickHandler() {
+    $("#objectopacity").on("click", function() {
+        toggleOpacitySlider();
+        hideOtherOptionsExceptThis('#objectopacity');
+    });
+}
+
+function toggleOpacitySlider() {
+    // Toggle the visibility of the opacity slider
+    $("#opacitySlider").toggle();
+}
+
+function hideOtherOptionsExceptThis(exceptionSelector) {
+    // Hide all other options that are currently visible except for the one specified
+    $("#showmoreoptions ul li a").each(function() {
+        if ($(this).css("display") === "block" && !$(this).is(exceptionSelector)) {
+            $(this).addClass("temphide");
+        }
+    });
+}
+
+function attachCharSpacingClickHandler() {
+    $("#charspacing").on("click", function() {
+        toggleCharSpacingSlider();
+        hideOtherOptionsExceptThis("#charspacing");
+    });
+}
+
+function toggleCharSpacingSlider() {
+    // Toggle visibility of the character spacing slider
+    $("#charspacingSlider").toggle();
+}
 
 function attachNoCloseClickHandler() {
     $(".noclose").on("click", preventEventPropagation);
@@ -900,7 +929,7 @@ function initializeLineHeightToggle() {
     logDebug("initializeLineHeightToggle()");
     $("#lineheight").on("click", function() {
         toggleLineHeightSlider();
-        hideVisibleOptionsExceptLineHeight();
+        hideOtherOptionsExceptThis("#lineheight")
     });
 }
 
@@ -910,23 +939,12 @@ function toggleLineHeightSlider() {
     $("#lineheightSlider").toggle();
 }
 
-function hideVisibleOptionsExceptLineHeight() {
-    logDebug("hideVisibleOptionsExceptLineHeight()");
-    // Hides options that are currently visible, except for the line height option.
-    $("#showmoreoptions ul li a").each(function() {
-        if ($(this).css("display") === "block" && !$(this).is("#lineheight")) {
-            $(this).addClass("temphide");
-        }
-    });
-}
-
-
 function setupTextCaseToggle() {
     logDebug("setupTextCaseToggle()");
     $("#textcase").on("click", function() {
         console.log("#textcase");
         toggleTextCaseOptions();
-        hideNonVisibleOptions();
+        hideOtherOptionsExceptThis("#textuppercase, #textlowercase, #textcapitalize");
     });
 }
 
@@ -936,15 +954,15 @@ function toggleTextCaseOptions() {
     $("#textuppercase, #textlowercase, #textcapitalize").toggle();
 }
 
-function hideNonVisibleOptions() {
-    logDebug("hideNonVisibleOptions()");
-    // Adds 'temphide' class to non-visible options, excluding specific text case options.
-    $("#showmoreoptions ul li a").each(function() {
-        if ($(this).css("display") === "block" && !$(this).is("#textuppercase, #textlowercase, #textcapitalize")) {
-            $(this).addClass("temphide");
-        }
-    });
-}
+// function hideNonVisibleOptions() {
+//     logDebug("hideNonVisibleOptions()");
+//     // Adds 'temphide' class to non-visible options, excluding specific text case options.
+//     $("#showmoreoptions ul li a").each(function() {
+//         if ($(this).css("display") === "block" && !$(this).is("#textuppercase, #textlowercase, #textcapitalize")) {
+//             $(this).addClass("temphide");
+//         }
+//     });
+// }
 
 function updateFontSizeForActiveObject(object, fontSize) {
     logDebug("updateFontSizeForActiveObject(o");
