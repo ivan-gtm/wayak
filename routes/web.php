@@ -33,6 +33,10 @@ use App\Http\Controllers\PacktController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\TemplettScrapperController;
 use App\Http\Controllers\LinkedInController;
+use App\Http\Controllers\PaymentController;
+
+
+Route::get('/paypal', [PaymentController::class, 'validatePayment']);
 
 Route::get('/api/demo-url', [AdminController::class, 'getTemplateObjects']);
 Route::get('/thumbnail-generation', [AdminController::class, 'thumbnailGeneration'])->name('admin.thumbnailGeneration');
@@ -224,6 +228,8 @@ Route::prefix('in-develop')->group(function () {
     // Manage collections (create or delete)
     Route::post('/{country}/user/favorites/collection/manage', [FavoritesController::class, 'manageCollection']); // beta
 
+    Route::post('/{country}/user/favorites/check', [FavoritesController::class, 'checkFavorite']);
+
     // Get all collections for a client
     Route::get('/{country}/user/favorites/collections/{clientId}', [FavoritesController::class, 'getCollections']); // beta
 
@@ -256,7 +262,7 @@ Route::group(['middleware' => ['guest']], function() {
     Route::get('/{country}/user/purchases', [UserPurchaseController::class, 'index'])->name('user.purchases');
 
     // Storing a purchase
-    Route::post('/{country}/user/purchases/store', [UserPurchaseController::class, 'store']);
+    // Route::post('/{country}/user/purchases/store', [UserPurchaseController::class, 'store']);
 
     
     // Mostrar los detalles de una compra específica.
@@ -326,6 +332,8 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('/editor/check-allow-revert-template', [EditorController::class, 'checkAllowRevertTemplate']);
     Route::get('/editor/get-css-fonts', [EditorController::class, 'getCSSFonts']);
     Route::post('/editor/pdf', [EditorController::class, 'generatePDF']);
+
+    Route::post('/{country}/api/validatePayment', [PaymentController::class,'validatePayment']);
 
     Route::get('/{country}/editar/plantillas', [EditorController::class, 'editPurchasedTemplate']);
     

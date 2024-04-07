@@ -1109,7 +1109,7 @@
     });
 </script>
 
-<script src="https://www.paypal.com/sdk/js?client-id=sb&enable-funding=venmo&currency=USD" data-sdk-integration-source="button-factory"></script>
+<script src="https://www.paypal.com/sdk/js?client-id=AaUvRB1myt7xfJWy9CQ73R6X__H4knB47JNZFe2EcXFdE7LoGsm3_OFqowRHa2OGBWXmQ0YfO4RMpocd&enable-funding=venmo&currency=USD" data-sdk-integration-source="button-factory"></script>
 <script>
     function storePurchase(customerId, templateId, redirectUrl) {
         const apiUrl = '/us/user/purchases/store';
@@ -1169,25 +1169,46 @@
 
             onApprove: function(data, actions) {
                 return actions.order.capture().then(function(orderData) {
-
-                    // Full available details
-                    // console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
-
-                    
-                    // Show a success message within this page, e.g.
-                    // let element = document.getElementById('paypal-button-container');
-                    // element.innerHTML = '';
-                    // element.innerHTML = '<h3>Thank you for your payment!</h3>';
-                    
                     const metaElement = document.querySelector('meta[name="product-id"]');
                     const productId = metaElement.getAttribute('content');
                     const customerId = getCustomerId();
                     
-                    // storePurchase(customerId, productId);
-                    var redirectUrl = "{{ route('editor.openTemplate', [ 'country' => $country, 'template_key' => $template->_id ]) }}";
-                    storePurchase(customerId, productId, redirectUrl)
+                    const paymentData = {
+                        orderID: data.orderID,
+                        // payerId: data.payerID,
+                        templateId: productId,
+                        customerId: customerId
+                    };
                     
-                    // actions.redirect("?customerId="+customerId);
+                    console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
+                    console.log('Capture result', data);
+
+                    // // Full available details
+                    // // console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
+                    // // actions.redirect("?customerId="+customerId);
+
+                    fetch('/us/api/validatePayment', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        },
+                        body: JSON.stringify(paymentData),
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.paymentValid) {
+                            const customerId = getCustomerId();
+                            var redirectUrl = "{{ route('editor.openTemplate', [ 'country' => $country, 'template_key' => $template->_id ]) }}?customerId=" + customerId;
+                            window.location.href = redirectUrl; // Modify as needed
+                        } else {
+                            // Handle payment validation failure
+                            console.error('Payment validation failed.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error in payment validation:', error);
+                    });
 
                 });
             },
@@ -1197,6 +1218,7 @@
             }
         }).render('#paypal-button-container');
     }
+
     initPayPalButton();
 
     function countdown(secondsRemaining, elementToUpdate) {

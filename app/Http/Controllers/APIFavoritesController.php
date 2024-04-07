@@ -75,18 +75,7 @@ class APIFavoritesController extends Controller
 
     }
 
-    public function isFavorite($productID, $clientId, $collectionId = 'default')
-    {
-        // Check in Redis
-        $isFavorite = Redis::sismember('wayak:user:favorites:' . $clientId . ':' . $collectionId, $productID);
-
-        // echo 'wayak:user:favorites:' . $clientId . ':' . $collectionId;
-        // exit;
-
-        // return response()->json(['isFavorite' => (bool) $isFavorite]);
-        return (bool) $isFavorite;
-        // return true;
-    }
+    
 
     public function removeFavorite(Request $request)
     {

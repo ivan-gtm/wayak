@@ -102,33 +102,6 @@ class UserPurchaseController extends Controller
         ]);
     }
 
-    // Store: Almacenar una nueva compra realizada por el usuario en la base de datos.
-    public function store($country, Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'customerId' => 'required|string|alpha_num|min:10|max:10',
-            'templateId' => 'required|string|alpha_num|min:10|max:10', // Assuming you'll send an array of template IDs.
-        ]);
-
-        if ($validator->fails()) {
-            abort(404); // Unprocessable Entity
-        }
-
-        // Validate and retrieve the customer ID
-        $customerId = $this->userPurchaseService->validateAndGetCustomerId($request);
-
-        // Get the purchase template IDs from the request
-        $templateId = $request->input('templateId');
-
-        // Store the template IDs in Redis under the user's purchases
-        $this->userPurchaseService->storePurchaseInRedis($customerId, $templateId);
-
-        // Return a success response or redirect as needed
-        return response()->json(['message' => 'Purchase successfully stored'], 200);
-    }
-
-   
-
     // // Mostrar los detalles de una compra específica
     // public function show($id)
     // {

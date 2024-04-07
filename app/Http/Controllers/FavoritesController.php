@@ -9,14 +9,19 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use App\Services\FavoritesService;
 
 class FavoritesController extends Controller
 {
     use LocaleTrait;
+    protected $favoriteService;
+
+    public function __construct(FavoritesService $favoriteService)
+    {
+        $this->favoriteService = $favoriteService;
+    }
 
     function showFavorites($country, Request $request){
-        // $this->getFavorites();
-        // $country = 'us';
         $validator = Validator::make($request->all(), [
             'customerId' => 'required|string|alpha_num|min:10|max:10', // Assuming clientId is between 8 and 20 characters
         ]);
@@ -41,58 +46,22 @@ class FavoritesController extends Controller
             abort(404);
         }
 
-        $collections = Redis::keys('wayak:user:' . $customerId . ':favorites:*');
-        $favorites = [];
-
-        foreach ($collections as $collection) {
-            // $favorites[$collection] = Redis::smembers($collection);
-            $favorites = array_merge( Redis::smembers($collection) ,$favorites);
-        }
-        
         $page = $request->input('page', 1);
-        $templates = [];
-        $last_page = 0;
-        if(sizeof($favorites) > 0){
-            $per_page = 100;
-            $skip = $per_page * ($page - 1);
-            $category_products = Template::whereIn('_id', $favorites)
-                ->skip($skip)
-                ->take($per_page)
-                ->get([
-                    '_id',
-                    'title',
-                    'slug',
-                    'previewImageUrls',
-                    'studioName',
-                    'prices'
-                ]);
-    
-            $templates = [];
-            foreach ($category_products as $template) {
-                $template->preview_image = App::environment() == 'local'
-                    ? asset('design/template/' . $template->_id . '/thumbnails/' . $locale . '/' . $template->previewImageUrls["carousel"])
-                    : Storage::disk('s3')->url('design/template/' . $template->_id . '/thumbnails/' . $locale . '/' . $template->previewImageUrls["carousel"]);
-    
-                $templates[] = $template;
-            }
-    
-            $total_documents = Template::whereIn('_id', $favorites)->count();
-            $last_page = ceil($total_documents / $per_page);
-        }
-                
+        $favoritesResults = $this->favoriteService->getFavorites($page, $customerId, $locale);
+        $lastPage = $favoritesResults['last_page'];
+
         return view('auth.user.wishlist2', [
             'menu' => $menu,
             'sale' => $sale,
             'customer_id' => $customerId,
-            'templates' => $templates,
+            'templates' => $favoritesResults['templates'],
             'country' => $country,
             'search_query' => '',
-            'current_page' => $page,
+            'current_page' => $favoritesResults['page'],
             'pagination_begin' => max($page - 4, 1),
-            'pagination_end' => min($page + 4, $last_page),
+            'pagination_end' => min($page + 4, $lastPage),
             'first_page' => 1,
-            'last_page' => $last_page,
-            'templates' => $templates,
+            'last_page' => $lastPage,
             'current_url' => url()->current()
         ]);
     }
@@ -113,22 +82,33 @@ class FavoritesController extends Controller
         $customerId = $request->input('customerId');
         $collectionName = $request->input('collectionName', 'default');  // Default to 'default' if collectionName is not provided
 
-        Redis::sadd('wayak:user:' . $customerId . ':favorites:' . $collectionName, $productID);
+        $result = $this->favoriteService->addToFavorites($customerId, $collectionName, $productID);
 
-        return response()->json(['status' => 'success']);
+        return response()->json(['message' => $result['message'],'status' => 'success', 'success' => $result['success']], $result['success'] ? 200 : 400);
     }
 
-    public function isFavorite($productID, $customerId, $collectionId = 'default')
+    public function checkFavorite(Request $request)
     {
-        // Check in Redis
-        $isFavorite = Redis::sismember('wayak:user:' . $customerId . ':favorites:' . $collectionId, $productID);
+        $productID = $request->input('productID');
+        $clientId = $request->input('clientId');
+        $collectionId = $request->input('collectionId', 'default'); // Use 'default' if not provided
 
-        // echo 'wayak:user:' . $customerId . ':favorites:' . $collectionId;
-        // exit;
+        $result = $this->favoriteService->isFavorite($productID, $clientId, $collectionId);
 
-        // return response()->json(['isFavorite' => (bool) $isFavorite]);
-        return (bool) $isFavorite;
-        // return true;
+        if ($result['success']) {
+            return response()->json([
+                'status' => 'success',
+                'success' => true,
+                'isFavorite' => $result['isFavorite'],
+                'message' => $result['message'],
+            ], 200);
+        } else {
+            return response()->json([
+                'status' => 'error',
+                'success' => false,
+                'message' => $result['message'],
+            ], 400);
+        }
     }
 
     public function removeFavorite(Request $request)
@@ -147,10 +127,28 @@ class FavoritesController extends Controller
         $customerId = $request->input('customerId');
         $collectionId = $request->input('collectionId', 'default');  // Default to 'default' if collectionId is not provided
         $redisKey = 'wayak:user:' . $customerId . ':favorites:' . $collectionId;
-        // echo $redisKey.'<br>';
-        Redis::srem($redisKey, $productID);
+        
+        $result = $this->favoriteService->removeFromFavorites($customerId, $collectionId,$productID);
+        // echo "<pre>";
+        // print_r($result);
+        // exit;
 
-        return response()->json(['status' => 'success']);
+        if ($result['success']) {
+            return response()->json([
+                'status' => ($result['success']) ? 'success' : 'fail',
+                'success' => $result['success'],
+                // 'isFavorite' => $result['isFavorite'],
+                'message' => $result['message'],
+            ], 200);
+        } else {
+            return response()->json([
+                'status' => 'error',
+                'success' => false,
+                'message' => $result['message'],
+            ], 400);
+        }
+
+        // return response()->json(['status' => 'success']);
     }
 
     // public function getFavorites(Request $request)
@@ -169,22 +167,27 @@ class FavoritesController extends Controller
 
     public function manageCollection(Request $request)
     {
-        $action = $request->input('action'); // create or delete
+        $action = $request->input('action');
         $collectionName = $request->input('collectionName');
         $customerId = $request->input('clientId');
 
         if ($action === 'create') {
-            $collectionId = Redis::incr('collection_id_counter'); // Create a unique ID
-            Redis::set('collection_names:' . $collectionId, $collectionName); // Save the name with the unique ID
-            Redis::sadd('wayak:user:' . $customerId . ':favorites:' . $collectionId, []); // Create the collection
-
-            return response()->json(['status' => 'success', 'collectionId' => $collectionId, 'collectionName' => $collectionName]);
+            $result = $this->favoriteService->createCollection($collectionName, $customerId);
+            if ($result['success']) {
+                return response()->json(['status' => 'success', 'collectionId' => $result['collectionId'], 'collectionName' => $result['collectionName']]);
+            } else {
+                return response()->json(['status' => 'error', 'message' => $result['message']], 500);
+            }
         } elseif ($action === 'delete') {
             $collectionId = $request->input('collectionId');
-            Redis::del('wayak:user:' . $customerId . ':favorites:' . $collectionId);
-            Redis::del('collection_names:' . $collectionId);
-
-            return response()->json(['status' => 'success']);
+            $result = $this->favoriteService->deleteCollection($collectionId, $customerId);
+            if ($result['success']) {
+                return response()->json(['status' => 'success']);
+            } else {
+                return response()->json(['status' => 'error', 'message' => $result['message']], 500);
+            }
+        } else {
+            return response()->json(['status' => 'error', 'message' => 'Invalid action specified'], 400);
         }
     }
 
@@ -193,16 +196,12 @@ class FavoritesController extends Controller
     {
         $customerId = $request->input('clientId');
 
-        $collectionKeys = Redis::keys('wayak:user:' . $customerId . ':favorites:*');
-        $collections = [];
+        $result = $this->favoriteService->getCollections($customerId);
 
-        foreach ($collectionKeys as $key) {
-            $parts = explode(':', $key);
-            $collectionId = end($parts); // Collection ID is the last part
-            $collectionName = Redis::get('collection_names:' . $collectionId); // Fetch name based on ID
-            $collections[$collectionId] = $collectionName;
+        if ($result['success']) {
+            return response()->json(['collections' => $result['collections']]);
+        } else {
+            return response()->json(['message' => $result['message']], 500);
         }
-
-        return response()->json(['collections' => $collections]);
     }
 }

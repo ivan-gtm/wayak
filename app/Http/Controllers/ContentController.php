@@ -5,15 +5,16 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\App;
-use App\Http\Controllers\FavoritesController;
 use App\Http\Controllers\AnalyticsController;
 use App\Traits\LocaleTrait;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Auth;
+
 use App\Services\UserPurchaseService;
 use App\Services\HomeCarouselsService;
+use App\Services\FavoritesService;
 
 use App\Models\Template;
 use Storage;
@@ -21,12 +22,13 @@ use Storage;
 class ContentController extends Controller
 {
     use LocaleTrait;
-    protected $userPurchaseService, $homeCarouselsService;
-
-    public function __construct(UserPurchaseService $userPurchaseService, HomeCarouselsService $homeCarouselsService)
+    protected $userPurchaseService, $homeCarouselsService, $favoriteService;
+    
+    public function __construct(UserPurchaseService $userPurchaseService, HomeCarouselsService $homeCarouselsService, FavoritesService $favoriteService)
     {
         $this->userPurchaseService = $userPurchaseService;
         $this->homeCarouselsService = $homeCarouselsService;
+        $this->favoriteService = $favoriteService;
     }
 
     public function showHome($country = 'us', Request $request)
@@ -272,7 +274,7 @@ class ContentController extends Controller
 
         $analyticsController = new AnalyticsController();
         $analyticsController->registerProductView($templateId);
-        $this->homeCarouselsService->buildFavoritesCarousels($customerId, $templateId);
+        $this->homeCarouselsService->addProductToRecentlyViewed($customerId, $templateId);
         // exit;
         
         $language_code = 'en'; // Temporal
@@ -311,9 +313,12 @@ class ContentController extends Controller
             // User is logged in
             $logged_id = Auth::id();
             $user = Auth::user();
+            
+            $resultFavorite = $this->favoriteService->isFavorite($template->_id, $user->customer_id);
+            if ($resultFavorite['success']) {
+                $isFavorite = true;
+            }
 
-            $favoritesController = new FavoritesController();
-            $isFavorite = $favoritesController->isFavorite($template->_id, $user->customer_id);
             $analyticsController->registerCategoryVisitByUser( substr($template->mainCategory, 1), $user->customer_id );
         }
 

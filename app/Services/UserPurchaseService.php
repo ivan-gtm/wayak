@@ -30,16 +30,13 @@ class UserPurchaseService
         Redis::sadd($redisKey, $templateId);
     }
 
-    public function validateAndGetCustomerId(Request $request)
+    public function getCustomerId($requestCustomerId)
     {
         $user = Auth::user();
-        
         if ($user) {
             return $user->customer_id;
-        } elseif ($request->filled('customerId')) {
-            return $request->input('customerId');
-        } else {
-            abort(404); // Not Found
         }
+        
+        return $requestCustomerId;
     }
 }

@@ -52,7 +52,7 @@ class RecomendatorCarousels extends Command
         $recentlyViewedProductsCarousel = $this->buildRecentlyViewedProductsCarousel($customerId);
         
         // Popular categories
-        $recommendationsCarousels = array_merge($favoritesCarousels, $searchBasedCarousels, $recentlyViewedProductsCarousel);
+        $recommendationsCarousels = array_merge($recentlyViewedProductsCarousel, $favoritesCarousels, $searchBasedCarousels);
         
         $redisRecommendationsCarouselKey = "wayak:user:{$customerId}:recommendations:carousels";
         Redis::set($redisRecommendationsCarouselKey, json_encode($recommendationsCarousels));
