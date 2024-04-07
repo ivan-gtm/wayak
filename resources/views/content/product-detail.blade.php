@@ -926,7 +926,7 @@
                             let favoriteButton = document.querySelector('.favorite-shop-action');
                             // toggleFavorite(favoriteButton);
                             
-                            // showAddedToFavoritesNotification();
+                            showAddedToFavoritesNotification();
                         } else if (!response.ok) {
                             // Handle other errors
                             return response.json().then(data => {

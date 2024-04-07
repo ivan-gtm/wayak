@@ -12,59 +12,101 @@ use App\Models\Template;
 
 class HomeCarouselsService
 {
-    function addOrUpdateCarouselItem($jsonString, $newItem, $maxItems = 20, $sliderId) {
+    function addOrUpdateCarouselItem($jsonString, $newItem, $maxItems = 20, $sliderId, $customerId, $country) {
         // Decode the JSON string to an associative array
         $data = json_decode($jsonString, true);
     
         // Check if $data is an array
         if (!is_array($data)) {
-            // Handle the error or initialize $data as an empty array
-            // For example, initialize as empty array (or you might want to return an error or throw an exception)
             $data = [];
         }
     
-        // Loop through the data to find the "recent-items" slider
-        foreach ($data as &$slider) {
+        // Flag to check if the carousel exists
+        $carouselExists = false;
+        // Track the position of "recently-viewed" if it exists
+        $recentlyViewedPosition = null;
+    
+        // Loop through the data to find the specified slider and "recently-viewed" position
+        foreach ($data as $index => &$slider) {
             if ($slider['slider_id'] === $sliderId) {
+                $carouselExists = true;
+    
                 // Ensure $slider['items'] is an array before looping
                 if (!isset($slider['items']) || !is_array($slider['items'])) {
                     $slider['items'] = []; // Initialize as empty array if not set or not an array
                 }
     
-                // Initialize an index to hold the position of an existing item
-                $existingItemIndex = null;
+                // Process the existing or new item
+                $this->processItem($slider, $newItem, $maxItems);
     
-                // Search for the item in the existing list
-                foreach ($slider['items'] as $index => $item) {
-                    if ($item['_id'] === $newItem['_id']) { // Assuming '_id' is unique
-                        $existingItemIndex = $index;
-                        break; // Break out of the loop once found
-                    }
-                }
+                break; // Exit the loop once we've processed the specified slider
+            }
     
-                if (!is_null($existingItemIndex)) {
-                    // Remove the existing item
-                    array_splice($slider['items'], $existingItemIndex, 1);
-                }
+            // Check for "recently-viewed" position
+            if ($slider['slider_id'] === 'recently-viewed') {
+                $recentlyViewedPosition = $index;
+            }
+        }
     
-                // Add the new item to the beginning of the "items" array
-                array_unshift($slider['items'], $newItem);
+        // If the specified carousel does not exist, create it
+        if (!$carouselExists) {
+            $newCarousel = [
+                'slider_id' => $sliderId,
+                'title' => $sliderId === 'favorites' ? 'Favorites' : 'Recently viewed products',
+                'search_term' => $sliderId === 'favorites' ? 'Favorites' : 'search_term',
+                'items' => []
+            ];
     
-                // Check if adding a new item exceeds the limit
-                if (count($slider['items']) > $maxItems) {
-                    // Remove the excess oldest items from the end
-                    $slider['items'] = array_slice($slider['items'], 0, $maxItems);
-                }
+            // Special handling for 'favorites' carousel
+            if ($sliderId === 'favorites') {
+                $newCarousel['link'] = route('user.favorites', ['customerId' => $customerId, 'country' => $country]);
+            }
     
-                break; // Exit the loop once we've processed the "recent-items" slider
+            // Process the new item for the new carousel
+            $this->processItem($newCarousel, $newItem, $maxItems);
+    
+            // Determine where to add the new carousel
+            if ($sliderId === 'recently-viewed') {
+                array_unshift($data, $newCarousel); // Add "recently-viewed" to the start
+            } elseif ($sliderId === 'favorites' && isset($recentlyViewedPosition)) {
+                // Insert "favorites" immediately after "recently-viewed"
+                array_splice($data, $recentlyViewedPosition + 1, 0, [$newCarousel]);
+            } else {
+                $data[] = $newCarousel; // Append other carousels to the end
             }
         }
     
         // Re-encode the modified array back to a JSON string
         return json_encode($data, JSON_PRETTY_PRINT);
     }
+        
+    function processItem(&$slider, $newItem, $maxItems) {
+        // Initialize an index to hold the position of an existing item
+        $existingItemIndex = null;
     
-
+        // Search for the item in the existing list
+        foreach ($slider['items'] as $index => $item) {
+            if ($item['_id'] === $newItem['_id']) { // Assuming '_id' is unique
+                $existingItemIndex = $index;
+                break; // Break out of the loop once found
+            }
+        }
+    
+        if (!is_null($existingItemIndex)) {
+            // Remove the existing item
+            array_splice($slider['items'], $existingItemIndex, 1);
+        }
+    
+        // Add the new item to the beginning of the "items" array
+        array_unshift($slider['items'], $newItem);
+    
+        // Check if adding a new item exceeds the limit
+        if (count($slider['items']) > $maxItems) {
+            // Remove the excess oldest items from the end
+            $slider['items'] = array_slice($slider['items'], 0, $maxItems);
+        }
+    }
+    
     function removeCarouselItem($jsonString, $itemIdToRemove, $sliderId) {
         // Decode the JSON string to an associative array
         $data = json_decode($jsonString, true);
@@ -160,7 +202,7 @@ class HomeCarouselsService
         ];
 
         $redisCarouselsJSON = Redis::get("wayak:user:{$customerId}:recommendations:carousels");
-        $modifiedJson = $this->addOrUpdateCarouselItem($redisCarouselsJSON, $carouselItem, 20,'favorites');
+        $modifiedJson = $this->addOrUpdateCarouselItem($redisCarouselsJSON, $carouselItem, 20,'favorites', $customerId, $country);
         
         Redis::set("wayak:user:{$customerId}:recommendations:carousels",$modifiedJson);
 
@@ -200,7 +242,7 @@ class HomeCarouselsService
         ];
 
         $redisCarouselsJSON = Redis::get("wayak:user:{$customerId}:recommendations:carousels");
-        $modifiedJson = $this->addOrUpdateCarouselItem($redisCarouselsJSON, $carouselItem, 20,'recently-viewed');
+        $modifiedJson = $this->addOrUpdateCarouselItem($redisCarouselsJSON, $carouselItem, 20,'recently-viewed', $customerId, $country);
         
         Redis::set("wayak:user:{$customerId}:recommendations:carousels",$modifiedJson);
 
