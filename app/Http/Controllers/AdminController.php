@@ -100,7 +100,7 @@ class AdminController extends Controller
             AND thumbnails.language_code = 'en'
             AND thumbnails.thumbnail_ready IS NULL
             AND thumbnails.status = 0
-        LIMIT 2000 OFFSET 400
+        LIMIT 2000 OFFSET 900
         ") 
         );
 

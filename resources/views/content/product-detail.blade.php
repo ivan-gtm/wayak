@@ -1168,6 +1168,8 @@
             },
 
             onApprove: function(data, actions) {
+                document.getElementById('overlay').style.display = 'block'; // Show the overlay
+
                 return actions.order.capture().then(function(orderData) {
                     const metaElement = document.querySelector('meta[name="product-id"]');
                     const productId = metaElement.getAttribute('content');
@@ -1197,6 +1199,7 @@
                     })
                     .then(response => response.json())
                     .then(data => {
+                        document.getElementById('overlay').style.display = 'none'; // Hide the overlay
                         if (data.paymentValid) {
                             const customerId = getCustomerId();
                             var redirectUrl = "{{ route('editor.openTemplate', [ 'country' => $country, 'template_key' => $template->_id ]) }}?customerId=" + customerId;
@@ -1207,6 +1210,7 @@
                         }
                     })
                     .catch(error => {
+                        document.getElementById('overlay').style.display = 'none'; // Ensure overlay is hidden on error
                         console.error('Error in payment validation:', error);
                     });
 

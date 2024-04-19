@@ -43,22 +43,37 @@ class HomeCarouselsService
             }
     
             // Check for "recently-viewed" position
-            if ($slider['slider_id'] === 'recently-viewed') {
+            if ($slider['slider_id'] === 'recently-viewed' || $slider['slider_id'] === 'purchases') {
                 $recentlyViewedPosition = $index;
-            }
+            } 
+            // elseif ($slider['slider_id'] === 'recently-viewed') {
+            //     $recentlyViewedPosition = $index;
+            // }
         }
     
         // If the specified carousel does not exist, create it
         if (!$carouselExists) {
+
+            if($sliderId === 'favorites') {
+                $sliderTitle = 'Favorites';
+            } elseif($sliderId === 'recently-viewed') {
+                $sliderTitle = 'Recently viewed products';
+            } elseif($sliderId === 'purchases') {
+                $sliderTitle = 'Recent Designs';
+            }
+
+
             $newCarousel = [
                 'slider_id' => $sliderId,
-                'title' => $sliderId === 'favorites' ? 'Favorites' : 'Recently viewed products',
+                'title' => $sliderTitle,
                 'search_term' => $sliderId === 'favorites' ? 'Favorites' : 'search_term',
                 'items' => []
             ];
     
             // Special handling for 'favorites' carousel
             if ($sliderId === 'favorites') {
+                $newCarousel['link'] = route('user.favorites', ['customerId' => $customerId, 'country' => $country]);
+            } elseif($sliderId === 'purchases') {
                 $newCarousel['link'] = route('user.favorites', ['customerId' => $customerId, 'country' => $country]);
             }
     
@@ -203,6 +218,46 @@ class HomeCarouselsService
 
         $redisCarouselsJSON = Redis::get("wayak:user:{$customerId}:recommendations:carousels");
         $modifiedJson = $this->addOrUpdateCarouselItem($redisCarouselsJSON, $carouselItem, 20,'favorites', $customerId, $country);
+        
+        Redis::set("wayak:user:{$customerId}:recommendations:carousels",$modifiedJson);
+
+        return $modifiedJson;
+    }
+    
+    function buildPurchasesCarousels($customerId, $templateID)
+    {
+        $language_code = 'en';
+        $country = 'us';
+
+        $product = Template::where('_id', $templateID)->select([
+            'title',
+            'slug',
+            'previewImageUrls',
+            'width',
+            'height',
+            'forSubscribers',
+            'previewImageUrls'
+        ])->first();
+
+        if (App::environment() == 'local') {
+            $product->preview_image_url = asset('design/template/' . $product->_id . '/thumbnails/' . $language_code . '/' . $product->previewImageUrls['carousel']);
+        } else {
+            $product->preview_image_url = Storage::disk('s3')->url('design/template/' . $product->_id . '/thumbnails/' . $language_code . '/' . $product->previewImageUrls['carousel']);
+        }
+
+        $carouselItem = [
+            '_id' => $product->_id,
+            'title' => $product->title,
+            'slug' => $product->slug,
+            'width' => $product->width,
+            'height' => $product->height,
+            'forSubscribers' => $product->forSubscribers,
+            'previewImageUrls' => $product->previewImageUrls,
+            'preview_image_url' => $product->preview_image_url
+        ];
+
+        $redisCarouselsJSON = Redis::get("wayak:user:{$customerId}:recommendations:carousels");
+        $modifiedJson = $this->addOrUpdateCarouselItem($redisCarouselsJSON, $carouselItem, 20,'purchases', $customerId, $country);
         
         Redis::set("wayak:user:{$customerId}:recommendations:carousels",$modifiedJson);
 
