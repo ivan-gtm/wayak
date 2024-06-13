@@ -84,4 +84,7 @@ class AnalyticsController extends Controller
             // Log::error("Error registering product view: " . $e->getMessage());
         }
     }
+
+    // $carouselKeys = $this->getCarouselKeys($redisPrefix, $customerId);
+    // $redisResults = Redis::mget($carouselKeys);
 }

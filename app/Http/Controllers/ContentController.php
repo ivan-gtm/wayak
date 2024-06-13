@@ -5,14 +5,16 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\App;
-use App\Http\Controllers\FavoritesController;
 use App\Http\Controllers\AnalyticsController;
 use App\Traits\LocaleTrait;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Auth;
+
 use App\Services\UserPurchaseService;
+use App\Services\HomeCarouselsService;
+use App\Services\FavoritesService;
 
 use App\Models\Template;
 use Storage;
@@ -20,16 +22,17 @@ use Storage;
 class ContentController extends Controller
 {
     use LocaleTrait;
-    protected $userPurchaseService;
-
-    public function __construct(UserPurchaseService $userPurchaseService)
+    protected $userPurchaseService, $homeCarouselsService, $favoriteService;
+    
+    public function __construct(UserPurchaseService $userPurchaseService, HomeCarouselsService $homeCarouselsService, FavoritesService $favoriteService)
     {
         $this->userPurchaseService = $userPurchaseService;
+        $this->homeCarouselsService = $homeCarouselsService;
+        $this->favoriteService = $favoriteService;
     }
 
     public function showHome($country = 'us', Request $request)
     {
-        
         if( $this->isValidCountry($country) == false){
             abort(400, 'Unsupported country.');
         }
@@ -243,6 +246,8 @@ class ContentController extends Controller
     {
 
         // $language_code = 'en';
+        $customerId = $this->getCustomerId($request);
+        $templateId = substr($slug, strrpos($slug, '-') + 1, strlen($slug));
         $locale = $this->getLocaleByCountry($country);
 
         if (!in_array($locale, ['en', 'es','fr','pt'])) {
@@ -251,14 +256,13 @@ class ContentController extends Controller
 
         App::setLocale($locale);
 
-        $template_id = substr($slug, strrpos($slug, '-') + 1, strlen($slug));
         $search_query = '';
 
         if (isset($request->searchQuery)) {
             $search_query = $request->searchQuery;
         }
 
-        $template = self::getTemplateMetadata($template_id);
+        $template = self::getTemplateMetadata($templateId);
 
         // Template not found
         if (isset($template->_id) == false) {
@@ -269,7 +273,9 @@ class ContentController extends Controller
         // $related_templates = [];
 
         $analyticsController = new AnalyticsController();
-        $analyticsController->registerProductView($template_id);
+        $analyticsController->registerProductView($templateId);
+        $this->homeCarouselsService->addProductToRecentlyViewed($customerId, $templateId);
+        // exit;
         
         $language_code = 'en'; // Temporal
         if (App::environment() == 'local') {
@@ -307,14 +313,17 @@ class ContentController extends Controller
             // User is logged in
             $logged_id = Auth::id();
             $user = Auth::user();
+            
+            $resultFavorite = $this->favoriteService->isFavorite($template->_id, $user->customer_id);
+            if ($resultFavorite['success']) {
+                $isFavorite = true;
+            }
 
-            $favoritesController = new FavoritesController();
-            $isFavorite = $favoritesController->isFavorite($template->_id, $user->customer_id);
             $analyticsController->registerCategoryVisitByUser( substr($template->mainCategory, 1), $user->customer_id );
         }
 
         $customerId = $this->getCustomerId($request);
-        $isPurchased = $this->userPurchaseService->isTemplateIdInPurchases($customerId, $template_id);
+        $isPurchased = $this->userPurchaseService->isTemplateIdInPurchases($customerId, $templateId);
         
         $couponDetails = null;
         if( isset($request->coupon) ) {

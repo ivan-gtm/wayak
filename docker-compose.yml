@@ -39,17 +39,17 @@ services:
         - "6379"
     volumes:
       - .cloud/redis/data/dev:/data
-  bard:
-    build:
-      context: .cloud/docker/bard/
-      dockerfile: Dockerfile
-    environment:
-      _BARD_API_KEY: "dwhW7r3ffeq_01nyIcrACWtwX0ssCfXDXvKu8FxJmPfCk-ydF4u5n_ijWz_QiVsRtBSpgg."
-    volumes:
-      - .cloud/bard/app:/app/code/
-      - /Users/daniel/Documents/GitHub/wayak/public/design/template:/app/images/
-    ports:
-      - "5000:5000"
+  # bard:
+  #   build:
+  #     context: .cloud/docker/bard/
+  #     dockerfile: Dockerfile
+  #   environment:
+  #     _BARD_API_KEY: "dwhW7r3ffeq_01nyIcrACWtwX0ssCfXDXvKu8FxJmPfCk-ydF4u5n_ijWz_QiVsRtBSpgg."
+  #   volumes:
+  #     - .cloud/bard/app:/app/code/
+  #     - /Users/daniel/Documents/GitHub/wayak/public/design/template:/app/images/
+  #   ports:
+  #     - "5000:5000"
   # redis_uat:
   #   image: redis:alpine
   #   ports:

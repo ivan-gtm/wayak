@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\App;
 use App\Services\UserPurchaseService;
+use App\Services\PayPalService;
 // use Illuminate\Support\Facades\Response;
 
 
@@ -39,9 +40,11 @@ ini_set('memory_limit', -1);
 class EditorController extends Controller
 {
 	protected $userPurchaseService;
+	protected $paypalService;
 
-	public function __construct(UserPurchaseService $userPurchaseService)
+	public function __construct(PayPalService $paypalService, UserPurchaseService $userPurchaseService)
 	{
+		$this->paypalService = $paypalService;
 		$this->userPurchaseService = $userPurchaseService;
 	}
 
@@ -906,13 +909,13 @@ class EditorController extends Controller
 
 	function getTemplateThumbnails(Request $request)
 	{
-		$templateKeys = str_replace('temp:','',$request->demo_templates);
-		$purchaseCode = str_replace('temp:','',$request->demo_templates);
+		$templateKeys = str_replace('temp:', '', $request->demo_templates);
+		$purchaseCode = str_replace('temp:', '', $request->demo_templates);
 		$languageCode = $request->language_code;
 		$customerId = $request->customerId;
 
 		// Fetch template IDs
-		$templateIds = Redis::hget('wayak:user:'.$customerId.':purchases:'.$purchaseCode,'template_key') ? Redis::hget('wayak:user:'.$customerId.':purchases:'.$purchaseCode,'template_key') : $templateKeys;
+		$templateIds = Redis::hget('wayak:user:' . $customerId . ':purchases:' . $purchaseCode, 'template_key') ? Redis::hget('wayak:user:' . $customerId . ':purchases:' . $purchaseCode, 'template_key') : $templateKeys;
 
 		if (!$templateIds) {
 			return response()->json(['success' => false, 'message' => 'Template IDs not found.']);
@@ -920,10 +923,10 @@ class EditorController extends Controller
 
 		// Fetch thumbnail
 		$thumbnail = DB::table('thumbnails')
-						->select(['template_id', 'filename', 'title', 'dimentions'])
-						->where('language_code', '=', $languageCode)
-						->whereIn('template_id', explode(',', $templateIds))
-						->first();
+			->select(['template_id', 'filename', 'title', 'dimentions'])
+			->where('language_code', '=', $languageCode)
+			->whereIn('template_id', explode(',', $templateIds))
+			->first();
 
 		if (!$thumbnail) {
 			return response()->json(['success' => false, 'message' => 'Thumbnail not found.']);
@@ -1021,41 +1024,42 @@ class EditorController extends Controller
 
 		$purchaseCode = isset($request['id']) ? $request['id'] : null;
 		$customerId = $request->customerId;
-		$remainingDownloads = intval( Redis::hget('wayak:user:'.$customerId.':purchases:'.$purchaseCode,'remaining_downloads') );
-		
-		if($remainingDownloads > 0){
-			$templateIds = Redis::hget('wayak:user:'.$customerId.':purchases:'.$purchaseCode,'template_key') ? Redis::hget('wayak:user:'.$customerId.':purchases:'.$purchaseCode,'template_key') : $request['id'];
-			$language_code = isset($request['language_code']) ? $request['language_code'] : 'en';
-			$array_final = $this->getJSONTemplate($templateIds, $language_code);
-	
-			return response()->json(
-				array(
-					'err' => 0,
-					'data' => $array_final,
-					'metrics' => 'in',
-					'options' => "{\"width\":1728,\"height\":2304,\"metrics\":\"in\",\"type\":\"single\",\"instructionsId\":\"80\",\"scriptVersion\":4}",
-					'instructions' => ""
-				)
-			);
-		} else {
-			return response()->json(
-				array(
-					'err' => 1,
-					// 'data' => '',
-					'msg' => 'This item is no longer available',
-					// 'metrics' => '',
-					// 'options' => '',
-					// 'instructions' => ''
-				)
-			);
-		}
+		$demoAsId = $request->demo_as_id;
+		$remainingDownloads = intval(Redis::hget('wayak:user:' . $customerId . ':purchases:' . $purchaseCode, 'remaining_downloads'));
+
+		// if($remainingDownloads > 0 || (intval($demoAsId) > 0)){
+		$templateIds = Redis::hget('wayak:user:' . $customerId . ':purchases:' . $purchaseCode, 'template_key') ? Redis::hget('wayak:user:' . $customerId . ':purchases:' . $purchaseCode, 'template_key') : $request['id'];
+		$language_code = isset($request['language_code']) ? $request['language_code'] : 'en';
+		$array_final = $this->getJSONTemplate($templateIds, $language_code);
+
+		return response()->json(
+			array(
+				'err' => 0,
+				'data' => $array_final,
+				'metrics' => 'in',
+				'options' => "{\"width\":1728,\"height\":2304,\"metrics\":\"in\",\"type\":\"single\",\"instructionsId\":\"80\",\"scriptVersion\":4}",
+				'instructions' => ""
+			)
+		);
+		// } else {
+		// 	return response()->json(
+		// 		array(
+		// 			'err' => 1,
+		// 			// 'data' => '',
+		// 			'msg' => 'This item is no longer available',
+		// 			// 'metrics' => '',
+		// 			// 'options' => '',
+		// 			// 'instructions' => ''
+		// 		)
+		// 	);
+		// }
 
 	}
 
 	function loadRemainingDownloads($purchaseCode, Request $request)
 	{
 		$customerId = $request->customerId;
-		$remainingDownloads = Redis::hget('wayak:user:'.$customerId.':purchases:'.$purchaseCode,'remaining_downloads') ? Redis::hget('wayak:user:'.$customerId.':purchases:'.$purchaseCode,'remaining_downloads') : $request['id'];
+		$remainingDownloads = Redis::hget('wayak:user:' . $customerId . ':purchases:' . $purchaseCode, 'remaining_downloads') ? Redis::hget('wayak:user:' . $customerId . ':purchases:' . $purchaseCode, 'remaining_downloads') : $request['id'];
 
 		return response()->json([
 			'success' => true,
@@ -1287,9 +1291,9 @@ class EditorController extends Controller
 
 		$customerId = $request->customerId;
 		$purchaseCode = $request->templateId;
-		$templateKey = Redis::hget('wayak:user:'.$customerId.':purchases:' . $purchaseCode, 'template_key');
-		$expires_at = Redis::hget('wayak:user:'.$customerId.':purchases:' . $purchaseCode, 'expires_at');
-		$remaining_downloads = Redis::hget('wayak:user:'.$customerId.':purchases:' . $purchaseCode, 'remaining_downloads') - 1;
+		$templateKey = Redis::hget('wayak:user:' . $customerId . ':purchases:' . $purchaseCode, 'template_key');
+		$expires_at = Redis::hget('wayak:user:' . $customerId . ':purchases:' . $purchaseCode, 'expires_at');
+		$remaining_downloads = Redis::hget('wayak:user:' . $customerId . ':purchases:' . $purchaseCode, 'remaining_downloads') - 1;
 
 		if (Redis::hexists('analytics:btn:download', $templateKey)) {
 			Redis::hincrby('analytics:btn:download', $templateKey, 1);
@@ -1298,17 +1302,16 @@ class EditorController extends Controller
 		}
 
 		// Once user downloads template, code is removed to avoid multiple usages
-		
-		Redis::hincrby('wayak:user:'.$customerId.':purchases:' . $purchaseCode, 'remaining_downloads', -1);
+
+		Redis::hincrby('wayak:user:' . $customerId . ':purchases:' . $purchaseCode, 'remaining_downloads', -1);
 		$successResponse = true;
-		
-		if($remaining_downloads == 0){
+
+		if ($remaining_downloads == 0) {
 			// } else {
 			// $successResponse = false;
 			Redis::del('code:' . $purchaseCode);
 			Redis::del('template:' . $language_code . ':temp:' . $purchaseCode . ':jsondata');
-			Redis::srem('wayak:user:'.$customerId.':purchases', $templateKey);
-			
+			Redis::srem('wayak:user:' . $customerId . ':purchases', $templateKey);
 		}
 
 		return response()->json([
@@ -1348,10 +1351,13 @@ class EditorController extends Controller
 
 		$purchase_code = rand(1111, 9999);
 
+
 		$original_template_key = $template_key;
+		// echo $original_template_key; exit;
 
 		// http://localhost:8001/us/template/open/sjilZYwA1V?customerId=gq9mm31pti
 		$customerId = $this->getCustomerId($request);
+		echo $customerId;
 		if ($this->userPurchaseService->isTemplateIdInPurchases($customerId, $template_key) == false) {
 			abort(404);
 		}
@@ -1407,7 +1413,7 @@ class EditorController extends Controller
 
 		// echo 'template:' . $language_code . ':' . $template_key . ':jsondata';
 		// exit;
-		
+
 		if (Redis::exists('template:' . $language_code . ':' . $template_key . ':jsondata') == false) {
 			abort(404);
 			// return response()->json([

@@ -88,9 +88,11 @@ class AdminController extends Controller
 
         $ready_for_sale_products = DB::select( DB::raw(
             "SELECT 
-            thumbnails.template_id, thumbnails. filename 
+            thumbnails.template_id, 
+            thumbnails.filename 
         FROM 
-            thumbnails,templates
+            thumbnails,
+            templates
         WHERE
             thumbnails.template_id = templates.template_id
             AND templates.source = 'templett'
@@ -98,7 +100,8 @@ class AdminController extends Controller
             AND thumbnails.language_code = 'en'
             AND thumbnails.thumbnail_ready IS NULL
             AND thumbnails.status = 0
-        LIMIT 2000") 
+        LIMIT 2000 OFFSET 900
+        ") 
         );
 
         return view('admin.thumbnail_generation', [

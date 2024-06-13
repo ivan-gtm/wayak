@@ -4,9 +4,17 @@ namespace App\Services;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Services\HomeCarouselsService;
 
 class UserPurchaseService
 {
+    protected $homeCarouselService;
+
+    public function __construct(HomeCarouselsService $homeCarouselService)
+    {
+        $this->homeCarouselService = $homeCarouselService;
+    }
+
     public function getPurchases($customerId)
     {
         // Construct the Redis key for the user's purchases
@@ -28,18 +36,16 @@ class UserPurchaseService
     {
         $redisKey = 'wayak:user:' . $customerId . ':purchases';
         Redis::sadd($redisKey, $templateId);
+        $this->homeCarouselService->buildPurchasesCarousels($customerId, $templateId);
     }
 
-    public function validateAndGetCustomerId(Request $request)
+    public function getCustomerId($requestCustomerId)
     {
         $user = Auth::user();
-        
         if ($user) {
             return $user->customer_id;
-        } elseif ($request->filled('customerId')) {
-            return $request->input('customerId');
-        } else {
-            abort(404); // Not Found
         }
+
+        return $requestCustomerId;
     }
 }
