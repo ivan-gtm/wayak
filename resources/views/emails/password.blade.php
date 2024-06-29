@@ -59,7 +59,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <img src="path_to_your_logo.png" alt="Company Logo">
+            <img src="https://wayak.app/assets/img/logo.png" alt="Company Logo">
         </div>
         <div class="content">
             <p>Hello,</p>

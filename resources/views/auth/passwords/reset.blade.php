@@ -8,8 +8,7 @@
         body {
             font-size: 100%;
         }
-    </style>
-    <style>
+    
         /*! CSS Used from: https://wp.alithemes.com/html/nest/demo/assets/css/main.css?v=5.6 */
         /*! @import https://wp.alithemes.com/html/nest/demo/assets/css/vendors/normalize.css */
         main {

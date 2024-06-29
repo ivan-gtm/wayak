@@ -43,6 +43,20 @@ class RegisterController extends Controller
         ]);
     }
 
+    function extractUsername($email) {
+        // Check if the email contains '@'
+        if (strpos($email, '@') === false) {
+            return ['success' => false, 'error' => 'Invalid email: No "@" symbol found.'];
+        }
+    
+        $parts = explode('@', $email);
+        if (count($parts) != 2) {
+            return ['success' => false, 'error' => 'Invalid email: More than one "@" symbol found.'];
+        }
+    
+        return ['success' => true, 'username' => $parts[0]];
+    }
+
     /**
      * Handle account registration request
      * 
@@ -55,10 +69,17 @@ class RegisterController extends Controller
         $userData = $request->validated();
         $userData['customer_id'] = $request->input('customerId');
         $userData['verification_token'] = $this->generateVerificationToken();
-    
+        
+        $resultUserName = $this->extractUsername($request->input('customerId'));
+        if ($resultUserName['success']) {
+            $userData['username'] = $resultUserName['username'];
+        } else {
+            $userData['username'] = 'username';
+        }
+        
         DB::beginTransaction();
     
-        try {
+        // try {
             $user = User::create($userData);
     
             $emailStatus = $this->sendVerificationEmail($user);
@@ -70,17 +91,17 @@ class RegisterController extends Controller
             DB::commit();
             return redirect('/')->with('success', 'Account successfully registered. Please check your email to verify.');
     
-        } catch (Exception $e) {
+        // } catch (Exception $e) {
             DB::rollBack();
             return redirect('/')->with('error', $e->getMessage());
-        }
+        // }
     }
     
     public function sendVerificationEmail($user)
     {
         $verificationLink = url('/verify-email/' . $user->verification_token);
 
-        try {
+        // try {
             Mail::send('emails.auth.verify', ['user' => $user, 'verificationLink' => $verificationLink], function ($message) use ($user) {
                 $message->from(config('mail.from.address'), config('mail.from.name'));
                 $message->to($user->email);
@@ -92,10 +113,10 @@ class RegisterController extends Controller
             }
 
             return true;
-        } catch (Exception $e) {
-            report($e);
-            return false;
-        }
+        // } catch (Exception $e) {
+        //     report($e);
+        //     return false;
+        // }
     }
 
 
@@ -118,7 +139,7 @@ class RegisterController extends Controller
         auth()->login($user);
 
         // Redirect to a verified page or with a success message
-        return redirect('/')->with('success', 'Email successfully verified.');
+        return redirect('/')->with('success', 'Email successfully verified. You are now logged in, welcome!');
     }
 
     public function generateVerificationToken()

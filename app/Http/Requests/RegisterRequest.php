@@ -27,7 +27,7 @@ class RegisterRequest extends FormRequest
             '_token' => 'required|string',
             'customerId'  => 'required|string|unique:users,customer_id',
             'email' => 'required|email|max:255|unique:users,email', // Assuming 'users' is the table name
-            'username' => 'required|string|max:255|unique:users,username', // Assuming 'users' is the table name
+            // 'username' => 'required|string|max:255|unique:users,username', // Assuming 'users' is the table name
             // 'password' => 'required|string|min:6|confirmed', // Minimum length of 6 and must match password_confirmation
             'password' => 'required|string|confirmed', // Minimum length of 6 and must match password_confirmation
             'password_confirmation' => 'required|same:password'

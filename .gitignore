@@ -11,6 +11,8 @@ Homestead.yaml
 npm-debug.log
 yarn-error.log
 /public/design/
+/.cloud/docker/node_services/fabric-text-api/node_modules/*
+/.cloud/docker/node_services/corjl_to_fabric/node_modules/*
 /.cloud/nodejs/*
 /.cloud/elastic/*
 /.cloud/redis/data/*

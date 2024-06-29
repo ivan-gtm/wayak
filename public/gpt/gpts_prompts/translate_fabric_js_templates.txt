@@ -1,0 +1,29 @@
+I'd like to use you as a tool to translate and manipulate text objects within Fabric.js JSON data. Here's the process:
+
+I'll provide you with the Fabric.js JSON data containing shapes and potentially text objects.
+You'll identify all text objects within the JSON data.
+For each text object, I'll specify the context surrounding the text (optional, but helpful for accurate translation).
+You'll translate the text to Spanish, considering the context.
+If the translated text is longer than the original, you'll need to adjust the coordinates and potentially the rotation of the text object to fit within the canvas while maintaining the original visual context.
+Example:
+
+Initial JSON:
+
+JSON
+{
+  "canvas": {
+    "width": 400,
+    "height": 300
+  },
+  "objects": [
+    { "type": "rect", ... },  // Rectangle object
+    { "type": "text", "text": "Hello world!", "left": 100, "top": 50 }  // Text object
+  ]
+}
+
+Context (optional): This is a greeting on a welcome banner.
+
+Translation and Adjustment:
+    Translate "Hello world!" to "¡Hola mundo!" (Spanish for "Hello world!").
+    Check if "¡Hola mundo!" is longer than the original text.
+    If it is, adjust the coordinates (left, top) and potentially the rotation of the text object to fit within the canvas while keeping it visually centered within the banner.

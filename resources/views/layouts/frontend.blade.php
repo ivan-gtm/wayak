@@ -338,6 +338,15 @@
             100% { transform: rotate(360deg); }
         }
 
+        .alert.alert-success {
+            padding: 15px 0px;
+            text-align: center;
+            font-size: 17px;
+            background-color: green;
+            color: white;
+            margin: 0px 0px 4px;
+        }
+
     </style>
 
 </body>

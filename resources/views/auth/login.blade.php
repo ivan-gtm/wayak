@@ -159,6 +159,13 @@
     .security-code{padding:0 20px;}
     }
 
+    div.alert.alert-danger {
+        background-color: red;
+        padding: 10px 0px 1px;
+        color: white;
+        line-height: 21px;
+    }
+
 </style>
 
 <main class="main pages">
@@ -168,7 +175,7 @@
                 <div class="col-xl-8 col-lg-10 col-md-12 m-auto">
                     <div class="row">
                         <div class="col-lg-6 pr-30 d-none d-lg-block">
-                            <img class="border-radius-15" src="https://wp.alithemes.com/html/nest/demo/assets/imgs/page/login-1.png" alt="">
+                            <img class="border-radius-15" src="{{ url('/assets/img/login.webp') }}" alt="">
                         </div>
                         <div class="col-lg-6 col-md-8">
                             <div class="login_wrap widget-taber-content background-white">
@@ -178,9 +185,11 @@
                                         <p class="mb-30">Don't have an account? <a href="{{ route('register.show') }}">Create here</a></p>
                                     </div>
                                     <form action="{{ route('login.perform') }}" method="POST" onsubmit="return validateForm()">
+                                        {{---
                                         <div class="error-message" id="error-message">
                                             @include('layouts.partials.messages')
                                         </div>
+                                        ---}}
                                         <input type="hidden" name="_token" value="{{ csrf_token() }}" />
                                         <div class="form-group">
                                             <input type="text" name="username" placeholder="Username or Email *" required value="{{ old('username') }}" autofocus>
