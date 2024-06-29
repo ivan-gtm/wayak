@@ -41,3 +41,6 @@ public/packtpub/*
 /public/template-assets/thumbs/*
 ._*
 composer.lock
+.cloud/docker/node_services/corjl_to_fabric/package-lock.json
+.cloud/docker/node_services/fabric-text-api/package-lock.json
+package-lock.json
