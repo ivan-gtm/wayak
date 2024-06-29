@@ -5,33 +5,41 @@ const { fabric } = require('fabric');
 const { JSDOM } = require('jsdom');
 const { SVGPathData } = require('svg-pathdata');
 
+console.log('Starting script...'); // Debug: Script start
+
 // Create and connect to the Redis client
-const client = redis.createClient();
+const client = redis.createClient({
+    url: 'redis://127.0.0.1:6381'
+});
+
+console.log('Redis client created'); // Debug: Redis client creation
 
 // Connect to Redis
 (async () => {
   await client.connect();
+  console.log('Connected to Redis'); // Debug: Redis connection
 })();
 
 // Handle Redis connection errors
 client.on('error', (err) => console.log('Redis Client Error', err));
 
 async function convertSvgToFabric(svgContent) {
-    const { window } = new JSDOM();
-    global.window = window;
-    global.document = window.document;
+    console.log('Converting SVG to Fabric...'); // Debug: SVG conversion start
+    const dom = new JSDOM(svgContent);
+    const document = dom.window.document;
+    const { Node } = dom.window;
 
     // Create a temporary canvas
     const canvas = new fabric.Canvas(null, { width: 600, height: 400 });
 
     // Parse SVG content
-    const parser = new DOMParser();
-    const svgDoc = parser.parseFromString(svgContent, 'image/svg+xml');
-    const svgElement = svgDoc.documentElement;
+    const svgElement = document.documentElement;
 
     // Get SVG dimensions
     const viewBox = svgElement.getAttribute('viewBox');
     let [minX, minY, width, height] = viewBox ? viewBox.split(' ').map(Number) : [0, 0, 600, 400];
+
+    console.log(`Canvas size set to: ${width}x${height}`); // Debug: Canvas size
 
     // Set canvas size
     canvas.setWidth(width);
@@ -39,7 +47,9 @@ async function convertSvgToFabric(svgContent) {
 
     // Process SVG elements
     const fabricObjects = [];
-    await processNode(svgElement, fabricObjects);
+    await processNode(svgElement, fabricObjects, Node);
+
+    console.log(`Processed ${fabricObjects.length} Fabric objects`); // Debug: Object count
 
     // Add objects to canvas
     canvas.add(...fabricObjects);
@@ -47,10 +57,12 @@ async function convertSvgToFabric(svgContent) {
     // Convert canvas to JSON
     const json = canvas.toJSON();
 
+    console.log('SVG converted to Fabric JSON'); // Debug: Conversion complete
     return json;
 }
 
-async function processNode(node, fabricObjects) {
+async function processNode(node, fabricObjects, Node) {
+    console.log(`Processing node: ${node.tagName}`); // Debug: Node processing
     switch (node.tagName.toLowerCase()) {
         case 'rect':
             fabricObjects.push(new fabric.Rect({
@@ -62,6 +74,7 @@ async function processNode(node, fabricObjects) {
                 stroke: node.getAttribute('stroke') || 'transparent',
                 strokeWidth: parseFloat(node.getAttribute('stroke-width') || 1)
             }));
+            console.log('Added rectangle'); // Debug: Rectangle added
             break;
         case 'circle':
             fabricObjects.push(new fabric.Circle({
@@ -72,6 +85,7 @@ async function processNode(node, fabricObjects) {
                 stroke: node.getAttribute('stroke') || 'transparent',
                 strokeWidth: parseFloat(node.getAttribute('stroke-width') || 1)
             }));
+            console.log('Added circle'); // Debug: Circle added
             break;
         case 'path':
             const pathData = new SVGPathData(node.getAttribute('d'));
@@ -81,6 +95,7 @@ async function processNode(node, fabricObjects) {
                 strokeWidth: parseFloat(node.getAttribute('stroke-width') || 1)
             });
             fabricObjects.push(path);
+            console.log('Added path'); // Debug: Path added
             break;
         case 'text':
             fabricObjects.push(new fabric.Text(node.textContent, {
@@ -89,18 +104,20 @@ async function processNode(node, fabricObjects) {
                 fontSize: parseFloat(node.getAttribute('font-size') || 16),
                 fill: node.getAttribute('fill') || 'black'
             }));
+            console.log('Added text'); // Debug: Text added
             break;
     }
 
     // Process child nodes
     for (const childNode of node.childNodes) {
         if (childNode.nodeType === Node.ELEMENT_NODE) {
-            await processNode(childNode, fabricObjects);
+            await processNode(childNode, fabricObjects, Node);
         }
     }
 }
 
 async function getRedisKeys(pattern) {
+    console.log(`Fetching Redis keys with pattern: ${pattern}`); // Debug: Redis key fetching
     let cursor = 0;
     const keys = [];
     do {
@@ -111,16 +128,19 @@ async function getRedisKeys(pattern) {
         cursor = result.cursor;
         keys.push(...result.keys);
     } while (cursor !== 0);
+    console.log(`Found ${keys.length} keys`); // Debug: Key count
     return keys;
 }
 
 async function getTemplatePages(collectionId) {
-    const dirPath = `/public/corjl/design/template/${collectionId}`;
+    console.log(`Processing collection: ${collectionId}`); // Debug: Collection processing
+    const dirPath = `/Users/daniel/Documents/GitHub/wayak/public/corjl/design/template/${collectionId}`;
     const files = await fs.readdir(dirPath);
     const templates = {};
 
     for (const file of files) {
         if (file.startsWith('svg_template_') && file.endsWith('.svg')) {
+            console.log(`Processing file: ${file}`); // Debug: File processing
             const match = file.match(/svg_template_(\d+)_page_(\d+)\.svg/);
             if (match) {
                 const templateNum = match[1];
@@ -131,6 +151,7 @@ async function getTemplatePages(collectionId) {
                     templates[templateNum] = [];
                 }
                 templates[templateNum].push(fabricJson);
+                console.log(`Added template ${templateNum}, page ${match[2]}`); // Debug: Template page added
             }
         }
     }
@@ -138,16 +159,19 @@ async function getTemplatePages(collectionId) {
 }
 
 async function processCollections() {
+    console.log('Starting to process collections...'); // Debug: Collection processing start
     const keys = await getRedisKeys('corjl:*');
 
     for (const key of keys) {
         const collectionId = key.split(':')[1];
+        console.log(`Processing collection ID: ${collectionId}`); // Debug: Collection ID
         const templates = await getTemplatePages(collectionId);
 
         for (const [templateNum, pages] of Object.entries(templates)) {
             const templateKey = `template:${templateNum}:jsondata`;
             await client.set(templateKey, JSON.stringify(pages));
             await client.hSet('corj:collections:converted_templates', templateKey, collectionId);
+            console.log(`Saved template ${templateNum} to Redis`); // Debug: Template saved
         }
     }
 
@@ -156,5 +180,9 @@ async function processCollections() {
 
 // Call the function and handle any errors
 processCollections()
-    .catch(console.error)
-    .finally(() => client.quit());
+    .then(() => console.log('Script completed successfully')) // Debug: Script completion
+    .catch(error => console.error('Error during script execution:', error)) // Debug: Error logging
+    .finally(() => {
+        console.log('Closing Redis connection...'); // Debug: Redis disconnection
+        client.quit();
+    });
