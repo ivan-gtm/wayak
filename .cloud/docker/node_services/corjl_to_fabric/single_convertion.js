@@ -2,6 +2,9 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { fabric } = require('fabric');
 const { JSDOM } = require('jsdom');
+const { SVGPathData } = require('svg-pathdata');
+const { round } = require('lodash');
+
 
 const app = express();
 const port = 3000;
@@ -58,37 +61,81 @@ async function convertSvgToFabric(svgContent) {
 async function processNode(node, fabricObjects, Node) {
     console.log(`Processing node: ${node.tagName}`); // Debug: Node processing
     switch (node.tagName.toLowerCase()) {
+        
         case 'text':
-            const parentNode = node.closest('g[id^="drawing_1_canvas_group_text_parent_"]');
-            let [a, b, c, d, e, f] = [1, 0, 0, 1, 0, 0];
+            console.log(`\n<<<<<>>>>>>`);
+            let parentNode = node.closest('g[id^="drawing_1_canvas_group_element_"]');
+            let textParentNode = node.closest('g[id^="drawing_1_canvas_group_text_parent_"]');
+            
+            console.log(`parentNode: ${parentNode.outerHTML}`);
+            console.log(`textParentNode: ${textParentNode.outerHTML}`);
+            
+            let [a, b, c, d, matrixX, matrixY] = [1, 0, 0, 1, 0, 0];
 
-            if (parentNode) {
-                const parentTransform = parentNode.getAttribute('transform');
-                const matrixMatch = parentTransform.match(/matrix\(([^)]+)\)/);
+            if (parentNode && textParentNode) {
+                console.log('Parent node found:'); // Debug: Parent node info
+                console.log(`Parent node ID: ${parentNode.id}`); // Debug: Parent node ID
+                console.log(`Parent node content: ${parentNode.outerHTML}`); // Debug: Parent node content
+
+                let parentTransform = textParentNode.getAttribute('transform');
+                console.log(`Parent transform: ${parentTransform}`); // Debug: Parent transform
+
+                let matrixMatch = parentTransform.match(/matrix\(([^)]+)\)/);
                 if (matrixMatch) {
-                    [a, b, c, d, e, f] = matrixMatch[1].split(',').map(Number);
+                    [a, b, c, d, matrixX, matrixY] = matrixMatch[1].split(',').map(Number);
+                    console.log(`Matrix values: a=${a}, b=${b}, c=${c}, d=${d}, matrixX=${matrixX}, matrixY=${matrixY}`); // Debug: Matrix values
                 }
+            } else {
+                console.log('No parent node found'); // Debug: No parent node
             }
 
-            const tspans = node.getElementsByTagName('tspan');
-            const x = parseFloat(node.getAttribute('x') || 0);
+            let rectElement = parentNode ? parentNode.querySelector('rect[id^="drawing_1_canvas_rect_"]') : null;
+            let rectAreaWidth = 0, rectAreaHeight = 0;
+            
+            if (rectElement) {
+                console.log('Rect element found:'); // Debug: Rect element info
+                console.log(`Rect element ID: ${rectElement.id}`); // Debug: Rect element ID
+                console.log(`Rect element content: ${rectElement.outerHTML}`); // Debug: Rect element content
+
+                rectAreaWidth = parseFloat(rectElement.getAttribute('width') || 0);
+                rectAreaHeight = parseFloat(rectElement.getAttribute('height') || 0);
+                rectAreaX = parseFloat(rectElement.getAttribute('x') || 0);
+                rectAreaY = parseFloat(rectElement.getAttribute('y') || 0);
+                console.log(`Rect dimensions: width=${rectAreaWidth}, height=${rectAreaHeight}`); // Debug: Rect dimensions
+            } else {
+                console.log('No rect element found'); // Debug: No rect element
+            }
+
+            let tspans = node.getElementsByTagName('tspan');
+            let x = parseFloat(node.getAttribute('x') || 0);
             let y = parseFloat(node.getAttribute('y') || 0);
-            const fontSize = parseFloat(node.getAttribute('font-size') || 16);
-            const fill = node.getAttribute('fill') || 'black';
-            const size = parseFloat(node.getAttribute('size') || 0);
+            let fontSize = parseFloat(node.getAttribute('font-size') || 16);
+            let fill = node.getAttribute('fill') || 'black';
+            let size = parseFloat(node.getAttribute('size') || 0);
 
-            for (const tspan of tspans) {
-                const dy = parseFloat(tspan.getAttribute('dy') || 0);
-                y += dy;
+            for (let tspan of tspans) {
+                let dy = parseFloat(tspan.getAttribute('dy') || 0);
+                let dx = parseFloat(tspan.getAttribute('x') || 0);
+                // y += dy;
 
-                const transformedX = a * x + c * y + e;
-                const transformedY = b * x + d * y + f;
+                // let transformedX = a * x + c * y + e;
+                // let transformedY = b * x + d * y + f;
+
+                console.log(`<<TEXTO>>: ${tspan.textContent}`); // Debug: Node processing
+                console.log(`MatrixY: ${matrixY}`); // Debug: Node processing
+                console.log(`Tex Y: ${y}`); // Debug: Node processing
+                console.log(`tspan dY: ${dy}`); // Debug: Node processing
+                console.log(`tspan dY: ${dx}`); // Debug: Node processing
+                console.log(`rectAreaWidth: ${rectAreaWidth}`); // Debug: Node processing
+                console.log(`rectAreaHeight: ${rectAreaHeight}`); // Debug: Node processing
 
                 fabricObjects.push(new fabric.Textbox(tspan.textContent, {
-                    originX: "center",
-                    originY: "top",
-                    left: transformedX,
-                    top: transformedY + size,
+                    // originX: "center",
+                    // originY: "top",
+                    left: rectAreaX,
+                    top: round(matrixY + y + dy - size),
+                    height:rectAreaHeight,
+                    width:rectAreaWidth,
                     fontSize,
                     fill,
                     textAlign: "right",
@@ -102,7 +149,7 @@ async function processNode(node, fabricObjects, Node) {
             break;
 
         case 'image':
-            const xlinkHref = node.getAttribute('xlink:href');
+            let xlinkHref = node.getAttribute('xlink:href');
             if (xlinkHref) {
                 await new Promise((resolve, reject) => {
                     fabric.Image.fromURL(xlinkHref, (img) => {
@@ -132,6 +179,39 @@ async function processNode(node, fabricObjects, Node) {
                 });
             }
             break;
+            // case 'rect':
+            //     fabricObjects.push(new fabric.Rect({
+            //         left: parseFloat(node.getAttribute('x') || 0),
+            //         top: parseFloat(node.getAttribute('y') || 0),
+            //         width: parseFloat(node.getAttribute('width')),
+            //         height: parseFloat(node.getAttribute('height')),
+            //         fill: node.getAttribute('fill') || 'transparent',
+            //         stroke: node.getAttribute('stroke') || 'transparent',
+            //         strokeWidth: parseFloat(node.getAttribute('stroke-width') || 1)
+            //     }));
+            //     console.log('Added rectangle'); // Debug: Rectangle added
+            //     break;
+            case 'circle':
+                fabricObjects.push(new fabric.Circle({
+                    left: parseFloat(node.getAttribute('cx')) - parseFloat(node.getAttribute('r')),
+                    top: parseFloat(node.getAttribute('cy')) - parseFloat(node.getAttribute('r')),
+                    radius: parseFloat(node.getAttribute('r')),
+                    fill: node.getAttribute('fill') || 'transparent',
+                    stroke: node.getAttribute('stroke') || 'transparent',
+                    strokeWidth: parseFloat(node.getAttribute('stroke-width') || 1)
+                }));
+                console.log('Added circle'); // Debug: Circle added
+                break;
+            // case 'path':
+            //     const pathData = new SVGPathData(node.getAttribute('d'));
+            //     const path = new fabric.Path(pathData.encode(), {
+            //         fill: node.getAttribute('fill') || 'transparent',
+            //         stroke: node.getAttribute('stroke') || 'transparent',
+            //         strokeWidth: parseFloat(node.getAttribute('stroke-width') || 1)
+            //     });
+            //     fabricObjects.push(path);
+            //     console.log('Added path'); // Debug: Path added
+            //     break;
     }
 
     // Process child nodes
