@@ -76,8 +76,8 @@ class TemplettScrapAssets extends Command
                 // Verify if an image is already donwloaded for another template
                 if( $existing_asset != null && isset($existing_asset->id) ){
 
-                    $old_path = public_path('design/template/'.$existing_asset->template_id.'/assets/'.$existing_asset->filename);
-                    $new_path = public_path('design/template/'.$asset->template_id.'/assets/'.$asset->filename);
+                    $old_path = public_path('corjl_imgs/design/template/'.$existing_asset->template_id.'/assets/'.$existing_asset->filename);
+                    $new_path = public_path('corjl_imgs/design/template/'.$asset->template_id.'/assets/'.$asset->filename);
                     
                     // print_r(sizeof($existing_asset));
                     // print_r("\n");
@@ -107,7 +107,7 @@ class TemplettScrapAssets extends Command
                     // print_r($url);
                     // exit;
 
-                    $path = public_path('design/template/'.$asset->template_id.'/assets');
+                    $path = public_path('corjl_imgs/design/template/'.$asset->template_id.'/assets');
                     if (!file_exists($path . '/'.$asset->filename)) {
                         $this->downloadImage( $asset->template_id, $asset->filename, $url );
                     }
@@ -149,7 +149,7 @@ class TemplettScrapAssets extends Command
     }
 
     function downloadImage($template_id, $file_name, $url){
-        $path = public_path('design/template/'.$template_id.'/assets');
+        $path = public_path('corjl_imgs/design/template/'.$template_id.'/assets');
 
         @mkdir($path, 0777, true);
 
