@@ -59,9 +59,9 @@ class UtilCreateAssetsThumbs extends Command
         $templates = DB::table('templates')
                     ->select('id', 'template_id','source')
                     // ->where('source','=','corjl')
-                    // ->where('status', '=', 1)
+                    ->where('status', '=', 1)
                     // ->whereNull('thumb_path')
-                    ->where('source','=','templett')
+                    ->where('source','=','corjl')
                     // ->where('template_id','=','lDwkOPQsXimhd5U')
                     // ->offset(18000)
                     ->limit(18000)
@@ -70,7 +70,7 @@ class UtilCreateAssetsThumbs extends Command
 
         foreach ($templates as $template) {
             
-            $local_path = public_path('design/template/'.$template->template_id.'/assets/');
+            $local_path = public_path('corjl/design/template/'.$template->template_id.'/assets/');
             
             print_r("\n\nPARSING >>".$template->template_id."\n");
             
