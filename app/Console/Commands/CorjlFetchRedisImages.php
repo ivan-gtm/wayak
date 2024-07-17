@@ -98,6 +98,30 @@ class CorjlFetchRedisImages extends Command
             $data // Data to insert or update
         );
     }
+    
+    function registerImageOnDB($template_id, $filename, $img_path, $thumb_path, $file_type, $url) {
+        // Prepare the data
+        $data = [
+            'template_id' => $template_id,
+            'filename' => $filename,
+            'img_path' => $img_path,
+            'status' => 1,
+            'thumb_path' => $thumb_path,
+            'file_type' => $file_type,
+            'original_path' => $url,
+            'source' => 'corjl',
+            'title' => null
+        ];
+    
+        // Use updateOrInsert to update existing or insert new row
+        DB::table('images')->updateOrInsert(
+            [
+                'template_id' => $template_id,
+                'filename' => $filename
+            ], // Condition to check existing row
+            $data // Data to insert or update
+        );
+    }
         
     function registerTemplateOnDB($template_id, $original_template_id, $name, $fk_etsy_template_id, $parent_template_id, $width, $height, $measureUnits) {
         // Check if the row exists
@@ -176,28 +200,32 @@ class CorjlFetchRedisImages extends Command
 
             // Process thumbnail images
             $this->info("Processing thumbnail for template: " . $template['thumb_url']);
-            $this->saveImage($client, $template['thumb_url'], public_path("corjl_imgs/design/template/$product_key/thumbnails/en/"));
+            $this->saveImage($product_key, $client, $template['thumb_url'], public_path("corjl_imgs/design/template/$product_key/thumbnails/en/"));
 
             
             $filename = $this->extractFilename( $template['thumb_url'] );
+
+            $dimensions['measureUnits'] = isset($dimensions['measureUnits']) ? $dimensions['measureUnits'] : null;
             
             $this->registerTemplateOnDB($product_key, $original_product_key, $template['name'], 0,0, $dimensions['width'], $dimensions['height'], $dimensions['measureUnits']);
             $this->registerThumbOnDB($product_key, $template['name'], $filename, $template['dimentions'], $product_key);
 
-            foreach ($template['pages'] as $page) {
-                // $this->info("Processing page: " . $page['id']);
-                // $title = $page['name'];
-                
-                // Process page thumbnails if any
-                if (!empty($page['thumbnail'])) {
-                    $this->info("Processing page thumbnail: " . $page['thumbnail']);
-                    $this->saveImage($client, $page['thumbnail'], public_path("corjl_imgs/design/template/$product_key/thumbnails/en/"));
-                }
-
-                // Process other images
-                foreach ($page['images'] as $image_url) {
-                    $this->info("Processing image: " . $image_url);
-                    $this->saveImage($client, $image_url, public_path("corjl_imgs/design/template/$product_key/assets/"));
+            if(isset($template['pages']) && is_array($template['pages'])){
+                foreach ($template['pages'] as $page) {
+                    // $this->info("Processing page: " . $page['id']);
+                    // $title = $page['name'];
+                    
+                    // Process page thumbnails if any
+                    if (!empty($page['thumbnail'])) {
+                        $this->info("Processing page thumbnail: " . $page['thumbnail']);
+                        $this->saveImage($product_key, $client, $page['thumbnail'], public_path("corjl_imgs/design/template/$product_key/thumbnails/en/"));
+                    }
+    
+                    // Process other images
+                    foreach ($page['images'] as $image_url) {
+                        $this->info("Processing image: " . $image_url);
+                        $this->saveImage($product_key, $client, $image_url, public_path("corjl_imgs/design/template/$product_key/assets/"));
+                    }
                 }
             }
         }
@@ -212,8 +240,18 @@ class CorjlFetchRedisImages extends Command
         
         return $filename;
     }
+    
+    private function extractFileExtension($url) {
+        // Parse the URL to get the path
+        $path = parse_url($url, PHP_URL_PATH);
+        
+        // Get the file extension from the path
+        $extension = pathinfo($path, PATHINFO_EXTENSION);
+        
+        return $extension;
+    }
 
-    private function saveImage($client, $url, $path)
+    private function saveImage($template_id, $client, $url, $path)
     {
         $imageName = basename($url);
         $filePath = $path . $imageName;
@@ -224,6 +262,10 @@ class CorjlFetchRedisImages extends Command
             $this->info("Creating directory: $path");
             mkdir($path, 0755, true);
         }
+
+        $file_type = $this->extractFileExtension($imageName);
+
+        $this->registerImageOnDB($template_id, $imageName, $filePath, $filePath, $file_type, $url);
 
         // Check if the image already exists and its size is greater than 0
         if (file_exists($filePath) && filesize($filePath) > 0) {
