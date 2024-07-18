@@ -11,7 +11,7 @@ use GuzzleHttp\Client;
 
 class CorjlFetchRedisImages extends Command
 {
-    protected $signature = 'fetch:redis-images {product_key}';
+    protected $signature = 'fetch:redis-images';
     protected $description = 'Fetch images from Redis and save them locally';
 
     public function __construct()
@@ -21,61 +21,70 @@ class CorjlFetchRedisImages extends Command
 
     public function handle()
     {
-        // template_id
-        // original_template_id
-        // language_code
-        // filename
-        // title
-        // dimentions
-        // status
-        // source
+        $templates = DB::table('corjl_template')
+                    ->select('id', 'template_id')
+                    ->where('status', '=', 1)
+                    // ->orderBy('id','DESC')
+                    ->limit(1000)
+                    ->get();
 
-        // product_name
-        // product_slug
-
-        
-        
-        $original_product_key = $this->argument('product_key');
-        $redis_key = 'corjl:' . $original_product_key;
-        
-        $db_template = DB::table('templates')
-                                        ->select('template_id','status')
-                                        ->where( 'original_template_id', '=', $original_product_key )
-                                        // ->where( 'status', '=', '0' )
-                                        ->first();
-                
-        if( isset( $db_template->template_id ) == false ){
-            $template_id = Str::random(10);
-        } else {
-            $template_id = $db_template->template_id;
-        }
-        
-        $this->info("Fetching data for Redis key: $redis_key");
-
-        // Get the JSON data from Redis
-        $jsonData = Redis::get($redis_key);
-
-        if (!$jsonData) {
-            $this->error("No data found for key $redis_key");
-            return 1;
+        // Create relationship between font and template, if it does not exists
+        if( $templates->count() == 0 ){
+            $this->info('No templates found to update.');
+            return 0;
         }
 
-        $this->info("Data fetched successfully for key: $redis_key");
-        
-        $data = json_decode($jsonData, true);
-        
-        // $this->info("<< DATA >>");
-        // print_r($data['templates']);
+        foreach ($templates as $index => $template) {
+            $original_product_key = str_replace('corjl:', '', $template->template_id);
+            $redis_key = $template->template_id;
+            
+            $db_template = DB::table('templates')
+                                            ->select('template_id','status')
+                                            ->where( 'original_template_id', '=', $original_product_key )
+                                            // ->where( 'status', '=', '0' )
+                                            ->first();
+                    
+            if( isset( $db_template->template_id ) == false ){
+                $template_id = Str::random(10);
+            } else {
+                $template_id = $db_template->template_id;
+            }
+            
+            $this->info("Fetching data for Redis key: $redis_key");
+    
+            // Get the JSON data from Redis
+            $jsonData = Redis::get($redis_key);
+    
+            if (!$jsonData) {
+                $this->error("No data found for key $redis_key");
+                return 1;
+            }
+    
+            $this->info("Data fetched successfully for key: $redis_key");
+            
+            $data = json_decode($jsonData, true);
+            
+            // $this->info("<< DATA >>");
+            // print_r($data['templates']);
+    
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                $this->error('Invalid JSON data');
+                return 1;
+            }
+    
+            $this->info('JSON data decoded successfully.');
+    
+            $this->processImages($data, $template_id, $original_product_key);
 
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            $this->error('Invalid JSON data');
-            return 1;
+            
+
+            DB::table('corjl_template')
+            ->where('id', $template->id )
+            ->update([ 'status' => 2 ]);
+
+            $this->info('Images fetched and saved successfully.');
         }
 
-        $this->info('JSON data decoded successfully.');
-
-        $this->processImages($data, $template_id, $original_product_key);
-        $this->info('Images fetched and saved successfully.');
         return 0;
     }
 
@@ -105,7 +114,7 @@ class CorjlFetchRedisImages extends Command
             'template_id' => $template_id,
             'filename' => $filename,
             'img_path' => $img_path,
-            'status' => 1,
+            'status' => 0,
             'thumb_path' => $thumb_path,
             'file_type' => $file_type,
             'original_path' => $url,
@@ -273,15 +282,15 @@ class CorjlFetchRedisImages extends Command
             return;
         }
 
-        $this->info("Downloading image: $url");
-        $response = $client->get($url);
-        $imageContent = $response->getBody();
+        // $this->info("Downloading image: $url");
+        // $response = $client->get($url);
+        // $imageContent = $response->getBody();
 
-        if ($imageContent->getSize() > 0) {
-            $this->info("Image downloaded successfully, saving to: $filePath");
-            file_put_contents($filePath, $imageContent);
-        } else {
-            $this->error("Failed to save image or image size is 0: $url");
-        }
+        // if ($imageContent->getSize() > 0) {
+        //     $this->info("Image downloaded successfully, saving to: $filePath");
+        //     file_put_contents($filePath, $imageContent);
+        // } else {
+        //     $this->error("Failed to save image or image size is 0: $url");
+        // }
     }
 }
