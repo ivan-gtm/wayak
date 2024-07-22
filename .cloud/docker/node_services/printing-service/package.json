@@ -1,0 +1,19 @@
+{
+  "name": "printing-service",
+  "version": "1.0.0",
+  "description": "A server to generate PDFs from Fabric.js JSON",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "canvas": "^2.11.2",
+    "express": "^4.19.2",
+    "fabric": "4.6.0",
+    "jsdom": "^24.1.1",
+    "pdfkit": "^0.15.0"
+  }
+}

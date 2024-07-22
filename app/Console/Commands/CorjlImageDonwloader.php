@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 
-class CorjlImageScrapper extends Command
+class CorjlImageDonwloader extends Command
 {
     /**
      * The name and signature of the console command.

@@ -25,7 +25,7 @@ class CorjlFetchRedisImages extends Command
                     ->select('id', 'template_id')
                     ->where('status', '=', 1)
                     // ->orderBy('id','DESC')
-                    ->limit(1000)
+                    ->limit(10000)
                     ->get();
 
         // Create relationship between font and template, if it does not exists

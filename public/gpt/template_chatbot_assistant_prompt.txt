@@ -1,0 +1,126 @@
+I have a website to sell invitations, i want to create a chatbot to give my customers ability to edit templates using a chatbot assistant.
+
+Given a fabric JSON like this one, please help me to create a prompt to personalize invitations, following this requirements:
+[chatbot System] will recieve as input product title, for example case is "Bohemian Eucalyptus Wedding Save the Date"
+[chatbot System] will recieve content invitation in fabricJS JSON format.
+[chatbot System] must analyze entire fabricJS JSON to get invitation context
+[chatbot System] only is allowed to ask event related questions, for example: event date, event place/address, name of the people celebrated, name for parents, name of the bride and groom etc.
+[chatbot System] must start by giving a good warming welcoming message, something like "great choise, this is a beautiful 'save the date' template. Let's start by defining when the event would be."
+[chatbot System] must adapt given user text to similar template lenght, for given JSON example, if [chatbot System] ask for bride name and is given a long name like "Maria Daniela Dominguez", in current template there is only a one name "Elizabeth", so [chatbot System] must only write "Maria Daniela" on this text object
+Once all event information is provided [chatbot System] will create a JSON replacing text user with personalized information.
+
+Please write initial prompt for this assistant.
+[
+    "{\"width\": 480.00, \"height\": 672.00, \"rows\": 1, \"cols\": 1}",
+    {
+        "version": "2.7.0",
+        "objects": [
+            {
+                "type": "textbox",
+                "version": "2.7.0",
+                "originX": "center",
+                "originY": "top",
+                "left": 240,
+                "top": 171.3147505503,
+                "width": 399.5992645476,
+                "height": 39.6140809849,
+                "fill": "#000000",
+                "text": "SAVE THE DATE",
+                "fontSize": 35.05670883616262
+            },
+            {
+                "type": "textbox",
+                "version": "2.7.0",
+                "originX": "center",
+                "originY": "top",
+                "left": 240,
+                "top": 146.6028776449,
+                "width": 260.7833349427,
+                "height": 11.3,
+                "fill": "#000000",
+                "text": "KINDLY",
+                "fontSize": "10"
+            },
+            {
+                "type": "textbox",
+                "version": "2.7.0",
+                "originX": "center",
+                "originY": "top",
+                "left": 240,
+                "top": 216.5938725447,
+                "width": 260.7833349427,
+                "height": 11.3,
+                "fill": "#000000",
+                "text": "FOR THE WEDDING OF",
+                "fontSize": "10"
+            },
+            {
+                "type": "textbox",
+                "version": "2.7.0",
+                "originX": "center",
+                "originY": "top",
+                "left": 240,
+                "top": 460.0971749906,
+                "width": 399.5992645476,
+                "height": 25.0828286704,
+                "fill": "#000000",
+                "text": "JULY 17th, 2019",
+                "fontSize": 22.197193513598116
+            },
+            {
+                "type": "textbox",
+                "version": "2.7.0",
+                "originX": "center",
+                "originY": "top",
+                "left": 240,
+                "top": 495.85,
+                "width": 260.7833349427,
+                "height": 38.42,
+                "fill": "#000000",
+                "text": "NEW YORK CITY, NY\n\nFORMAL INVITATION TO FOLLOW",
+                "fontSize": "10"
+            },
+            {
+                "type": "textbox",
+                "version": "2.7.0",
+                "originX": "center",
+                "originY": "top",
+                "left": 254.5673361922,
+                "top": 365.0934680288,
+                "width": 453.6409430828,
+                "height": 88.14,
+                "fill": "#8E5A15",
+                "text": "Matthe\n ",
+                "fontSize": "39"
+            },
+            {
+                "type": "textbox",
+                "version": "2.7.0",
+                "originX": "center",
+                "originY": "top",
+                "left": 233.5672439946,
+                "top": 258.8817960091,
+                "width": 373.0517332159,
+                "height": 88.14,
+                "fill": "#8E5A15",
+                "text": "Elizabet\n ",
+                "fontSize": "39"
+            },
+            {
+                "type": "textbox",
+                "version": "2.7.0",
+                "originX": "center",
+                "originY": "top",
+                "left": 240,
+                "top": 329.85,
+                "width": 260.7833349427,
+                "height": 11.3,
+                "fill": "#000000",
+                "text": "AND",
+                "fontSize": "10"
+            }
+        ],
+        "cwidth": 480,
+        "cheight": 672
+    }
+]

@@ -58,7 +58,7 @@
                            <ul class="metismenu side-nav mm-show">
                               <li class="side-nav-title side-nav-item">Navigation</li>
                               <li class="side-nav-item mm-active">
-                                 <a href="/admin/sales" class="side-nav-link active">
+                                 <a href="/admin/campaign" class="side-nav-link active">
                                     <i class="uil-home-alt"></i>
                                     <!-- <span class="badge badge-success float-right">4</span> -->
                                     <span>Global Sale</span>
@@ -68,6 +68,30 @@
                                  <a href="{{ route('admin.carousels.step1', ['country' => 'us']) }}" class="side-nav-link active">
                                     <i class="uil-home-alt"></i>
                                     <span>Carousels</span>
+                                 </a>
+                              </li>
+                              <li class="side-nav-item mm-active">
+                                 <a href="/admin/us/carousels/manage" class="side-nav-link active">
+                                    <i class="uil-home-alt"></i>
+                                    <span>Home Carousels Positions</span>
+                                 </a>
+                              </li>
+                              <li class="side-nav-item mm-active">
+                                 <a href="/admin/us/carousels/manage" class="side-nav-link active">
+                                    <i class="uil-home-alt"></i>
+                                    <span>Home Carousels Create</span>
+                                 </a>
+                              </li>
+                              <li class="side-nav-item mm-active">
+                                 <a href="/admin/analytics/categories" class="side-nav-link active">
+                                    <i class="uil-home-alt"></i>
+                                    <span>analytics categories</span>
+                                 </a>
+                              </li>
+                              <li class="side-nav-item mm-active">
+                                 <a href="/admin/analytics/templates" class="side-nav-link active">
+                                    <i class="uil-home-alt"></i>
+                                    <span>analytics templates</span>
                                  </a>
                               </li>
                               <li class="side-nav-item mm-active">
@@ -93,7 +117,7 @@
                                  </a>
                               </li>
                               <li class="side-nav-item mm-active">
-                                 <a href="/admin/us/manage-codes" class="side-nav-link active">
+                                 <a href="/admin/us/codes/manage" class="side-nav-link active">
                                     <i class="uil-home-alt"></i>
                                     <!-- <span class="badge badge-success float-right">4</span> -->
                                     <span> Promocodes</span>
@@ -138,6 +162,20 @@
                                     <i class="uil-home-alt"></i>
                                     <!-- <span class="badge badge-success float-right">4</span> -->
                                     <span> Assets Gallery</span>
+                                 </a>
+                              </li>
+                              <li class="side-nav-item mm-active">
+                                 <a href="/admin/bot/templett/bulk-translation/en/es" class="side-nav-link active">
+                                    <i class="uil-home-alt"></i>
+                                    <!-- <span class="badge badge-success float-right">4</span> -->
+                                    <span> bulk translation</span>
+                                 </a>
+                              </li>
+                              <li class="side-nav-item mm-active">
+                                 <a href="/admin/bot/generate-thumbs" class="side-nav-link active">
+                                    <i class="uil-home-alt"></i>
+                                    <!-- <span class="badge badge-success float-right">4</span> -->
+                                    <span> bot generate-thumbs</span>
                                  </a>
                               </li>
                               

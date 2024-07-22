@@ -63,22 +63,22 @@ Route::prefix('admin')->middleware('auth')->group(function () {
             Route::get('/scrapper/templett/keynames', [TemplettScrapperController::class, 'migrateTemplateKeyNames']);
             Route::get('/scrapper/templett/missing-translation', [TemplettScrapperController::class, 'missinTranslation']);
         // DESYGNER
-            Route::get('/desygner/download-templates', [DesygnerController::class, 'index']);
+            Route::get('/scrapper/desygner/download-templates', [DesygnerController::class, 'index']);
         // CRELLO
-            Route::get('/crello/explore', [CrelloController::class,'explore'])->name('crello.explore');
-            Route::get('/crello/download-templates', [CrelloController::class, 'index']);
-            Route::get('/crello/translate-templates', [CrelloController::class, 'translateTemplate']);
-            // Route::get('/crello', [EditorController::class, 'home']);
+            Route::get('/scrapper/crello/explore', [CrelloController::class,'explore'])->name('crello.explore');
+            Route::get('/scrapper/crello/download-templates', [CrelloController::class, 'index']);
+            Route::get('/scrapper/crello/translate-templates', [CrelloController::class, 'translateTemplate']);
+            // Route::get('/scrapper/crello', [EditorController::class, 'home']);
         // GREEN
-            Route::get('/green/explore', [greenController::class, 'getFrontCategories']);
-            Route::get('/green/all-products', [greenController::class, 'getAllProducts'])->name('green.products');
-            Route::get('/green/all-categories', [greenController::class, 'getAllCategories'])->name('green.categories');
-            Route::get('/green/category/{category_id}/products', [greenController::class, 'getFrontCategoryProducts']);
-            Route::get('/green/translate-templates', [greenController::class, 'translateTemplate']);
-            Route::get('/green/download-templates', [greenController::class, 'index']);
+            Route::get('/scrapper/green/explore', [greenController::class, 'getFrontCategories']);
+            Route::get('/scrapper/green/all-products', [greenController::class, 'getAllProducts'])->name('green.products');
+            Route::get('/scrapper/green/all-categories', [greenController::class, 'getAllCategories'])->name('green.categories');
+            Route::get('/scrapper/green/category/{category_id}/products', [greenController::class, 'getFrontCategoryProducts']);
+            Route::get('/scrapper/green/translate-templates', [greenController::class, 'translateTemplate']);
+            Route::get('/scrapper/green/download-templates', [greenController::class, 'index']);
 
         // PLACEIT
-            Route::get('/placeit', [PlaceitController::class, 'index']);
+            Route::get('/scrapper/placeit', [PlaceitController::class, 'index']);
 
 
     // Route::get('/scrap-from-templett', [TemplettScrapperController::class, 'scrapURL']);
@@ -112,13 +112,12 @@ Route::prefix('admin')->middleware('auth')->group(function () {
             Route::get('/refactor', [AdminController::class, 'refactor'])->name('admin.keyrefactor');
             
         // TEMPLATES TRANLATION
-            
-
             Route::get('/bulk-translate/{from}/{to}', [AdminController::class, 'bulkTranslate'])->name('admin.bulkTranslateText');
             Route::post('/bulk-translate/{from}/{to}', [AdminController::class, 'bulkTranslate'])->name('admin.bulkTranslate');
             Route::get('/template/translate/{template_key}/{from}/{to}', [AdminController::class, 'translateTemplateForm'])->name('admin.translate.templateForm');
             Route::post('/template/translate/{template_key}/{from}/{to}', [AdminController::class, 'translateTemplate'])->name('admin.translate.template');
             Route::get('/template/gallery/{country}', [AdminController::class, 'viewGallery'])->name('admin.template.gallery');
+        
         // Sales    
             Route::get('/manage-campaign', [SalesManagerController::class, 'manageCampaign'])->name('admin.sales_manager');
             Route::post('/manage-campaign', [SalesManagerController::class, 'manageCampaign']);
@@ -138,12 +137,6 @@ Route::prefix('admin')->middleware('auth')->group(function () {
             Route::get('/analytics/categories', [AdminController::class, 'analyticsCategories'])->name('admin.analyticsCategories');
             Route::get('/analytics/templates', [AdminController::class, 'analyticsTemplates'])->name('admin.analyticsTemplates');
         
-        // BOT
-            Route::get('/bot/templett/bulk-translation/{from}/{to}', [TemplettScrapperController::class, 'bulkTranslation']);
-            Route::post('/bot/templett/bulk-translation/{from}/{to}', [TemplettScrapperController::class, 'bulkTranslation'])->name('templett.bulkTranslate');
-            Route::get('/bot/generate-thumbs', [AdminController::class, 'generateProductThumbnails'])->name('admin.generateProductThumbnails');
-            Route::get('/bot/db-missing-thumbs', [AdminController::class, 'registerMissingTemplatesOnDB']);
-
         // KEYWORDS
             Route::get('/metadata/keywords/manage', [AdminController::class, 'manageKeywords']);
             Route::post('/metadata/keywords/manage', [AdminController::class, 'manageKeywords'])->name('admin.keywords.manage');
@@ -155,6 +148,12 @@ Route::prefix('admin')->middleware('auth')->group(function () {
             Route::get('/{country}/codes/create', [AdminCodeController::class, 'createCode'])->name('admin.code.create');
             Route::get('/{country}/codes/delete/{code}', [AdminCodeController::class, 'deleteCode'])->name('admin.code.delete');
             // Route::post('/{country}/generate-code', [AdminController::class, 'generateCode'])->name('code.generate');
+        
+        // BOT
+            Route::get('/bot/templett/bulk-translation/{from}/{to}', [TemplettScrapperController::class, 'bulkTranslation']);
+            Route::post('/bot/templett/bulk-translation/{from}/{to}', [TemplettScrapperController::class, 'bulkTranslation'])->name('templett.bulkTranslate');
+            Route::get('/bot/generate-thumbs', [AdminController::class, 'generateProductThumbnails'])->name('admin.generateProductThumbnails');
+            // Route::get('/bot/db-missing-thumbs', [AdminController::class, 'registerMissingTemplatesOnDB']);
 
     // MARKETPLACE SELLING PRODUCTS
         // PRODUCT
