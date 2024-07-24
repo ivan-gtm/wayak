@@ -61,13 +61,13 @@ app.get('/start-session/:product_id', async (req, res) => {
     // Initialize an array to store text object information
     const textObjects = [];
 
-    // Assign unique objectId to each text object and collect text information
+    // Assign unique objectId to each text-containing object and collect text information
     fabricJSON.objects = fabricJSON.objects.map((obj, index) => {
-      if (obj.type === 'textbox' || obj.type === 'text' || obj.type === 'i-text') {
-        const objectId = `text_${index}`;
-        obj.objectId = objectId;
-        
-        // Collect minimal information for frontend
+      const objectId = `text_${index}`;
+      obj.objectId = objectId;
+
+      // Check for text properties in various fabricJS object types
+      if (['textbox', 'text', 'i-text', 'supertext'].includes(obj.type)) {
         textObjects.push({
           objectId: objectId,
           text: obj.text,
@@ -77,6 +77,7 @@ app.get('/start-session/:product_id', async (req, res) => {
           height: obj.height
         });
       }
+
       return obj;
     });
 
@@ -120,13 +121,13 @@ app.post('/generate-preview', async (req, res) => {
 
     // Load fonts used in the template
     const fontLoadPromises = fabricJSON.objects
-      .filter(obj => obj.type === 'textbox' && obj.fontFamily)
+      .filter(obj => obj.fontFamily)
       .map(async (obj) => {
         const fontId = obj.fontFamily;
         const fontUrlResponse = await fetch(`http://localhost:8001/editor/get-woff-font-url?font_id=${fontId}`);
         const fontUrlData = await fontUrlResponse.json();
         if (fontUrlData.success) {
-          loadFont(fontId, fontUrlData.url);
+          await loadFont(fontId, fontUrlData.url);
         }
       });
 
@@ -148,26 +149,96 @@ app.post('/generate-preview', async (req, res) => {
       renderOnAddRemove: false
     });
 
-    // Load all images before rendering
+    // Load all images and other objects before rendering
     const loadedObjects = await Promise.all(fabricJSON.objects.map(async (obj) => {
-      if (obj.type === 'image') {
-        const localPath = urlToLocalPath(obj.src);
-        try {
-          const img = await loadImage(localPath);
-          return new fabric.Image(img, {
-            ...obj,
-            scaleX: obj.scaleX || obj.width / img.width,
-            scaleY: obj.scaleY || obj.height / img.height
-          });
-        } catch (error) {
-          console.error(`Error loading image from ${localPath}:`, error);
-          return null;
-        }
-      } else if (obj.type === 'textbox') {
-        return new fabric.Textbox(obj.text, obj);
+      switch (obj.type) {
+        case 'image':
+          const localPath = urlToLocalPath(obj.src);
+          try {
+            const img = await loadImage(localPath);
+            return new fabric.Image(img, {
+              ...obj,
+              scaleX: obj.scaleX || obj.width / img.width,
+              scaleY: obj.scaleY || obj.height / img.height
+            });
+          } catch (error) {
+            console.error(`Error loading image from ${localPath}:`, error);
+            return null;
+          }
+        case 'textbox':
+          return new fabric.Textbox(obj.text, obj);
+        case 'i-text':
+          return new fabric.IText(obj.text, obj);
+        case 'line':
+          return new fabric.Line([obj.x1, obj.y1, obj.x2, obj.y2], obj);
+        case 'circle':
+          return new fabric.Circle(obj);
+        case 'triangle':
+          return new fabric.Triangle(obj);
+        case 'ellipse':
+          return new fabric.Ellipse(obj);
+        case 'rect':
+          return new fabric.Rect(obj);
+        case 'polyline':
+          return new fabric.Polyline(obj.points, obj);
+        case 'polygon':
+          return new fabric.Polygon(obj.points, obj);
+        case 'path':
+          return new fabric.Path(obj.path, obj);
+        case 'group':
+          const groupObjects = await Promise.all(obj.objects.map(async (groupObj) => {
+            return await loadFabricObject(groupObj);
+          }));
+          return new fabric.Group(groupObjects, obj);
+        case 'path-group':
+          const pathGroupObjects = await Promise.all(obj.objects.map(async (pathGroupObj) => {
+            return await loadFabricObject(pathGroupObj);
+          }));
+          return new fabric.PathGroup(pathGroupObjects, obj);
+        default:
+          return obj;
       }
-      return obj;
     }));
+
+    async function loadFabricObject(obj) {
+      switch (obj.type) {
+        case 'image':
+          const localPath = urlToLocalPath(obj.src);
+          try {
+            const img = await loadImage(localPath);
+            return new fabric.Image(img, {
+              ...obj,
+              scaleX: obj.scaleX || obj.width / img.width,
+              scaleY: obj.scaleY || obj.height / img.height
+            });
+          } catch (error) {
+            console.error(`Error loading image from ${localPath}:`, error);
+            return null;
+          }
+        case 'textbox':
+          return new fabric.Textbox(obj.text, obj);
+        case 'i-text':
+          return new fabric.IText(obj.text, obj);
+        case 'line':
+          return new fabric.Line([obj.x1, obj.y1, obj.x2, obj.y2], obj);
+        case 'circle':
+          return new fabric.Circle(obj);
+        case 'triangle':
+          return new fabric.Triangle(obj);
+        case 'ellipse':
+          return new fabric.Ellipse(obj);
+        case 'rect':
+          return new fabric.Rect(obj);
+        case 'polyline':
+          return new fabric.Polyline(obj.points, obj);
+        case 'polygon':
+          return new fabric.Polygon(obj.points, obj);
+        case 'path':
+          return new fabric.Path(obj.path, obj);
+        default:
+          return obj;
+      }
+    }
 
     // Add loaded objects to canvas
     loadedObjects.forEach(obj => {
@@ -180,7 +251,9 @@ app.post('/generate-preview', async (req, res) => {
       opacity: 0.5,
       angle: -45,
       left: dimensions.width / 2,
-      top: dimensions.height / 2
+      top: dimensions.height / 2,
+      originX: 'center',
+      originY: 'center'
     });
     fabricCanvas.add(watermark);
 
