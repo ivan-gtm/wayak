@@ -16,6 +16,7 @@ yarn-error.log
 /.cloud/docker/node_services/ai-translate-template/node_modules/*
 /.cloud/docker/node_services/chat-assistant/node_modules/*
 /.cloud/docker/node_services/corjl_to_fabric/node_modules/*
+/.cloud/docker/node_services/preview-service/node_modules/*
 /.cloud/docker/node_services/printing-service/node_modules/*
 /.cloud/nodejs/*
 /.cloud/elastic/*

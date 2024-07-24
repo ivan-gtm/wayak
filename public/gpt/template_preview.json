@@ -1,0 +1,127 @@
+You are an expert in NodeJS development, specialized on fabric.js library. 
+Help me to develop a NodeJS webservice for my company that sells templates online, i need to create backend functionallity to preview templates.
+User will specify product id as initial paramenter to start a customization sesion, then, he will send text adjustments for template getting image as preview.
+
+[Endpoint 1] requirements:
+    * Create and endpoint in nodejs that recieves a {product_id} as request parameter.
+    * Internally [Endpoint 1] will get [template] metadata from a redis key stored on redis with following structure "template:en:{product_id}:json"
+    * Redis key "template:en:(product_id):json" will contain [template] metadata composed by a FabricJS in JSON format and template dimentions following [template_metadata_example] structure.
+    * Using [template] metadata, iterate on every text object and assign a unique {objectId}, despite {objectId} is added to metadata, fabricJS JSON must still be valid.
+    * Store modified [template] metadata on a redis key named "template:en:{session_id}:demo:json", key must expire on 60 minutes. {session_id} will be a new 10 characters alphanumeric value.
+    * finally, return {session_id} as endpoint response in JSON format.
+
+[Endpoint 2] requirements:
+    * Create an endpoint that receives {session_id} and text as request parameters.
+    * Recovers metadata based on {session_id}, replace text on corresponding {objectId}
+    * Based on [template] metadata and dimentions, generates an image with updated text for endpoint response.
+    * Add a preview watermark for result image.
+    * Image must be resized from original image dimentions to a 600px width.
+
+[template_metadata_example]
+[
+    "{\"width\": 960.00, \"height\": 768.00, \"rows\": 1, \"cols\": 1}",
+    {
+        "version": "2.7.0",
+        "objects": [
+            {
+                "type": "image",
+                "version": "2.7.0",
+                "originX": "center",
+                "originY": "center",
+                "left": 134,
+                "top": -361,
+                "width": 4500,
+                "height": 4920,
+                "fill": "rgb(0,0,0)",
+                "stroke": null,
+                "strokeWidth": 0,
+                "strokeDashArray": null,
+                "strokeLineCap": "butt",
+                "strokeDashOffset": 0,
+                "strokeLineJoin": "miter",
+                "strokeMiterLimit": 4,
+                "scaleX": 0.32,
+                "scaleY": 0.32,
+                "angle": 0,
+                "flipX": true,
+                "flipY": false,
+                "opacity": 0.4,
+                "shadow": null,
+                "visible": true,
+                "clipTo": null,
+                "backgroundColor": "",
+                "fillRule": "nonzero",
+                "paintFirst": "fill",
+                "globalCompositeOperation": "source-over",
+                "transformMatrix": null,
+                "skewX": 0,
+                "skewY": 0,
+                "crossOrigin": "Anonymous",
+                "cropX": 0,
+                "cropY": 0,
+                "selectable": true,
+                "evented": true,
+                "lockMovementX": false,
+                "lockMovementY": false,
+                "src": "http://localhost/design/template/05o1uQKTrB/assets/822101_5e8afdf1afc10.png",
+                "filters": []
+            },
+            {
+                "type": "textbox",
+                "version": "2.7.0",
+                "originX": "center",
+                "originY": "top",
+                "left": 484.7545374832,
+                "top": 227.8906813625,
+                "width": 916.7163202422,
+                "height": 28.25,
+                "fill": "#000000",
+                "stroke": null,
+                "strokeWidth": 1,
+                "strokeDashArray": null,
+                "strokeLineCap": "butt",
+                "strokeDashOffset": 0,
+                "strokeLineJoin": "miter",
+                "strokeMiterLimit": 4,
+                "scaleX": 1,
+                "scaleY": 1,
+                "angle": 0,
+                "flipX": false,
+                "flipY": false,
+                "opacity": 1,
+                "shadow": null,
+                "visible": true,
+                "clipTo": null,
+                "backgroundColor": "",
+                "fillRule": "nonzero",
+                "paintFirst": "fill",
+                "globalCompositeOperation": "source-over",
+                "transformMatrix": null,
+                "skewX": 0,
+                "skewY": 0,
+                "text": "F U L L Y   E D I T A B L E",
+                "fontSize": 25,
+                "fontWeight": "normal",
+                "fontFamily": "font189",
+                "fontStyle": "normal",
+                "lineHeight": 1.2,
+                "underline": false,
+                "overline": false,
+                "linethrough": false,
+                "textAlign": "center",
+                "textBackgroundColor": "",
+                "charSpacing": 0,
+                "minWidth": 20,
+                "splitByGrapheme": false,
+                "selectable": true,
+                "editable": true,
+                "evented": true,
+                "lockMovementX": false,
+                "lockMovementY": false,
+                "styles": {}
+            }
+        ],
+        "cwidth": 960,
+        "cheight": 768
+    }
+]

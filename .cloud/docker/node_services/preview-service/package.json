@@ -1,0 +1,19 @@
+{
+  "name": "preview-service",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "canvas": "^2.11.2",
+    "express": "^4.19.2",
+    "fabric": "4.6.0",
+    "redis": "^4.6.15",
+    "uuid": "^10.0.0"
+  }
+}
