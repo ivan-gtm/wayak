@@ -1108,7 +1108,6 @@ class EditorController extends Controller
 
 	function getWoffFontUrl(Request $request)
 	{
-		// {"success":true,"url":"https:\/\/templett.com\/design\/fonts_new\/KG_Second_Chances_Solid_1537862439.woff"}
 		$success = false;
 		$font_url = null;
 
@@ -1120,10 +1119,6 @@ class EditorController extends Controller
 				->where('font_id', '=', $font_id)
 				->where('status', '=', 1)
 				->first();
-
-			// echo "<pre>";
-			// print_r($font_info);
-			// exit;
 
 			if (isset($font_info->name)) {
 				$success = 'true';

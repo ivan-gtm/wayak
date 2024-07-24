@@ -2,8 +2,9 @@ const express = require('express');
 const redis = require('redis');
 const { v4: uuidv4 } = require('uuid');
 const { fabric } = require('fabric');
-const { createCanvas, loadImage } = require('canvas');
+const { createCanvas, loadImage, registerFont } = require('canvas');
 const path = require('path');
+const fs = require('fs');
 
 const app = express();
 const port = 3000;
@@ -24,6 +25,19 @@ function urlToLocalPath(url) {
   const localPrefix = '/Volumes/wayak/wayak/public/design';
   const urlPrefix = 'http://localhost:8001/design';
   return url.replace(urlPrefix, localPrefix);
+}
+
+// Function to load font
+function loadFont(fontId, fontPath) {
+  const fontName = fontId;
+  const fontFilePath = urlToLocalPath(fontPath);
+
+  if (fs.existsSync(fontFilePath)) {
+    registerFont(fontFilePath, { family: fontName });
+    console.log(`Font loaded: ${fontName} from ${fontFilePath}`);
+  } else {
+    console.error(`Font file not found: ${fontFilePath}`);
+  }
 }
 
 // [Endpoint 1] - Start Customization Session
@@ -49,7 +63,7 @@ app.get('/start-session/:product_id', async (req, res) => {
 
     // Assign unique objectId to each text object and collect text information
     fabricJSON.objects = fabricJSON.objects.map((obj, index) => {
-      if (obj.type === 'textbox' || obj.type === 'text') {
+      if (obj.type === 'textbox' || obj.type === 'text' || obj.type === 'i-text') {
         const objectId = `text_${index}`;
         obj.objectId = objectId;
         
@@ -103,6 +117,20 @@ app.post('/generate-preview', async (req, res) => {
 
     const [dimensionsStr, fabricJSON] = JSON.parse(templateMetadata);
     const dimensions = JSON.parse(dimensionsStr);
+
+    // Load fonts used in the template
+    const fontLoadPromises = fabricJSON.objects
+      .filter(obj => obj.type === 'textbox' && obj.fontFamily)
+      .map(async (obj) => {
+        const fontId = obj.fontFamily;
+        const fontUrlResponse = await fetch(`http://localhost:8001/editor/get-woff-font-url?font_id=${fontId}`);
+        const fontUrlData = await fontUrlResponse.json();
+        if (fontUrlData.success) {
+          loadFont(fontId, fontUrlData.url);
+        }
+      });
+
+    await Promise.all(fontLoadPromises);
 
     // Replace text on corresponding objectId
     fabricJSON.objects = fabricJSON.objects.map(obj => {
