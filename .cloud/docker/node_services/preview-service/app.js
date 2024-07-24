@@ -141,6 +141,10 @@ app.post('/generate-preview', async (req, res) => {
       return obj;
     });
 
+    // Save the modified fabricJSON back to Redis
+    const updatedTemplateMetadata = JSON.stringify([dimensionsStr, fabricJSON]);
+    await redisClient.set(`template:en:${session_id}:demo:json`, updatedTemplateMetadata);
+
     // Create a node-canvas instance
     const canvas = createCanvas(dimensions.width, dimensions.height);
     const fabricCanvas = new fabric.StaticCanvas(null, {
@@ -150,17 +154,14 @@ app.post('/generate-preview', async (req, res) => {
     });
 
     // Load all images and other objects before rendering
+    // Load all objects before rendering
     const loadedObjects = await Promise.all(fabricJSON.objects.map(async (obj) => {
       switch (obj.type) {
         case 'image':
           const localPath = urlToLocalPath(obj.src);
           try {
             const img = await loadImage(localPath);
-            return new fabric.Image(img, {
-              ...obj,
-              scaleX: obj.scaleX || obj.width / img.width,
-              scaleY: obj.scaleY || obj.height / img.height
-            });
+            return new fabric.Image(img, obj);
           } catch (error) {
             console.error(`Error loading image from ${localPath}:`, error);
             return null;
@@ -206,11 +207,7 @@ app.post('/generate-preview', async (req, res) => {
           const localPath = urlToLocalPath(obj.src);
           try {
             const img = await loadImage(localPath);
-            return new fabric.Image(img, {
-              ...obj,
-              scaleX: obj.scaleX || obj.width / img.width,
-              scaleY: obj.scaleY || obj.height / img.height
-            });
+            return new fabric.Image(img, obj);
           } catch (error) {
             console.error(`Error loading image from ${localPath}:`, error);
             return null;
