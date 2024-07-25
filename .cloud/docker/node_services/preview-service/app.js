@@ -20,6 +20,9 @@ app.use(express.json());
   await redisClient.connect();
 })();
 
+// Global Set to keep track of loaded fonts
+const loadedFonts = new Set();
+
 // Function to convert URL to local path
 function urlToLocalPath(url) {
   const localPrefix = '/Volumes/wayak/wayak/public/design';
@@ -27,13 +30,64 @@ function urlToLocalPath(url) {
   return url.replace(urlPrefix, localPrefix);
 }
 
-// Function to load font
-function loadFont(fontId, fontPath) {
+// Function to load fabric object
+async function loadFabricObject(obj) {
+  const localPath = urlToLocalPath(obj.src);
+  try {
+    const img = await loadImage(localPath);
+    return new fabric.Image(img, obj);
+  } catch (error) {
+    console.error(`Error loading image from ${localPath}:`, error);
+    return null;
+  }
+}
+
+// Function to load different types of fabric objects
+async function createFabricObject(obj) {
+  switch (obj.type) {
+    case 'image':
+      return await loadFabricObject(obj);
+    case 'textbox':
+      return new fabric.Textbox(obj.text, obj);
+    case 'i-text':
+      return new fabric.IText(obj.text, obj);
+    case 'line':
+      return new fabric.Line([obj.x1, obj.y1, obj.x2, obj.y2], obj);
+    case 'circle':
+      return new fabric.Circle(obj);
+    case 'triangle':
+      return new fabric.Triangle(obj);
+    case 'ellipse':
+      return new fabric.Ellipse(obj);
+    case 'rect':
+      return new fabric.Rect(obj);
+    case 'polyline':
+      return new fabric.Polyline(obj.points, obj);
+    case 'polygon':
+      return new fabric.Polygon(obj.points, obj);
+    case 'path':
+      return new fabric.Path(obj.path, obj);
+    case 'group':
+      const groupObjects = await Promise.all(obj.objects.map(createFabricObject));
+      return new fabric.Group(groupObjects, obj);
+    case 'path-group':
+      const pathGroupObjects = await Promise.all(obj.objects.map(createFabricObject));
+      return new fabric.PathGroup(pathGroupObjects, obj);
+    default:
+      return obj;
+  }
+}
+
+// Function to load font if not already loaded
+async function loadFont(fontId, fontPath) {
+  if (loadedFonts.has(fontId)) return;
+
   const fontName = fontId;
   const fontFilePath = urlToLocalPath(fontPath);
 
   if (fs.existsSync(fontFilePath)) {
     registerFont(fontFilePath, { family: fontName });
+    loadedFonts.add(fontId);
     console.log(`Font loaded: ${fontName} from ${fontFilePath}`);
   } else {
     console.error(`Font file not found: ${fontFilePath}`);
@@ -43,62 +97,31 @@ function loadFont(fontId, fontPath) {
 // [Endpoint 1] - Start Customization Session
 app.get('/start-session/:product_id', async (req, res) => {
   const productId = req.params.product_id;
-  const sessionId = uuidv4().substring(0, 10); // Generate a 10-character session ID
+  const sessionId = uuidv4().substring(0, 10);
 
   try {
-    // Fetch template metadata from Redis
-    var templateMetadata = await redisClient.get(`template:en:${productId}:jsondata`);
+    let templateMetadata = await redisClient.get(`template:en:${productId}:jsondata`);
     if (!templateMetadata) {
       return res.status(404).json({ error: 'Template not found' });
     }
 
-    // Replace 'localhost' with 'localhost:8001' in the entire templateMetadata
     templateMetadata = templateMetadata.replace(/localhost/g, 'localhost:8001');
-
-    // Parse the template metadata
     const [dimensions, fabricJSON] = JSON.parse(templateMetadata);
+    const textObjects = fabricJSON.objects
+      .map((obj, index) => {
+        const objectId = `text_${index}`;
+        obj.objectId = objectId;
+        if (['textbox', 'text', 'i-text', 'supertext'].includes(obj.type)) {
+          return { objectId, text: obj.text, left: obj.left, top: obj.top, width: obj.width, height: obj.height };
+        }
+        return null;
+      })
+      .filter(obj => obj !== null);
 
-    // Initialize an array to store text object information
-    const textObjects = [];
-
-    // Assign unique objectId to each text-containing object and collect text information
-    fabricJSON.objects = fabricJSON.objects.map((obj, index) => {
-      const objectId = `text_${index}`;
-      obj.objectId = objectId;
-
-      // Check for text properties in various fabricJS object types
-      if (['textbox', 'text', 'i-text', 'supertext'].includes(obj.type)) {
-        textObjects.push({
-          objectId: objectId,
-          text: obj.text,
-          left: obj.left,
-          top: obj.top,
-          width: obj.width,
-          height: obj.height
-        });
-      }
-
-      return obj;
-    });
-
-    // Store modified template metadata in Redis with expiration
     const modifiedMetadata = JSON.stringify([dimensions, fabricJSON]);
-    await redisClient.set(`template:en:${sessionId}:demo:json`, modifiedMetadata, {
-      EX: 3600 // 60 minutes expiration
-    });
+    await redisClient.set(`template:en:${sessionId}:demo:json`, modifiedMetadata, { EX: 3600 });
 
-    // Prepare the response
-    const response = {
-      session_id: sessionId,
-      template_info: {
-        width: dimensions.width,
-        height: dimensions.height,
-        text_objects: textObjects
-      }
-    };
-
-    // Return the session ID and template info
-    res.json(response);
+    res.json({ session_id: sessionId, template_info: { width: dimensions.width, height: dimensions.height, text_objects: textObjects } });
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -110,7 +133,6 @@ app.post('/generate-preview', async (req, res) => {
   const { session_id, text, object_id } = req.body;
 
   try {
-    // Recover metadata based on session_id
     const templateMetadata = await redisClient.get(`template:en:${session_id}:demo:json`);
     if (!templateMetadata) {
       return res.status(404).json({ error: 'Session not found or expired' });
@@ -119,7 +141,6 @@ app.post('/generate-preview', async (req, res) => {
     const [dimensionsStr, fabricJSON] = JSON.parse(templateMetadata);
     const dimensions = JSON.parse(dimensionsStr);
 
-    // Load fonts used in the template
     const fontLoadPromises = fabricJSON.objects
       .filter(obj => obj.fontFamily)
       .map(async (obj) => {
@@ -133,7 +154,6 @@ app.post('/generate-preview', async (req, res) => {
 
     await Promise.all(fontLoadPromises);
 
-    // Replace text on corresponding objectId
     fabricJSON.objects = fabricJSON.objects.map(obj => {
       if (obj.objectId === object_id) {
         obj.text = text;
@@ -141,11 +161,9 @@ app.post('/generate-preview', async (req, res) => {
       return obj;
     });
 
-    // Save the modified fabricJSON back to Redis
     const updatedTemplateMetadata = JSON.stringify([dimensionsStr, fabricJSON]);
     await redisClient.set(`template:en:${session_id}:demo:json`, updatedTemplateMetadata);
 
-    // Create a node-canvas instance
     const canvas = createCanvas(dimensions.width, dimensions.height);
     const fabricCanvas = new fabric.StaticCanvas(null, {
       width: dimensions.width,
@@ -153,96 +171,11 @@ app.post('/generate-preview', async (req, res) => {
       renderOnAddRemove: false
     });
 
-    // Load all images and other objects before rendering
-    // Load all objects before rendering
-    const loadedObjects = await Promise.all(fabricJSON.objects.map(async (obj) => {
-      switch (obj.type) {
-        case 'image':
-          const localPath = urlToLocalPath(obj.src);
-          try {
-            const img = await loadImage(localPath);
-            return new fabric.Image(img, obj);
-          } catch (error) {
-            console.error(`Error loading image from ${localPath}:`, error);
-            return null;
-          }
-        case 'textbox':
-          return new fabric.Textbox(obj.text, obj);
-        case 'i-text':
-          return new fabric.IText(obj.text, obj);
-        case 'line':
-          return new fabric.Line([obj.x1, obj.y1, obj.x2, obj.y2], obj);
-        case 'circle':
-          return new fabric.Circle(obj);
-        case 'triangle':
-          return new fabric.Triangle(obj);
-        case 'ellipse':
-          return new fabric.Ellipse(obj);
-        case 'rect':
-          return new fabric.Rect(obj);
-        case 'polyline':
-          return new fabric.Polyline(obj.points, obj);
-        case 'polygon':
-          return new fabric.Polygon(obj.points, obj);
-        case 'path':
-          return new fabric.Path(obj.path, obj);
-        case 'group':
-          const groupObjects = await Promise.all(obj.objects.map(async (groupObj) => {
-            return await loadFabricObject(groupObj);
-          }));
-          return new fabric.Group(groupObjects, obj);
-        case 'path-group':
-          const pathGroupObjects = await Promise.all(obj.objects.map(async (pathGroupObj) => {
-            return await loadFabricObject(pathGroupObj);
-          }));
-          return new fabric.PathGroup(pathGroupObjects, obj);
-        default:
-          return obj;
-      }
-    }));
-
-    async function loadFabricObject(obj) {
-      switch (obj.type) {
-        case 'image':
-          const localPath = urlToLocalPath(obj.src);
-          try {
-            const img = await loadImage(localPath);
-            return new fabric.Image(img, obj);
-          } catch (error) {
-            console.error(`Error loading image from ${localPath}:`, error);
-            return null;
-          }
-        case 'textbox':
-          return new fabric.Textbox(obj.text, obj);
-        case 'i-text':
-          return new fabric.IText(obj.text, obj);
-        case 'line':
-          return new fabric.Line([obj.x1, obj.y1, obj.x2, obj.y2], obj);
-        case 'circle':
-          return new fabric.Circle(obj);
-        case 'triangle':
-          return new fabric.Triangle(obj);
-        case 'ellipse':
-          return new fabric.Ellipse(obj);
-        case 'rect':
-          return new fabric.Rect(obj);
-        case 'polyline':
-          return new fabric.Polyline(obj.points, obj);
-        case 'polygon':
-          return new fabric.Polygon(obj.points, obj);
-        case 'path':
-          return new fabric.Path(obj.path, obj);
-        default:
-          return obj;
-      }
-    }
-
-    // Add loaded objects to canvas
+    const loadedObjects = await Promise.all(fabricJSON.objects.map(createFabricObject));
     loadedObjects.forEach(obj => {
       if (obj) fabricCanvas.add(obj);
     });
 
-    // Add watermark
     const watermark = new fabric.Text('PREVIEW', {
       fontSize: 40,
       opacity: 0.5,
@@ -254,20 +187,16 @@ app.post('/generate-preview', async (req, res) => {
     });
     fabricCanvas.add(watermark);
 
-    // Render the canvas
     fabricCanvas.renderAll();
 
-    // Convert fabricCanvas to node-canvas using toDataURL
     const dataURL = fabricCanvas.toDataURL();
     const img = await loadImage(dataURL);
     const ctx = canvas.getContext('2d');
     ctx.drawImage(img, 0, 0);
 
-    // Resize the image while maintaining aspect ratio
     const maxWidth = 600;
     const maxHeight = 800;
     const aspectRatio = dimensions.width / dimensions.height;
-
     let newWidth, newHeight;
 
     if (dimensions.width > dimensions.height) {
@@ -282,10 +211,7 @@ app.post('/generate-preview', async (req, res) => {
     const resizedCtx = resizedCanvas.getContext('2d');
     resizedCtx.drawImage(canvas, 0, 0, newWidth, newHeight);
 
-    // Convert canvas to buffer
     const buffer = resizedCanvas.toBuffer('image/png');
-
-    // Send the image as response
     res.contentType('image/png');
     res.send(buffer);
   } catch (error) {
