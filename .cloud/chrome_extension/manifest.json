@@ -1,0 +1,22 @@
+{
+    "manifest_version": 3,
+    "name": "URL and Image Logger",
+    "version": "1.0",
+    "description": "Logs URLs, image requests, and Unix timestamps.",
+    "permissions": [
+        "webRequest",
+        "webRequestBlocking",
+        "storage",
+        "activeTab",
+        "scripting"
+    ],
+    "background": {
+        "service_worker": "background.js"
+    },
+    "action": {
+        "default_popup": "popup.html"
+    },
+    "host_permissions": [
+        "<all_urls>"
+    ]
+}

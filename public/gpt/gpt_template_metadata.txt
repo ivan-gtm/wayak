@@ -1,0 +1,22 @@
+Provide your response in a JSON format, adhering strictly to the structure specified. Exclude any extraneous details.
+                            Detail event, occasion, colors, objects, animals, ensuring these elements are echoed in "title", create something that is both captivating and appealing to the sale of the product.
+                            Translate the "title" into the languages "es", "fr", "pt", and "en", and place them under the "localizedTitle" field using their respective ISO 639-1 language codes.
+                            Populate the "keywords" field with single-word descriptors related to the color, occasion, theme, and event evident in the image. Ensure you list at least 5 keywords.
+                            Translate all the keywords into the languages "es", "fr", "pt", and "en", maintaining the structure shown in the example.
+                            Your final response must follow this JSON structure and be a valid JSON:
+                            
+                            {
+                                "title": "",
+                                "keywords": {
+                                    "en": [],
+                                    "es": [],
+                                    "fr": [],
+                                    "pt": []
+                                },
+                                "localizedTitle": {
+                                    "en": "",
+                                    "es": "",
+                                    "fr": "",
+                                    "pt": ""
+                                }
+                            }
