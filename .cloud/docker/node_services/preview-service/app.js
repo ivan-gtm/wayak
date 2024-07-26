@@ -72,6 +72,8 @@ async function loadFabricObject(obj) {
 // Function to load different types of fabric objects
 async function createFabricObject(obj) {
   console.log(`Creating fabric object of type: ${obj.type}`);
+  let fabricObj;
+
   switch (obj.type) {
     case 'image':
       return await loadFabricObject(obj);
@@ -104,7 +106,8 @@ async function createFabricObject(obj) {
       return new fabric.Polygon(obj.points, obj);
     case 'path':
       console.log('Creating path object');
-      return new fabric.Path(obj.path, obj);
+      fabricObj = new fabric.Path(obj.path, obj);
+      break;
     case 'group':
       console.log('Creating group object');
       const groupObjects = await Promise.all(obj.objects.map(createFabricObject));
@@ -117,6 +120,15 @@ async function createFabricObject(obj) {
       console.warn(`Unknown object type: ${obj.type}`);
       return obj;
   }
+
+  // Handle clipPath separately
+  if (obj.clipPath) {
+    console.log('Handling clipPath');
+    const clipPath = await createFabricObject(obj.clipPath);
+    fabricObj.set('clipPath', clipPath);
+  }
+
+  return fabricObj;
 }
 
 // Function to load font if not already loaded
