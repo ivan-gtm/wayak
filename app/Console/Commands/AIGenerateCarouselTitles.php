@@ -35,7 +35,7 @@ class AIGenerateCarouselTitles extends Command
     {
         $client = new Client();
         $apiKey = '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';
-        $prompt = "Generate a JSON array with carousel titles, related keywords, and search terms for a wedding campaign. The titles should be captivating and suitable for an invitation design templates platform. Ensure each entry in the array has title, keywords, and search_term properties and is a direct child of the JSON root. Do not nest the entries under another key.";
+        $prompt = "Generate a JSON array with at least 10 carousels, composed by titles, related keywords, and search terms for a wedding campaign. The titles should be captivating and suitable for an invitation design templates platform. Ensure each entry in the array has title, keywords, and search_term properties and is a direct child of the JSON root. Do not nest the entries under another key.";
 
         $this->info('Sending request to OpenAI API...');
 
