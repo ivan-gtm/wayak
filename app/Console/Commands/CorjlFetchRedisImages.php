@@ -11,7 +11,7 @@ use GuzzleHttp\Client;
 
 class CorjlFetchRedisImages extends Command
 {
-    protected $signature = 'fetch:redis-images';
+    protected $signature = 'corjl:fetch:redis-images';
     protected $description = 'Fetch images from Redis and save them locally';
 
     public function __construct()
@@ -25,7 +25,7 @@ class CorjlFetchRedisImages extends Command
                     ->select('id', 'template_id')
                     ->where('status', '=', 1)
                     // ->orderBy('id','DESC')
-                    ->limit(10000)
+                    ->limit(50000)
                     ->get();
 
         // Create relationship between font and template, if it does not exists

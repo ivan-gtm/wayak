@@ -51,7 +51,7 @@ class TemplettScrapAssets extends Command
                     ->where('status', '=', '0')
                     ->where('source', '=', 'corjl')
                     ->orderBy('id','DESC')
-                    ->limit(10000)
+                    ->limit(50000)
                     ->get();
 
         // echo "<pre>";

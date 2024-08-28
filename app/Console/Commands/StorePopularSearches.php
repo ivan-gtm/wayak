@@ -30,11 +30,11 @@ class StorePopularSearches extends Command
     {
         $country = $this->argument('country');
 
-        $popularSearches = $this->getTop10PopularSearches($country);
+        $this->getTop10PopularSearches($country);
 
-        // Store the results in a new Redis key
-        $newRedisKey = 'wayak:' . $country . ':top10:popular:searches';
-        Redis::set($newRedisKey, $popularSearches);
+        // // Store the results in a new Redis key
+        // $newRedisKey = 'wayak:' . $country . ':top10:popular:searches';
+        // Redis::set($newRedisKey, $popularSearches);
 
         $this->info('Top 10 popular searches have been stored in Redis.');
 
