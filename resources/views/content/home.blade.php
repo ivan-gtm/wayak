@@ -6,6 +6,8 @@
     <meta name="description" content="{{ __('home.meta_description') }}" />
     <meta name="title" content="{{ __('home.meta_title') }}" />
     <meta name="keywords" content="{{ __('home.meta_keywords') }}" />
+@endsection
+@section('css')
     <link type="text/css" rel="stylesheet" href="{{ asset('assets/css/home.css') }}" media="all" preload>
     <style>
         .category.slider .sliderMask .sliderContent .slider-item {
@@ -401,5 +403,4 @@
     //     loadSliders();
     // });    
 </script>
-
 @endsection

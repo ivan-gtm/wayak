@@ -3,23 +3,15 @@
 @section('title', 'Results for: "'.$search_query.'" | Online Template Editor | Wayak')
 
 @section('meta')
-<link rel="stylesheet" href="{{ asset('assets/css/search.css') }}">
-<link rel="preconnect" href="https://fonts.gstatic.com">
-<link href="https://fonts.googleapis.com/css2?family=PT+Sans+Caption&display=swap" rel="stylesheet">
-
-<meta data-rh="true" charset="UTF-8">
-<meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-    
-{{--
-        <meta data-rh="true" name="google-site-verification" content="">
-        <meta data-rh="true" name="apple-itunes-app" content="">
-        <meta data-rh="true" name="google" content="no-translate">
---}}
-
+    <meta data-rh="true" charset="UTF-8">
+    <meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+@endsection
+@section('css')
+    <link type="text/css" rel="stylesheet" href="{{ asset('assets/css/home.css') }}" media="all" preload>
+    <link rel="stylesheet" href="{{ asset('assets/css/search.css') }}">
 @endsection
 
 @section('content')
-
 <main class="content">
     <div id="app" class="appReady">
         <div class="Pwa91aRM">

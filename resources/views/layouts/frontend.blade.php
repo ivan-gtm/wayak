@@ -15,7 +15,7 @@
     <link type="text/css" rel="stylesheet" href="{{ asset('assets/css/menu.css') }}" media="all">
     <link type="text/css" rel="stylesheet" href="{{ asset('assets/css/autocomplete.css') }}" media="all">
     <link type="text/css" rel="stylesheet" href="{{ asset('assets/css/notification.css') }}" media="all">
-    <link type="text/css" rel="stylesheet" href="{{ asset('assets/css/promobar.css') }}" media="all">
+    <!-- <link type="text/css" rel="stylesheet" href="{{ asset('assets/css/promobar.css') }}" media="all"> -->
     <link type="text/css" rel="stylesheet" href="{{ asset('assets/css/footer.css') }}" media="all">
     
     <meta name="customer-id" content="{{ $customer_id }}">
@@ -110,7 +110,7 @@
                 </a>
             </div>
             <div class="primary-nav visible-small-laptop visible-desktop" id="nav-primary-items">
-                <div class="nav-item-container hide-for-student">
+                <div class="nav-item-container for-user" id="my-stuff-nav-item">
                     <a class="nav-item {{ (\Route::current()->getName() == 'showHome' || \Route::current()->getName() == 'user.homepage') ? 'active' : null }}" href="{{ url('/'.$country).'?source=menu'  }}">
                         {{ __('menu.home') }}
                     </a>
@@ -128,9 +128,9 @@
                                             {{ $menu->templates[$i]->name }}
                                         </a>
                                     </li>
-                                    @endfor
+                                @endfor
                                     {{-- <li class="list-item">
-                                        <a class="item cta animate-icon" href="https://wayak.app/index.php/posters/sizes?utm_source=nav&utm_content=viewallsizes&utm_medium=link&utm_campaign=templategallerynav">
+                                        <a class="item" cta animate-icon" href="https://wayak.app/index.php/posters/sizes?utm_source=nav&utm_content=viewallsizes&utm_medium=link&utm_campaign=templategallerynav">
                                             View All <i class="icon-to-animate icon-caret-right"></i>
                                         </a>
                                     </li> --}}
@@ -215,10 +215,10 @@
                             
                             <li>
                                 @auth
-                                {{auth()->user()->name}}
-                                <div class="text-end">
-                                    <a style="color: black;" href="javascript:void(0)" onclick="logout()" class="btn btn-outline-light me-2">Logout</a>
-                                </div>
+                                    {{auth()->user()->name}}
+                                    <div class="text-end">
+                                        <a style="color: black;" href="javascript:void(0)" onclick="logout()" class="btn btn-outline-light me-2">Logout</a>
+                                    </div>
                                 @endauth
                                 @guest
                                     <div class="text-end">
