@@ -115,24 +115,23 @@ class TemplettScrapAssets extends Command
 
                 // $mysqli->query("UPDATE images SET status = 1 WHERE id =".$font_row['id']);
                 DB::table('images')
-                        ->where('id', $asset->id)
+                        ->where('filename', $asset->filename)
                         ->update(['status' => 1]);
-
             }
         }
 
         // Set templates as status 3: 
-        DB::statement("UPDATE templates SET status = 3 WHERE template_id IN(
-                            SELECT template_id FROM (
-                                SELECT images.template_id, COUNT(images.id) images, SUM(images.status) downloaded_images 
-                                                                    FROM images, templates
-                                                                WHERE images.template_id = templates.template_id
-                                                                    AND templates.status = 2
-                                                                GROUP BY images.template_id
-                                                                    LIMIT 1000
-                            ) tmp_images 
-                            WHERE images = downloaded_images
-                        )");
+        // DB::statement("UPDATE templates SET status = 3 WHERE template_id IN(
+        //                     SELECT template_id FROM (
+        //                         SELECT images.template_id, COUNT(images.id) images, SUM(images.status) downloaded_images 
+        //                                                             FROM images, templates
+        //                                                         WHERE images.template_id = templates.template_id
+        //                                                             AND templates.status = 2
+        //                                                         GROUP BY images.template_id
+        //                                                             LIMIT 1000
+        //                     ) tmp_images 
+        //                     WHERE images = downloaded_images
+        //                 )");
         echo "Termine\n";
     }
 

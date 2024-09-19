@@ -25,10 +25,10 @@ class SearchController extends Controller
         $customerId = $request->customerId ?? null;
 
         $user = Auth::user();
-        
-        if($user){
+
+        if ($user) {
             $customer_id = $user->customer_id;
-        } elseif( isset($request->customerId) ) {
+        } elseif (isset($request->customerId)) {
             $customer_id = $request->customerId;
         }
 
@@ -38,10 +38,9 @@ class SearchController extends Controller
 
         $searchSlug = $this->generateSearchSlug($searchTerm);
         $this->saveGlobalSearchHistory($country, $searchSlug, $searchTerm);
-        if($customerId != null){
+        if ($customerId != null) {
             $this->updateUserSearchHistory($customer_id, $searchSlug);
-        }
-         else {
+        } else {
             abort(404);
         }
 
@@ -49,8 +48,16 @@ class SearchController extends Controller
         $total_documents = $result['total'];
         $search_result = $result['documents'];
         
+        unset( $result['documents'] );
+        
+        $filterData = $result;
+
+        $filterData['top_keywords'] = array_slice(json_decode(json_encode($filterData['top_keywords'])),0,20);
+
         // echo "<pre>";
-        // print_r(json_encode($result));
+        // print_r($result);
+        // // // print_r($filterData['top_keywords']);
+        // // // print_r(json_decode(json_encode($filterData['top_keywords'])));
         // exit;
 
         $last_page = ceil($total_documents / $per_page);
@@ -58,6 +65,7 @@ class SearchController extends Controller
         $to_document = $skip + $per_page;
         $templates = $this->prepareTemplates($search_result, $language_code);
 
+        // $skip, $per_page);
         return view('content.search', [
             'country' => $country,
             'language_code' => $language_code,
@@ -65,6 +73,11 @@ class SearchController extends Controller
             'menu' => $menu,
             'sale' => $sale,
             'search_query' => $searchTerm,
+            'filterData' => $filterData,
+            'min_price' => $minPrice,
+            'max_price' => $maxPrice,
+            'author' => $author,
+            'productsInSale' => $productsInSale,
             'category' => $category,
             'current_page' => $page,
             'first_page' => 1,
@@ -131,7 +144,8 @@ class SearchController extends Controller
         return $templates;
     }
 
-    function getSerachTermBasedOnSlug($country, $searchSlug){
+    function getSerachTermBasedOnSlug($country, $searchSlug)
+    {
         if (Redis::hexists('wayak:' . $country . ':analytics:search:terms', $searchSlug)) {
             return Redis::hget('wayak:' . $country . ':analytics:search:terms', $searchSlug);
         }
@@ -236,9 +250,9 @@ class SearchController extends Controller
             }
         }
 
-         // Calculate the magnitude (Euclidean norm) of each vector
-        $magnitude1 = sqrt(array_sum(array_map(fn ($tfidf) => $tfidf ** 2, $vector1)));
-        $magnitude2 = sqrt(array_sum(array_map(fn ($tfidf) => $tfidf ** 2, $vector2)));
+        // Calculate the magnitude (Euclidean norm) of each vector
+        $magnitude1 = sqrt(array_sum(array_map(fn($tfidf) => $tfidf ** 2, $vector1)));
+        $magnitude2 = sqrt(array_sum(array_map(fn($tfidf) => $tfidf ** 2, $vector2)));
 
 
         // Calculate the cosine similarity
@@ -262,12 +276,12 @@ class SearchController extends Controller
         //     // Add more words and their IDF values as needed
         // ];
 
-        
+
 
         // Return the IDF value for the word if it exists, or a default value
-        if(Redis::hget('wayak:idf:dictionary', $word)){
+        if (Redis::hget('wayak:idf:dictionary', $word)) {
             return Redis::hget('wayak:idf:dictionary', $word);
-        }else{
+        } else {
             return 1.0;
         }
         // return $idfDictionary[$word] ?? 1.0; // Default IDF value
